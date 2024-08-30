@@ -10,7 +10,7 @@ function qs = samplequadrature(T,L,R,z)
 
 % BEGIN SANITY CHECKS
 % check that T yields square matrices
-n1,n2 = size(feval(T,0));
+[n1,n2] = size(T(0));
 assert(n1==n2);
 n = n1;
 
@@ -25,11 +25,13 @@ assert(all([l1,l2]==[n,n]));
 assert(ell <= n && r <= n);
 % END SANITY CHECKS
 
-qs = zeros(N,n,n);
+% BEGIN NUMERICS
+qs = zeros(ell,r,N);
 for i=1:N
     % could be a good idea to pick / or \ based on outer dims of L and R
     % but wtv for now :)
-    qs(:,:,i) = feval(T,z(i)) \ R;
-    qs(:,:,i) = L' * qs(:,:,i)
+    qs(:,:,i) = L' * (T(z(i)) \ R);
 end
+% END NUMERICS
+
 end

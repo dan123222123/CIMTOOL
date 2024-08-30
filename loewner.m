@@ -1,17 +1,17 @@
-function [E,V] = loewner(qs,f,z,w,m,maxK)
+function E = loewner(qs,sigma,z,w,m,maxK)
 % Suppose T : C -> nXn matrices is meromorphic on a domain D.
 % The boundary of D is a closed curve in C approximated with {z_k,w_k}
 % nodes and weights associated to a particular quadrature rule.
 % INPUTS
 %   qs -- vector of two-sided samples of L*T^{-1}R at z_k in z
-%   f -- function from ZxC -> C that is analytic on D
+%   sigma -- shift for moment calculation, can be finite or Inf
 %   z -- points on C (coming from some quadrature rule)
 %   w -- quadrature weights associated to z
 %   m -- number of poles of T in D
 %   maxK -- max number of moments to use in construction of data matrices
+%           should be >=1
 % OUTPUTS
 %   E -- mXm matrix of eigenvalues of T within D
-%   V -- nXm matrix of eigenvectors of T corresponding to E
 % BEGIN
 
 % BEGIN SANITY CHECKS
@@ -24,36 +24,60 @@ end
 % check that the length of qs, z, and w match
 assert(N==length(z));
 assert(N==length(w));
-
-% check that m <= n -- we can't find more than n poles of T!
-assert(m <= n);
 % END SANITY CHECKS
 
 % BEGIN NUMERICS
-
-% extract shift from f(k,z)
-sigma = 1/feval(0,0)
-
 % allocate maximum size moment and data matrix
-M = zeros(ell,r,maxK);
+M = zeros(ell,r,2*maxK);
 D = zeros(ell*maxK,r*(maxK+1));
 
-kb=0;
-for k=1:maxK
-    % construct kth moment
-    for n=1:N
-        M(:,:,k) = M(:,:,k) + w(n) * feval(f,k,z(n)) * qs(:,:,n);
-    end
-    % update kth block-row/column of D (overwrites diagonals, but wtv)
-    for i=1:k
-        D((i+k-2)*ell+1:(i+k-1)*ell,(i-1)*r+1:i*r) = M(:,:,k+i-1);
-        D((i-1)*ell+1:i*ell,(i+k-2)*r+1:(i+k-1)*r) = M(:,:,k+i-1);
-    end
-    
-    % TODO
-    
+% choose "hankel" or "loewner" moment functions based on shift finite/Inf
+if sigma == Inf
+    f = @(k,z) (z.^k);
+else
+    f = @(k,z) ((-1.^k)/(sigma - z).^(k+1));
 end
 
+kb=0; % which moment the data matrix reaches sufficient rank at
+for k=1:maxK
+    % construct (k+1)-st moment
+    for n=1:N
+        M(:,:,2*k-1) = M(:,:,2*k-1) + w(n) * f(2*k-2,z(n)) * qs(:,:,n);
+        M(:,:,2*k) = M(:,:,2*k) + w(n) * f(2*k-1,z(n)) * qs(:,:,n);
+    end
+    % update k-th block-row and (k+1)-st block-column of D
+    for i=1:k
+        D((k-1)*ell+1:k*ell,(i-1)*r+1:i*r) = M(:,:,k+i-1);
+        D((i-1)*ell+1:i*ell,k*r+1:(k+1)*r) = M(:,:,k+i);
+    end
+    % if rank(Db) >= m, we don't need to continue padding the data matrix
+    if rank(D(1:k*ell,1:k*r)) >= m
+        kb=k;
+        break;
+    end
+end
+
+if kb==0
+    error("could not generate rank %d base data matrix",m);
+end
+
+% extract base data matrix from D
+D0 = D(1:k*ell,1:k*r);
+
+% construct shifted data matrix based on sigma and D
+if sigma == Inf
+    D1 = D(1:k*ell,r+1:(k+1)*r);
+else
+    D0 = -1*D0;
+    D1 = -sigma*D(1:k*ell,r+1:(k+1)*r) - D0;
+end
+
+% (reduced) rank-m svd of D0
+[X, Sigma, Y] = svd(D0,"matrix");
+X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
+
+% solve (X'*D1*Y,Sigma) GEP to get eigenvalues of underlying NLEVP in D.
+E = eig(X'*D1*Y,Sigma);
 % END NUMERICS
 
 end
