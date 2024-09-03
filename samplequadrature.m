@@ -1,11 +1,13 @@
-function qs = samplequadrature(T,L,R,z)
+function [Ql,Qr,Qlr] = samplequadrature(T,L,R,z)
 % INPUTS
 %   T -- function handle from C -> nXn matrices, meromorphic on domain D
 %   L -- left nXell probing/sketching matrix
 %   R -- right nXr probing/sketching matrix
 %   z -- points on the boundary of D (coming from some quadrature rule)
 % OUTPUTS
-%   qs -- vector of two-sided samples of L*T^{-1}R at z_k in z
+%   Ql -- vector of one-sided samples L*T^{-1} at z_k in z
+%   Qr -- vector of one-sided samples T^{-1}R at z_k in z
+%   Qlr -- vector of two-sided samples L*T^{-1}R at z_k in z
 % BEGIN
 
 % BEGIN SANITY CHECKS
@@ -26,11 +28,13 @@ assert(ell <= n && r <= n);
 % END SANITY CHECKS
 
 % BEGIN NUMERICS
-qs = zeros(ell,r,N);
+Ql = zeros(ell,n,N);
+Qr = zeros(n,r,N);
+Qlr = zeros(ell,r,N);
 for i=1:N
-    % could be a good idea to pick / or \ based on outer dims of L and R
-    % but wtv for now :)
-    qs(:,:,i) = L' * (T(z(i)) \ R);
+    Ql(:,:,i) = L'/T(z(i));
+    Qr(:,:,i) = T(z(i))\R;
+    Qlr(:,:,i) = L'*Qr(:,:,i);
 end
 % END NUMERICS
 

@@ -1,24 +1,24 @@
-function E = loewner(qs,sigma,z,w,m,maxK)
+function E = sploewner(Qlr,sigma,z,w,m,maxK)
 % Suppose T : C -> nXn matrices is meromorphic on a domain D.
 % The boundary of D is a closed curve in C approximated with {z_k,w_k}
 % nodes and weights associated to a particular quadrature rule.
 % INPUTS
-%   qs -- vector of two-sided samples of L*T^{-1}R at z_k in z
-%   sigma -- shift for moment calculation, can be finite or Inf
-%   z -- points on C (coming from some quadrature rule)
-%   w -- quadrature weights associated to z
-%   m -- number of poles of T in D
-%   maxK -- max number of moments to use in construction of data matrices
-%           should be >=1
+%   Qlr     -- vector of two-sided samples L*T^{-1}R at z_k in z
+%   sigma   -- shift for moment calculation, can be finite or Inf
+%   z       -- points on C (coming from some quadrature rule)
+%   w       -- quadrature weights associated to z
+%   m       -- number of poles of T in D
+%   maxK    -- max number of moments to use in construction of data 
+%              matrices should be >=1
 % OUTPUTS
-%   E -- mXm matrix of eigenvalues of T within D
+%   E       -- mXm matrix of eigenvalues of T within D
 % BEGIN
 
 % BEGIN SANITY CHECKS
 % check that elements of qs have the same dimension
-[ell,r,N] = size(qs);
+[ell,r,N] = size(Qlr);
 for i=1:N
-    assert(all(size(qs(:,:,i))==[ell,r]));
+    assert(all(size(Qlr(:,:,i))==[ell,r]));
 end
 
 % check that the length of qs, z, and w match
@@ -42,8 +42,8 @@ kb=0; % which moment the data matrix reaches sufficient rank at
 for k=1:maxK
     % construct (k+1)-st moment
     for n=1:N
-        M(:,:,2*k-1) = M(:,:,2*k-1) + w(n) * f(2*k-2,z(n)) * qs(:,:,n);
-        M(:,:,2*k) = M(:,:,2*k) + w(n) * f(2*k-1,z(n)) * qs(:,:,n);
+        M(:,:,2*k-1) = M(:,:,2*k-1) + w(n) * f(2*k-2,z(n)) * Qlr(:,:,n);
+        M(:,:,2*k) = M(:,:,2*k) + w(n) * f(2*k-1,z(n)) * Qlr(:,:,n);
     end
     % update k-th block-row and (k+1)-st block-column of D
     for i=1:k
