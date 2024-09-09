@@ -47,7 +47,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         TextArea_3                    matlab.ui.control.TextArea
         ContourTab                    matlab.ui.container.Tab
         GridLayout3                   matlab.ui.container.GridLayout
-        contourparameters             contourparameters
+        contourparameters             ContourComponentInterface
         TypeButtonGroup               matlab.ui.container.ButtonGroup
         RectangleButton               matlab.ui.control.RadioButton
         EllipseButton                 matlab.ui.control.RadioButton
@@ -167,11 +167,11 @@ classdef CIMTOOL < matlab.apps.AppBase
             selectedButton = app.TypeButtonGroup.SelectedObject;
             switch(selectedButton.Text)
                 case "Circle"
-                    app.contourparameters = circleparameters(app.GridLayout3);
+                    app.contourparameters = CircleComponent(app.GridLayout3);
                 case "Ellipse"
-                    app.contourparameters = ellipseparameters(app.GridLayout3);
+                    app.contourparameters = EllipseComponent(app.GridLayout3);
                 case "Rectangle"
-                    app.contourparameters = circleparameters(app.GridLayout3);
+                    app.contourparameters = CircleComponent(app.GridLayout3);
                 otherwise
                     errordlg("no contour selected")
             end
@@ -496,7 +496,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.RectangleButton.Position = [11 24 76 22];
 
             % Create contourparameters
-            app.contourparameters = circleparameters(app.GridLayout3);
+            app.contourparameters = CircleComponent(app.GridLayout3);
             app.contourparameters.Layout.Row = 1;
             app.contourparameters.Layout.Column = 2;
 
