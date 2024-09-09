@@ -46,6 +46,12 @@ classdef CircleComponent < ContourComponentInterface
         end
     end
 
+    methods (Access = public)
+        function [z,w] = getNodesWeights(comp,N)
+            [z,w] = circle_trapezoid(N,comp.center,comp.radius);
+        end
+    end
+
     methods (Access = protected)
         
         % Code that executes when the value of a public property is changed
@@ -53,16 +59,10 @@ classdef CircleComponent < ContourComponentInterface
             % Use this function to update the underlying components
             comp.radiusEditField.Value = comp.radius;
             comp.centerEditField.Value = num2str(comp.center);
-            comp.f = @(z) comp.center + comp.radius*exp(1i*z);
         end
 
         % Create the underlying components
         function setup(comp)
-
-            % default cirlce parametrization
-            comp.f = @(z) comp.center + comp.radius*exp(1i*z);
-            % default quadrature rule
-            comp.q = @(N) ((2*pi)/N)*((1:N) - (1/2));
 
             comp.Position = [1 1 367 169];
             comp.BackgroundColor = [0.94 0.94 0.94];

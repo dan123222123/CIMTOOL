@@ -60,6 +60,12 @@ classdef EllipseComponent < ContourComponentInterface
         end
     end
 
+    methods (Access = public)
+        function [z,w] = getNodesWeights(comp,N)
+            [z,w] = ellipse_trapezoid(N,comp.center,comp.alpha,comp.beta);
+        end
+    end
+
     methods (Access = protected)
         
         % Code that executes when the value of a public property is changed

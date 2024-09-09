@@ -20,6 +20,8 @@ classdef CIMTOOL < matlab.apps.AppBase
         ComputationMenu               matlab.ui.container.Menu
         GridLayout                    matlab.ui.container.GridLayout
         LeftPanel                     matlab.ui.container.Panel
+        QuadNodesEditField            matlab.ui.control.NumericEditField
+        QuadNodesEditFieldLabel       matlab.ui.control.Label
         EigSearchEditField            matlab.ui.control.NumericEditField
         EigSearchEditFieldLabel       matlab.ui.control.Label
         IMINEditField                 matlab.ui.control.NumericEditField
@@ -36,7 +38,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         AxisEqualCheckBox             matlab.ui.control.CheckBox
         RESETVIEWPORTButton           matlab.ui.control.Button
         COMPUTEButton                 matlab.ui.control.Button
-        COMPUTATIONALMODEButtonGroup  matlab.ui.container.ButtonGroup
+        ComputationalModeButtonGroup  matlab.ui.container.ButtonGroup
         MPLoewnerButton               matlab.ui.control.ToggleButton
         SPLoewnerButton               matlab.ui.control.ToggleButton
         HankelButton                  matlab.ui.control.ToggleButton
@@ -52,6 +54,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         RectangleButton               matlab.ui.control.RadioButton
         EllipseButton                 matlab.ui.control.RadioButton
         CircleButton                  matlab.ui.control.RadioButton
+        ShiftsTab                     matlab.ui.container.Tab
         EigenvalueInformationTab      matlab.ui.container.Tab
         TextArea                      matlab.ui.control.TextArea
         ErrorsWarningsTab             matlab.ui.container.Tab
@@ -63,18 +66,76 @@ classdef CIMTOOL < matlab.apps.AppBase
     properties (Access = private)
         onePanelWidth = 576;
     end
-
-    
-    properties (Access = private)
-        %
-    end
     
     properties (Access = public)
+        QuadType % Circle, Ellipse, or Custom
+        ComputationalMode % Hankel, SPLoewner, MPLoewner
+        ViewPortDimensions % [xmin, xmax, ymin, ymax]
         NLEVP % structure array that contains NLEVP fields
+        ProbingData % L,R,ell,r
+        N % number of quadrature nodes
+        m % number of quadrature nodes, specified by the user (for now)
+        QuadData % z,w the quadrature nodes and weights
+        SampleData % Ql,Qr,Qlr
+        InterpolationData % mode, lshifts, rshifts 
+        ResultData % eigs, ews, metrics, etc.
     end
     
     methods (Access = public)
-        %
+
+        % assumed that we must recompute some/all (for now all) data
+        % this method should be called after certain property updates.
+        function computeData(app)
+            [app.SampleData.Ql,app.SampleData.Qr,app.SampleData.Qlr] ...
+                = samplequadrature( ...
+                app.NLEVP.T, ...
+                app.ProbingData.L, ...
+                app.ProbingData.R,...
+                app.QuadData.z ...
+                );
+            computeMethod(app);
+        end
+        
+        % assumed that the data stays fixed, and we simply use it in the
+        % method specified by app.ComputationalMode 
+        function computeMethod(app)
+            switch(app.InterpolationData.mode)
+                case "Hankel"
+                    [app.ResultData.eigs] = sploewner( ...
+                        app.SampleData.Qlr, ...
+                        app.InterpolationData.sigma(1), ...
+                        app.QuadData.z, ...
+                        app.QuadData.w, ...
+                        app.m, ...
+                        ceil(app.m/min(ell,r)) ...
+                    );
+                case "SPLoewner"
+                    [app.ResultData.eigs] = sploewner( ...
+                        app.SampleData.Qlr, ...
+                        Inf, ...
+                        app.QuadData.z, ...
+                        app.QuadData.w, ...
+                        app.m, ...
+                        ceil(app.m/min(ell,r)) ...
+                    );
+                case "MPLoewner"
+                    [app.ResultData.eigs] = mploewner( ...
+                        app.SampleData.Ql, ...
+                        app.SampleData.Qr, ...
+                        app.InterpolationData.theta, ...
+                        app.InterpolationData.sigma, ...
+                        app.ProbingData.L, ...
+                        app.ProbingData.R, ...
+                        app.QuadData.z, ...
+                        app.QuadData.w, ...
+                        app.m ...
+                    );
+                otherwise
+                    errordlg("no computational method selected")
+            end
+            
+        end
+
     end
     
 
@@ -114,7 +175,7 @@ classdef CIMTOOL < matlab.apps.AppBase
                 % the problem exists, so this should run without error
                 app.NLEVP.arglist=missing;
                 app.PROBLEMLOADEDTextArea.Value=sprintf("%s",probstr);
-                [app.NLEVP.coeffs,app.NLEVP.fun,app.NLEVP.f] = nlevp(probstr);
+                [app.NLEVP.coeffs,app.NLEVP.T,app.NLEVP.f] = nlevp(probstr);
             else
                 numarglist=num2cell(str2double(strarglist));
                 % check that there isn't something like an extra comma,
@@ -136,7 +197,7 @@ classdef CIMTOOL < matlab.apps.AppBase
                 % calling convention, but there is no "number" to check
                 % against...
                 try
-                    [app.NLEVP.coeffs,app.NLEVP.fun,app.NLEVP.f] = nlevp(probstr,numarglist{:});
+                    [app.NLEVP.coeffs,app.NLEVP.T,app.NLEVP.f] = nlevp(probstr,numarglist{:});
                 catch AE
                     errordlg('NLEVP exists, but passed argument list caused an error. Check NLEVP help string and try again.')
                     app.PROBLEMLOADEDTextArea.BackgroundColor="r";
@@ -159,7 +220,7 @@ classdef CIMTOOL < matlab.apps.AppBase
 
         % Button pushed function: COMPUTEButton
         function COMPUTEButtonPushed(app, event)
-            delete(app.contourparameters);
+            computeData(app);
         end
 
         % Selection changed function: TypeButtonGroup
@@ -177,6 +238,11 @@ classdef CIMTOOL < matlab.apps.AppBase
             end
             app.contourparameters.Layout.Row = 1;
             app.contourparameters.Layout.Column = 2;
+        end
+
+        % Selection changed function: ComputationalModeButtonGroup
+        function ComputationalModeChanged(app, event)
+            app.ComputationalMode = app.ComputationalModeButtonGroup.SelectedObject.Text;
         end
 
         % Changes arrangement of the app based on UIFigure width
@@ -200,6 +266,16 @@ classdef CIMTOOL < matlab.apps.AppBase
 
     % Component initialization
     methods (Access = private)
+
+        % Value changed function: m
+        function mEditFieldValueChanged(app, event)
+            try
+                app.m = str2double(app.EigSearchEditField.Value);
+            catch
+                update(app);
+                errordlg("Invalid m value.")
+            end
+        end
 
         % Create UIFigure and components
         function createComponents(app)
@@ -294,24 +370,25 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.LeftPanel.Layout.Column = 1;
 
             % Create COMPUTATIONALMODEButtonGroup
-            app.COMPUTATIONALMODEButtonGroup = uibuttongroup(app.LeftPanel);
-            app.COMPUTATIONALMODEButtonGroup.TitlePosition = 'centertop';
-            app.COMPUTATIONALMODEButtonGroup.Title = 'COMPUTATIONAL MODE';
-            app.COMPUTATIONALMODEButtonGroup.Position = [17 277 183 122];
+            app.ComputationalModeButtonGroup = uibuttongroup(app.LeftPanel);
+            app.ComputationalModeButtonGroup.SelectionChangedFcn = createCallbackFcn(app, @ComputationalModeChanged, true);
+            app.ComputationalModeButtonGroup.TitlePosition = 'centertop';
+            app.ComputationalModeButtonGroup.Title = 'COMPUTATIONAL MODE';
+            app.ComputationalModeButtonGroup.Position = [17 233 183 122];
 
             % Create HankelButton
-            app.HankelButton = uitogglebutton(app.COMPUTATIONALMODEButtonGroup);
+            app.HankelButton = uitogglebutton(app.ComputationalModeButtonGroup);
             app.HankelButton.Text = 'Hankel';
             app.HankelButton.Position = [10 67 163 23];
             app.HankelButton.Value = true;
 
             % Create SPLoewnerButton
-            app.SPLoewnerButton = uitogglebutton(app.COMPUTATIONALMODEButtonGroup);
+            app.SPLoewnerButton = uitogglebutton(app.ComputationalModeButtonGroup);
             app.SPLoewnerButton.Text = 'SPLoewner';
             app.SPLoewnerButton.Position = [11 38 162 23];
 
             % Create MPLoewnerButton
-            app.MPLoewnerButton = uitogglebutton(app.COMPUTATIONALMODEButtonGroup);
+            app.MPLoewnerButton = uitogglebutton(app.ComputationalModeButtonGroup);
             app.MPLoewnerButton.Text = 'MPLoewner';
             app.MPLoewnerButton.Position = [11 11 162 23];
 
@@ -332,12 +409,6 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.AxisEqualCheckBox = uicheckbox(app.LeftPanel);
             app.AxisEqualCheckBox.Text = 'Axis Equal';
             app.AxisEqualCheckBox.Position = [67 19 79 22];
-
-            % Create ShiftsButton
-            app.ShiftsButton = uibutton(app.LeftPanel, 'push');
-            app.ShiftsButton.Enable = 'off';
-            app.ShiftsButton.Position = [17 225 185 43];
-            app.ShiftsButton.Text = 'Shift(s)';
 
             % Create PROBLEMLOADEDTextAreaLabel
             app.PROBLEMLOADEDTextAreaLabel = uilabel(app.LeftPanel);
@@ -420,6 +491,21 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.EigSearchEditField.ValueDisplayFormat = '%.0f';
             app.EigSearchEditField.HorizontalAlignment = 'center';
             app.EigSearchEditField.Position = [86 407 109 30];
+            app.EigSearchEditField.ValueChangedFcn = createCallbackFcn(app, @mEditFieldValueChanged, true);
+
+            % Create QuadNodesEditFieldLabel
+            app.QuadNodesEditFieldLabel = uilabel(app.LeftPanel);
+            app.QuadNodesEditFieldLabel.HorizontalAlignment = 'center';
+            app.QuadNodesEditFieldLabel.WordWrap = 'on';
+            app.QuadNodesEditFieldLabel.Position = [19 368 68 30];
+            app.QuadNodesEditFieldLabel.Text = '# Quad Nodes';
+
+            % Create QuadNodesEditField
+            app.QuadNodesEditField = uieditfield(app.LeftPanel, 'numeric');
+            app.QuadNodesEditField.Limits = [0 Inf];
+            app.QuadNodesEditField.ValueDisplayFormat = '%.0f';
+            app.QuadNodesEditField.HorizontalAlignment = 'center';
+            app.QuadNodesEditField.Position = [86 368 109 30];
 
             % Create RightPanel
             app.RightPanel = uipanel(app.GridLayout);
@@ -499,6 +585,10 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.contourparameters = CircleComponent(app.GridLayout3);
             app.contourparameters.Layout.Row = 1;
             app.contourparameters.Layout.Column = 2;
+
+            % Create Shift(s) tab
+            app.ShiftsTab = uitab(app.TabGroup);
+            app.ShiftsTab.Title = 'Shift(s)';
 
             % Create EigenvalueInformationTab
             app.EigenvalueInformationTab = uitab(app.TabGroup);
