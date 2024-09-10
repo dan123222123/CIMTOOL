@@ -71,14 +71,29 @@ classdef CIMTOOL < matlab.apps.AppBase
         QuadType % Circle, Ellipse, or Custom
         ComputationalMode % Hankel, SPLoewner, MPLoewner
         ViewPortDimensions % [xmin, xmax, ymin, ymax]
-        NLEVP % structure array that contains NLEVP fields
-        ProbingData % L,R,ell,r
-        N % number of quadrature nodes
-        m % number of quadrature nodes, specified by the user (for now)
+        NLEVP % T, name, loaded, arglist, coeff, f
+        ProbingData % L,R
+        NumQuadNodes % number of quadrature nodes
+        NumEigSearch % number of quadrature nodes, specified by the user (for now)
         QuadData % z,w the quadrature nodes and weights
         SampleData % Ql,Qr,Qlr
-        InterpolationData % mode, lshifts, rshifts 
+        InterpolationData % lshifts, rshifts 
         ResultData % eigs, ews, metrics, etc.
+    end
+
+    % Plot handles to surgically modify plot window
+    properties (Access = public)
+        NLEVPPlotHandles
+        ContourPlotHandles
+        InterpolationDataPlotHandles
+        ResultDataPlotHandles
+    end
+
+    events
+        NLEVPChanged
+        ContourParametersChanged
+        InterpolationDataChanged
+        ResultDataChanged
     end
     
     methods (Access = public)
@@ -99,24 +114,24 @@ classdef CIMTOOL < matlab.apps.AppBase
         % assumed that the data stays fixed, and we simply use it in the
         % method specified by app.ComputationalMode 
         function computeMethod(app)
-            switch(app.InterpolationData.mode)
+            switch(app.ComputationalMode)
                 case "Hankel"
-                    [app.ResultData.eigs] = sploewner( ...
-                        app.SampleData.Qlr, ...
-                        app.InterpolationData.sigma(1), ...
-                        app.QuadData.z, ...
-                        app.QuadData.w, ...
-                        app.m, ...
-                        ceil(app.m/min(ell,r)) ...
-                    );
-                case "SPLoewner"
                     [app.ResultData.eigs] = sploewner( ...
                         app.SampleData.Qlr, ...
                         Inf, ...
                         app.QuadData.z, ...
                         app.QuadData.w, ...
-                        app.m, ...
-                        ceil(app.m/min(ell,r)) ...
+                        app.NumEigSearch, ...
+                        ceil(app.NumEigSearch/min(app.ProbingData.ell,app.ProbingData.r)) ...
+                    );
+                case "SPLoewner"
+                    [app.ResultData.eigs] = sploewner( ...
+                        app.SampleData.Qlr, ...
+                        app.InterpolationData.sigma(1), ...
+                        app.QuadData.z, ...
+                        app.QuadData.w, ...
+                        app.NumEigSearch, ...
+                        ceil(app.NumEigSearch/min(app.ProbingData.ell,app.ProbingData.r)) ...
                     );
                 case "MPLoewner"
                     [app.ResultData.eigs] = mploewner( ...
@@ -128,7 +143,7 @@ classdef CIMTOOL < matlab.apps.AppBase
                         app.ProbingData.R, ...
                         app.QuadData.z, ...
                         app.QuadData.w, ...
-                        app.m ...
+                        app.NumEigSearch ...
                     );
                 otherwise
                     errordlg("no computational method selected")
@@ -147,6 +162,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             % prompt the user for a problem name and comma-separated list
             % of arguments
             app.NLEVPPackMenu.Enable = "off";
+            app.NLEVP.loaded=false;
             prompt = {"problem","arglist (comma-separated list)"};
             answer = inputdlg(prompt,"NLEVP pack import");
             probstr = answer{1};
@@ -175,7 +191,7 @@ classdef CIMTOOL < matlab.apps.AppBase
                 % the problem exists, so this should run without error
                 app.NLEVP.arglist=missing;
                 app.PROBLEMLOADEDTextArea.Value=sprintf("%s",probstr);
-                [app.NLEVP.coeffs,app.NLEVP.T,app.NLEVP.f] = nlevp(probstr);
+                [app.NLEVP.coeffs,app.NLEVP.fun,app.NLEVP.T] = nlevp(probstr);
             else
                 numarglist=num2cell(str2double(strarglist));
                 % check that there isn't something like an extra comma,
@@ -197,7 +213,7 @@ classdef CIMTOOL < matlab.apps.AppBase
                 % calling convention, but there is no "number" to check
                 % against...
                 try
-                    [app.NLEVP.coeffs,app.NLEVP.T,app.NLEVP.f] = nlevp(probstr,numarglist{:});
+                    [app.NLEVP.coeffs,app.NLEVP.fun,app.NLEVP.T] = nlevp(probstr,numarglist{:});
                 catch AE
                     errordlg('NLEVP exists, but passed argument list caused an error. Check NLEVP help string and try again.')
                     app.PROBLEMLOADEDTextArea.BackgroundColor="r";
@@ -210,7 +226,10 @@ classdef CIMTOOL < matlab.apps.AppBase
             if allfinite
                 app.PROBLEMLOADEDTextArea.BackgroundColor="g";
             end
+            app.NLEVP.n = length(app.NLEVP.T(0));
+            app.NLEVP.loaded=true;
             app.NLEVPPackMenu.Enable="on";
+            notify(app,'NLEVPChanged')
         end
 
         % Close request function: UIFigure
@@ -220,7 +239,12 @@ classdef CIMTOOL < matlab.apps.AppBase
 
         % Button pushed function: COMPUTEButton
         function COMPUTEButtonPushed(app, event)
+            if ~app.NLEVP.loaded
+                uialert(app.UIFigure,'NLEVP not loaded.','Compute Error');
+                return
+            end
             computeData(app);
+            notify(app,"ResultDataChanged");
         end
 
         % Selection changed function: TypeButtonGroup
@@ -243,6 +267,8 @@ classdef CIMTOOL < matlab.apps.AppBase
         % Selection changed function: ComputationalModeButtonGroup
         function ComputationalModeChanged(app, event)
             app.ComputationalMode = app.ComputationalModeButtonGroup.SelectedObject.Text;
+            app.cleanhandles(app.ResultDataPlotHandles);
+            app.updateshifts();
         end
 
         % Changes arrangement of the app based on UIFigure width
@@ -268,17 +294,120 @@ classdef CIMTOOL < matlab.apps.AppBase
     methods (Access = private)
 
         % Value changed function: m
-        function mEditFieldValueChanged(app, event)
+        function EigSearchEditFieldValueChanged(app, event)
             try
-                app.m = str2double(app.EigSearchEditField.Value);
+                app.NumEigSearch = app.EigSearchEditField.Value;
             catch
                 update(app);
                 errordlg("Invalid m value.")
             end
         end
 
+        % Value changed function: N
+        function QuadNodesEditFieldValueChanged(app, event)
+            try
+                app.NumQuadNodes = app.QuadNodesEditField.Value;
+                notify(app,"ContourParametersChanged");
+            catch
+                app.QuadNodesEditField.Value = event.PreviousValue;
+                errordlg("Invalid N value.")
+            end
+        end
+
+        function cleanhandles(app,handles)
+            for i=1:length(handles)
+                delete(handles{i});
+            end
+        end
+
+        function ContourChangedFcn(app, src, event)
+            [app.QuadData.z,app.QuadData.w] = app.contourparameters.getNodesWeights(app.NumQuadNodes);
+            app.cleanhandles(app.ContourPlotHandles);
+            app.ContourPlotHandles = app.contourparameters.plot(app.UIAxes,app.QuadData.z);
+            app.COMPUTEButton.BackgroundColor = "red";
+        end
+
+        function InterpolationDataChangedFcn(app, src, event)
+            app.cleanhandles(app.InterpolationDataPlotHandles);
+            app.InterpolationDataPlotHandles = {};
+            if ~any(ismissing(app.InterpolationData.sigma)) && all(isfinite(app.InterpolationData.sigma))
+                app.InterpolationDataPlotHandles{1} = scatter(app.UIAxes,real(app.InterpolationData.sigma),imag(app.InterpolationData.sigma),"blue","square",'LineWidth',2);
+            end
+            if ~any(ismissing(app.InterpolationData.theta))
+                app.InterpolationDataPlotHandles{2} = scatter(app.UIAxes,real(app.InterpolationData.theta),imag(app.InterpolationData.theta),"red","square",'LineWidth',2);
+            end
+            app.COMPUTEButton.BackgroundColor = "red";
+        end
+
+        function NLEVPChangedFcn(app, src, event)
+            % update probing data
+            [app.ProbingData.ell,app.ProbingData.r] = size(app.NLEVP.T(0));
+            app.ProbingData.L = eye(app.ProbingData.ell);
+            app.ProbingData.R = eye(app.ProbingData.r);
+            % update shifts and display reference eigenvalues
+            app.updateshifts();
+            app.NLEVP.eigref = polyeig(app.NLEVP.coeffs{:});
+            app.cleanhandles(app.NLEVPPlotHandles);
+            app.NLEVPPlotHandles = {};
+            app.NLEVPPlotHandles{1} = scatter(app.UIAxes,real(app.NLEVP.eigref),imag(app.NLEVP.eigref),"blue","diamond",'LineWidth',2);
+            app.COMPUTEButton.BackgroundColor = "red";
+        end
+
+        function s = FindRandomShift(app)
+            c = sum(app.QuadData.z);
+            d = max(abs(c - app.QuadData.z))*1.1;
+            r = randn(1,"like",1i); r = r/norm(r);
+            s = c + r*d;
+        end
+
+        function updateshifts(app)
+            % update the underlying shifts
+            switch(app.ComputationalMode)
+                case "Hankel"
+                    app.InterpolationData.sigma = Inf;
+                    app.InterpolationData.theta = missing;
+                case "SPLoewner"
+                    app.InterpolationData.sigma = FindRandomShift(app);
+                    app.InterpolationData.theta = missing;
+                case "MPLoewner"
+                    app.InterpolationData.sigma = zeros(app.NLEVP.n,1);
+                    app.InterpolationData.theta = zeros(app.NLEVP.n,1);
+                    for i = 1:app.NLEVP.n
+                        app.InterpolationData.sigma(i) = FindRandomShift(app);
+                        app.InterpolationData.theta(i) = FindRandomShift(app);
+                    end
+            end
+            notify(app,"InterpolationDataChanged");
+        end
+
+        function ResultDataChangedFcn(app, src, event)
+            app.cleanhandles(app.ResultDataPlotHandles);
+            app.ResultDataPlotHandles = {};
+            app.ResultDataPlotHandles{1} = scatter(app.UIAxes,real(app.ResultData.eigs),imag(app.ResultData.eigs),50,'r','LineWidth',2);
+            app.COMPUTEButton.BackgroundColor = "g";
+        end
+
         % Create UIFigure and components
         function createComponents(app)
+
+            % set data structs/properties
+            app.NLEVP.loaded = false;
+            app.ProbingData.L = missing;
+            app.ProbingData.R = missing;
+            app.InterpolationData.sigma = missing;
+            app.InterpolationData.theta = missing;
+
+            % listeners
+            addlistener(app,'NLEVPChanged', @app.NLEVPChangedFcn);
+            addlistener(app,'ContourParametersChanged', @app.ContourChangedFcn);
+            addlistener(app,'InterpolationDataChanged', @app.InterpolationDataChangedFcn);
+            addlistener(app,'ResultDataChanged', @app.ResultDataChangedFcn);
+
+            % plot handles
+            app.NLEVPPlotHandles = {};
+            app.ContourPlotHandles = {};
+            app.InterpolationDataPlotHandles = {};
+            app.ResultDataPlotHandles = {};
 
             % Create UIFigure and hide until all components are created
             app.UIFigure = uifigure('Visible', 'off');
@@ -392,6 +521,9 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.MPLoewnerButton.Text = 'MPLoewner';
             app.MPLoewnerButton.Position = [11 11 162 23];
 
+            % Default Computational Mode
+            app.ComputationalMode = app.ComputationalModeButtonGroup.SelectedObject.Text;
+
             % Create COMPUTEButton
             app.COMPUTEButton = uibutton(app.LeftPanel, 'push');
             app.COMPUTEButton.ButtonPushedFcn = createCallbackFcn(app, @COMPUTEButtonPushed, true);
@@ -404,6 +536,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.RESETVIEWPORTButton.WordWrap = 'on';
             app.RESETVIEWPORTButton.Position = [49 147 115 38];
             app.RESETVIEWPORTButton.Text = 'RESET VIEWPORT';
+            app.RESETVIEWPORTButton.Enable = "off";
 
             % Create AxisEqualCheckBox
             app.AxisEqualCheckBox = uicheckbox(app.LeftPanel);
@@ -491,7 +624,9 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.EigSearchEditField.ValueDisplayFormat = '%.0f';
             app.EigSearchEditField.HorizontalAlignment = 'center';
             app.EigSearchEditField.Position = [86 407 109 30];
-            app.EigSearchEditField.ValueChangedFcn = createCallbackFcn(app, @mEditFieldValueChanged, true);
+            app.EigSearchEditField.ValueChangedFcn = createCallbackFcn(app, @EigSearchEditFieldValueChanged, true);
+            app.EigSearchEditField.Value = 0;
+            app.NumEigSearch = app.EigSearchEditField.Value;
 
             % Create QuadNodesEditFieldLabel
             app.QuadNodesEditFieldLabel = uilabel(app.LeftPanel);
@@ -506,6 +641,9 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.QuadNodesEditField.ValueDisplayFormat = '%.0f';
             app.QuadNodesEditField.HorizontalAlignment = 'center';
             app.QuadNodesEditField.Position = [86 368 109 30];
+            app.QuadNodesEditField.ValueChangedFcn = createCallbackFcn(app, @QuadNodesEditFieldValueChanged, true);
+            app.QuadNodesEditField.Value = 8;
+            app.NumQuadNodes = app.QuadNodesEditField.Value;
 
             % Create RightPanel
             app.RightPanel = uipanel(app.GridLayout);
@@ -529,6 +667,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.UIAxes.ZMinorGrid = 'on';
             app.UIAxes.Layout.Row = 1;
             app.UIAxes.Layout.Column = 1;
+            hold(app.UIAxes,"on");
 
             % Create TabGroup
             app.TabGroup = uitabgroup(app.GridLayout2);
@@ -545,7 +684,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.TextArea_3.HorizontalAlignment = 'center';
             app.TextArea_3.BackgroundColor = [0.8 0.8 0.8];
             app.TextArea_3.Position = [15 13 501 117];
-            app.TextArea_3.Value = {'Information about the loaded NLEVP (if taken from the NLEVP pack, say)'; 'Each problem has their own "documentation" in matlab comments, though I don''t know if there is a way to extract some relevant bits programatically.'};
+            app.TextArea_3.Value = {'No NLEVP Loaded.'};
 
             % Create ContourTab
             app.ContourTab = uitab(app.TabGroup);
@@ -582,7 +721,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.RectangleButton.Position = [11 24 76 22];
 
             % Create contourparameters
-            app.contourparameters = CircleComponent(app.GridLayout3);
+            app.contourparameters = CircleComponent(app.GridLayout3,'MainApp',app);
             app.contourparameters.Layout.Row = 1;
             app.contourparameters.Layout.Column = 2;
 

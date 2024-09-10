@@ -2,6 +2,7 @@ classdef ContourComponentInterface < matlab.ui.componentcontainer.ComponentConta
 
     methods (Abstract)
         getNodesWeights(obj,N)
+        plot(obj,ax)
     end
     
     methods (Access = protected)
