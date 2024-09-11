@@ -27,6 +27,7 @@ classdef CircleComponent < ContourComponentInterface
         function radiusEditFieldValueChanged(comp, event)
             try
                 comp.radius = comp.radiusEditField.Value;
+                notify(comp.MainApp,"ContourDataChanged");
             catch
                 comp.radiusEditField.Value = event.PreviousValue;
                 errordlg("Invalid radius. Please check input and try again.")
@@ -37,6 +38,7 @@ classdef CircleComponent < ContourComponentInterface
         function centerEditFieldValueChanged(comp, event)
             try
                 comp.center = str2double(comp.centerEditField.Value);
+                notify(comp.MainApp,"ContourDataChanged");
             catch
                 comp.centerEditField.Value = event.PreviousValue;
                 errordlg("Invalid center. Please check input and try again.")
@@ -63,7 +65,7 @@ classdef CircleComponent < ContourComponentInterface
             % Use this function to update the underlying components
             comp.radiusEditField.Value = comp.radius;
             comp.centerEditField.Value = num2str(comp.center);
-            notify(comp.MainApp,"ContourParametersChanged");
+            notify(comp.MainApp,"ContourDataChanged");
         end
 
         % Create the underlying components
