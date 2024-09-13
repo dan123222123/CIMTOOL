@@ -22,8 +22,6 @@ classdef CIMTOOL < matlab.apps.AppBase
         LeftPanel                     matlab.ui.container.Panel
         QuadNodesEditField            matlab.ui.control.NumericEditField
         QuadNodesEditFieldLabel       matlab.ui.control.Label
-        EigSearchEditField            matlab.ui.control.NumericEditField
-        EigSearchEditFieldLabel       matlab.ui.control.Label
         IMINEditField                 matlab.ui.control.NumericEditField
         IMINEditFieldLabel            matlab.ui.control.Label
         RMAXEditField                 matlab.ui.control.NumericEditField
@@ -47,44 +45,54 @@ classdef CIMTOOL < matlab.apps.AppBase
         TabGroup                      matlab.ui.container.TabGroup
         NLEVPInformationTab           matlab.ui.container.Tab
         TextArea_3                    matlab.ui.control.TextArea
-        ContourTab                    matlab.ui.container.Tab
-        GridLayout3                   matlab.ui.container.GridLayout
-        contourparameters             ContourComponentInterface
-        ContourTypeButtonGroup        matlab.ui.container.ButtonGroup
-        RectangleButton               matlab.ui.control.RadioButton
-        EllipseButton                 matlab.ui.control.RadioButton
-        CircleButton                  matlab.ui.control.RadioButton
-        ShiftsTab                     matlab.ui.container.Tab
-        ShiftsGridLayout              matlab.ui.container.GridLayout
-        ShiftsTable                   matlab.ui.control.Table
-        EigenvaluesTab                matlab.ui.container.Tab
-        EigenvaluesGridLayout         matlab.ui.container.GridLayout
-        EigenvaluesTable              matlab.ui.control.Table
-        TextArea                      matlab.ui.control.TextArea
-        ErrorsWarningsTab             matlab.ui.container.Tab
-        TextArea_2                    matlab.ui.control.TextArea
-        UIAxes                        matlab.ui.control.UIAxes
+        MethodTab                     matlab.ui.container.Tab
+        MethodLayout                   matlab.ui.container.GridLayout
+        MethodDataParameterLayout      matlab.ui.container.GridLayout
+        MaxMomentsEditField            matlab.ui.control.NumericEditField
+        MaxMomentsEditFieldLabel       matlab.ui.control.Label
+        EigSearchEditField             matlab.ui.control.NumericEditField
+        EigSearchEditFieldLabel        matlab.ui.control.Label
+        ProbingLayout                  matlab.ui.container.GridLayout
+        RightProbingSizeEditField      matlab.ui.control.NumericEditField
+        RightProbingSizeEditFieldLabel matlab.ui.control.Label
+        LeftProbingSizeEditField       matlab.ui.control.NumericEditField
+        LeftProbingSizeEditFieldLabel  matlab.ui.control.Label        
+        ContourTab                     matlab.ui.container.Tab
+        GridLayout3                    matlab.ui.container.GridLayout
+        contourparameters              ContourComponentInterface
+        ContourTypeButtonGroup         matlab.ui.container.ButtonGroup
+        RectangleButton                matlab.ui.control.RadioButton
+        EllipseButton                  matlab.ui.control.RadioButton
+        CircleButton                   matlab.ui.control.RadioButton
+        ShiftsTab                      matlab.ui.container.Tab
+        ShiftsGridLayout               matlab.ui.container.GridLayout
+        ShiftsTable                    matlab.ui.control.Table
+        EigenvaluesTab                 matlab.ui.container.Tab
+        EigenvaluesGridLayout          matlab.ui.container.GridLayout
+        EigenvaluesTable               matlab.ui.control.Table
+        TextArea                       matlab.ui.control.TextArea
+        ErrorsWarningsTab              matlab.ui.container.Tab
+        TextArea_2                     matlab.ui.control.TextArea
+        UIAxes                         matlab.ui.control.UIAxes
     end
 
     % Properties that correspond to apps with auto-reflow
     properties (Access = private)
         onePanelWidth = 576;
     end
-    
-    % Numerical properties
-    properties (Access = public)
-        AbsTol
-        RelTol
-        QuadType % Circle, Ellipse, or Custom
-        ComputationalMode % Hankel, SPLoewner, MPLoewner
+
+
+    % observable data properties -- easier than separate events, can
+    % probably switch over to make the code simpler
+    properties (SetObservable)
         ViewPortDimensions % [xmin, xmax, ymin, ymax]
-        NLEVP % T, name, loaded, arglist, coeff, f
-        ProbingData % L,R
-        NumQuadNodes % number of quadrature nodes
-        NumEigSearch % number of quadrature nodes, specified by the user (for now)
-        QuadData % z,w the quadrature nodes and weights
+        DataDirtiness % 0,1, or 2 to denote what needs to be recomputed
+        SamplingParameterData % L,R,ell,r,NumQuadNodes
+        MethodParameterData % ComputationalMode,NumEigSearch,NumMaxMoments,AbsTol,RelTol
+        QuadData % QuadType,z,w
+        NLEVPData % T, name, loaded, arglist, coeff, f
         SampleData % Ql,Qr,Qlr
-        InterpolationData % lshifts, rshifts 
+        InterpolationData % table with variables sigma and theta
         ResultData % eigs, ews, metrics, etc.
     end
 
@@ -96,14 +104,8 @@ classdef CIMTOOL < matlab.apps.AppBase
         ResultDataPlotHandles
     end
 
-    % observable data properties -- easier than separate events, can
-    % probably switch over to make the code simpler
-    properties (SetObservable)
-        DataDirtiness % 0,1, or 2 to denote what needs to be recomputed
-    end
-
     events
-        NLEVPDataChanged
+        NLEVPReferenceChanged
         ContourDataChanged
         InterpolationDataChanged
         ResultDataChanged
@@ -115,7 +117,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         % compute only "dirty" data -- enables rapid system
         % realization when only interpolation data changes
         function compute(app)
-            if ~app.NLEVP.loaded
+            if ~app.NLEVPData.loaded
                 uialert(app.UIFigure,'NLEVP not loaded.','Compute Error');
                 return
             end
@@ -147,9 +149,9 @@ classdef CIMTOOL < matlab.apps.AppBase
         function computeSamplingData(app)
             [app.SampleData.Ql,app.SampleData.Qr,app.SampleData.Qlr] ...
                 = samplequadrature( ...
-                app.NLEVP.T, ...
-                app.ProbingData.L, ...
-                app.ProbingData.R,...
+                app.NLEVPData.T, ...
+                app.SamplingParameterData.L, ...
+                app.SamplingParameterData.R,...
                 app.QuadData.z ...
                 );
         end
@@ -164,7 +166,7 @@ classdef CIMTOOL < matlab.apps.AppBase
                         app.QuadData.z, ...
                         app.QuadData.w, ...
                         app.NumEigSearch, ...
-                        ceil(app.NumEigSearch/min(app.ProbingData.ell,app.ProbingData.r)) ...
+                        app.NumMaxMoments ...
                     );
                 case "MPLoewner"
                     [eigs] = mploewner( ...
@@ -172,8 +174,8 @@ classdef CIMTOOL < matlab.apps.AppBase
                         app.SampleData.Qr, ...
                         app.InterpolationData.theta, ...
                         app.InterpolationData.sigma, ...
-                        app.ProbingData.L, ...
-                        app.ProbingData.R, ...
+                        app.SamplingParameterData.L, ...
+                        app.SamplingParameterData.R, ...
                         app.QuadData.z, ...
                         app.QuadData.w, ...
                         app.NumEigSearch ...
@@ -190,7 +192,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         % prompt for a problem name and comma-separated list of arguments
         function NLEVPPackMenuSelected(app, event)
             app.NLEVPPackMenu.Enable = "off";
-            app.NLEVP.loaded=false;
+            app.NLEVPData.loaded=false;
             prompt = {"problem","arglist (comma-separated list)"};
             answer = inputdlg(prompt,"NLEVP pack import");
             probstr = answer{1};
@@ -217,9 +219,9 @@ classdef CIMTOOL < matlab.apps.AppBase
             allfinite=true;
             if (strarglist=="")
                 % the problem exists, so this should run without error
-                app.NLEVP.arglist=missing;
+                app.NLEVPData.arglist=missing;
                 app.PROBLEMLOADEDTextArea.Value=sprintf("%s",probstr);
-                [app.NLEVP.coeffs,app.NLEVP.fun,app.NLEVP.T] = nlevp(probstr);
+                [app.NLEVPData.coeffs,app.NLEVPData.fun,app.NLEVPData.T] = nlevp(probstr);
             else
                 numarglist=num2cell(str2double(strarglist));
                 % check that there isn't something like an extra comma,
@@ -241,21 +243,23 @@ classdef CIMTOOL < matlab.apps.AppBase
                 % calling convention, but there is no "number" to check
                 % against...
                 try
-                    [app.NLEVP.coeffs,app.NLEVP.fun,app.NLEVP.T] = nlevp(probstr,numarglist{:});
+                    [app.NLEVPData.coeffs,app.NLEVPData.fun,app.NLEVPData.T] = nlevp(probstr,numarglist{:});
                 catch AE
                     uialert(app.UIFigure,'NLEVP exists, but passed argument list caused an error. Check NLEVP help string and try again.','Error Setting NLEVP');
                     app.PROBLEMLOADEDTextArea.BackgroundColor="r";
                     app.NLEVPPackMenu.Enable="on";
                     rethrow(AE)
                 end
-                app.NLEVP.arglist = numarglist;
+                app.NLEVPData.arglist = numarglist;
             end
-            app.NLEVP.name = probstr;
+            app.NLEVPData.name = probstr;
             if allfinite
                 app.PROBLEMLOADEDTextArea.BackgroundColor="g";
             end
-            app.NLEVP.n = length(app.NLEVP.T(0));
-            app.NLEVP.loaded=true;
+            app.NLEVPData.n = length(app.NLEVPData.T(0));
+            app.NumEigSearch = app.NLEVPData.n;
+            app.NumMaxMoments = app.NLEVPData.n;
+            app.NLEVPData.loaded=true;
             app.NLEVPPackMenu.Enable="on";
             notify(app,'NLEVPDataChanged')
         end
@@ -290,7 +294,7 @@ classdef CIMTOOL < matlab.apps.AppBase
                     app.ShiftsTable.ColumnEditable = true;
             end
             app.cleanhandles(app.ResultDataPlotHandles);
-            if app.NLEVP.loaded
+            if app.NLEVPData.loaded
                 app.defaultshifts();
             end
             app.DataDirtiness = 2;
@@ -311,8 +315,8 @@ classdef CIMTOOL < matlab.apps.AppBase
         function EigSearchEditFieldValueChanged(app, event)
             try
                 app.NumEigSearch = app.EigSearchEditField.Value;
-                if app.DataDirtiness ~= 1
-                    app.DataDirtiness = app.DataDirtiness + 1;
+                if app.DataDirtiness ~= 2
+                    app.DataDirtiness = 1;
                 end
             catch
                 app.EigSearchEditField.Value = event.PreviousValue;
@@ -321,10 +325,25 @@ classdef CIMTOOL < matlab.apps.AppBase
             end
         end
 
+        % link NumMaxMoments to MaxMomentsEditField
+        function MaxMomentsEditFieldValueChanged(app, event)
+            try
+                app.NumMaxMoments = event.Value;
+                if app.DataDirtiness ~= 2
+                    app.DataDirtiness = 1;
+                end
+            catch
+                app.MaxMomentsEditField.Value = event.PreviousValue;
+                uialert(app.UIFigure,'Error Setting Max # Moments.','');
+                return
+            end
+        end
+
         % link NumQuadNodes to QuadNodesEditField
         function QuadNodesEditFieldValueChanged(app, event)
             try
                 app.NumQuadNodes = app.QuadNodesEditField.Value;
+                app.DataDirtiness = 2;
                 notify(app,"ContourDataChanged");
             catch
                 app.QuadNodesEditField.Value = event.PreviousValue;
@@ -371,12 +390,12 @@ classdef CIMTOOL < matlab.apps.AppBase
         % listener for NLEVPDataChanged -- DataDirtyness+2
         function NLEVPDataChangedFcn(app, src, event)
             % update probing data
-            [app.ProbingData.ell,app.ProbingData.r] = size(app.NLEVP.T(0));
-            app.ProbingData.L = eye(app.ProbingData.ell);
-            app.ProbingData.R = eye(app.ProbingData.r);
+            [app.SamplingParameterData.ell,app.SamplingParameterData.r] = size(app.NLEVPData.T(0));
+            app.SamplingParameterData.L = eye(app.SamplingParameterData.ell);
+            app.SamplingParameterData.R = eye(app.SamplingParameterData.r);
             % update shifts and display reference eigenvalues
             app.defaultshifts();
-            app.NLEVP.eigref = polyeig(app.NLEVP.coeffs{:});
+            app.NLEVPData.eigref = polyeig(app.NLEVPData.coeffs{:});
             app.plotNLEVPeigref();
             app.DataDirtiness = 2;
         end
@@ -416,6 +435,25 @@ classdef CIMTOOL < matlab.apps.AppBase
             end
         end
 
+        % listener for ProbingData, notifies the app that samples must be
+        % recomputed
+        function ProbingDataChangedFcn(app, src, event)
+            app.LeftProbingSizeEditField.Value = app.SamplingData.ell;
+            app.RightProbingSizeEditField.Value = app.SamplingData.r;
+            app.QuadNodesEditField.Value = app.SamplingData.NumQuadNodes;
+            app.DataDirtiness = 2;
+        end
+
+        % listener for ProbingData, notifies the app that samples must be
+        % recomputed
+        function MethodParameterDataChangedFcn(app, src, event)
+            app.EigSearchEditField.Value = app.MethodData.NumEigSearch;
+            app.MaxMomentsEditField.Value = app.MethodData.NumMaxMoments;
+            if app.DataDirtiness ~= 2
+                app.DataDirtiness = 1;
+            end
+        end
+
     end
  
     methods (Access = private)
@@ -431,7 +469,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         function plotNLEVPeigref(app)
             app.cleanhandles(app.NLEVPPlotHandles);
             app.NLEVPPlotHandles = {};
-            app.NLEVPPlotHandles{1} = scatter(app.UIAxes,real(app.NLEVP.eigref),imag(app.NLEVP.eigref),"blue","diamond",'LineWidth',2);
+            app.NLEVPPlotHandles{1} = scatter(app.UIAxes,real(app.NLEVPData.eigref),imag(app.NLEVPData.eigref),"blue","diamond",'LineWidth',2);
         end
 
         % simple heuristic to find a random complex number a set distance
@@ -454,9 +492,9 @@ classdef CIMTOOL < matlab.apps.AppBase
                     sigma = FindRandomShift(app);
                     theta = missing;
                 case "MPLoewner"
-                    sigma = zeros(app.NLEVP.n,1);
-                    theta = zeros(app.NLEVP.n,1);
-                    for i = 1:app.NLEVP.n
+                    sigma = zeros(app.NLEVPData.n,1);
+                    theta = zeros(app.NLEVPData.n,1);
+                    for i = 1:app.NLEVPData.n
                         sigma(i) = FindRandomShift(app);
                         theta(i) = FindRandomShift(app);
                     end
@@ -469,16 +507,22 @@ classdef CIMTOOL < matlab.apps.AppBase
 
         function setdefaults(app)
             % listeners
-            addlistener(app,'DataDirtiness','PostSet',@app.DataDirtinessChangedFcn);
             addlistener(app,'NLEVPDataChanged', @app.NLEVPDataChangedFcn);
             addlistener(app,'ContourDataChanged', @app.ContourDataChangedFcn);
             addlistener(app,'InterpolationDataChanged', @app.InterpolationDataChangedFcn);
             addlistener(app,'ResultDataChanged', @app.ResultDataChangedFcn);
             % set data structs/properties
-            app.NLEVP.loaded = false;
+            app.NLEVPData.loaded = false;
+            addlistener(app,'DataDirtiness','PostSet',@app.DataDirtinessChangedFcn);
             app.DataDirtiness = 2;
-            app.ProbingData.L = missing;
-            app.ProbingData.R = missing;
+            app.SamplingData.L = missing;
+            app.SamplingData.R = missing;
+            app.SamplingData.ell = 0;
+            app.SamplingData.r = 0;
+            app.SamplingData.NumQuadNodes = 8;
+            app.MethodData.NumEigSearch = 0;
+            app.MethodData.NumMaxMoments = 0;
+            addlistener(app,'SamplingData','PostSet',@app.SamplingChangedFcn);
             app.InterpolationData = table(missing, missing,'VariableNames',["sigma","theta"]);
             app.ResultData = table(missing, missing,'VariableNames',["eigs","tnr"]);
             % plot handles
@@ -700,23 +744,6 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.IMINEditField.Position = [88 61 36 22];
             app.IMINEditField.Enable = "off";
 
-            % Create EigSearchEditFieldLabel
-            app.EigSearchEditFieldLabel = uilabel(app.LeftPanel);
-            app.EigSearchEditFieldLabel.HorizontalAlignment = 'center';
-            app.EigSearchEditFieldLabel.WordWrap = 'on';
-            app.EigSearchEditFieldLabel.Position = [19 407 68 30];
-            app.EigSearchEditFieldLabel.Text = '# Eig Search';
-
-            % Create EigSearchEditField
-            app.EigSearchEditField = uieditfield(app.LeftPanel, 'numeric');
-            app.EigSearchEditField.Limits = [0 Inf];
-            app.EigSearchEditField.ValueDisplayFormat = '%.0f';
-            app.EigSearchEditField.HorizontalAlignment = 'center';
-            app.EigSearchEditField.Position = [86 407 109 30];
-            app.EigSearchEditField.ValueChangedFcn = createCallbackFcn(app, @EigSearchEditFieldValueChanged, true);
-            app.EigSearchEditField.Value = 0;
-            app.NumEigSearch = app.EigSearchEditField.Value;
-
             % Create QuadNodesEditFieldLabel
             app.QuadNodesEditFieldLabel = uilabel(app.LeftPanel);
             app.QuadNodesEditFieldLabel.HorizontalAlignment = 'center';
@@ -774,6 +801,90 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.TextArea_3.BackgroundColor = [0.8 0.8 0.8];
             app.TextArea_3.Position = [15 13 501 117];
             app.TextArea_3.Value = {'No NLEVP Loaded.'};
+
+            % Create MethodTab
+            app.MethodTab = uitab(app.TabGroup);
+            app.MethodTab.Title = 'Method';
+
+            % Create MethodLayout
+            app.MethodLayout = uigridlayout(app.MethodTab);
+            app.MethodLayout.ColumnWidth = {'1x', '2x'};
+            app.MethodLayout.RowHeight = {'1x'};
+
+            % Create ProbingLayout
+            app.ProbingLayout = uigridlayout(app.MethodLayout);
+            app.ProbingLayout.Layout.Row = 1;
+            app.ProbingLayout.Layout.Column = 2;
+
+            % Create LeftProbingSizeEditFieldLabel
+            app.LeftProbingSizeEditFieldLabel = uilabel(app.ProbingLayout);
+            app.LeftProbingSizeEditFieldLabel.HorizontalAlignment = 'center';
+            app.LeftProbingSizeEditFieldLabel.WordWrap = 'on';
+            app.LeftProbingSizeEditFieldLabel.Layout.Row = 1;
+            app.LeftProbingSizeEditFieldLabel.Layout.Column = 1;
+            app.LeftProbingSizeEditFieldLabel.Text = 'Left Probing Size';
+
+            % Create LeftProbingSizeEditField
+            app.LeftProbingSizeEditField = uieditfield(app.ProbingLayout, 'numeric');
+            app.LeftProbingSizeEditField.Limits = [0 Inf];
+            app.LeftProbingSizeEditField.HorizontalAlignment = 'center';
+            app.LeftProbingSizeEditField.Layout.Row = 2;
+            app.LeftProbingSizeEditField.Layout.Column = 1;
+
+            % Create RightProbingSizeEditFieldLabel
+            app.RightProbingSizeEditFieldLabel = uilabel(app.ProbingLayout);
+            app.RightProbingSizeEditFieldLabel.HorizontalAlignment = 'center';
+            app.RightProbingSizeEditFieldLabel.WordWrap = 'on';
+            app.RightProbingSizeEditFieldLabel.Layout.Row = 1;
+            app.RightProbingSizeEditFieldLabel.Layout.Column = 2;
+            app.RightProbingSizeEditFieldLabel.Text = 'Right Probing Size';
+
+            % Create RightProbingSizeEditField
+            app.RightProbingSizeEditField = uieditfield(app.ProbingLayout, 'numeric');
+            app.RightProbingSizeEditField.Limits = [0 Inf];
+            app.RightProbingSizeEditField.HorizontalAlignment = 'center';
+            app.RightProbingSizeEditField.Layout.Row = 2;
+            app.RightProbingSizeEditField.Layout.Column = 2;
+
+            % Create MethodDataParameterLayout
+            app.MethodDataParameterLayout = uigridlayout(app.MethodLayout);
+            app.MethodDataParameterLayout.ColumnWidth = {'1x'};
+            app.MethodDataParameterLayout.RowHeight = {'1x', '1x', '1x', '1x'};
+            app.MethodDataParameterLayout.Layout.Row = 1;
+            app.MethodDataParameterLayout.Layout.Column = 1;
+
+            % Create EigSearchEditFieldLabel
+            app.EigSearchEditFieldLabel = uilabel(app.MethodDataParameterLayout);
+            app.EigSearchEditFieldLabel.HorizontalAlignment = 'center';
+            app.EigSearchEditFieldLabel.WordWrap = 'on';
+            app.EigSearchEditFieldLabel.Layout.Row = 1;
+            app.EigSearchEditFieldLabel.Layout.Column = 1;
+            app.EigSearchEditFieldLabel.Text = '# Eig Search';
+
+            % Create EigSearchEditField
+            app.EigSearchEditField = uieditfield(app.MethodDataParameterLayout, 'numeric');
+            app.EigSearchEditField.Limits = [0 Inf];
+            app.EigSearchEditField.HorizontalAlignment = 'center';
+            app.EigSearchEditField.ValueChangedFcn = createCallbackFcn(app, @EigSearchEditFieldValueChanged, true);
+            app.EigSearchEditField.Value = 0;
+            app.EigSearchEditField.Layout.Row = 2;
+            app.EigSearchEditField.Layout.Column = 1;
+
+            % Create MaxMomentsEditFieldLabel
+            app.MaxMomentsEditFieldLabel = uilabel(app.MethodDataParameterLayout);
+            app.MaxMomentsEditFieldLabel.HorizontalAlignment = 'center';
+            app.MaxMomentsEditFieldLabel.WordWrap = 'on';
+            app.MaxMomentsEditFieldLabel.Layout.Row = 3;
+            app.MaxMomentsEditFieldLabel.Layout.Column = 1;
+            app.MaxMomentsEditFieldLabel.Text = 'Max # Moments';
+
+            % Create MaxMomentsEditField
+            app.MaxMomentsEditField = uieditfield(app.MethodDataParameterLayout, 'numeric');
+            app.MaxMomentsEditField.Limits = [0 Inf];
+            app.MaxMomentsEditField.HorizontalAlignment = 'center';
+            app.MaxMomentsEditField.ValueChangedFcn = createCallbackFcn(app, @MaxMomentsEditFieldValueChanged, true);
+            app.MaxMomentsEditField.Layout.Row = 4;
+            app.MaxMomentsEditField.Layout.Column = 1;
 
             % Create ContourTab
             app.ContourTab = uitab(app.TabGroup);
