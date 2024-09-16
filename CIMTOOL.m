@@ -35,7 +35,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         ShiftsButton                  matlab.ui.control.Button
         AxisEqualCheckBox             matlab.ui.control.CheckBox
         RESETVIEWPORTButton           matlab.ui.control.Button
-        COMPUTEButton                 matlab.ui.control.Button
+        ComputeButton                 matlab.ui.control.Button
         ComputationalModeButtonGroup  matlab.ui.container.ButtonGroup
         MPLoewnerButton               matlab.ui.control.ToggleButton
         SPLoewnerButton               matlab.ui.control.ToggleButton
@@ -58,7 +58,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         LeftProbingSizeEditField       matlab.ui.control.NumericEditField
         LeftProbingSizeEditFieldLabel  matlab.ui.control.Label        
         ContourTab                     matlab.ui.container.Tab
-        GridLayout3                    matlab.ui.container.GridLayout
+        ContourParameterLayout         matlab.ui.container.GridLayout
         contourparameters              ContourComponentInterface
         ContourTypeButtonGroup         matlab.ui.container.ButtonGroup
         RectangleButton                matlab.ui.control.RadioButton
@@ -81,17 +81,26 @@ classdef CIMTOOL < matlab.apps.AppBase
         onePanelWidth = 576;
     end
 
+    properties (Access = public)
+        SampleData % Ql,Qr,Qlr
+        QuadType % Circle, Ellipse, Rectangle, etc.
+        NLEVPData % T, name, loaded, arglist, coeff, f
+        NLEVPReferenceData % eigs, ews, etc. (if set)
+    end
 
     % observable data properties -- easier than separate events, can
     % probably switch over to make the code simpler
-    properties (SetObservable)
+    properties (SetObservable,AbortSet)
         ViewPortDimensions % [xmin, xmax, ymin, ymax]
+        ComputationalMode
         DataDirtiness % 0,1, or 2 to denote what needs to be recomputed
-        SamplingParameterData % L,R,ell,r,NumQuadNodes
-        MethodParameterData % ComputationalMode,NumEigSearch,NumMaxMoments,AbsTol,RelTol
-        QuadData % QuadType,z,w
-        NLEVPData % T, name, loaded, arglist, coeff, f
-        SampleData % Ql,Qr,Qlr
+        SampleParameters % L,R,ell,r
+        QuadData % z,w
+        NumQuadNodes
+        NumEigSearch
+        NumMaxMoments
+        AbsTol = missing
+        RelTol
         InterpolationData % table with variables sigma and theta
         ResultData % eigs, ews, metrics, etc.
     end
@@ -105,9 +114,8 @@ classdef CIMTOOL < matlab.apps.AppBase
     end
 
     events
-        NLEVPReferenceChanged
         ContourDataChanged
-        InterpolationDataChanged
+        NLEVPDataChanged
         ResultDataChanged
     end
     
@@ -127,7 +135,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             end
             if app.DataDirtiness > 1
                 try
-                    app.computeSamplingData();
+                    app.computeSampleData();
                     app.DataDirtiness = 1;
                 catch SDE
                     uialert(app.UIFigure,'Could not re-sample quadrature.','Quad Sampling Error');
@@ -137,7 +145,6 @@ classdef CIMTOOL < matlab.apps.AppBase
                 try
                     app.computeResultData();
                     app.DataDirtiness = 0;
-                    notify(app,"ResultDataChanged");
                 catch RDE
                     uialert(app.UIFigure,'Could not realize system.','Realization Error');
                     rethrow(RDE);
@@ -146,12 +153,12 @@ classdef CIMTOOL < matlab.apps.AppBase
         end
         
         % "heavy" sampling data computation
-        function computeSamplingData(app)
+        function computeSampleData(app)
             [app.SampleData.Ql,app.SampleData.Qr,app.SampleData.Qlr] ...
                 = samplequadrature( ...
                 app.NLEVPData.T, ...
-                app.SamplingParameterData.L, ...
-                app.SamplingParameterData.R,...
+                app.SampleParameters.L, ...
+                app.SampleParameters.R,...
                 app.QuadData.z ...
                 );
         end
@@ -166,7 +173,8 @@ classdef CIMTOOL < matlab.apps.AppBase
                         app.QuadData.z, ...
                         app.QuadData.w, ...
                         app.NumEigSearch, ...
-                        app.NumMaxMoments ...
+                        app.NumMaxMoments, ...
+                        app.AbsTol ...
                     );
                 case "MPLoewner"
                     [eigs] = mploewner( ...
@@ -174,8 +182,8 @@ classdef CIMTOOL < matlab.apps.AppBase
                         app.SampleData.Qr, ...
                         app.InterpolationData.theta, ...
                         app.InterpolationData.sigma, ...
-                        app.SamplingParameterData.L, ...
-                        app.SamplingParameterData.R, ...
+                        app.SampleParameters.L, ...
+                        app.SampleParameters.R, ...
                         app.QuadData.z, ...
                         app.QuadData.w, ...
                         app.NumEigSearch ...
@@ -260,39 +268,45 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.NumEigSearch = app.NLEVPData.n;
             app.NumMaxMoments = app.NLEVPData.n;
             app.NLEVPData.loaded=true;
+            notify(app,'NLEVPDataChanged');
             app.NLEVPPackMenu.Enable="on";
-            notify(app,'NLEVPDataChanged')
         end
 
         % change the current contour type
         function ContourTypeButtonGroupSelectionChanged(app, event)
-            display(event);
             selectedButton = app.ContourTypeButtonGroup.SelectedObject;
             switch(selectedButton.Text)
                 case "Circle"
-                    app.contourparameters = CircleComponent(app.GridLayout3);
+                    app.contourparameters = CircleComponent(app.ContourParameterLayout);
                 case "Ellipse"
-                    app.contourparameters = EllipseComponent(app.GridLayout3);
+                    app.contourparameters = EllipseComponent(app.ContourParameterLayout);
                 case "Rectangle"
-                    app.contourparameters = CircleComponent(app.GridLayout3);
+                    app.contourparameters = CircleComponent(app.ContourParameterLayout);
             end
+            app.QuadType = selectedButton.Text;
             app.contourparameters.Layout.Row = 1;
             app.contourparameters.Layout.Column = 2;
         end
 
         % change the current computational mode
-        function ComputationalModeChanged(app, event)
-            app.ComputationalMode = app.ComputationalModeButtonGroup.SelectedObject.Text;
+        function ComputationalModeButtonGroupSelectionChangedFcn(app, event)
             % change editability of ShiftsTable based on what shift changes
             % make sense for the selected ComputationalMode
-            switch(app.ComputationalMode)
+            switch(app.ComputationalModeButtonGroup.SelectedObject.Text)
                 case "Hankel"
                     app.ShiftsTable.ColumnEditable = [false false];
+                    app.NumMaxMoments = app.NLEVPData.n;
+                    app.MaxMomentsEditField.Editable = "on";
                 case "SPLoewner"
                     app.ShiftsTable.ColumnEditable = [true false];
+                    app.NumMaxMoments = app.NLEVPData.n;
+                    app.MaxMomentsEditField.Editable = "on";
                 case "MPLoewner"
                     app.ShiftsTable.ColumnEditable = true;
+                    app.NumMaxMoments = 0;
+                    app.MaxMomentsEditField.Editable = "off";
             end
+            app.ComputationalMode = app.ComputationalModeButtonGroup.SelectedObject.Text;
             app.cleanhandles(app.ResultDataPlotHandles);
             if app.NLEVPData.loaded
                 app.defaultshifts();
@@ -301,53 +315,54 @@ classdef CIMTOOL < matlab.apps.AppBase
         end
 
         % link ComputeButton to compute(app)
-        function COMPUTEButtonPushed(app, event)
+        function ComputeButtonPushed(app, event)
             app.compute();
         end
         
         % link InterpolationData with ShiftsTable.Data
         function ShiftsTableCellEdit(app, event)
             app.InterpolationData = event.Source.Data;
-            notify(app,"InterpolationDataChanged");
         end
 
         % link NumEigSearch to EigSearchEditField
         function EigSearchEditFieldValueChanged(app, event)
-            try
-                app.NumEigSearch = app.EigSearchEditField.Value;
-                if app.DataDirtiness ~= 2
-                    app.DataDirtiness = 1;
-                end
-            catch
-                app.EigSearchEditField.Value = event.PreviousValue;
-                uialert(app.UIFigure,'Error Setting # Eig Search.','');
-                return
+            app.NumEigSearch = app.EigSearchEditField.Value;
+            if ~app.DataDirtiness % if DataDirtiness != 0
+                app.DataDirtiness = 1;
             end
         end
 
         % link NumMaxMoments to MaxMomentsEditField
         function MaxMomentsEditFieldValueChanged(app, event)
-            try
-                app.NumMaxMoments = event.Value;
-                if app.DataDirtiness ~= 2
-                    app.DataDirtiness = 1;
-                end
-            catch
-                app.MaxMomentsEditField.Value = event.PreviousValue;
-                uialert(app.UIFigure,'Error Setting Max # Moments.','');
-                return
+            app.NumMaxMoments = event.Value;
+            if ~app.DataDirtiness % if DataDirtiness != 0
+                app.DataDirtiness = 1;
             end
         end
 
         % link NumQuadNodes to QuadNodesEditField
         function QuadNodesEditFieldValueChanged(app, event)
-            try
-                app.NumQuadNodes = app.QuadNodesEditField.Value;
-                app.DataDirtiness = 2;
-                notify(app,"ContourDataChanged");
-            catch
-                app.QuadNodesEditField.Value = event.PreviousValue;
-                uialert(app.UIFigure,'Error Setting # Quad Nodes.','');
+            app.NumQuadNodes = app.QuadNodesEditField.Value;
+            app.DataDirtiness = 2;
+        end
+
+        function M = sampleNormalRandomComplexMatrix(~,n,d)
+            M = rand(n,d,"like",1i);
+        end
+
+        % link app.SampleParameters.ell/L to LeftProbingSizeEditField
+        function LeftProbingSizeEditFieldChangedFcn(app, event)
+            app.SampleParameters.ell = app.LeftProbingSizeEditField.Value;
+            if app.NLEVPData.loaded
+                app.SampleParameters.L = app.sampleNormalRandomComplexMatrix(app.NLEVPData.n,app.SampleParameters.ell);
+            end
+        end
+
+        % link app.SampleParameters.ell/L to LeftProbingSizeEditField
+        function RightProbingSizeEditFieldChangedFcn(app, event)
+            app.SampleParameters.r = app.RightProbingSizeEditField.Value;
+            if app.NLEVPData.loaded
+                app.SampleParameters.R = app.sampleNormalRandomComplexMatrix(app.NLEVPData.n,app.SampleParameters.r);
             end
         end
 
@@ -379,24 +394,30 @@ classdef CIMTOOL < matlab.apps.AppBase
     % event listeners
     methods (Access = private)
 
-        % listener for ContourDataChanged -- DataDirtyness+2
-        function ContourDataChangedFcn(app, src, event)
+        % listener for ContourDataChanged -- DataDirtyness=2
+        function ContourDataChangedChangedFcn(app, src, event)
             [app.QuadData.z,app.QuadData.w] = app.contourparameters.getNodesWeights(app.NumQuadNodes);
             app.cleanhandles(app.ContourPlotHandles);
             app.ContourPlotHandles = app.contourparameters.plot(app.UIAxes,app.QuadData.z);
             app.DataDirtiness = 2;
         end
 
-        % listener for NLEVPDataChanged -- DataDirtyness+2
+        % listener for NLEVPDataChanged -- DataDirtyness=2
         function NLEVPDataChangedFcn(app, src, event)
             % update probing data
-            [app.SamplingParameterData.ell,app.SamplingParameterData.r] = size(app.NLEVPData.T(0));
-            app.SamplingParameterData.L = eye(app.SamplingParameterData.ell);
-            app.SamplingParameterData.R = eye(app.SamplingParameterData.r);
-            % update shifts and display reference eigenvalues
+            [app.SampleParameters.ell,app.SampleParameters.r] = size(app.NLEVPData.T(0));
+            app.SampleParameters.L = eye(app.SampleParameters.ell);
+            app.SampleParameters.R = eye(app.SampleParameters.r);
+            % update shifts
             app.defaultshifts();
-            app.NLEVPData.eigref = polyeig(app.NLEVPData.coeffs{:});
-            app.plotNLEVPeigref();
+            % optionally compute/display reference eigenvalues
+            if ~app.NLEVPReferenceData.loaded && app.NLEVPReferenceData.compute
+                app.NLEVPReferenceData.eigs = polyeig(app.NLEVPData.coeffs{:});
+                app.NLEVPReferenceData.loaded = true;
+            end
+            if app.NLEVPReferenceData.loaded
+                app.plotNLEVPeigref();
+            end
             app.DataDirtiness = 2;
         end
 
@@ -405,10 +426,10 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.cleanhandles(app.InterpolationDataPlotHandles);
             app.InterpolationDataPlotHandles = {};
             if ~any(ismissing(app.InterpolationData.sigma)) && all(isfinite(app.InterpolationData.sigma))
-                app.InterpolationDataPlotHandles{1} = scatter(app.UIAxes,real(app.InterpolationData.sigma),imag(app.InterpolationData.sigma),"blue","square",'LineWidth',2);
+                app.InterpolationDataPlotHandles{end+1} = scatter(app.UIAxes,real(app.InterpolationData.sigma),imag(app.InterpolationData.sigma),"blue","square",'LineWidth',2);
             end
             if ~any(ismissing(app.InterpolationData.theta))
-                app.InterpolationDataPlotHandles{2} = scatter(app.UIAxes,real(app.InterpolationData.theta),imag(app.InterpolationData.theta),"red","square",'LineWidth',2);
+                app.InterpolationDataPlotHandles{end+1} = scatter(app.UIAxes,real(app.InterpolationData.theta),imag(app.InterpolationData.theta),"red","square",'LineWidth',2);
             end
             app.ShiftsTable.Data = app.InterpolationData;
             if app.DataDirtiness == 0
@@ -418,40 +439,46 @@ classdef CIMTOOL < matlab.apps.AppBase
 
         % listener for ResultDataChanged -- DataDirtyness+0
         function ResultDataChangedFcn(app, src, event)
-            app.cleanhandles(app.ResultDataPlotHandles);
-            app.ResultDataPlotHandles = {};
-            app.ResultDataPlotHandles{1} = scatter(app.UIAxes,real(app.ResultData.eigs),imag(app.ResultData.eigs),50,'r','LineWidth',2);
-            app.EigenvaluesTable.Data = app.ResultData;
+            if ~ismissing(app.ResultData.eigs)
+                app.cleanhandles(app.ResultDataPlotHandles);
+                app.ResultDataPlotHandles = {};
+                app.ResultDataPlotHandles{end+1} = scatter(app.UIAxes,real(app.ResultData.eigs),imag(app.ResultData.eigs),50,'r','LineWidth',2);
+                app.EigenvaluesTable.Data = app.ResultData;
+            end
         end
 
         % listener for DataDirtinessChanged, updates color of ComputeButton
         function DataDirtinessChangedFcn(app, src, event)
             if app.DataDirtiness == 0
-                app.COMPUTEButton.BackgroundColor = "g";
+                app.ComputeButton.BackgroundColor = "g";
             elseif app.DataDirtiness == 1
-                app.COMPUTEButton.BackgroundColor = "#EDB120";
+                app.ComputeButton.BackgroundColor = "#EDB120";
             else
-                app.COMPUTEButton.BackgroundColor = "r";
+                app.ComputeButton.BackgroundColor = "r";
             end
         end
 
-        % listener for ProbingData, notifies the app that samples must be
-        % recomputed
-        function ProbingDataChangedFcn(app, src, event)
-            app.LeftProbingSizeEditField.Value = app.SamplingData.ell;
-            app.RightProbingSizeEditField.Value = app.SamplingData.r;
-            app.QuadNodesEditField.Value = app.SamplingData.NumQuadNodes;
+        % listener for SamplingData
+        function SampleParametersChangedFcn(app, src, event)
+            app.LeftProbingSizeEditField.Value = app.SampleParameters.ell;
+            app.RightProbingSizeEditField.Value = app.SampleParameters.r;
             app.DataDirtiness = 2;
         end
 
-        % listener for ProbingData, notifies the app that samples must be
-        % recomputed
-        function MethodParameterDataChangedFcn(app, src, event)
-            app.EigSearchEditField.Value = app.MethodData.NumEigSearch;
-            app.MaxMomentsEditField.Value = app.MethodData.NumMaxMoments;
-            if app.DataDirtiness ~= 2
-                app.DataDirtiness = 1;
-            end
+        % listener for NumQuadNodes
+        function NumQuadNodesChangedFcn(app, src, event)
+            app.QuadNodesEditField.Value = app.NumQuadNodes;
+            notify(app,"ContourDataChanged");
+        end
+
+        % listener for NumEigSearch
+        function NumEigSearchChangedFcn(app, src, event)
+            app.EigSearchEditField.Value = app.NumEigSearch;
+        end
+
+        % listener for NumMaxMoments
+        function NumMaxMomentsChangedFcn(app, src, event)
+            app.MaxMomentsEditField.Value = app.NumMaxMoments;
         end
 
     end
@@ -469,7 +496,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         function plotNLEVPeigref(app)
             app.cleanhandles(app.NLEVPPlotHandles);
             app.NLEVPPlotHandles = {};
-            app.NLEVPPlotHandles{1} = scatter(app.UIAxes,real(app.NLEVPData.eigref),imag(app.NLEVPData.eigref),"blue","diamond",'LineWidth',2);
+            app.NLEVPPlotHandles{end+1} = scatter(app.UIAxes,real(app.NLEVPReferenceData.eigs),imag(app.NLEVPReferenceData.eigs),"blue","diamond",'LineWidth',2);
         end
 
         % simple heuristic to find a random complex number a set distance
@@ -502,27 +529,36 @@ classdef CIMTOOL < matlab.apps.AppBase
                     uialert(app.UIFigure,'Could not set shifts.','Interpolation Data Error');
             end
             app.InterpolationData = table(sigma, theta,'VariableNames',["sigma","theta"]);
-            notify(app,"InterpolationDataChanged");
         end
 
         function setdefaults(app)
-            % listeners
-            addlistener(app,'NLEVPDataChanged', @app.NLEVPDataChangedFcn);
-            addlistener(app,'ContourDataChanged', @app.ContourDataChangedFcn);
-            addlistener(app,'InterpolationDataChanged', @app.InterpolationDataChangedFcn);
-            addlistener(app,'ResultDataChanged', @app.ResultDataChangedFcn);
-            % set data structs/properties
-            app.NLEVPData.loaded = false;
-            addlistener(app,'DataDirtiness','PostSet',@app.DataDirtinessChangedFcn);
             app.DataDirtiness = 2;
-            app.SamplingData.L = missing;
-            app.SamplingData.R = missing;
-            app.SamplingData.ell = 0;
-            app.SamplingData.r = 0;
-            app.SamplingData.NumQuadNodes = 8;
-            app.MethodData.NumEigSearch = 0;
-            app.MethodData.NumMaxMoments = 0;
-            addlistener(app,'SamplingData','PostSet',@app.SamplingChangedFcn);
+            addlistener(app,'DataDirtiness','PostSet',@app.DataDirtinessChangedFcn);
+            app.NumQuadNodes = 8;
+            app.NumEigSearch = 0;
+            app.NumMaxMoments = 0;
+            % default observable properties
+            app.SampleParameters.L = 0;
+            app.SampleParameters.R = 0;
+            app.SampleParameters.ell = 0;
+            app.SampleParameters.r = 0;
+            % NLEVPData
+            app.NLEVPData.loaded = false;
+            % NLEVPReferenceData
+            app.NLEVPReferenceData.loaded = false;
+            app.NLEVPReferenceData.compute = true;
+            % listeners
+            addlistener(app,'ContourDataChanged',@app.ContourDataChangedChangedFcn);
+            %addlistener(app,'QuadData','PostSet',@app.QuadDataChangedFcn);
+            addlistener(app,'NLEVPDataChanged',@app.NLEVPDataChangedFcn);
+            addlistener(app,'InterpolationData','PostSet',@app.InterpolationDataChangedFcn);
+            app.ResultData.loaded = false;
+            addlistener(app,'NumQuadNodes','PostSet',@app.NumQuadNodesChangedFcn);
+            addlistener(app,'NumEigSearch','PostSet',@app.NumEigSearchChangedFcn);
+            addlistener(app,'NumMaxMoments','PostSet',@app.NumMaxMomentsChangedFcn);
+            addlistener(app,'SampleParameters','PostSet',@app.SampleParametersChangedFcn);
+            addlistener(app,'ResultData','PostSet',@app.ResultDataChangedFcn);
+            % set data structs/properties
             app.InterpolationData = table(missing, missing,'VariableNames',["sigma","theta"]);
             app.ResultData = table(missing, missing,'VariableNames',["eigs","tnr"]);
             % plot handles
@@ -626,11 +662,11 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.LeftPanel.Layout.Row = 1;
             app.LeftPanel.Layout.Column = 1;
 
-            % Create COMPUTATIONALMODEButtonGroup
+            % Create ComputationalModeButtonGroup
             app.ComputationalModeButtonGroup = uibuttongroup(app.LeftPanel);
-            app.ComputationalModeButtonGroup.SelectionChangedFcn = createCallbackFcn(app, @ComputationalModeChanged, true);
+            app.ComputationalModeButtonGroup.SelectionChangedFcn = createCallbackFcn(app, @ComputationalModeButtonGroupSelectionChangedFcn, true);
             app.ComputationalModeButtonGroup.TitlePosition = 'centertop';
-            app.ComputationalModeButtonGroup.Title = 'COMPUTATIONAL MODE';
+            app.ComputationalModeButtonGroup.Title = 'Computational Mode';
             app.ComputationalModeButtonGroup.Position = [17 233 183 122];
 
             % Create HankelButton
@@ -652,12 +688,12 @@ classdef CIMTOOL < matlab.apps.AppBase
             % Default Computational Mode
             app.ComputationalMode = app.ComputationalModeButtonGroup.SelectedObject.Text;
 
-            % Create COMPUTEButton
-            app.COMPUTEButton = uibutton(app.LeftPanel, 'push');
-            app.COMPUTEButton.ButtonPushedFcn = createCallbackFcn(app, @COMPUTEButtonPushed, true);
-            app.COMPUTEButton.WordWrap = 'on';
-            app.COMPUTEButton.Position = [49 184 115 32];
-            app.COMPUTEButton.Text = 'COMPUTE';
+            % Create ComputeButton
+            app.ComputeButton = uibutton(app.LeftPanel, 'push');
+            app.ComputeButton.ButtonPushedFcn = createCallbackFcn(app, @ComputeButtonPushed, true);
+            app.ComputeButton.WordWrap = 'on';
+            app.ComputeButton.Position = [49 184 115 32];
+            app.ComputeButton.Text = 'COMPUTE';
 
             % Create RESETVIEWPORTButton
             app.RESETVIEWPORTButton = uibutton(app.LeftPanel, 'push');
@@ -828,6 +864,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.LeftProbingSizeEditField = uieditfield(app.ProbingLayout, 'numeric');
             app.LeftProbingSizeEditField.Limits = [0 Inf];
             app.LeftProbingSizeEditField.HorizontalAlignment = 'center';
+            app.LeftProbingSizeEditField.ValueChangedFcn = createCallbackFcn(app, @LeftProbingSizeEditFieldChangedFcn, true);
             app.LeftProbingSizeEditField.Layout.Row = 2;
             app.LeftProbingSizeEditField.Layout.Column = 1;
 
@@ -843,6 +880,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.RightProbingSizeEditField = uieditfield(app.ProbingLayout, 'numeric');
             app.RightProbingSizeEditField.Limits = [0 Inf];
             app.RightProbingSizeEditField.HorizontalAlignment = 'center';
+            app.RightProbingSizeEditField.ValueChangedFcn = createCallbackFcn(app, @RightProbingSizeEditFieldChangedFcn, true);
             app.RightProbingSizeEditField.Layout.Row = 2;
             app.RightProbingSizeEditField.Layout.Column = 2;
 
@@ -890,13 +928,13 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.ContourTab = uitab(app.TabGroup);
             app.ContourTab.Title = 'Contour';
 
-            % Create GridLayout3
-            app.GridLayout3 = uigridlayout(app.ContourTab);
-            app.GridLayout3.ColumnWidth = {100, '1x'};
-            app.GridLayout3.RowHeight = {114};
+            % Create ContourParameterLayout
+            app.ContourParameterLayout = uigridlayout(app.ContourTab);
+            app.ContourParameterLayout.ColumnWidth = {100, '1x'};
+            app.ContourParameterLayout.RowHeight = {114};
 
             % Create ContourTypeButtonGroup
-            app.ContourTypeButtonGroup = uibuttongroup(app.GridLayout3);
+            app.ContourTypeButtonGroup = uibuttongroup(app.ContourParameterLayout);
             app.ContourTypeButtonGroup.SelectionChangedFcn = createCallbackFcn(app, @ContourTypeButtonGroupSelectionChanged, true);
             app.ContourTypeButtonGroup.TitlePosition = 'centertop';
             app.ContourTypeButtonGroup.Title = 'Type';
@@ -922,7 +960,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.RectangleButton.Position = [11 24 76 22];
 
             % Create contourparameters
-            app.contourparameters = CircleComponent(app.GridLayout3,'MainApp',app);
+            app.contourparameters = CircleComponent(app.ContourParameterLayout,'MainApp',app);
             app.contourparameters.Layout.Row = 1;
             app.contourparameters.Layout.Column = 2;
 

@@ -1,4 +1,4 @@
-function E = sploewner(Qlr,sigma,z,w,m,maxK)
+function E = sploewner(Qlr,sigma,z,w,m,maxK,abstol)
 % Suppose T : C -> nXn matrices is meromorphic on a domain D.
 % The boundary of D is a closed curve in C approximated with {z_k,w_k}
 % nodes and weights associated to a particular quadrature rule.
@@ -10,6 +10,7 @@ function E = sploewner(Qlr,sigma,z,w,m,maxK)
 %   m       -- number of poles of T in D
 %   maxK    -- max number of moments to use in construction of data 
 %              matrices should be >=1
+%   abstol  -- absolute tolerance for rank determination of base data matrix
 % OUTPUTS
 %   E       -- mXm matrix of eigenvalues of T within D
 % BEGIN
@@ -50,8 +51,14 @@ for k=1:maxK
         D((k-1)*ell+1:k*ell,(i-1)*r+1:i*r) = M(:,:,k+i-1);
         D((i-1)*ell+1:i*ell,k*r+1:(k+1)*r) = M(:,:,k+i);
     end
-    % if rank(Db) >= m, we don't need to continue padding the data matrix
-    if rank(D(1:k*ell,1:k*r)) >= m
+    % if rank(Db) > m, we don't need to continue padding the data matrix
+    if ~ismissing(abstol)
+        Drank = rank(D(1:k*ell,1:k*r),abstol);
+    else
+        Drank = rank(D(1:k*ell,1:k*r));
+    end
+
+    if Drank >= m
         kb=k;
         break;
     end

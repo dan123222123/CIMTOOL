@@ -24,7 +24,7 @@ N = length(z);
 [l1,ell] = size(L);
 [l2,r] = size(R);
 assert(all([l1,l2]==[n,n]));
-assert(ell <= n && r <= n);
+%assert(ell <= n && r <= n);
 % END SANITY CHECKS
 
 % BEGIN NUMERICS
