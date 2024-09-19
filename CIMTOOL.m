@@ -2,78 +2,79 @@ classdef CIMTOOL < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        UIFigure                      matlab.ui.Figure
-        FileMenu                      matlab.ui.container.Menu
-        ImportNLEVPMenu               matlab.ui.container.Menu
-        WorkspaceMenu                 matlab.ui.container.Menu
-        FileMenu_2                    matlab.ui.container.Menu
-        NLEVPPackMenu                 matlab.ui.container.Menu
-        ExportMenu                    matlab.ui.container.Menu
-        EigenvaluesMenu               matlab.ui.container.Menu
-        MomentsMenu                   matlab.ui.container.Menu
-        FigureMenu                    matlab.ui.container.Menu
-        PreferencesMenu               matlab.ui.container.Menu
-        ShiftPatternMenu              matlab.ui.container.Menu
-        equispacedMenu                matlab.ui.container.Menu
-        randomMenu                    matlab.ui.container.Menu
-        PlottingAttributesMenu        matlab.ui.container.Menu
-        ComputationMenu               matlab.ui.container.Menu
-        GridLayout                    matlab.ui.container.GridLayout
-        LeftPanel                     matlab.ui.container.Panel
-        QuadNodesEditField            matlab.ui.control.NumericEditField
-        QuadNodesEditFieldLabel       matlab.ui.control.Label
-        IMINEditField                 matlab.ui.control.NumericEditField
-        IMINEditFieldLabel            matlab.ui.control.Label
-        RMAXEditField                 matlab.ui.control.NumericEditField
-        RMAXEditFieldLabel            matlab.ui.control.Label
-        RMINEditField                 matlab.ui.control.NumericEditField
-        RMINEditFieldLabel            matlab.ui.control.Label
-        IMAXEditField                 matlab.ui.control.NumericEditField
-        IMAXEditFieldLabel            matlab.ui.control.Label
-        PROBLEMLOADEDTextArea         matlab.ui.control.TextArea
-        PROBLEMLOADEDTextAreaLabel    matlab.ui.control.Label
-        ShiftsButton                  matlab.ui.control.Button
-        AxisEqualCheckBox             matlab.ui.control.CheckBox
-        RESETVIEWPORTButton           matlab.ui.control.Button
-        ComputeButton                 matlab.ui.control.Button
-        ComputationalModeButtonGroup  matlab.ui.container.ButtonGroup
-        MPLoewnerButton               matlab.ui.control.ToggleButton
-        SPLoewnerButton               matlab.ui.control.ToggleButton
-        HankelButton                  matlab.ui.control.ToggleButton
-        RightPanel                    matlab.ui.container.Panel
-        GridLayout2                   matlab.ui.container.GridLayout
-        TabGroup                      matlab.ui.container.TabGroup
-        NLEVPInformationTab           matlab.ui.container.Tab
-        TextArea_3                    matlab.ui.control.TextArea
-        MethodTab                     matlab.ui.container.Tab
-        MethodLayout                   matlab.ui.container.GridLayout
-        MethodDataParameterLayout      matlab.ui.container.GridLayout
+        UIFigure                       matlab.ui.Figure
+        FileMenu                       matlab.ui.container.Menu
+        ImportNLEVPMenu                matlab.ui.container.Menu
+        WorkspaceMenu                  matlab.ui.container.Menu
+        ImportNLEVPFileMenu            matlab.ui.container.Menu
+        NLEVPPackMenu                  matlab.ui.container.Menu
+        ExportMenu                     matlab.ui.container.Menu
+        EigenvaluesMenu                matlab.ui.container.Menu
+        MomentsMenu                    matlab.ui.container.Menu
+        FigureMenu                     matlab.ui.container.Menu
+        PreferencesMenu                matlab.ui.container.Menu
+        ShiftPatternMenu               matlab.ui.container.Menu
+        equispacedMenu                 matlab.ui.container.Menu
+        randomMenu                     matlab.ui.container.Menu
+        PlottingAttributesMenu         matlab.ui.container.Menu
+        ComputationMenu                matlab.ui.container.Menu
+        AppGridLayout                  matlab.ui.container.GridLayout
+        LeftPanel                      matlab.ui.container.Panel
+        QuadNodesEditField             matlab.ui.control.NumericEditField
+        QuadNodesEditFieldLabel        matlab.ui.control.Label
+        IMINEditField                  matlab.ui.control.NumericEditField
+        IMINEditFieldLabel             matlab.ui.control.Label
+        RMAXEditField                  matlab.ui.control.NumericEditField
+        RMAXEditFieldLabel             matlab.ui.control.Label
+        RMINEditField                  matlab.ui.control.NumericEditField
+        RMINEditFieldLabel             matlab.ui.control.Label
+        IMAXEditField                  matlab.ui.control.NumericEditField
+        IMAXEditFieldLabel             matlab.ui.control.Label
+        PROBLEMLOADEDTextArea          matlab.ui.control.TextArea
+        PROBLEMLOADEDTextAreaLabel     matlab.ui.control.Label
+        ShiftsButton                   matlab.ui.control.Button
+        AxisEqualCheckBox              matlab.ui.control.CheckBox
+        RESETVIEWPORTButton            matlab.ui.control.Button
+        ComputeButton                  matlab.ui.control.Button
+        ComputationalModeButtonGroup   matlab.ui.container.ButtonGroup
+        MPLoewnerButton                matlab.ui.control.ToggleButton
+        SPLoewnerButton                matlab.ui.control.ToggleButton
+        HankelButton                   matlab.ui.control.ToggleButton
+        RightPanel                     matlab.ui.container.Panel
+        RightPanelGridLayout           matlab.ui.container.GridLayout
+        ParameterTabGroup              matlab.ui.container.TabGroup
+        NLEVPInformationTab            matlab.ui.container.Tab
+        NLEVPHelpTextArea              matlab.ui.control.TextArea
+        MethodTab                      matlab.ui.container.Tab
+        MethodTabGridLayout            matlab.ui.container.GridLayout
+        MethodDataParameterGridLayout  matlab.ui.container.GridLayout
         MaxMomentsEditField            matlab.ui.control.NumericEditField
         MaxMomentsEditFieldLabel       matlab.ui.control.Label
         EigSearchEditField             matlab.ui.control.NumericEditField
         EigSearchEditFieldLabel        matlab.ui.control.Label
-        ProbingLayout                  matlab.ui.container.GridLayout
+        ProbingGridLayout              matlab.ui.container.GridLayout
         RightProbingSizeEditField      matlab.ui.control.NumericEditField
         RightProbingSizeEditFieldLabel matlab.ui.control.Label
         LeftProbingSizeEditField       matlab.ui.control.NumericEditField
         LeftProbingSizeEditFieldLabel  matlab.ui.control.Label        
         ContourTab                     matlab.ui.container.Tab
-        ContourParameterLayout         matlab.ui.container.GridLayout
+        ContourTabGridLayout           matlab.ui.container.GridLayout
         contourparameters              ContourComponentInterface
         ContourTypeButtonGroup         matlab.ui.container.ButtonGroup
         RectangleButton                matlab.ui.control.RadioButton
         EllipseButton                  matlab.ui.control.RadioButton
         CircleButton                   matlab.ui.control.RadioButton
         ShiftsTab                      matlab.ui.container.Tab
-        ShiftsGridLayout               matlab.ui.container.GridLayout
+        ShiftsTabGridLayout            matlab.ui.container.GridLayout
         ShiftsTable                    matlab.ui.control.Table
         EigenvaluesTab                 matlab.ui.container.Tab
-        EigenvaluesGridLayout          matlab.ui.container.GridLayout
+        EigenvaluesTabGridLayout       matlab.ui.container.GridLayout
         EigenvaluesTable               matlab.ui.control.Table
-        TextArea                       matlab.ui.control.TextArea
-        ErrorsWarningsTab              matlab.ui.container.Tab
-        TextArea_2                     matlab.ui.control.TextArea
-        UIAxes                         matlab.ui.control.UIAxes
+        PlotTabGroup                   matlab.ui.container.TabGroup
+        MainPlotTab                    matlab.ui.container.Tab
+        MainPlotAxes                   matlab.ui.control.UIAxes
+        HSVPlotTab                     matlab.ui.container.Tab
+        HSVAxes                        matlab.ui.control.UIAxes
     end
 
     % Properties that correspond to apps with auto-reflow
@@ -218,9 +219,9 @@ classdef CIMTOOL < matlab.apps.AppBase
             nlevp_home = which('nlevp');
             nlevp_home = strrep(nlevp_home, 'nlevp.m', '');
             if ispc
-                app.TextArea_3.Value=help(sprintf('%sprivate\\%s', nlevp_home, probstr));
+                app.NLEVPHelpTextArea.Value=help(sprintf('%sprivate\\%s', nlevp_home, probstr));
             else
-                app.TextArea_3.Value=help(sprintf('%sprivate/%s', nlevp_home, probstr));
+                app.NLEVPHelpTextArea.Value=help(sprintf('%sprivate/%s', nlevp_home, probstr));
             end
             % now deal with any NLEVP parameters
             strarglist = split(answer{2},",");
@@ -277,11 +278,11 @@ classdef CIMTOOL < matlab.apps.AppBase
             selectedButton = app.ContourTypeButtonGroup.SelectedObject;
             switch(selectedButton.Text)
                 case "Circle"
-                    app.contourparameters = CircleComponent(app.ContourParameterLayout);
+                    app.contourparameters = CircleComponent(app.ContourTabGridLayout);
                 case "Ellipse"
-                    app.contourparameters = EllipseComponent(app.ContourParameterLayout);
+                    app.contourparameters = EllipseComponent(app.ContourTabGridLayout);
                 case "Rectangle"
-                    app.contourparameters = CircleComponent(app.ContourParameterLayout);
+                    app.contourparameters = CircleComponent(app.ContourTabGridLayout);
             end
             app.QuadType = selectedButton.Text;
             app.contourparameters.Layout.Row = 1;
@@ -366,19 +367,39 @@ classdef CIMTOOL < matlab.apps.AppBase
             end
         end
 
+        % link app.IMAX/IMIN/RMAX/RMINEditField to
+        % app.MainPlotAxes.Ylim/XLim
+        function MainPlotAxesWindowChangedFcn(app, event)
+            OldXLim = app.MainPlotAxes.XLim;
+            OldYLim = app.MainPlotAxes.YLim;
+            NewXLim = [app.RMINEditField.Value; app.RMAXEditField.Value];
+            NewYLim = [app.IMINEditField.Value; app.IMAXEditField.Value];
+            try
+                app.MainPlotAxes.XLim = NewXLim;
+                app.MainPlotAxes.YLim = NewYLim;
+            catch PLE
+                event.Source.Value = event.PreviousValue;
+                app.MainPlotAxes.XLim = OldXLim;
+                app.MainPlotAxes.YLim = OldYLim;
+                uialert(app.UIFigure,'Please ensure that IMIN < IMAX and RMIN < RMAX.','MainPlotAxes Error');
+                %rethrow(PLE)
+                return
+            end
+        end
+
         % Changes arrangement of the app based on UIFigure width
         function updateAppLayout(app, event)
             currentFigureWidth = app.UIFigure.Position(3);
             if(currentFigureWidth <= app.onePanelWidth)
                 % Change to a 2x1 grid
-                app.GridLayout.RowHeight = {483, 483};
-                app.GridLayout.ColumnWidth = {'1x'};
+                app.AppGridLayout.RowHeight = {483, 483};
+                app.AppGridLayout.ColumnWidth = {'1x'};
                 app.RightPanel.Layout.Row = 2;
                 app.RightPanel.Layout.Column = 1;
             else
                 % Change to a 1x2 grid
-                app.GridLayout.RowHeight = {'1x'};
-                app.GridLayout.ColumnWidth = {212, '1x'};
+                app.AppGridLayout.RowHeight = {'1x'};
+                app.AppGridLayout.ColumnWidth = {212, '1x'};
                 app.RightPanel.Layout.Row = 1;
                 app.RightPanel.Layout.Column = 2;
             end
@@ -394,11 +415,23 @@ classdef CIMTOOL < matlab.apps.AppBase
     % event listeners
     methods (Access = private)
 
+        % listener for XLim of the MainPlot window
+        function MainPlotWindowXLimChangedFcn(app, src, event)
+            app.RMINEditField.Value = app.MainPlotAxes.XLim(1);
+            app.RMAXEditField.Value = app.MainPlotAxes.XLim(2);
+        end
+
+        % listener for YLim of the MainPlot window
+        function MainPlotWindowYLimChangedFcn(app, src, event)
+            app.IMINEditField.Value = app.MainPlotAxes.YLim(1);
+            app.IMAXEditField.Value = app.MainPlotAxes.YLim(2);
+        end
+
         % listener for ContourDataChanged -- DataDirtyness=2
         function ContourDataChangedChangedFcn(app, src, event)
             [app.QuadData.z,app.QuadData.w] = app.contourparameters.getNodesWeights(app.NumQuadNodes);
             app.cleanhandles(app.ContourPlotHandles);
-            app.ContourPlotHandles = app.contourparameters.plot(app.UIAxes,app.QuadData.z);
+            app.ContourPlotHandles = app.contourparameters.plot(app.MainPlotAxes,app.QuadData.z);
             app.DataDirtiness = 2;
         end
 
@@ -426,10 +459,10 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.cleanhandles(app.InterpolationDataPlotHandles);
             app.InterpolationDataPlotHandles = {};
             if ~any(ismissing(app.InterpolationData.sigma)) && all(isfinite(app.InterpolationData.sigma))
-                app.InterpolationDataPlotHandles{end+1} = scatter(app.UIAxes,real(app.InterpolationData.sigma),imag(app.InterpolationData.sigma),"blue","square",'LineWidth',2);
+                app.InterpolationDataPlotHandles{end+1} = scatter(app.MainPlotAxes,real(app.InterpolationData.sigma),imag(app.InterpolationData.sigma),"blue","square",'LineWidth',2);
             end
             if ~any(ismissing(app.InterpolationData.theta))
-                app.InterpolationDataPlotHandles{end+1} = scatter(app.UIAxes,real(app.InterpolationData.theta),imag(app.InterpolationData.theta),"red","square",'LineWidth',2);
+                app.InterpolationDataPlotHandles{end+1} = scatter(app.MainPlotAxes,real(app.InterpolationData.theta),imag(app.InterpolationData.theta),"red","square",'LineWidth',2);
             end
             app.ShiftsTable.Data = app.InterpolationData;
             if app.DataDirtiness == 0
@@ -442,7 +475,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             if ~ismissing(app.ResultData.eigs)
                 app.cleanhandles(app.ResultDataPlotHandles);
                 app.ResultDataPlotHandles = {};
-                app.ResultDataPlotHandles{end+1} = scatter(app.UIAxes,real(app.ResultData.eigs),imag(app.ResultData.eigs),50,'r','LineWidth',2);
+                app.ResultDataPlotHandles{end+1} = scatter(app.MainPlotAxes,real(app.ResultData.eigs),imag(app.ResultData.eigs),50,'r','LineWidth',2);
                 app.EigenvaluesTable.Data = app.ResultData;
             end
         end
@@ -486,7 +519,7 @@ classdef CIMTOOL < matlab.apps.AppBase
     methods (Access = private)
 
         % clears all plot handles in the given cell-array
-        % used when re-plotting a portion of data fields in app.UIAxes
+        % used when re-plotting a portion of data fields in app.MainPlotAxes
         function cleanhandles(app,handles)
             for i=1:length(handles)
                 delete(handles{i});
@@ -496,7 +529,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         function plotNLEVPeigref(app)
             app.cleanhandles(app.NLEVPPlotHandles);
             app.NLEVPPlotHandles = {};
-            app.NLEVPPlotHandles{end+1} = scatter(app.UIAxes,real(app.NLEVPReferenceData.eigs),imag(app.NLEVPReferenceData.eigs),"blue","diamond",'LineWidth',2);
+            app.NLEVPPlotHandles{end+1} = scatter(app.MainPlotAxes,real(app.NLEVPReferenceData.eigs),imag(app.NLEVPReferenceData.eigs),"blue","diamond",'LineWidth',2);
         end
 
         % simple heuristic to find a random complex number a set distance
@@ -558,6 +591,8 @@ classdef CIMTOOL < matlab.apps.AppBase
             addlistener(app,'NumMaxMoments','PostSet',@app.NumMaxMomentsChangedFcn);
             addlistener(app,'SampleParameters','PostSet',@app.SampleParametersChangedFcn);
             addlistener(app,'ResultData','PostSet',@app.ResultDataChangedFcn);
+            addlistener(app.MainPlotAxes,'XLim','PostSet',@(src,event)app.MainPlotWindowXLimChangedFcn);
+            addlistener(app.MainPlotAxes,'YLim','PostSet',@(src,event)app.MainPlotWindowYLimChangedFcn);
             % set data structs/properties
             app.InterpolationData = table(missing, missing,'VariableNames',["sigma","theta"]);
             app.ResultData = table(missing, missing,'VariableNames',["eigs","tnr"]);
@@ -592,10 +627,10 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.WorkspaceMenu.Enable = 'off';
             app.WorkspaceMenu.Text = 'Workspace';
 
-            % Create FileMenu_2
-            app.FileMenu_2 = uimenu(app.ImportNLEVPMenu);
-            app.FileMenu_2.Enable = 'off';
-            app.FileMenu_2.Text = 'File';
+            % Create ImportNLEVPFile
+            app.ImportNLEVPFileMenu = uimenu(app.ImportNLEVPMenu);
+            app.ImportNLEVPFileMenu.Enable = 'off';
+            app.ImportNLEVPFileMenu.Text = 'File';
 
             % Create NLEVPPackMenu
             app.NLEVPPackMenu = uimenu(app.ImportNLEVPMenu);
@@ -649,16 +684,16 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.ComputationMenu.Text = 'Computation';
 
             % Create GridLayout
-            app.GridLayout = uigridlayout(app.UIFigure);
-            app.GridLayout.ColumnWidth = {212, '1x'};
-            app.GridLayout.RowHeight = {'1x'};
-            app.GridLayout.ColumnSpacing = 0;
-            app.GridLayout.RowSpacing = 0;
-            app.GridLayout.Padding = [0 0 0 0];
-            app.GridLayout.Scrollable = 'on';
+            app.AppGridLayout = uigridlayout(app.UIFigure);
+            app.AppGridLayout.ColumnWidth = {212, '1x'};
+            app.AppGridLayout.RowHeight = {'1x'};
+            app.AppGridLayout.ColumnSpacing = 0;
+            app.AppGridLayout.RowSpacing = 0;
+            app.AppGridLayout.Padding = [0 0 0 0];
+            app.AppGridLayout.Scrollable = 'on';
 
             % Create LeftPanel
-            app.LeftPanel = uipanel(app.GridLayout);
+            app.LeftPanel = uipanel(app.AppGridLayout);
             app.LeftPanel.Layout.Row = 1;
             app.LeftPanel.Layout.Column = 1;
 
@@ -732,11 +767,12 @@ classdef CIMTOOL < matlab.apps.AppBase
 
             % Create IMAXEditField
             app.IMAXEditField = uieditfield(app.LeftPanel, 'numeric');
-            app.IMAXEditField.RoundFractionalValues = 'on';
             app.IMAXEditField.HorizontalAlignment = 'center';
+            app.IMAXEditField.ValueChangedFcn = createCallbackFcn(app, @MainPlotAxesWindowChangedFcn, true);
             app.IMAXEditField.Placeholder = '1';
+            app.IMAXEditField.Value = 1;
             app.IMAXEditField.Position = [88 101 36 22];
-            app.IMAXEditField.Enable = "off";
+            %app.IMAXEditField.Enable = "off";
 
             % Create RMINEditFieldLabel
             app.RMINEditFieldLabel = uilabel(app.LeftPanel);
@@ -746,11 +782,12 @@ classdef CIMTOOL < matlab.apps.AppBase
 
             % Create RMINEditField
             app.RMINEditField = uieditfield(app.LeftPanel, 'numeric');
-            app.RMINEditField.RoundFractionalValues = 'on';
             app.RMINEditField.HorizontalAlignment = 'center';
+            app.RMINEditField.ValueChangedFcn = createCallbackFcn(app, @MainPlotAxesWindowChangedFcn, true);
             app.RMINEditField.Placeholder = '1';
+            app.RMINEditField.Value = -1;
             app.RMINEditField.Position = [48 80 31 22];
-            app.RMINEditField.Enable = "off";
+            %app.RMINEditField.Enable = "off";
 
             % Create RMAXEditFieldLabel
             app.RMAXEditFieldLabel = uilabel(app.LeftPanel);
@@ -760,11 +797,12 @@ classdef CIMTOOL < matlab.apps.AppBase
 
             % Create RMAXEditField
             app.RMAXEditField = uieditfield(app.LeftPanel, 'numeric');
-            app.RMAXEditField.RoundFractionalValues = 'on';
             app.RMAXEditField.HorizontalAlignment = 'center';
+            app.RMAXEditField.ValueChangedFcn = createCallbackFcn(app, @MainPlotAxesWindowChangedFcn, true);
             app.RMAXEditField.Placeholder = '1';
+            app.RMAXEditField.Value = 1;
             app.RMAXEditField.Position = [132 80 31 22];
-            app.RMAXEditField.Enable = "off";
+            %app.RMAXEditField.Enable = "off";
 
             % Create IMINEditFieldLabel
             app.IMINEditFieldLabel = uilabel(app.LeftPanel);
@@ -774,11 +812,10 @@ classdef CIMTOOL < matlab.apps.AppBase
 
             % Create IMINEditField
             app.IMINEditField = uieditfield(app.LeftPanel, 'numeric');
-            app.IMINEditField.RoundFractionalValues = 'on';
             app.IMINEditField.HorizontalAlignment = 'center';
-            app.IMINEditField.Placeholder = '1';
+            app.IMINEditField.ValueChangedFcn = createCallbackFcn(app, @MainPlotAxesWindowChangedFcn, true);
+            app.IMINEditField.Value = -1;
             app.IMINEditField.Position = [88 61 36 22];
-            app.IMINEditField.Enable = "off";
 
             % Create QuadNodesEditFieldLabel
             app.QuadNodesEditFieldLabel = uilabel(app.LeftPanel);
@@ -798,62 +835,82 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.NumQuadNodes = app.QuadNodesEditField.Value;
 
             % Create RightPanel
-            app.RightPanel = uipanel(app.GridLayout);
+            app.RightPanel = uipanel(app.AppGridLayout);
             app.RightPanel.Layout.Row = 1;
             app.RightPanel.Layout.Column = 2;
 
             % Create GridLayout2
-            app.GridLayout2 = uigridlayout(app.RightPanel);
-            app.GridLayout2.ColumnWidth = {'1x'};
-            app.GridLayout2.RowHeight = {'1.83x', '1x'};
-            app.GridLayout2.RowSpacing = 7.33333333333333;
-            app.GridLayout2.Padding = [6 7.33333333333333 6 7.33333333333333];
+            app.RightPanelGridLayout = uigridlayout(app.RightPanel);
+            app.RightPanelGridLayout.ColumnWidth = {'1x'};
+            app.RightPanelGridLayout.RowHeight = {'1.83x', '1x'};
+            app.RightPanelGridLayout.RowSpacing = 7.33333333333333;
+            app.RightPanelGridLayout.Padding = [6 7.33333333333333 6 7.33333333333333];
 
-            % Create UIAxes
-            app.UIAxes = uiaxes(app.GridLayout2);
-            app.UIAxes.Layer = 'top';
-            app.UIAxes.XGrid = 'on';
-            app.UIAxes.XMinorGrid = 'on';
-            app.UIAxes.YGrid = 'on';
-            app.UIAxes.YMinorGrid = 'on';
-            app.UIAxes.ZMinorGrid = 'on';
-            app.UIAxes.Layout.Row = 1;
-            app.UIAxes.Layout.Column = 1;
-            hold(app.UIAxes,"on");
+            % Create PlotTabGroup
+            app.PlotTabGroup = uitabgroup(app.RightPanelGridLayout);
+            app.PlotTabGroup.Layout.Row = 1;
+            app.PlotTabGroup.Layout.Column = 1;
+
+            % Create MainPlotTab
+            app.MainPlotTab = uitab(app.PlotTabGroup);
+            app.MainPlotTab.Title = 'Main';
+
+            % Create MainPlotAxes
+            app.MainPlotAxes = uiaxes(app.MainPlotTab);
+            app.MainPlotAxes.Layer = 'top';
+            app.MainPlotAxes.XGrid = 'on';
+            app.MainPlotAxes.XMinorGrid = 'on';
+            app.MainPlotAxes.YGrid = 'on';
+            app.MainPlotAxes.YMinorGrid = 'on';
+            app.MainPlotAxes.ZMinorGrid = 'on';
+            hold(app.MainPlotAxes,"on");
+
+            % Create HSVPlotTab
+            app.HSVPlotTab = uitab(app.PlotTabGroup);
+            app.HSVPlotTab.Title = 'HSV(s)';
+
+            % Create HSVAxes
+            app.HSVAxes = uiaxes(app.HSVPlotTab);
+            app.HSVAxes.Layer = 'top';
+            app.HSVAxes.XGrid = 'on';
+            app.HSVAxes.XMinorGrid = 'off';
+            app.HSVAxes.YGrid = 'on';
+            app.HSVAxes.YMinorGrid = 'on';
+            app.HSVAxes.ZMinorGrid = 'off';
 
             % Create TabGroup
-            app.TabGroup = uitabgroup(app.GridLayout2);
-            app.TabGroup.Layout.Row = 2;
-            app.TabGroup.Layout.Column = 1;
+            app.ParameterTabGroup = uitabgroup(app.RightPanelGridLayout);
+            app.ParameterTabGroup.Layout.Row = 2;
+            app.ParameterTabGroup.Layout.Column = 1;
 
             % Create NLEVPInformationTab
-            app.NLEVPInformationTab = uitab(app.TabGroup);
+            app.NLEVPInformationTab = uitab(app.ParameterTabGroup);
             app.NLEVPInformationTab.Title = 'NLEVP Information';
 
-            % Create TextArea_3
-            app.TextArea_3 = uitextarea(app.NLEVPInformationTab);
-            app.TextArea_3.Editable = 'off';
-            app.TextArea_3.HorizontalAlignment = 'center';
-            app.TextArea_3.BackgroundColor = [0.8 0.8 0.8];
-            app.TextArea_3.Position = [15 13 501 117];
-            app.TextArea_3.Value = {'No NLEVP Loaded.'};
+            % Create NLEVPHelpTextArea
+            app.NLEVPHelpTextArea = uitextarea(app.NLEVPInformationTab);
+            app.NLEVPHelpTextArea.Editable = 'off';
+            app.NLEVPHelpTextArea.HorizontalAlignment = 'center';
+            app.NLEVPHelpTextArea.BackgroundColor = [0.8 0.8 0.8];
+            app.NLEVPHelpTextArea.Position = [15 13 501 117];
+            app.NLEVPHelpTextArea.Value = {'No NLEVP Loaded.'};
 
             % Create MethodTab
-            app.MethodTab = uitab(app.TabGroup);
+            app.MethodTab = uitab(app.ParameterTabGroup);
             app.MethodTab.Title = 'Method';
 
             % Create MethodLayout
-            app.MethodLayout = uigridlayout(app.MethodTab);
-            app.MethodLayout.ColumnWidth = {'1x', '2x'};
-            app.MethodLayout.RowHeight = {'1x'};
+            app.MethodTabGridLayout = uigridlayout(app.MethodTab);
+            app.MethodTabGridLayout.ColumnWidth = {'1x', '2x'};
+            app.MethodTabGridLayout.RowHeight = {'1x'};
 
             % Create ProbingLayout
-            app.ProbingLayout = uigridlayout(app.MethodLayout);
-            app.ProbingLayout.Layout.Row = 1;
-            app.ProbingLayout.Layout.Column = 2;
+            app.ProbingGridLayout = uigridlayout(app.MethodTabGridLayout);
+            app.ProbingGridLayout.Layout.Row = 1;
+            app.ProbingGridLayout.Layout.Column = 2;
 
             % Create LeftProbingSizeEditFieldLabel
-            app.LeftProbingSizeEditFieldLabel = uilabel(app.ProbingLayout);
+            app.LeftProbingSizeEditFieldLabel = uilabel(app.ProbingGridLayout);
             app.LeftProbingSizeEditFieldLabel.HorizontalAlignment = 'center';
             app.LeftProbingSizeEditFieldLabel.WordWrap = 'on';
             app.LeftProbingSizeEditFieldLabel.Layout.Row = 1;
@@ -861,7 +918,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.LeftProbingSizeEditFieldLabel.Text = 'Left Probing Size';
 
             % Create LeftProbingSizeEditField
-            app.LeftProbingSizeEditField = uieditfield(app.ProbingLayout, 'numeric');
+            app.LeftProbingSizeEditField = uieditfield(app.ProbingGridLayout, 'numeric');
             app.LeftProbingSizeEditField.Limits = [0 Inf];
             app.LeftProbingSizeEditField.HorizontalAlignment = 'center';
             app.LeftProbingSizeEditField.ValueChangedFcn = createCallbackFcn(app, @LeftProbingSizeEditFieldChangedFcn, true);
@@ -869,7 +926,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.LeftProbingSizeEditField.Layout.Column = 1;
 
             % Create RightProbingSizeEditFieldLabel
-            app.RightProbingSizeEditFieldLabel = uilabel(app.ProbingLayout);
+            app.RightProbingSizeEditFieldLabel = uilabel(app.ProbingGridLayout);
             app.RightProbingSizeEditFieldLabel.HorizontalAlignment = 'center';
             app.RightProbingSizeEditFieldLabel.WordWrap = 'on';
             app.RightProbingSizeEditFieldLabel.Layout.Row = 1;
@@ -877,7 +934,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.RightProbingSizeEditFieldLabel.Text = 'Right Probing Size';
 
             % Create RightProbingSizeEditField
-            app.RightProbingSizeEditField = uieditfield(app.ProbingLayout, 'numeric');
+            app.RightProbingSizeEditField = uieditfield(app.ProbingGridLayout, 'numeric');
             app.RightProbingSizeEditField.Limits = [0 Inf];
             app.RightProbingSizeEditField.HorizontalAlignment = 'center';
             app.RightProbingSizeEditField.ValueChangedFcn = createCallbackFcn(app, @RightProbingSizeEditFieldChangedFcn, true);
@@ -885,14 +942,14 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.RightProbingSizeEditField.Layout.Column = 2;
 
             % Create MethodDataParameterLayout
-            app.MethodDataParameterLayout = uigridlayout(app.MethodLayout);
-            app.MethodDataParameterLayout.ColumnWidth = {'1x'};
-            app.MethodDataParameterLayout.RowHeight = {'1x', '1x', '1x', '1x'};
-            app.MethodDataParameterLayout.Layout.Row = 1;
-            app.MethodDataParameterLayout.Layout.Column = 1;
+            app.MethodDataParameterGridLayout = uigridlayout(app.MethodTabGridLayout);
+            app.MethodDataParameterGridLayout.ColumnWidth = {'1x'};
+            app.MethodDataParameterGridLayout.RowHeight = {'1x', '1x', '1x', '1x'};
+            app.MethodDataParameterGridLayout.Layout.Row = 1;
+            app.MethodDataParameterGridLayout.Layout.Column = 1;
 
             % Create EigSearchEditFieldLabel
-            app.EigSearchEditFieldLabel = uilabel(app.MethodDataParameterLayout);
+            app.EigSearchEditFieldLabel = uilabel(app.MethodDataParameterGridLayout);
             app.EigSearchEditFieldLabel.HorizontalAlignment = 'center';
             app.EigSearchEditFieldLabel.WordWrap = 'on';
             app.EigSearchEditFieldLabel.Layout.Row = 1;
@@ -900,7 +957,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.EigSearchEditFieldLabel.Text = '# Eig Search';
 
             % Create EigSearchEditField
-            app.EigSearchEditField = uieditfield(app.MethodDataParameterLayout, 'numeric');
+            app.EigSearchEditField = uieditfield(app.MethodDataParameterGridLayout, 'numeric');
             app.EigSearchEditField.Limits = [0 Inf];
             app.EigSearchEditField.HorizontalAlignment = 'center';
             app.EigSearchEditField.ValueChangedFcn = createCallbackFcn(app, @EigSearchEditFieldValueChanged, true);
@@ -909,7 +966,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.EigSearchEditField.Layout.Column = 1;
 
             % Create MaxMomentsEditFieldLabel
-            app.MaxMomentsEditFieldLabel = uilabel(app.MethodDataParameterLayout);
+            app.MaxMomentsEditFieldLabel = uilabel(app.MethodDataParameterGridLayout);
             app.MaxMomentsEditFieldLabel.HorizontalAlignment = 'center';
             app.MaxMomentsEditFieldLabel.WordWrap = 'on';
             app.MaxMomentsEditFieldLabel.Layout.Row = 3;
@@ -917,7 +974,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.MaxMomentsEditFieldLabel.Text = 'Max # Moments';
 
             % Create MaxMomentsEditField
-            app.MaxMomentsEditField = uieditfield(app.MethodDataParameterLayout, 'numeric');
+            app.MaxMomentsEditField = uieditfield(app.MethodDataParameterGridLayout, 'numeric');
             app.MaxMomentsEditField.Limits = [0 Inf];
             app.MaxMomentsEditField.HorizontalAlignment = 'center';
             app.MaxMomentsEditField.ValueChangedFcn = createCallbackFcn(app, @MaxMomentsEditFieldValueChanged, true);
@@ -925,16 +982,16 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.MaxMomentsEditField.Layout.Column = 1;
 
             % Create ContourTab
-            app.ContourTab = uitab(app.TabGroup);
+            app.ContourTab = uitab(app.ParameterTabGroup);
             app.ContourTab.Title = 'Contour';
 
             % Create ContourParameterLayout
-            app.ContourParameterLayout = uigridlayout(app.ContourTab);
-            app.ContourParameterLayout.ColumnWidth = {100, '1x'};
-            app.ContourParameterLayout.RowHeight = {114};
+            app.ContourTabGridLayout = uigridlayout(app.ContourTab);
+            app.ContourTabGridLayout.ColumnWidth = {100, '1x'};
+            app.ContourTabGridLayout.RowHeight = {114};
 
             % Create ContourTypeButtonGroup
-            app.ContourTypeButtonGroup = uibuttongroup(app.ContourParameterLayout);
+            app.ContourTypeButtonGroup = uibuttongroup(app.ContourTabGridLayout);
             app.ContourTypeButtonGroup.SelectionChangedFcn = createCallbackFcn(app, @ContourTypeButtonGroupSelectionChanged, true);
             app.ContourTypeButtonGroup.TitlePosition = 'centertop';
             app.ContourTypeButtonGroup.Title = 'Type';
@@ -960,22 +1017,22 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.RectangleButton.Position = [11 24 76 22];
 
             % Create contourparameters
-            app.contourparameters = CircleComponent(app.ContourParameterLayout,'MainApp',app);
+            app.contourparameters = CircleComponent(app.ContourTabGridLayout,'MainApp',app);
             app.contourparameters.Layout.Row = 1;
             app.contourparameters.Layout.Column = 2;
 
             %% ShiftsTab
-            app.ShiftsTab = uitab(app.TabGroup);
+            app.ShiftsTab = uitab(app.ParameterTabGroup);
             app.ShiftsTab.Title = 'Shift(s)';
 
             % Shift(s) tab gridlayout
-            app.ShiftsGridLayout = uigridlayout(app.ShiftsTab);
-            app.ShiftsGridLayout.ColumnWidth = {'1x'};
-            app.ShiftsGridLayout.RowHeight = { '1x'};
-            app.ShiftsGridLayout.Padding = [10 10 10 10];
+            app.ShiftsTabGridLayout = uigridlayout(app.ShiftsTab);
+            app.ShiftsTabGridLayout.ColumnWidth = {'1x'};
+            app.ShiftsTabGridLayout.RowHeight = { '1x'};
+            app.ShiftsTabGridLayout.Padding = [10 10 10 10];
 
             % table of shifts
-            app.ShiftsTable = uitable(app.ShiftsGridLayout);
+            app.ShiftsTable = uitable(app.ShiftsTabGridLayout);
             app.ShiftsTable.ColumnName = {'sigma','theta'};
             app.ShiftsTable.RowName = {};
             app.ShiftsTable.CellEditCallback = createCallbackFcn(app, @ShiftsTableCellEdit, true);
@@ -984,17 +1041,17 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.ShiftsTable.Data = app.InterpolationData;
 
             %% EigenvaluesTab
-            app.EigenvaluesTab = uitab(app.TabGroup);
+            app.EigenvaluesTab = uitab(app.ParameterTabGroup);
             app.EigenvaluesTab.Title = 'Eigenvalue Information';
 
             % EigenvalueInformationGridLayout
-            app.EigenvaluesGridLayout = uigridlayout(app.EigenvaluesTab);
-            app.EigenvaluesGridLayout.ColumnWidth = {'1x'};
-            app.EigenvaluesGridLayout.RowHeight = { '1x'};
-            app.EigenvaluesGridLayout.Padding = [10 10 10 10];
+            app.EigenvaluesTabGridLayout = uigridlayout(app.EigenvaluesTab);
+            app.EigenvaluesTabGridLayout.ColumnWidth = {'1x'};
+            app.EigenvaluesTabGridLayout.RowHeight = { '1x'};
+            app.EigenvaluesTabGridLayout.Padding = [10 10 10 10];
 
             % EigenvalueInformationTable
-            app.EigenvaluesTable = uitable(app.EigenvaluesGridLayout);
+            app.EigenvaluesTable = uitable(app.EigenvaluesTabGridLayout);
             app.EigenvaluesTable.ColumnName = {'eigs','tnr'};
             app.EigenvaluesTable.RowName = {};
             app.EigenvaluesTable.CellEditCallback = createCallbackFcn(app, @EigenvaluesTableCellEdit, true);
