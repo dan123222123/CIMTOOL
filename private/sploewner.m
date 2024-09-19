@@ -1,4 +1,4 @@
-function E = sploewner(Qlr,sigma,z,w,m,maxK,abstol)
+function [E,sv] = sploewner(Qlr,sigma,z,w,m,maxK,abstol)
 % Suppose T : C -> nXn matrices is meromorphic on a domain D.
 % The boundary of D is a closed curve in C approximated with {z_k,w_k}
 % nodes and weights associated to a particular quadrature rule.
@@ -68,10 +68,10 @@ if kb==0
     error("could not generate rank %d base data matrix",m);
 end
 
-% extract base data matrix from D
+% extract data matrix from D
 D0 = D(1:k*ell,1:k*r);
 
-% construct shifted data matrix based on sigma and D
+% construct base and shifted data matrix based on sigma and D
 if sigma == Inf
     D1 = D(1:k*ell,r+1:(k+1)*r);
 else
@@ -85,6 +85,7 @@ X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
 
 % solve (X'*D1*Y,Sigma) GEP to get eigenvalues of underlying NLEVP in D.
 E = eig(X'*D1*Y,Sigma);
+sv = diag(Sigma)/Sigma(1,1);
 % END NUMERICS
 
 end

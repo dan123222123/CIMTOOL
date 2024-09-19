@@ -104,6 +104,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         RelTol
         InterpolationData % table with variables sigma and theta
         ResultData % eigs, ews, metrics, etc.
+        sv % singular values of base data matrix
     end
 
     % Plot handles
@@ -112,6 +113,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         ContourPlotHandles
         InterpolationDataPlotHandles
         ResultDataPlotHandles
+        svPlotHandles
     end
 
     events
@@ -168,7 +170,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         function computeResultData(app)
             switch(app.ComputationalMode)
                 case {"Hankel","SPLoewner"}
-                    [eigs] = sploewner( ...
+                    [eigs,app.sv] = sploewner( ...
                         app.SampleData.Qlr, ...
                         app.InterpolationData.sigma(1), ...
                         app.QuadData.z, ...
@@ -178,7 +180,7 @@ classdef CIMTOOL < matlab.apps.AppBase
                         app.AbsTol ...
                     );
                 case "MPLoewner"
-                    [eigs] = mploewner( ...
+                    [eigs,app.sv] = mploewner( ...
                         app.SampleData.Ql, ...
                         app.SampleData.Qr, ...
                         app.InterpolationData.theta, ...
@@ -299,7 +301,7 @@ classdef CIMTOOL < matlab.apps.AppBase
                     app.NumMaxMoments = app.NLEVPData.n;
                     app.MaxMomentsEditField.Editable = "on";
                 case "SPLoewner"
-                    app.ShiftsTable.ColumnEditable = [true false];
+                    app.ShiftsTable.ColumnEditable = [false true];
                     app.NumMaxMoments = app.NLEVPData.n;
                     app.MaxMomentsEditField.Editable = "on";
                 case "MPLoewner"
@@ -357,13 +359,19 @@ classdef CIMTOOL < matlab.apps.AppBase
             if app.NLEVPData.loaded
                 app.SampleParameters.L = app.sampleNormalRandomComplexMatrix(app.NLEVPData.n,app.SampleParameters.ell);
             end
+            if app.ComputationalMode == "MPLoewner"
+                app.updateMPLoewnershifts();
+            end
         end
 
-        % link app.SampleParameters.ell/L to LeftProbingSizeEditField
+        % link app.SampleParameters.r/R to RightProbingSizeEditField
         function RightProbingSizeEditFieldChangedFcn(app, event)
             app.SampleParameters.r = app.RightProbingSizeEditField.Value;
             if app.NLEVPData.loaded
                 app.SampleParameters.R = app.sampleNormalRandomComplexMatrix(app.NLEVPData.n,app.SampleParameters.r);
+            end
+            if app.ComputationalMode == "MPLoewner"
+                app.updateMPLoewnershifts();
             end
         end
 
@@ -458,7 +466,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         function InterpolationDataChangedFcn(app, src, event)
             app.cleanhandles(app.InterpolationDataPlotHandles);
             app.InterpolationDataPlotHandles = {};
-            if ~any(ismissing(app.InterpolationData.sigma)) && all(isfinite(app.InterpolationData.sigma))
+            if ~any(ismissing(app.InterpolationData.sigma))% && all(isfinite(rmmissing(app.InterpolationData.sigma)))
                 app.InterpolationDataPlotHandles{end+1} = scatter(app.MainPlotAxes,real(app.InterpolationData.sigma),imag(app.InterpolationData.sigma),"blue","square",'LineWidth',2);
             end
             if ~any(ismissing(app.InterpolationData.theta))
@@ -477,6 +485,11 @@ classdef CIMTOOL < matlab.apps.AppBase
                 app.ResultDataPlotHandles = {};
                 app.ResultDataPlotHandles{end+1} = scatter(app.MainPlotAxes,real(app.ResultData.eigs),imag(app.ResultData.eigs),50,'r','LineWidth',2);
                 app.EigenvaluesTable.Data = app.ResultData;
+            end
+            if ~ismissing(app.sv)
+                app.cleanhandles(app.svPlotHandles);
+                app.svPlotHandles = {};
+                app.svPlotHandles{end+1} = semilogy(app.HSVAxes,1:length(app.sv),app.sv,"->","MarkerSize",10);
             end
         end
 
@@ -561,7 +574,37 @@ classdef CIMTOOL < matlab.apps.AppBase
                 otherwise
                     uialert(app.UIFigure,'Could not set shifts.','Interpolation Data Error');
             end
-            app.InterpolationData = table(sigma, theta,'VariableNames',["sigma","theta"]);
+            app.InterpolationData = table(theta, sigma,'VariableNames',["theta","sigma"]);
+        end
+
+        function updateMPLoewnershifts(app)
+            ellold = length(app.InterpolationData.theta);
+            rold = length(app.InterpolationData.sigma);
+            ellnew = app.SampleParameters.ell;
+            rnew = app.SampleParameters.r;
+            ellrnewmax = max(ellnew,rnew);
+
+            % new theta and sigma, fill with missings if unavailable
+            thetanew = repelem(NaN,ellrnewmax);
+            sigmanew = repelem(NaN,ellrnewmax);
+
+            % fill with old shifts to preserve past user input and fill
+            % with new random shifts where necessary
+            for i=1:min(ellold,ellnew)
+                thetanew(i) = app.InterpolationData.theta(i);
+            end
+            for j = ellold:ellnew
+                thetanew(j) = app.FindRandomShift();
+            end
+            for i=1:min(rold,rnew)
+                sigmanew(i) = app.InterpolationData.sigma(i);
+            end
+            for j = rold:rnew
+                sigmanew(j) = app.FindRandomShift();
+            end
+
+            app.InterpolationData = table(thetanew', sigmanew','VariableNames',["theta","sigma"]);
+
         end
 
         function setdefaults(app)
@@ -594,13 +637,14 @@ classdef CIMTOOL < matlab.apps.AppBase
             addlistener(app.MainPlotAxes,'XLim','PostSet',@(src,event)app.MainPlotWindowXLimChangedFcn);
             addlistener(app.MainPlotAxes,'YLim','PostSet',@(src,event)app.MainPlotWindowYLimChangedFcn);
             % set data structs/properties
-            app.InterpolationData = table(missing, missing,'VariableNames',["sigma","theta"]);
+            app.InterpolationData = table(missing, missing,'VariableNames',["theta","sigma"]);
             app.ResultData = table(missing, missing,'VariableNames',["eigs","tnr"]);
             % plot handles
             app.NLEVPPlotHandles = {};
             app.ContourPlotHandles = {};
             app.InterpolationDataPlotHandles = {};
             app.ResultDataPlotHandles = {};
+            app.svPlotHandles = {};
         end
 
         % Create UIFigure and components
@@ -1033,7 +1077,7 @@ classdef CIMTOOL < matlab.apps.AppBase
 
             % table of shifts
             app.ShiftsTable = uitable(app.ShiftsTabGridLayout);
-            app.ShiftsTable.ColumnName = {'sigma','theta'};
+            app.ShiftsTable.ColumnName = {'theta','sigma'};
             app.ShiftsTable.RowName = {};
             app.ShiftsTable.CellEditCallback = createCallbackFcn(app, @ShiftsTableCellEdit, true);
             app.ShiftsTable.Layout.Row = 1;

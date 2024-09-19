@@ -1,4 +1,4 @@
-function E = mploewner(Ql,Qr,theta,sigma,L,R,z,w,m)
+function [E,sv] = mploewner(Ql,Qr,theta,sigma,L,R,z,w,m)
 % Suppose T : C -> nXn matrices is meromorphic on a domain D.
 % The boundary of D is a closed curve in C approximated with {z_k,w_k}
 % nodes and weights associated to a particular quadrature rule.
@@ -66,6 +66,7 @@ X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
 
 % solve (X'*D1*Y,Sigma) GEP to get eigenvalues of underlying NLEVP in D.
 E = eig(X'*Ls*Y,Sigma);
+sv = diag(Sigma)/Sigma(1,1);
 % END NUMERICS
 
 end
