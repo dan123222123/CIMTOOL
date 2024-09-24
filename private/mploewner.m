@@ -1,4 +1,4 @@
-function [E,sv] = mploewner(Ql,Qr,theta,sigma,L,R,z,w,m)
+function [E,sw] = mploewner(Ql,Qr,theta,sigma,L,R,z,w,m,abstol)
 % Suppose T : C -> nXn matrices is meromorphic on a domain D.
 % The boundary of D is a closed curve in C approximated with {z_k,w_k}
 % nodes and weights associated to a particular quadrature rule.
@@ -18,8 +18,10 @@ function [E,sv] = mploewner(Ql,Qr,theta,sigma,L,R,z,w,m)
 
 % BEGIN SANITY CHECKS
 % check that elements of qs have the same dimension
-[ell,n1,N1] = size(Ql);
-[n2,r,N2] = size(Qr);
+[Lsize,n1,N1] = size(Ql);
+[n2,Rsize,N2] = size(Qr);
+ell = length(theta);
+r = length(sigma);
 
 % check that the dimensions of the samples are compatible
 assert(n1==n2);
@@ -39,34 +41,53 @@ Lb = zeros(ell,r); Ls = zeros(ell,r);
 % construct B and C matrices
 for i=1:ell
     for k=1:N
-        B(i,:) = B(i,:) + (w(k)/(theta(i)-z(k)))*Ql(i,:,k);
+        ldir = mod(i-1,Lsize)+1;
+        B(i,:) = B(i,:) + (w(k)/(theta(i)-z(k)))*Ql(ldir,:,k);
     end
 end
+
 for j=1:r
     for k=1:N
-        C(:,j) = C(:,j) + (w(k)/(sigma(j)-z(k)))*Qr(:,j,k);
+        rdir = mod(j-1,Rsize)+1;
+        C(:,j) = C(:,j) + (w(k)/(sigma(j)-z(k)))*Qr(:,rdir,k);
     end
 end
+
+% % construct Lb and Ls matrices
+% for i=1:ell
+%     for j=1:r
+%         Lb(i,j) = (B(i,:)*R(:,j) - L(:,i)'*C(:,j))/(theta(i)-sigma(j));
+%         Ls(i,j) = (theta(i)*B(i,:)*R(:,j) - sigma(j)*L(:,i)'*C(:,j))/(theta(i)-sigma(j));
+%     end
+% end
 
 % construct Lb and Ls matrices
 for i=1:ell
     for j=1:r
-        Lb(i,j) = (B(i,:)*R(:,j) - L(:,i)'*C(:,j))/(theta(i)-sigma(j));
-        Ls(i,j) = (theta(i)*B(i,:)*R(:,j) - sigma(j)*L(:,i)'*C(:,j))/(theta(i)-sigma(j));
+        ldir = mod(i-1,Lsize)+1;
+        rdir = mod(j-1,Rsize)+1;
+        Lb(i,j) = (B(i,:)*R(:,rdir) - L(:,ldir)'*C(:,j))/(theta(i)-sigma(j));
+        Ls(i,j) = (theta(i)*B(i,:)*R(:,rdir) - sigma(j)*L(:,ldir)'*C(:,j))/(theta(i)-sigma(j));
     end
 end
 
-if rank(Lb) < m
+if ~isnan(abstol)
+    Lbrank = rank(Lb,abstol);
+else
+    Lbrank = rank(Lb);
+end
+
+if Lbrank < m
     error("could not generate rank %d base Loewner matrix",m);
 end
 
 % (reduced) rank-m svd of Lb
 [X, Sigma, Y] = svd(Lb,"matrix");
-X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
+sw = diag(Sigma)/Sigma(1,1);
 
 % solve (X'*D1*Y,Sigma) GEP to get eigenvalues of underlying NLEVP in D.
+X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
 E = eig(X'*Ls*Y,Sigma);
-sv = diag(Sigma)/Sigma(1,1);
 % END NUMERICS
 
 end

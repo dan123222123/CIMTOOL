@@ -52,7 +52,7 @@ for k=1:maxK
         D((i-1)*ell+1:i*ell,k*r+1:(k+1)*r) = M(:,:,k+i);
     end
     % if rank(Db) > m, we don't need to continue padding the data matrix
-    if ~ismissing(abstol)
+    if ~isnan(abstol)
         Drank = rank(D(1:k*ell,1:k*r),abstol);
     else
         Drank = rank(D(1:k*ell,1:k*r));
@@ -81,11 +81,11 @@ end
 
 % (reduced) rank-m svd of D0
 [X, Sigma, Y] = svd(D0,"matrix");
-X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
+sv = diag(Sigma)/Sigma(1,1);
 
 % solve (X'*D1*Y,Sigma) GEP to get eigenvalues of underlying NLEVP in D.
+X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
 E = eig(X'*D1*Y,Sigma);
-sv = diag(Sigma)/Sigma(1,1);
 % END NUMERICS
 
 end
