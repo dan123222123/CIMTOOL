@@ -33,8 +33,6 @@ classdef CIMTOOL < matlab.apps.AppBase
         PROBLEMLOADEDTextArea          matlab.ui.control.TextArea
         PROBLEMLOADEDTextAreaLabel     matlab.ui.control.Label
         ShiftsButton                   matlab.ui.control.Button
-        AxisEqualCheckBox              matlab.ui.control.CheckBox
-        RESETVIEWPORTButton            matlab.ui.control.Button
         ComputeButton                  matlab.ui.control.Button
         ComputationalModeButtonGroup   matlab.ui.container.ButtonGroup
         MPLoewnerButton                matlab.ui.control.ToggleButton
@@ -72,6 +70,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         EigenvaluesTable               matlab.ui.control.Table
         PlotTabGroup                   matlab.ui.container.TabGroup
         MainPlotTab                    matlab.ui.container.Tab
+        MainPlotTabGridLayout          matlab.ui.container.GridLayout
         MainPlotAxes                   matlab.ui.control.UIAxes
         HSVPlotTab                     matlab.ui.container.Tab
         HSVAxes                        matlab.ui.control.UIAxes
@@ -88,6 +87,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         NLEVPData % T, name, loaded, arglist, coeff, f
         NLEVPReferenceData % eigs, ews, etc. (if set)
         InterpolationData % theta, sigma
+        idxKey
     end
 
     % observable data properties -- easier than separate events, can
@@ -123,6 +123,81 @@ classdef CIMTOOL < matlab.apps.AppBase
     
     % CIM computation
     methods (Access = public)
+
+        function recordKey(app,src,event)
+            app.idxKey = [contains(event.Key,'control'), contains(event.Key,'shift')];
+            if any(app.idxKey)
+                set(app.MainPlotAxes.Title,'String','MOD');
+            end
+            set(app.UIFigure,'WindowButtonDownFcn',@app.MainPlotAxesWindowButtonDownFcn);
+            app.MainPlotAxes.Interactions = dataTipInteraction('SnapToDataVertex','on');
+            app.MainPlotAxes.PickableParts = "all";
+        end
+
+        function releaseKey(app,src,event)
+            set(app.MainPlotAxes.Title,'String','NORMAL');
+            app.idxKey = [false false];
+            set(app.UIFigure,'WindowButtonDownFcn','');
+            set(app.UIFigure,'WindowButtonMotionFcn','');
+            set(app.UIFigure,'WindowButtonUpFcn','');
+            app.MainPlotAxes.Interactions = [panInteraction('Dimensions','xy') zoomInteraction('Dimensions','xy')];
+        end
+
+        % this callback will be set when CTRL/SHIFT is pressed
+        % should allow for axes interactivity when not selected, while
+        % allowing the user to affect CIM parameters when desired
+        function MainPlotAxesWindowButtonDownFcn(app,handle,event)
+            cf = gco(app.UIFigure);
+            switch(cf.Tag)
+                case "contour_center"
+                    set(app.UIFigure,'WindowButtonMotionFcn',@app.drag_center);
+                    set(app.UIFigure,'WindowButtonUpFcn',@app.set_new_center);
+                case "contour"
+                    set(app.UIFigure,'WindowButtonMotionFcn',@app.drag_radius);
+                    set(app.UIFigure,'WindowButtonUpFcn',@app.set_new_radius);
+            end
+        end
+
+        function drag_center(app,handle,event)
+            cp = app.MainPlotAxes.CurrentPoint;
+            onc = findobj(app.MainPlotAxes,'Tag','new_contour_center');
+            if ~isempty(onc)
+                delete(onc)
+            end
+            scatter(app.MainPlotAxes,cp(1,1),cp(1,2),200,"red",'filled','Tag',"new_contour_center");
+        end
+
+        function set_new_center(app,handle,event)
+            cp = app.MainPlotAxes.CurrentPoint;
+            cp = cp(1,1) + cp(1,2)*1i;
+            delete(findobj(app.MainPlotAxes,'Tag','new_contour_center'));
+            app.contourparameters.center = cp;
+            app.releaseKey(handle,event);
+        end
+
+        function drag_radius(app,handle,event)
+            cp = app.MainPlotAxes.CurrentPoint;
+            cp = cp(1,1) + cp(1,2)*1i;
+            center = app.contourparameters.center;
+            radius = sqrt((real(center) - real(cp))^2 + (imag(center) - imag(cp))^2);
+            onc = findobj(app.MainPlotAxes,'Tag','new_contour');
+            if ~isempty(onc)
+                delete(onc)
+            end
+            zc = circle_trapezoid(256,center,radius);
+            zc = [center + radius, zc, center + radius];
+            plot(app.MainPlotAxes,real(zc),imag(zc),"red",'LineWidth',5,'Tag',"new_contour");
+        end
+
+        function set_new_radius(app,handle,event)
+            cp = app.MainPlotAxes.CurrentPoint;
+            cp = cp(1,1) + cp(1,2)*1i;
+            center = app.contourparameters.center;
+            radius = sqrt((real(center) - real(cp))^2 + (imag(center) - imag(cp))^2);
+            delete(findobj(app.MainPlotAxes,'Tag','new_contour'));
+            app.contourparameters.radius = radius;
+            app.releaseKey(handle,event);
+        end
 
         % compute only "dirty" data -- enables rapid system
         % realization when only interpolation data changes
@@ -365,7 +440,7 @@ classdef CIMTOOL < matlab.apps.AppBase
                 app.SampleParameters.L = app.sampleNormalRandomMatrix(app.NLEVPData.n,app.SampleParameters.ell);
             end
             if app.ComputationalMode == "MPLoewner"
-                app.updateMPLoewnershifts();
+                app.updateshifts();
             end
         end
 
@@ -376,7 +451,7 @@ classdef CIMTOOL < matlab.apps.AppBase
                 app.SampleParameters.R = app.sampleNormalRandomMatrix(app.NLEVPData.n,app.SampleParameters.r);
             end
             if app.ComputationalMode == "MPLoewner"
-                app.updateMPLoewnershifts();
+                app.updateshifts();
             end
         end
 
@@ -445,6 +520,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             [app.QuadData.z,app.QuadData.w] = app.contourparameters.getNodesWeights(app.NumQuadNodes);
             app.cleanhandles(app.ContourPlotHandles);
             app.ContourPlotHandles = app.contourparameters.plot(app.MainPlotAxes,app.QuadData.z);
+            app.updateshifts();
             app.DataDirtiness = 2;
         end
 
@@ -534,7 +610,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         function NumEigSearchChangedFcn(app, src, event)
             app.EigSearchEditField.Value = app.NumEigSearch;
              if app.ComputationalMode == "MPLoewner"
-                app.updateMPLoewnershifts();
+                app.updateshifts();
             end
         end
 
@@ -623,7 +699,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             notify(app,'InterpolationDataChanged');
         end
 
-        function updateMPLoewnershifts(app)
+        function updateshifts(app)
             app.defaultshifts();
         end
 
@@ -666,7 +742,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         function createComponents(app)
 
             % Create UIFigure and hide until all components are created
-            app.UIFigure = uifigure('Visible', 'off');
+            app.UIFigure = uifigure('Visible', 'off','WindowKeyPressFcn',@app.recordKey,'WindowKeyReleaseFcn',@app.releaseKey);
             app.UIFigure.AutoResizeChildren = 'off';
             app.UIFigure.Position = [100 100 752 483];
             app.UIFigure.Name = 'MATLAB App';
@@ -789,19 +865,6 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.ComputeButton.Position = [49 184 115 32];
             app.ComputeButton.Text = 'COMPUTE';
 
-            % Create RESETVIEWPORTButton
-            app.RESETVIEWPORTButton = uibutton(app.LeftPanel, 'push');
-            app.RESETVIEWPORTButton.WordWrap = 'on';
-            app.RESETVIEWPORTButton.Position = [49 147 115 38];
-            app.RESETVIEWPORTButton.Text = 'RESET VIEWPORT';
-            app.RESETVIEWPORTButton.Enable = "off";
-
-            % Create AxisEqualCheckBox
-            app.AxisEqualCheckBox = uicheckbox(app.LeftPanel);
-            app.AxisEqualCheckBox.Text = 'Axis Equal';
-            app.AxisEqualCheckBox.Position = [67 19 79 22];
-            app.AxisEqualCheckBox.Enable = "off";
-
             % Create PROBLEMLOADEDTextAreaLabel
             app.PROBLEMLOADEDTextAreaLabel = uilabel(app.LeftPanel);
             app.PROBLEMLOADEDTextAreaLabel.HorizontalAlignment = 'center';
@@ -898,7 +961,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.RightPanel.Layout.Row = 1;
             app.RightPanel.Layout.Column = 2;
 
-            % Create GridLayout2
+            % Create RightPanelGridLayout
             app.RightPanelGridLayout = uigridlayout(app.RightPanel);
             app.RightPanelGridLayout.ColumnWidth = {'1x'};
             app.RightPanelGridLayout.RowHeight = {'1.83x', '1x'};
@@ -914,15 +977,25 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.MainPlotTab = uitab(app.PlotTabGroup);
             app.MainPlotTab.Title = 'Main';
 
+            % Create MainPlotTabGridLayout
+            app.MainPlotTabGridLayout = uigridlayout(app.MainPlotTab);
+            app.MainPlotTabGridLayout.ColumnWidth = {'1x'};
+            app.MainPlotTabGridLayout.RowHeight = {'1x'};
+            app.MainPlotTabGridLayout.RowSpacing = 0;
+            app.MainPlotTabGridLayout.Padding = [0 0 0 0];
+
             % Create MainPlotAxes
-            app.MainPlotAxes = uiaxes(app.MainPlotTab);
+            app.MainPlotAxes = uiaxes(app.MainPlotTabGridLayout);
             app.MainPlotAxes.Layer = 'top';
             app.MainPlotAxes.XGrid = 'on';
             app.MainPlotAxes.XMinorGrid = 'on';
             app.MainPlotAxes.YGrid = 'on';
             app.MainPlotAxes.YMinorGrid = 'on';
             app.MainPlotAxes.ZMinorGrid = 'on';
+            app.MainPlotAxes.Title.String = 'NORMAL';
             app.MainPlotAxes.DataAspectRatioMode = "manual";
+            app.MainPlotAxes.Layout.Row = 1;
+            app.MainPlotAxes.Layout.Column = 1;
             hold(app.MainPlotAxes,"on");
 
             % Create HSVPlotTab

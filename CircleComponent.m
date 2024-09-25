@@ -51,10 +51,12 @@ classdef CircleComponent < ContourComponentInterface
             [z,w] = circle_trapezoid(N,comp.center,comp.radius);
         end
         function phandles = plot(comp,ax,zd)
-            zc = circle_trapezoid(128,comp.center,comp.radius);
+            zc = circle_trapezoid(256,comp.center,comp.radius);
+            zc = [comp.center + comp.radius, zc, comp.center + comp.radius];
             phandles = {};
-            phandles{1} = plot(ax,real(zc),imag(zc),"blue");
-            phandles{2} = scatter(ax,real(zd),imag(zd),"red","x",'LineWidth',2);
+            phandles{1} = scatter(ax,real(comp.center),imag(comp.center),200,"black",'filled','LineWidth',10,'Tag',"contour_center");
+            phandles{2} = plot(ax,real(zc),imag(zc),"blue",'LineWidth',5,'Tag',"contour");
+            %phandles{3} = scatter(ax,real(zd),imag(zd),200,"red","x",'Tag',"quadnodes");
         end
     end
 
