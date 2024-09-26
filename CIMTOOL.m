@@ -403,7 +403,9 @@ classdef CIMTOOL < matlab.apps.AppBase
         
         % link InterpolationData with ShiftsTable.Data
         function ShiftsTableCellEdit(app, event)
-            app.InterpolationData = event.Source.Data;
+            app.InterpolationData.sigma = event.Source.Data.sigma;
+            app.InterpolationData.theta = event.Source.Data.theta;
+            %app.InterpolationData = event.Source.Data;
             notify(app,'InterpolationDataChanged')
         end
 
@@ -706,7 +708,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         function set_default_properties(app)
             app.DataDirtiness = 2;
             app.NLEVPData = struct('loaded',false,'T',missing);
-            app.NLEVPReferenceData = struct('loaded',false,'compute',true,'ew',NaN);
+            app.NLEVPReferenceData = struct('loaded',false,'compute',false,'ew',NaN);
             app.SampleParameters = struct('L',NaN,'ell',NaN,'R',NaN,'r',NaN);
             app.InterpolationData = struct('loaded',false,'theta',NaN,'sigma',NaN,'ShiftScale',1.2);
             app.ResultData = struct('loaded',false,'ew',NaN,'ev',NaN,'sw',NaN,'sv',NaN);

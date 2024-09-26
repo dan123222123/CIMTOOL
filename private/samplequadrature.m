@@ -31,7 +31,7 @@ assert(all([l1,l2]==[n,n]));
 Ql = zeros(ell,n,N);
 Qr = zeros(n,r,N);
 Qlr = zeros(ell,r,N);
-for i=1:N
+parfor i=1:N
     Ql(:,:,i) = L'/T(z(i));
     Qr(:,:,i) = T(z(i))\R;
     Qlr(:,:,i) = L'*Qr(:,:,i);

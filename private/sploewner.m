@@ -36,7 +36,7 @@ D = zeros(ell*maxK,r*(maxK+1));
 if sigma == Inf
     f = @(k,z) (z.^k);
 else
-    f = @(k,z) ((-1.^k)/(sigma - z).^(k+1));
+    f = @(k,z) (((-1).^k)/(sigma - z).^(k+1));
 end
 
 kb=0; % which moment the data matrix reaches sufficient rank at
@@ -75,8 +75,8 @@ D0 = D(1:k*ell,1:k*r);
 if sigma == Inf
     D1 = D(1:k*ell,r+1:(k+1)*r);
 else
-    D0 = -1*D0;
-    D1 = -sigma*D(1:k*ell,r+1:(k+1)*r) - D0;
+    D0 = D(1:k*ell,r+1:(k+1)*r);
+    D1 = sigma*D(1:k*ell,r+1:(k+1)*r) + D(1:k*ell,1:k*r);
 end
 
 % (reduced) rank-m svd of D0
