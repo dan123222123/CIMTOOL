@@ -16,8 +16,6 @@ classdef CircleComponent < ContourComponentInterface
 
     properties (Access = public)
         MainApp % app that contains this component, set in constructor
-        center (1,1) double {mustBeNonmissing(center), mustBeNonNan(center), mustBeFinite(center)} = 0+0i;
-        radius (1,1) double {mustBeReal(radius), mustBePositive(radius), mustBeNonzero(radius), mustBeNonmissing(radius), mustBeNonNan(radius), mustBeFinite(radius)} = 1;
     end
     
     % Callbacks that handle component events
