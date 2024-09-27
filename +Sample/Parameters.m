@@ -1,23 +1,36 @@
-classdef Parameters
-    %PARAMETERS Summary of this class goes here
-    %   Detailed explanation goes here
+classdef Parameters < handle
     
-    properties
-        Property1
+    properties (SetObservable)
+        L       (:,:) double
+        R       (:,:) double
+        n       (1,1) double
+        ell     (1,1) double
+        r       (1,1) double
+        ComputationalMode 
+        % make this an enum, listen and set from the main app
+        % this might be useful here, and we may be able to save some
+        % sampling overhead if the mode is right.
     end
     
     methods
-        function obj = Parameters(inputArg1,inputArg2)
-            %PARAMETERS Construct an instance of this class
-            %   Detailed explanation goes here
-            obj.Property1 = inputArg1 + inputArg2;
+
+        function obj = Parameters(n,ell,r)
+            obj.L = sample(n,ell);
+            obj.R = sample(n,r);
+            obj.n = n;
+            obj.ell = ell;
+            obj.r = r;
         end
-        
-        function outputArg = method1(obj,inputArg)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-            outputArg = obj.Property1 + inputArg;
-        end
+
     end
+
+    methods (Static)
+
+        function M = sample(n,d)
+            M = randn(n,d);
+        end
+
+    end
+
 end
 
