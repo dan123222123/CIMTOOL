@@ -1,8 +1,14 @@
-classdef Parameters < handle
-    
-    properties (SetObservable)
+classdef Sampling < handle
+
+    properties
         L       (:,:) double
         R       (:,:) double
+        Ql          (:,:,:) double
+        Qr          (:,:,:) double
+        Qlr         (:,:,:) double
+    end
+    
+    properties (SetObservable)
         n       (1,1) double
         ell     (1,1) double
         r       (1,1) double
@@ -14,7 +20,7 @@ classdef Parameters < handle
     
     methods
 
-        function obj = Parameters(n,ell,r)
+        function obj = Sampling(n,ell,r)
             obj.L = sample(n,ell);
             obj.R = sample(n,r);
             obj.n = n;

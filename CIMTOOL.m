@@ -82,11 +82,6 @@ classdef CIMTOOL < matlab.apps.AppBase
     end
 
     properties (Access = public)
-        SampleData % Ql,Qr,Qlr
-        QuadType % Circle, Ellipse, Rectangle, etc.
-        NLEVPData % T, name, loaded, arglist, coeff, f
-        NLEVPReferenceData % eigs, ews, etc. (if set)
-        InterpolationData % theta, sigma
         idxKey
     end
 
@@ -94,15 +89,10 @@ classdef CIMTOOL < matlab.apps.AppBase
     % probably switch over to make the code simpler
     properties (SetObservable,AbortSet)
         ViewPortDimensions % [xmin, xmax, ymin, ymax]
-        ComputationalMode
-        DataDirtiness % 0,1, or 2 to denote what needs to be recomputed
-        SampleParameters % L,R,ell,r
-        QuadData % z,w
         NumQuadNodes
         NumEigSearch
         NumMaxMoments
         tol = NaN
-        ResultData % ew, ev, sw, sv, metrics, etc.
     end
 
     % Plot handles
@@ -246,7 +236,7 @@ classdef CIMTOOL < matlab.apps.AppBase
                 case {"Hankel","SPLoewner"}
                     [ew,sw] = sploewner( ...
                         app.SampleData.Qlr, ...
-                        app.InterpolationData.sigma(1), ...
+                        app.RealizationData.sigma(1), ...
                         app.QuadData.z, ...
                         app.QuadData.w, ...
                         app.NumEigSearch, ...
@@ -257,8 +247,8 @@ classdef CIMTOOL < matlab.apps.AppBase
                     [ew,sw] = mploewner( ...
                         app.SampleData.Ql, ...
                         app.SampleData.Qr, ...
-                        app.InterpolationData.theta, ...
-                        app.InterpolationData.sigma, ...
+                        app.RealizationData.theta, ...
+                        app.RealizationData.sigma, ...
                         app.SampleParameters.L, ...
                         app.SampleParameters.R, ...
                         app.QuadData.z, ...
@@ -403,8 +393,8 @@ classdef CIMTOOL < matlab.apps.AppBase
         
         % link InterpolationData with ShiftsTable.Data
         function ShiftsTableCellEdit(app, event)
-            app.InterpolationData.sigma = event.Source.Data.sigma;
-            app.InterpolationData.theta = event.Source.Data.theta;
+            app.RealizationData.sigma = event.Source.Data.sigma;
+            app.RealizationData.theta = event.Source.Data.theta;
             %app.InterpolationData = event.Source.Data;
             notify(app,'InterpolationDataChanged')
         end
@@ -549,16 +539,16 @@ classdef CIMTOOL < matlab.apps.AppBase
         function InterpolationDataChangedFcn(app, src, event)
             app.cleanhandles(app.InterpolationDataPlotHandles);
             app.InterpolationDataPlotHandles = {};
-            if ~any(ismissing(app.InterpolationData.sigma))% && all(isfinite(rmmissing(app.InterpolationData.sigma)))
-                app.InterpolationDataPlotHandles{end+1} = scatter(app.MainPlotAxes,real(app.InterpolationData.sigma),imag(app.InterpolationData.sigma),"blue","square",'LineWidth',2);
+            if ~any(ismissing(app.RealizationData.sigma))% && all(isfinite(rmmissing(app.InterpolationData.sigma)))
+                app.InterpolationDataPlotHandles{end+1} = scatter(app.MainPlotAxes,real(app.RealizationData.sigma),imag(app.RealizationData.sigma),"blue","square",'LineWidth',2);
             end
-            if ~any(ismissing(app.InterpolationData.theta))
-                app.InterpolationDataPlotHandles{end+1} = scatter(app.MainPlotAxes,real(app.InterpolationData.theta),imag(app.InterpolationData.theta),"red","square",'LineWidth',2);
+            if ~any(ismissing(app.RealizationData.theta))
+                app.InterpolationDataPlotHandles{end+1} = scatter(app.MainPlotAxes,real(app.RealizationData.theta),imag(app.RealizationData.theta),"red","square",'LineWidth',2);
             end
-            mil = max(length(app.InterpolationData.theta),length(app.InterpolationData.sigma));
-            thetapadsize = mil - length(app.InterpolationData.theta);
-            sigmapadsize = mil - length(app.InterpolationData.sigma);
-            app.ShiftsTable.Data = table(padarray(app.InterpolationData.theta,thetapadsize,NaN,'post'),padarray(app.InterpolationData.sigma,sigmapadsize,NaN,'post'),'VariableNames',["theta","sigma"]);
+            mil = max(length(app.RealizationData.theta),length(app.RealizationData.sigma));
+            thetapadsize = mil - length(app.RealizationData.theta);
+            sigmapadsize = mil - length(app.RealizationData.sigma);
+            app.ShiftsTable.Data = table(padarray(app.RealizationData.theta,thetapadsize,NaN,'post'),padarray(app.RealizationData.sigma,sigmapadsize,NaN,'post'),'VariableNames',["theta","sigma"]);
             if app.DataDirtiness == 0
                 app.DataDirtiness = 1;
             end
@@ -643,7 +633,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         % outside of the circumcircle given by QuadData.z 
         function s = FindRandomShift(app)
             c = sum(app.QuadData.z)/length(app.QuadData.z);
-            d = max(abs(c - app.QuadData.z))*app.InterpolationData.ShiftScale;
+            d = max(abs(c - app.QuadData.z))*app.RealizationData.ShiftScale;
             r = randn(1,"like",1i); r = r/norm(r);
             s = c + r*d;
         end
@@ -659,7 +649,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             % get the maximum distance between c and quad nodes
             r = max(abs(c - app.QuadData.z));
             % nodes on a circle around the current quad nodes
-            z = circle_trapezoid(4*m,c,r*app.InterpolationData.ShiftScale);
+            z = circle_trapezoid(4*m,c,r*app.RealizationData.ShiftScale);
             theta = double.empty();
             sigma = double.empty();
             for i=1:length(z)
@@ -696,8 +686,8 @@ classdef CIMTOOL < matlab.apps.AppBase
                 otherwise
                     uialert(app.UIFigure,'Could not set shifts.','Interpolation Data Error');
             end
-            app.InterpolationData.theta = theta;
-            app.InterpolationData.sigma = sigma;
+            app.RealizationData.theta = theta;
+            app.RealizationData.sigma = sigma;
             notify(app,'InterpolationDataChanged');
         end
 
@@ -710,7 +700,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.NLEVPData = struct('loaded',false,'T',missing);
             app.NLEVPReferenceData = struct('loaded',false,'compute',false,'ew',NaN);
             app.SampleParameters = struct('L',NaN,'ell',NaN,'R',NaN,'r',NaN);
-            app.InterpolationData = struct('loaded',false,'theta',NaN,'sigma',NaN,'ShiftScale',1.2);
+            app.RealizationData = struct('loaded',false,'theta',NaN,'sigma',NaN,'ShiftScale',1.2);
             app.ResultData = struct('loaded',false,'ew',NaN,'ev',NaN,'sw',NaN,'sv',NaN);
             app.NumQuadNodes = 8;
             app.NumEigSearch = 0;

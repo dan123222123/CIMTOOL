@@ -3,12 +3,12 @@ classdef Quad < handle
     properties
         z (1,:) double = NaN
         w (1,:) double = NaN
+        phandles = gobjects(0);
     end
 
     properties (SetObservable)
         changed = false
         ax = missing
-        phandles = gobjects(0);
     end
 
     methods
