@@ -1,28 +1,25 @@
-classdef Sampling < handle
+classdef SampleData < handle
 
     properties
-        L       (:,:) double
-        R       (:,:) double
-        Ql          (:,:,:) double
-        Qr          (:,:,:) double
-        Qlr         (:,:,:) double
+        Ql      (:,:,:) double = missing
+        Qr      (:,:,:) double = missing
+        Qlr     (:,:,:) double = missing
     end
     
     properties (SetObservable)
         n       (1,1) double
         ell     (1,1) double
         r       (1,1) double
-        ComputationalMode 
-        % make this an enum, listen and set from the main app
-        % this might be useful here, and we may be able to save some
-        % sampling overhead if the mode is right.
+        L       (:,:) double
+        R       (:,:) double
+        loaded = false
     end
     
     methods
 
-        function obj = Sampling(n,ell,r)
-            obj.L = sample(n,ell);
-            obj.R = sample(n,r);
+        function obj = SampleData(n,ell,r)
+            obj.L = Numerics.SampleData.sampleMatrix(n,ell);
+            obj.R = Numerics.SampleData.sampleMatrix(n,r);
             obj.n = n;
             obj.ell = ell;
             obj.r = r;
@@ -32,7 +29,7 @@ classdef Sampling < handle
 
     methods (Static)
 
-        function M = sample(n,d)
+        function M = sampleMatrix(n,d)
             M = randn(n,d);
         end
 

@@ -1,13 +1,13 @@
 classdef Quad < handle
 
     properties
-        z (1,:) double = NaN
-        w (1,:) double = NaN
         phandles = gobjects(0);
     end
 
     properties (SetObservable)
-        changed = false
+        z (1,:) double = NaN
+        w (1,:) double = NaN
+        loaded = false
         ax = missing
     end
 
@@ -21,6 +21,7 @@ classdef Quad < handle
             end
             obj.z = z;
             obj.w = w;
+            obj.loaded = true;
             obj.ax = ax;
             obj.phandles = gobjects(0);
         end
@@ -34,7 +35,9 @@ classdef Quad < handle
                 ax = gca();
             end
             if ~isgraphics(ax), ax = axes(gcf); end
-            hold(ax,"on");
+            if ~isempty(obj.phandles)
+                obj.cla();
+            end
             obj.phandles(end+1) = scatter(ax,real(obj.z),imag(obj.z),200,"red","x",'Tag',"quadrature_nodes");
             obj.ax = ax;
         end

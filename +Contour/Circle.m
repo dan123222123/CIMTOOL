@@ -51,21 +51,27 @@ classdef Circle < Contour.Quad
                 ax = gca();
             end
             if ~isgraphics(ax), ax = axes(gcf); end
+            if ~isempty(obj.phandles)
+                obj.cla();
+            end
             zp = Contour.Circle.trapezoid(obj.center,obj.radius,512);
             zp = [obj.center + obj.radius, zp, obj.center + obj.radius];
+            chold = ishold(ax);
+            obj.phandles(end+1) = scatter(ax,real(obj.center),imag(obj.center),200,"black",'filled','Tag',"contour_center");
             hold(ax,"on");
             if obj.plot_quadrature
-                plot@Contour.Quad(obj,ax);
+                obj.phandles(end+1) = scatter(ax,real(obj.z),imag(obj.z),200,"red","x",'Tag',"quadrature_nodes");
             end
-            obj.phandles(end+1) = scatter(ax,real(obj.center),imag(obj.center),200,"black",'filled','Tag',"contour_center");
             obj.phandles(end+1) = plot(ax,real(zp),imag(zp),"blue",'LineWidth',5,'Tag',"contour");
+            hold(ax,chold);
             obj.ax = ax;
         end
 
         function update(obj,~,~)
+            obj.loaded = false;
             [obj.z,obj.w] = Contour.Circle.trapezoid(obj.center,obj.radius,obj.N);
             obj.update_plot(missing,missing);
-            obj.changed = true;
+            obj.loaded = true;
         end
 
     end
