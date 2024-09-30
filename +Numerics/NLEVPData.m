@@ -37,6 +37,7 @@ classdef NLEVPData < handle
             if ~ismissing(ax)
                 obj.plot(ax)
             end
+            obj.n = size(obj.T(0),1);
             addlistener(obj,'coeffs','PostSet',@obj.computeReference);
             addlistener(obj,'compute_reference','PostSet',@obj.computeReference);
             addlistener(obj,'refew','PostSet',@obj.update_plot);

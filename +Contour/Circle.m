@@ -23,8 +23,8 @@ classdef Circle < Contour.Quad
 
         function obj = Circle(center,radius,N,ax)
             arguments
-                center
-                radius
+                center = 0
+                radius = 1
                 N = 8
                 ax = missing
             end
