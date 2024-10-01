@@ -1,4 +1,4 @@
-function [E,sw] = mploewner(Ql,Qr,theta,sigma,L,R,z,w,m,abstol)
+function [E,Lbsw] = mploewner(Ql,Qr,theta,sigma,L,R,z,w,m,abstol)
 % Suppose T : C -> nXn matrices is meromorphic on a domain D.
 % The boundary of D is a closed curve in C approximated with {z_k,w_k}
 % nodes and weights associated to a particular quadrature rule.
@@ -53,14 +53,6 @@ for j=1:r
     end
 end
 
-% % construct Lb and Ls matrices
-% for i=1:ell
-%     for j=1:r
-%         Lb(i,j) = (B(i,:)*R(:,j) - L(:,i)'*C(:,j))/(theta(i)-sigma(j));
-%         Ls(i,j) = (theta(i)*B(i,:)*R(:,j) - sigma(j)*L(:,i)'*C(:,j))/(theta(i)-sigma(j));
-%     end
-% end
-
 % construct Lb and Ls matrices
 for i=1:ell
     for j=1:r
@@ -71,23 +63,26 @@ for i=1:ell
     end
 end
 
-if ~isnan(abstol)
-    Lbrank = rank(Lb,abstol);
-else
-    Lbrank = rank(Lb);
-end
+[Lbrank,X,Sigma,Y,Lbsw] = rankdet;
 
 if Lbrank < m
     error("could not generate rank %d base Loewner matrix",m);
 end
 
-% (reduced) rank-m svd of Lb
-[X, Sigma, Y] = svd(Lb,"matrix");
-sw = diag(Sigma)/Sigma(1,1);
-
 % solve (X'*D1*Y,Sigma) GEP to get eigenvalues of underlying NLEVP in D.
 X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
 E = eig(X'*Ls*Y,Sigma);
 % END NUMERICS
+
+    function [Lbrank,X,Sigma,Y,Lbsw] = rankdet
+        [X, Sigma, Y] = svd(Lb,"matrix");
+        if isnan(abstol)
+            tol = max(size(Sigma))*eps(Sigma(1,1));
+        else
+            tol = abstol;
+        end
+        Lbsw = diag(Sigma)/Sigma(1,1);
+        Lbrank = sum(diag(Sigma)>=tol);
+    end
 
 end

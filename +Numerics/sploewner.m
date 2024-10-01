@@ -1,4 +1,4 @@
-function [E,sv] = sploewner(Qlr,sigma,z,w,m,maxK,abstol)
+function [E,Dbsw] = sploewner(Qlr,sigma,z,w,m,K,abstol)
 % Suppose T : C -> nXn matrices is meromorphic on a domain D.
 % The boundary of D is a closed curve in C approximated with {z_k,w_k}
 % nodes and weights associated to a particular quadrature rule.
@@ -13,6 +13,7 @@ function [E,sv] = sploewner(Qlr,sigma,z,w,m,maxK,abstol)
 %   abstol  -- absolute tolerance for rank determination of base data matrix
 % OUTPUTS
 %   E       -- mXm matrix of eigenvalues of T within D
+%   Dbsw    -- singular valuse of base data matrix
 % BEGIN
 
 % BEGIN SANITY CHECKS
@@ -29,8 +30,8 @@ assert(N==length(w));
 
 % BEGIN NUMERICS
 % allocate maximum size moment and data matrix
-M = zeros(ell,r,2*maxK);
-D = zeros(ell*maxK,r*(maxK+1));
+M = zeros(ell,r,2*K);
+D = zeros(ell*K,r*(K+1));
 
 % choose "hankel" or "loewner" moment functions based on shift finite/Inf
 if sigma == Inf
@@ -40,7 +41,7 @@ else
 end
 
 kb=0; % which moment the data matrix reaches sufficient rank at
-for k=1:maxK
+for k=1:K
     % construct (k+1)-st moment
     for n=1:N
         M(:,:,2*k-1) = M(:,:,2*k-1) + w(n) * f(2*k-2,z(n)) * Qlr(:,:,n);
@@ -51,41 +52,40 @@ for k=1:maxK
         D((k-1)*ell+1:k*ell,(i-1)*r+1:i*r) = M(:,:,k+i-1);
         D((i-1)*ell+1:i*ell,k*r+1:(k+1)*r) = M(:,:,k+i);
     end
-    % if rank(Db) > m, we don't need to continue padding the data matrix
-    if ~isnan(abstol)
-        Drank = rank(D(1:k*ell,1:k*r),abstol);
+
+    % extract data matrix from D
+    D0 = D(1:k*ell,1:k*r);
+    
+    % construct base and shifted data matrix based on sigma and D
+    if sigma == Inf
+        D1 = D(1:k*ell,r+1:(k+1)*r);
     else
-        Drank = rank(D(1:k*ell,1:k*r));
+        D0 = D(1:k*ell,r+1:(k+1)*r);
+        D1 = sigma*D(1:k*ell,r+1:(k+1)*r) + D(1:k*ell,1:k*r);
     end
 
-    if Drank >= m
-        kb=k;
-        break;
-    end
 end
 
-if kb==0
+[Drank,X,Sigma,Y,Dbsw] = rankdet;
+
+if Drank < m
     error("could not generate rank %d base data matrix",m);
 end
-
-% extract data matrix from D
-D0 = D(1:k*ell,1:k*r);
-
-% construct base and shifted data matrix based on sigma and D
-if sigma == Inf
-    D1 = D(1:k*ell,r+1:(k+1)*r);
-else
-    D0 = D(1:k*ell,r+1:(k+1)*r);
-    D1 = sigma*D(1:k*ell,r+1:(k+1)*r) + D(1:k*ell,1:k*r);
-end
-
-% (reduced) rank-m svd of D0
-[X, Sigma, Y] = svd(D0,"matrix");
-sv = diag(Sigma)/Sigma(1,1);
 
 % solve (X'*D1*Y,Sigma) GEP to get eigenvalues of underlying NLEVP in D.
 X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
 E = eig(X'*D1*Y,Sigma);
 % END NUMERICS
+
+    function [Drank,X,Sigma,Y,Dbsw] = rankdet
+        [X, Sigma, Y] = svd(D0,"matrix");
+        if isnan(abstol)
+            tol = max(size(Sigma))*eps(Sigma(1,1));
+        else
+            tol = abstol;
+        end
+        Dbsw = diag(Sigma)/Sigma(1,1);
+        Drank = sum(diag(Sigma)>=tol);
+    end
 
 end

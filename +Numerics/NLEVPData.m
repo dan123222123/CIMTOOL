@@ -12,9 +12,12 @@ classdef NLEVPData < handle
         refev = missing
         ax = missing
     end
+
+    properties (Dependent)
+        n
+    end
     
     properties
-        n = missing
         arglist = missing
         phandles = gobjects(0);
     end
@@ -37,12 +40,15 @@ classdef NLEVPData < handle
             if ~ismissing(ax)
                 obj.plot(ax)
             end
-            obj.n = size(obj.T(0),1);
             addlistener(obj,'coeffs','PostSet',@obj.computeReference);
             addlistener(obj,'compute_reference','PostSet',@obj.computeReference);
             addlistener(obj,'refew','PostSet',@obj.update_plot);
             addlistener(obj,'ax','PostSet',@obj.update_plot);
             addlistener(obj,'plot_reference','PostSet',@obj.update_plot);
+        end
+
+        function value = get.n(obj)
+            value = size(obj.T(0),1);
         end
 
         function cla(obj)

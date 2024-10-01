@@ -7,7 +7,6 @@ classdef Quad < handle
     properties (SetObservable)
         z (1,:) double = NaN
         w (1,:) double = NaN
-        loaded = false
         ax = missing
     end
 
@@ -21,9 +20,12 @@ classdef Quad < handle
             end
             obj.z = z;
             obj.w = w;
-            obj.loaded = true;
             obj.ax = ax;
             obj.phandles = gobjects(0);
+            if ~ismissing(ax)
+                obj.plot(ax)
+            end
+            addlistener(obj,'z','PostSet',@obj.update_plot)
         end
 
         function plot(obj,ax)

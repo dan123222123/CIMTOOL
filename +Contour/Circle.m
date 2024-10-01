@@ -1,9 +1,9 @@
 classdef Circle < Contour.Quad
     
     properties (SetObservable)
-        center  (1,1) double = 0+0i
-        radius  (1,1) double = 1
-        N       (1,1) double = 8
+        center  (1,1) double
+        radius  (1,1) double
+        N       (1,1) double
         plot_quadrature = false
     end
 
@@ -40,6 +40,7 @@ classdef Circle < Contour.Quad
             addlistener(obj,'radius','PostSet',@obj.update);
             addlistener(obj,'N','PostSet',@obj.update);
             addlistener(obj,'plot_quadrature','PostSet',@obj.update_plot)
+            addlistener(obj,'ax','PostSet',@obj.update_plot);
         end
 
         function plot(obj,ax)
@@ -68,10 +69,8 @@ classdef Circle < Contour.Quad
         end
 
         function update(obj,~,~)
-            obj.loaded = false;
             [obj.z,obj.w] = Contour.Circle.trapezoid(obj.center,obj.radius,obj.N);
             obj.update_plot(missing,missing);
-            obj.loaded = true;
         end
 
     end
