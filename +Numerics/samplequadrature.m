@@ -31,10 +31,16 @@ assert(all([l1,l2]==[n,n]));
 Ql = zeros(ell,n,N);
 Qr = zeros(n,r,N);
 Qlr = zeros(ell,r,N);
+Tz = zeros(n,n,N);
+% first evaluate T at z(i)
+for i = 1:N
+    Tz(:,:,i) = T(z(i));
+end
+% then compute left/right/two-sided samples
 parfor i=1:N
-    Ql(:,:,i) = L'/T(z(i));
-    Qr(:,:,i) = T(z(i))\R;
-    Qlr(:,:,i) = L'*Qr(:,:,i);
+    Ql(:,:,i) = L' / Tz(:,:,i);
+    Qr(:,:,i) = Tz(:,:,i) \ R;
+    Qlr(:,:,i) = L' * Qr(:,:,i);
 end
 % END NUMERICS
 

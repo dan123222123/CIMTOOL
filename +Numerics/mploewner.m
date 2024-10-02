@@ -20,8 +20,8 @@ function [E,Lbsw] = mploewner(Ql,Qr,theta,sigma,L,R,z,w,m,abstol)
 % check that elements of qs have the same dimension
 [Lsize,n1,N1] = size(Ql);
 [n2,Rsize,N2] = size(Qr);
-ell = length(theta);
-r = length(sigma);
+elltheta = length(theta);
+rsigma = length(sigma);
 
 % check that the dimensions of the samples are compatible
 assert(n1==n2);
@@ -35,18 +35,18 @@ assert(N==length(w));
 
 % BEGIN NUMERICS
 % allocate left/right data and base/shifted Loewner matrices
-B = zeros(ell,n); C = zeros(n,r);
-Lb = zeros(ell,r); Ls = zeros(ell,r);
+B = zeros(elltheta,n); C = zeros(n,rsigma);
+Lb = zeros(elltheta,rsigma); Ls = zeros(elltheta,rsigma);
 
 % construct B and C matrices
-for i=1:ell
+for i=1:elltheta
     for k=1:N
         ldir = mod(i-1,Lsize)+1;
         B(i,:) = B(i,:) + (w(k)/(theta(i)-z(k)))*Ql(ldir,:,k);
     end
 end
 
-for j=1:r
+for j=1:rsigma
     for k=1:N
         rdir = mod(j-1,Rsize)+1;
         C(:,j) = C(:,j) + (w(k)/(sigma(j)-z(k)))*Qr(:,rdir,k);
@@ -54,8 +54,8 @@ for j=1:r
 end
 
 % construct Lb and Ls matrices
-for i=1:ell
-    for j=1:r
+for i=1:elltheta
+    for j=1:rsigma
         ldir = mod(i-1,Lsize)+1;
         rdir = mod(j-1,Rsize)+1;
         Lb(i,j) = (B(i,:)*R(:,rdir) - L(:,ldir)'*C(:,j))/(theta(i)-sigma(j));

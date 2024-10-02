@@ -40,7 +40,6 @@ else
     f = @(k,z) (((-1).^k)/(sigma - z).^(k+1));
 end
 
-kb=0; % which moment the data matrix reaches sufficient rank at
 for k=1:K
     % construct (k+1)-st moment
     for n=1:N
@@ -53,17 +52,17 @@ for k=1:K
         D((i-1)*ell+1:i*ell,k*r+1:(k+1)*r) = M(:,:,k+i);
     end
 
-    % extract data matrix from D
-    D0 = D(1:k*ell,1:k*r);
-    
-    % construct base and shifted data matrix based on sigma and D
-    if sigma == Inf
-        D1 = D(1:k*ell,r+1:(k+1)*r);
-    else
-        D0 = D(1:k*ell,r+1:(k+1)*r);
-        D1 = sigma*D(1:k*ell,r+1:(k+1)*r) + D(1:k*ell,1:k*r);
-    end
+end
 
+% extract data matrix from D
+D0 = D(1:K*ell,1:K*r);
+
+% construct base and shifted data matrix based on sigma and D
+if sigma == Inf
+    D1 = D(1:K*ell,r+1:(K+1)*r);
+else
+    D0 = D(1:K*ell,r+1:(K+1)*r);
+    D1 = sigma*D(1:K*ell,r+1:(K+1)*r) + D(1:K*ell,1:K*r);
 end
 
 [Drank,X,Sigma,Y,Dbsw] = rankdet;

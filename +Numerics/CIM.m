@@ -35,6 +35,7 @@ classdef CIM < handle
             %
             addlistener(obj.RealizationData,'ComputationalMode','PostSet',@obj.update_shifts);
             addlistener(obj.RealizationData,'ShiftScale','PostSet',@obj.update_shifts);
+            addlistener(obj.RealizationData,'K','PostSet',@obj.update_shifts);
             addlistener(obj.SampleData.Contour,'z','PostSet',@obj.update_shifts);
 
 
@@ -42,7 +43,7 @@ classdef CIM < handle
         end
 
         function update_shifts(obj,src,~)
-            if src.Name == "z" && ~obj.auto_update_shifts
+            if (src.Name == "z" || src.Name == "K") && ~obj.auto_update_shifts
                 return;
             end
             switch obj.RealizationData.ComputationalMode
@@ -62,7 +63,7 @@ classdef CIM < handle
         % circle with geo center and max_dist*scale
         function interlevedshifts(obj)
             z = obj.SampleData.Contour.z;
-            nsw = length(obj.ResultData.Dbsw);
+            nsw = obj.RealizationData.K;
             % get the geometric center
             c = sum(z)/length(z);
             % get the maximum distance between c and quad nodes
