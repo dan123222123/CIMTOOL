@@ -1,12 +1,15 @@
-% make main and sv axes
+%% make main and sv axes
 f1 = figure(1);
 clf(f1);
 ax1 = axes(f1,DataAspectRatioMode="manual");
+title(ax1,"Complex Plane")
 
 f2 = figure(2);
 clf(f2);
 ax2 = axes(f2,'yscale','log');
 cla(ax2);
+title(ax2,"Db/Ds Singular Values")
+legend(ax2);
 
 nep = Numerics.NLEVPData(missing,'qep3');
 nep.compute_reference = true;
@@ -25,7 +28,6 @@ c.compute()
 
 c.auto = true;
 
-% uncomment the line below to see the same trajectory using MPLoewner
 c.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
 
 pause(5);

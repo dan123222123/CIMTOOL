@@ -41,6 +41,7 @@ classdef RealizationData < handle
             addlistener(obj,'ax','PostSet',@obj.update_plot);
         end
 
+        
         function set.InterpolationData(obj,value)
             obj.InterpolationData = value;
             obj.loaded = false;

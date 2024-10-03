@@ -1,4 +1,4 @@
-function [E,Lbsw] = mploewner(Ql,Qr,theta,sigma,L,R,z,w,m,abstol)
+function [Lambda,V,Lbsw,Lssw,Lb,Ls] = mploewner(Ql,Qr,theta,sigma,L,R,z,w,m,abstol)
 % Suppose T : C -> nXn matrices is meromorphic on a domain D.
 % The boundary of D is a closed curve in C approximated with {z_k,w_k}
 % nodes and weights associated to a particular quadrature rule.
@@ -71,7 +71,13 @@ end
 
 % solve (X'*D1*Y,Sigma) GEP to get eigenvalues of underlying NLEVP in D.
 X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
-E = eig(X'*Ls*Y,Sigma);
+M = X'*Ls*Y / Sigma;
+[S,Lambda] = eig(M);
+Lambda = diag(Lambda);
+
+% recover right eigenvectors from right-sided samples
+V = C*Y*(Sigma\S);
+Lssw = svd(Ls);
 % END NUMERICS
 
     function [Lbrank,X,Sigma,Y,Lbsw] = rankdet

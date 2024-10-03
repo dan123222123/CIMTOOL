@@ -1,6 +1,8 @@
 classdef ResultData < handle
     
     properties (SetObservable)
+        Db      = missing
+        Ds      = missing
         ew      = missing % computed eigenvalues
         ev      = missing % computed eigenvectors
         Dbsw    = missing % singular values of base data matrix
@@ -12,6 +14,11 @@ classdef ResultData < handle
     properties
         MainAxphandles = gobjects(0);
         SvAxphandles = gobjects(0);
+    end
+
+    properties (Dependent)
+        Dbsize
+        Dssize
     end
     
     methods
@@ -27,8 +34,16 @@ classdef ResultData < handle
             addlistener(obj,'SvAx','PostSet',@obj.update_sv_ax);
 
             addlistener(obj,'ew','PostSet',@obj.update_main_ax);
-            addlistener(obj,'Dbsw','PostSet',@obj.update_sv_ax);
-            addlistener(obj,'Dssw','PostSet',@obj.update_sv_ax);
+            addlistener(obj,'Db','PostSet',@obj.update_sv_ax);
+            addlistener(obj,'Ds','PostSet',@obj.update_sv_ax);
+        end
+
+        function value = get.Dbsize(obj)
+            value = size(obj.Db);
+        end
+
+        function value = get.Dssize(obj)
+            value = size(obj.Ds);
         end
 
         function plot_main(obj)
@@ -51,7 +66,7 @@ classdef ResultData < handle
             obj.MainAx = ax;
         end
 
-        function plot_sv(obj,sw)
+        function plot_sv(obj)
             ax = obj.SvAx;
             if ismissing(ax)
                 ax = gca();
@@ -60,14 +75,21 @@ classdef ResultData < handle
             if ~isempty(obj.SvAxphandles)
                 obj.cla_sv();
             end
+            tstring = "";
             if ~any(ismissing(ax))
                 chold = ishold(ax);
-                if ~ismissing(sw)
-                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(sw),sw,"->","MarkerSize",10);
-                    ax.XLim = [0,length(sw)+1];
+                if ~ismissing(obj.Dbsw)
+                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(obj.Dbsw),obj.Dbsw,"->","MarkerSize",10,'DisplayName','Dbsw');
+                    tstring = strcat(tstring,sprintf("size(Db) = %d, %d",obj.Dbsize(1),obj.Dbsize(2)));
                 end
+                if ~ismissing(obj.Dbsw)
+                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(obj.Dssw),obj.Dssw,"->","MarkerSize",10,'DisplayName','Dssw');
+                    tstring = strcat(tstring,sprintf("\t||\tsize(Ds) = %d, %d",obj.Dssize(1),obj.Dssize(2)));
+                end
+                ax.XLim = [0,max(length(obj.Dbsw),length(obj.Dssw))+1];
                 hold(ax,chold);
             end
+            title(ax,tstring);
             obj.SvAx = ax;
         end
 
@@ -100,7 +122,7 @@ classdef ResultData < handle
         function update_sv_ax(obj,~,~)
             obj.cla_sv();
             if ~ismissing(obj.SvAx)
-                obj.plot_sv(obj.Dbsw);
+                obj.plot_sv();
             end
         end
        

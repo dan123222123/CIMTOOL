@@ -1,4 +1,4 @@
-function [E,Dbsw] = sploewner(Qlr,sigma,z,w,m,K,abstol)
+function [Lambda,V,Dbsw,Dssw,D0,D1] = sploewner(Qlr,Qr,sigma,z,w,m,K,abstol)
 % Suppose T : C -> nXn matrices is meromorphic on a domain D.
 % The boundary of D is a closed curve in C approximated with {z_k,w_k}
 % nodes and weights associated to a particular quadrature rule.
@@ -19,6 +19,7 @@ function [E,Dbsw] = sploewner(Qlr,sigma,z,w,m,K,abstol)
 % BEGIN SANITY CHECKS
 % check that elements of qs have the same dimension
 [ell,r,N] = size(Qlr);
+n = size(Qr,1);
 for i=1:N
     assert(all(size(Qlr(:,:,i))==[ell,r]));
 end
@@ -30,7 +31,8 @@ assert(N==length(w));
 
 % BEGIN NUMERICS
 % allocate maximum size moment and data matrix
-M = zeros(ell,r,2*K);
+Mlr = zeros(ell,r,2*K);
+Mr = zeros(n,r,K);
 D = zeros(ell*K,r*(K+1));
 
 % choose "hankel" or "loewner" moment functions based on shift finite/Inf
@@ -41,15 +43,16 @@ else
 end
 
 for k=1:K
-    % construct (k+1)-st moment
-    for n=1:N
-        M(:,:,2*k-1) = M(:,:,2*k-1) + w(n) * f(2*k-2,z(n)) * Qlr(:,:,n);
-        M(:,:,2*k) = M(:,:,2*k) + w(n) * f(2*k-1,z(n)) * Qlr(:,:,n);
+    % construct (k+1)-st moments
+    for nn=1:N
+        Mlr(:,:,2*k-1) = Mlr(:,:,2*k-1) + w(nn) * f(2*k-2,z(nn)) * Qlr(:,:,nn);
+        Mlr(:,:,2*k) = Mlr(:,:,2*k) + w(nn) * f(2*k-1,z(nn)) * Qlr(:,:,nn);
+        Mr(:,:,k) = Mr(:,:,k) + w(nn) * f(k,z(nn)) * Qr(:,:,nn);
     end
     % update k-th block-row and (k+1)-st block-column of D
     for i=1:k
-        D((k-1)*ell+1:k*ell,(i-1)*r+1:i*r) = M(:,:,k+i-1);
-        D((i-1)*ell+1:i*ell,k*r+1:(k+1)*r) = M(:,:,k+i);
+        D((k-1)*ell+1:k*ell,(i-1)*r+1:i*r) = Mlr(:,:,k+i-1);
+        D((i-1)*ell+1:i*ell,k*r+1:(k+1)*r) = Mlr(:,:,k+i);
     end
 
 end
@@ -73,7 +76,18 @@ end
 
 % solve (X'*D1*Y,Sigma) GEP to get eigenvalues of underlying NLEVP in D.
 X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
-E = eig(X'*D1*Y,Sigma);
+M = X'*D1*Y / Sigma;
+[S,Lambda] = eig(M);
+Lambda = diag(Lambda);
+
+% recover right eigenvectors from right-sided samples
+Cbb = zeros(size(Mr,1),size(Mr,2)*K);
+for i=1:K
+    Cbb(:,(i-1)*size(Mr,2)+1:i*size(Mr,2)) = Mr(:,:,i);
+end
+V = Cbb*Y*(Sigma\S);
+Dssw = svd(D1);
+
 % END NUMERICS
 
     function [Drank,X,Sigma,Y,Dbsw] = rankdet
