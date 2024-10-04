@@ -69,7 +69,7 @@ pause(3);
 steps = 100; plength=0.1; y = linspace(0,0.75,steps);
 for i=1:length(y)
     title(ax1,sprintf("center = %d",y(i)));
-    c.SampleData.Contour.center = y(i);
+    c.SampleData.Contour.N = y(i);
     pause(plength);
     addpoints(mresal,i,maxrelresidual(c));
 end

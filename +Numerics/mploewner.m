@@ -66,7 +66,7 @@ end
 [Lbrank,X,Sigma,Y,Lbsw] = rankdet;
 
 if Lbrank < m
-    error("could not generate rank %d base Loewner matrix",m);
+    error("generated rand %d < %d base Loewner matrix",Lbrank,m);
 end
 
 % solve (X'*D1*Y,Sigma) GEP to get eigenvalues of underlying NLEVP in D.

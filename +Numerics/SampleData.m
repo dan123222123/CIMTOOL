@@ -15,8 +15,8 @@ classdef SampleData < handle
     properties (SetObservable)
         ell     (1,1) double
         r       (1,1) double
-        L       (:,:) double
-        R       (:,:) double
+        Lf       (:,:) double
+        Rf       (:,:) double
         loaded  = false
         ax = missing
     end
@@ -24,6 +24,11 @@ classdef SampleData < handle
     properties (SetObservable,Access = public)
         NLEVP
         Contour
+    end
+
+    properties (Dependent)
+        L
+        R
     end
     
     methods
@@ -52,11 +57,11 @@ classdef SampleData < handle
 
         function NLEVPChanged(obj,~,~)
             if obj.NLEVP.loaded
-                nold = size(obj.L,1);
+                nold = size(obj.Lf,1);
                 n = obj.NLEVP.n;
                 if n ~= nold
-                    obj.L = Numerics.SampleData.sampleMatrix(n,obj.ell);
-                    obj.R = Numerics.SampleData.sampleMatrix(n,obj.r);
+                    obj.Lf = Numerics.SampleData.sampleMatrix(n,obj.ell);
+                    obj.Rf = Numerics.SampleData.sampleMatrix(n,obj.r);
                 end
                 obj.ell = min(obj.ell,n);
                 obj.r = min(obj.r,n);
@@ -72,26 +77,52 @@ classdef SampleData < handle
             obj.loaded = false;
         end
 
+        function value = get.L(obj)
+            maxsize = size(obj.Lf,2);
+            value = obj.Lf(:,1:min(obj.ell,maxsize));
+        end
+
+        function value = get.R(obj)
+            maxsize = size(obj.Rf,2);
+            value = obj.Rf(:,1:min(obj.r,maxsize));
+        end
+
         function set.ell(obj,value)
-            if value > obj.ell
-                Lnew = Numerics.SampleData.sampleMatrix(obj.NLEVP.n,value-obj.ell);
-                obj.L = [obj.L,Lnew];
-            else
-                obj.L = obj.L(:,1:value);
-            end
+            % Lsize = size(obj.Lf,2);
+            % if value ~= Lsize % don't mess with L if it was set first and ell is being updated to match it
+            %     if value > obj.ell
+            %         Lnew = Numerics.SampleData.sampleMatrix(obj.NLEVP.n,value-obj.ell);
+            %         obj.Lf = [obj.Lf,Lnew];
+            %     else
+            %         obj.Lf = obj.Lf(:,1:value);
+            %     end
+            % end
             obj.ell = value;
             obj.loaded = false;
         end
 
         function set.r(obj,value)
-            if value > obj.r
-                Rnew = Numerics.SampleData.sampleMatrix(obj.NLEVP.n,value-obj.r);
-                obj.R = [obj.R,Rnew];
-            else
-                obj.R = obj.R(:,1:value);
-            end
+            % Rsize = size(obj.Lf,2);
+            % if value ~= Rsize % don't mess with R if it was set first and r is being updated to match it
+            %     if value > obj.r
+            %         Rnew = Numerics.SampleData.sampleMatrix(obj.NLEVP.n,value-obj.r);
+            %         obj.Rf = [obj.Rf,Rnew];
+            %     else
+            %         obj.Rf = obj.Rf(:,1:value);
+            %     end
+            % end
             obj.r = value;
             obj.loaded = false;
+        end
+
+        function set.L(obj,value)
+            obj.Lf = value;
+            obj.ell = size(value,2);
+        end
+
+        function set.R(obj,value)
+            obj.Rf = value;
+            obj.r = size(value,2);
         end
 
         function compute(obj)
@@ -101,10 +132,10 @@ classdef SampleData < handle
             if ~obj.loaded
                 % seems possible to compare sT,sL,sR,squad BEFORE sampling
                 % save some work if possible!
-                [obj.Ql,obj.Qr,obj.Qlr] = Numerics.samplequadrature(obj.NLEVP.T,obj.L,obj.R,obj.Contour.z);
+                [obj.Ql,obj.Qr,obj.Qlr] = Numerics.samplequadrature(obj.NLEVP.T,obj.Lf,obj.Rf,obj.Contour.z);
                 obj.squad = obj.Contour.z;
-                obj.sL = obj.L;
-                obj.sR = obj.R;
+                obj.sL = obj.Lf;
+                obj.sR = obj.Rf;
                 obj.sT = obj.NLEVP.T;
                 obj.loaded = true;
             end

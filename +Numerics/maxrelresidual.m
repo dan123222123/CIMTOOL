@@ -1,4 +1,4 @@
-function mres = maxrelresidual(cim)
+function [mres,wl] = maxrelresidual(cim)
     relres = zeros(cim.RealizationData.m,1);
     for j = 1:cim.RealizationData.m
         cew = cim.ResultData.ew(j);
@@ -7,5 +7,6 @@ function mres = maxrelresidual(cim)
         ceval = cim.SampleData.NLEVP.T(cew);
         relres(j) = norm(ceval*cev)/norm(ceval,"fro");
     end
-    mres = max(relres(j));
+    [mres,li] = max(relres(j));
+    wl = cim.ResultData.ew(li);
 end
