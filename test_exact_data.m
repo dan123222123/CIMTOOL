@@ -3,7 +3,8 @@ n = 30;
 A = randn(n);
 [C,A,B] = eig(A);
 H = @(z) (C*inv(z*eye(n) - A))*B';
-T = @(z) inv(H(z));
+%T = @(z) inv(H(z));
+T = @(z) z*eye(n) - A;
 N = 128; contour = Contour.Circle(0,10,N);
 [theta,sigma] = Numerics.interlevedshifts(contour.z,2*n);
 L = Numerics.SampleData.sampleMatrix(n,n);
@@ -45,7 +46,7 @@ c.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
 c.SampleData.L = Lt;
 c.SampleData.R = Rt;
 c.RealizationData.K = 55;
-c.RealizationData.m = 27;
+c.RealizationData.m = 30;
 %c.auto = true;
 c.SampleData.NLEVP.refew = diag(A);
 semilogy(ax2,1:length(Lbswe),Lbswe,'DisplayName','refLbsw')
