@@ -1,38 +1,59 @@
 %% construct system of interest
-load("CDplayer.mat")
-n = 120;
-Porg = full(transpose(S)*S);
-Qorg = full(transpose(R)*R);
-S = full(transpose(S)); R = full(transpose(R));
+n = 5;
+A = diag(-n:-1); B = rand(n); C = B';
+sysorg = ss(A,B,C,0);
+sysbt = getrom(reducespec(sysorg,"balanced"));
+sysbr = balreal(sysbt);
 
-%% sqrt bt
-[W,Sigma,V] = svd(transpose(S)*R);
-[X,Phi] = qr(S*W); [Y,Psi] = qr(R*V);
-T = sqrt(Sigma) \ (V'*R');
-Ti = (S*W) / sqrt(Sigma);
-
-%% check bt gramians
-Pbt = T*Porg*T';
-Qbt = Ti'*Qorg*Ti;
-%disp(norm(Pbt-Qbt));
-
-%% construct bt state-space
-A = T*A*Ti; B = T*B; C = C*Ti;
+%% matlab bt
+A = sysbr.A; B = sysbr.B; C = sysbr.C; D = sysbr.D;
+Pbr = gram(sysbr, 'c'); Qbr = gram(sysbr, 'o');
+G = @(s) C*((s*speye(size(A)) - A)\B);
 
 %% partition + permute (for cdplayer, 16th hsv is ~1)
-rsv = 16;
+rsv = n; ord = 1;
 % perm mat
-P = eye(n); P(rsv,rsv) = 0; P(end,rsv) = 1; P(end,end) = 0; P(rsv,end) = 1;
-Pbtp = P*Pbt*P; Qbtp = P*Qbt*P;
-Ahat = P*A*P'; Bhat = P*B; Chat = C*P';
+Ahat = A; Bhat = B; Chat = C; Dhat = D;
+%
+Sigmahat = Pbr(1:end-1,1:end-1);
+xi = Pbr(end,end);
+
+% perhaps this construction works in the MIMO case, but I should try to
+% isolate the largest hsv to make sure -- need to write a real permutation
+% function to generate the right matrices and permute the state matrices
+% appropriately...
 
 %% check lyap
-disp(norm(A'*Qbt + Qbt*A + C'*C));
-disp(norm(A*Pbt + Pbt*A' + B*B'));
-disp(norm(Ahat'*Qbtp + Qbtp*Ahat + Chat'*Chat));
-disp(norm(Ahat*Pbtp + Pbtp*Ahat' + Bhat*Bhat'));
+%disp(norm(A'*Qbr + Qbr*A + C'*C));
+%disp(norm(A*Pbr + Pbr*A' + B*B'));
+%disp(norm(Ahat'*Qbr + Qbr*Ahat + Chat'*Chat));
+%disp(norm(Ahat*Pbr + Pbr*Ahat' + Bhat*Bhat'));
 
-%% partition SigmaHat and construct SigmaTilde
+%% partition SigmaHat
+A11 = Ahat(1:end-ord,1:end-ord); A12 = Ahat(1:end-ord,end-ord+1:end); 
+A21 = Ahat(end-ord+1,1:end-ord); A22 = Ahat(end-ord+1:end,end-ord+1:end);
+%
+B1 = Bhat(1:end-ord,:); B2 = Bhat(end-ord+1:end,:);
+%
+C1 = Chat(:,1:end-ord); C2 = Chat(:,end-ord+1:end);
+
+%% construct SigmaTilde
+Gamma = Sigmahat*Sigmahat - xi^2*eye(n-ord);
+U = pinv(C2')*B2;
+%
+Atilde = Gamma\(xi^2*A11' + Sigmahat*A11*Sigmahat + xi*C1'*U*B1');
+Btilde = Gamma\(Sigmahat*B1 - xi*C1'*U);
+Ctilde = C1*Sigmahat - xi*U*B1';
+Dtilde = Dhat + xi*U;
+systilde = ss(Atilde,Btilde,Ctilde,Dtilde);
+
+%%
+G = @(s) C*((s*eye(size(A)) - A)\B) + D;
+Gtilde = @(s) Ctilde*((s*eye(size(Atilde)) - Atilde) \ Btilde) + Dtilde;
+Epsilon = @(s) G(s) - Gtilde(s);
+s = 0.5;
+Epsilon(s)*Epsilon(-s)'% - diag(repmat(xi^2,n))
+
 
 %% construct (all-pass) error transfer function
 
