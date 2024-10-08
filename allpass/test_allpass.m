@@ -1,44 +1,43 @@
 %% construct system of interest
 n = 5;
-A = diag(-n:-1); B = rand(n); C = B';
+A = diag(-n:-1); B = rand(n,n-1); C = B';
 sysorg = ss(A,B,C,0);
 sysbt = getrom(reducespec(sysorg,"balanced"));
 sysbr = balreal(sysbt);
+% check observability and reachability of the balanced+"reduced" system
+assert(rank(obsv(sysbr)) == rank(ctrb(sysbr)));
+assert(rank(obsv(sysbr)) == n);
 
 %% matlab bt
 A = sysbr.A; B = sysbr.B; C = sysbr.C; D = sysbr.D;
-Pbr = gram(sysbr, 'c'); Qbr = gram(sysbr, 'o');
-G = @(s) C*((s*speye(size(A)) - A)\B);
+Gram = gram(sysbr, 'c');
+G = @(s) C*((s*speye(size(A)) - A)\B) + D;
 
-%% partition + permute (for cdplayer, 16th hsv is ~1)
-rsv = n; ord = 1;
+%% partition + permute (first hsv)
+rsv = 2; ord = 1;
+
 % perm mat
-Ahat = A; Bhat = B; Chat = C; Dhat = D;
+[Gramhat,P] = shuffleend(Gram,rsv);
+Ahat = P*A*P'; Bhat = P*B; Chat = C*P'; Dhat = D;
 %
-Sigmahat = Pbr(1:end-1,1:end-1);
-xi = Pbr(end,end);
-
-% perhaps this construction works in the MIMO case, but I should try to
-% isolate the largest hsv to make sure -- need to write a real permutation
-% function to generate the right matrices and permute the state matrices
-% appropriately...
+Sigmahat = Gramhat(1:end-1,1:end-1);
+xi = Gramhat(end,end);
 
 %% check lyap
-%disp(norm(A'*Qbr + Qbr*A + C'*C));
-%disp(norm(A*Pbr + Pbr*A' + B*B'));
-%disp(norm(Ahat'*Qbr + Qbr*Ahat + Chat'*Chat));
-%disp(norm(Ahat*Pbr + Pbr*Ahat' + Bhat*Bhat'));
+disp(norm(A'*Gram + Gram*A + C'*C));
+disp(norm(A*Gram + Gram*A' + B*B'));
+disp(norm(Ahat'*Gramhat + Gramhat*Ahat + Chat'*Chat));
+disp(norm(Ahat*Gramhat + Gramhat*Ahat' + Bhat*Bhat'));
 
-%% partition SigmaHat
+%% construct SigmaTilde
 A11 = Ahat(1:end-ord,1:end-ord); A12 = Ahat(1:end-ord,end-ord+1:end); 
 A21 = Ahat(end-ord+1,1:end-ord); A22 = Ahat(end-ord+1:end,end-ord+1:end);
 %
 B1 = Bhat(1:end-ord,:); B2 = Bhat(end-ord+1:end,:);
 %
 C1 = Chat(:,1:end-ord); C2 = Chat(:,end-ord+1:end);
-
-%% construct SigmaTilde
-Gamma = Sigmahat*Sigmahat - xi^2*eye(n-ord);
+%
+Gamma = Sigmahat^2 - xi^2*eye(n-ord);
 U = pinv(C2')*B2;
 %
 Atilde = Gamma\(xi^2*A11' + Sigmahat*A11*Sigmahat + xi*C1'*U*B1');
@@ -47,16 +46,13 @@ Ctilde = C1*Sigmahat - xi*U*B1';
 Dtilde = Dhat + xi*U;
 systilde = ss(Atilde,Btilde,Ctilde,Dtilde);
 
-%%
-G = @(s) C*((s*eye(size(A)) - A)\B) + D;
+%% tf of SigmaTilde and check if Epsilon is all-pass
 Gtilde = @(s) Ctilde*((s*eye(size(Atilde)) - Atilde) \ Btilde) + Dtilde;
 Epsilon = @(s) G(s) - Gtilde(s);
-s = 0.5;
-Epsilon(s)*Epsilon(-s)'% - diag(repmat(xi^2,n))
+s = 10;
+Epsilon(s)*Epsilon(-s)' % - diag(repmat(xi^2,n))
 
-
-%% construct (all-pass) error transfer function
-
+% idk why this isn't working...
 
 % %%
 % n = 30;

@@ -9,10 +9,10 @@ end
     % get the maximum distance between c and quad nodes
     r = max(abs(c - z));
     % nodes on a circle around the current quad nodes
-    z = Contour.Circle.trapezoid(c,r*ShiftScale,2*nsw);
+    z = Contour.Circle.trapezoid(c,r*ShiftScale,2*nsw+1);
     theta = double.empty();
     sigma = double.empty();
-    for i=1:length(z)
+    for i=1:length(z)-1
         if mod(i,2) == 1
             theta(end+1) = z(i);
         else

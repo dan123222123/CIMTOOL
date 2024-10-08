@@ -1,8 +1,8 @@
 classdef InterpolationData
     
     properties
-        theta   (:,1) double % left shifts
-        sigma   (:,1) double  % right shifts
+        theta   % left shifts
+        sigma   % right shifts
     end
     
     methods

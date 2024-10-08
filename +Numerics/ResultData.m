@@ -79,11 +79,11 @@ classdef ResultData < handle
             if ~any(ismissing(ax))
                 chold = ishold(ax);
                 if ~ismissing(obj.Dbsw)
-                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(obj.Dbsw),obj.Dbsw,"->","MarkerSize",10,'DisplayName','Dbsw');
+                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(obj.Dbsw),obj.Dbsw,"->","MarkerSize",10,'DisplayName','Dbsw','Color',"b");
                     tstring = strcat(tstring,sprintf("size(Db) = %d, %d",obj.Dbsize(1),obj.Dbsize(2)));
                 end
                 if ~ismissing(obj.Dbsw)
-                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(obj.Dssw),obj.Dssw,"->","MarkerSize",10,'DisplayName','Dssw');
+                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(obj.Dssw),obj.Dssw,"->","MarkerSize",10,'DisplayName','Dssw','Color',"r");
                     tstring = strcat(tstring,sprintf("\t||\tsize(Ds) = %d, %d",obj.Dssize(1),obj.Dssize(2)));
                 end
                 ax.XLim = [0,max(length(obj.Dbsw),length(obj.Dssw))+1];

@@ -1,5 +1,5 @@
 %% construct system of interest
-n = 30;
+n = 10; K = 11;
 A = randn(n);
 [C,A,B] = eig(A);
 H = @(z) (C*inv(z*eye(n) - A))*B';
@@ -10,7 +10,7 @@ N = 128; contour = Contour.Circle(0,10,N);
 L = Numerics.SampleData.sampleMatrix(n,n);
 R = Numerics.SampleData.sampleMatrix(n,n);
 %% exact MPLoewner realization using the exact transfer function
-ell = 5; r = ell;
+ell = 3; r = ell;
 Lt = L(:,1:ell); Rt = R(:,1:r);
 [Lbe,Lse,Be,Ce] = Numerics.build_exact_MPLoewner_data(H,theta,sigma,Lt,Rt);
 Lbswe = svd(Lbe); Lsswe = svd(Lse);
@@ -38,15 +38,33 @@ cla(ax3);
 title(ax3,"2-norm Eigenvalue Matching Distance")
 xlabel(ax3,"N")
 merral = animatedline(ax3);
+
+f4 = figure(4);
+clf(f4);
+ax4 = axes(f4,'yscale','log');
+cla(ax4);
+title(ax4,"best relative rank drop ratio")
+xlabel(ax4,"N")
+rrd = animatedline(ax4);
+
+f5 = figure(5);
+clf(f5);
+ax5 = axes(f5);
+cla(ax5);
+title(ax5,"best guess of m (based on relative rank drop ratio)")
+xlabel(ax5,"N")
+bgm = animatedline(ax5,"Marker","o");
 %%
 evp = Numerics.NLEVPData(T);
 c = Numerics.CIM(evp,contour,ax1,ax2);
-c.SampleData.Contour.plot_quadrature = true;
 c.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+c.RealizationData.InterpolationData = Numerics.InterpolationData(theta,sigma);
+c.SampleData.Contour.plot_quadrature = true;
 c.SampleData.L = Lt;
 c.SampleData.R = Rt;
-c.RealizationData.K = 55;
-c.RealizationData.m = 30;
+c.RealizationData.K = K;
+ylim(ax5,[0,c.RealizationData.K])
+c.RealizationData.m = 4;
 %c.auto = true;
 c.SampleData.NLEVP.refew = diag(A);
 semilogy(ax2,1:length(Lbswe),Lbswe,'DisplayName','refLbsw')
@@ -55,10 +73,14 @@ c.compute();
 %%
 clearpoints(merral);
 
-plength=0.5; y = 10:3:150; steps = length(y);
+plength=0.1; y = 10:1:150; steps = length(y);
 for i=1:length(y)
     title(ax1,sprintf("N = %d",y(i)));
     c.SampleData.Contour.N = y(i);
+    if mod(y(i),2*c.RealizationData.K)==0
+        xline(ax3,y(i),"Color","r");
+        xline(ax4,y(i),"Color","r");
+    end
     try
         c.compute();
     catch E
@@ -70,4 +92,9 @@ for i=1:length(y)
     cew = c.ResultData.ew;
     merr = maxeigmderror(crefew,cew);
     addpoints(merral,y(i),merr);
+    chsv = c.ResultData.Dbsw;
+    [m,d] = findrankdrop(chsv);
+    addpoints(rrd,y(i),d);
+    addpoints(bgm,y(i),m);
+    drawnow limitrate
 end
