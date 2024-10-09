@@ -3,7 +3,6 @@ n = 10; K = 11;
 A = randn(n);
 [C,A,B] = eig(A);
 H = @(z) (C*inv(z*eye(n) - A))*B';
-%T = @(z) inv(H(z));
 T = @(z) z*eye(n) - A;
 N = 128; contour = Contour.Circle(0,10,N);
 [theta,sigma] = Numerics.interlevedshifts(contour.z,2*n);
@@ -98,3 +97,45 @@ for i=1:length(y)
     addpoints(bgm,y(i),m);
     drawnow limitrate
 end
+
+for j = 1:n
+    Lt = L(:,1:j); Rt = R(:,1:j);
+    c.SampleData.L = Lt;
+    c.SampleData.R = Rt;
+    Col = ColOrd(j,:);
+    mresal = [];
+    rrd = [];
+    bgm = [];
+    Nsteps = 10:1:100; steps = length(Nsteps);
+    intN = [10,40,70,150];
+    for i=1:length(Nsteps)
+        title(ax1,sprintf("N = %d",Nsteps(i)));
+        c.SampleData.Contour.N = Nsteps(i);
+        if any(Nsteps(i) == intN(:))
+            saveas(f2,sprintf("%s_m%d_pdir%d_DbDssw_N%d.png",prob,c.RealizationData.m,j,Nsteps(i)));
+        end
+        try
+            c.compute();
+        catch E
+            warning("issue at N = %d",Nsteps(i));
+            rethrow(E);
+        end
+        if any(Nsteps(i) == intN(:))
+            saveas(f2,sprintf("%s_m%d_pdir%d_DbDssw_N%d.png",prob,c.RealizationData.m,j,Nsteps(i)));
+        end
+        mresal(i) = Numerics.maxrelresidual(c);
+        chsv = c.ResultData.Dbsw;
+        [m,d] = findrankdrop(chsv);
+        rrd(i) = d;
+        bgm(i) = m;
+    end
+    l = sprintf("$\\ell'=r'=%d$",j);
+    plot(ax3,Nsteps,mresal,'DisplayName',l,'Color',Col);
+    plot(ax4,Nsteps,rrd,'DisplayName',l,'Color',Col);
+    plot(ax5,Nsteps,bgm,'DisplayName',l,'Color',Col);
+end
+axis(ax1,"equal");
+saveas(f1,sprintf("%s_m%d_cplane.png",prob,c.RealizationData.m))
+saveas(f3,sprintf("%s_m%d_rre.png",prob,c.RealizationData.m))
+saveas(f4,sprintf("%s_m%d_rrd.png",prob,c.RealizationData.m))
+saveas(f5,sprintf("%s_m%d_bgm.png",prob,c.RealizationData.m))
