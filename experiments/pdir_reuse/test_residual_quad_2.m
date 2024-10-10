@@ -56,7 +56,7 @@ ColOrd = get(gca,'ColorOrder');
 c.RealizationData.ShiftScale = 1.25;
 
 %% exact MPLoewner realization using the exact transfer function
-c.RealizationData.K = 12;
+c.RealizationData.K = 128;
 ylim(ax5,[0,c.RealizationData.K])
 c.RealizationData.m = 9;
 %
