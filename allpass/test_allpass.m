@@ -49,10 +49,10 @@ systilde = ss(Atilde,Btilde,Ctilde,Dtilde);
 %% tf of SigmaTilde and check if Epsilon is all-pass
 Gtilde = @(s) Ctilde*((s*eye(size(Atilde)) - Atilde) \ Btilde) + Dtilde;
 Epsilon = @(s) G(s) - Gtilde(s);
-s = 10;
-Epsilon(s)*Epsilon(-s)' % - diag(repmat(xi^2,n))
+s = 10i;
+Epsilon(s)*Epsilon(-s).' % - diag(repmat(xi^2,n))
 
-% idk why this isn't working...
+% it does work! an all-pass system up to a system similarity transformation
 
 % %%
 % n = 30;
