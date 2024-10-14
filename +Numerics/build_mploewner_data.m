@@ -1,4 +1,4 @@
-function [Lb,Ls,B,C] = build_exact_MPLoewner_data(H,theta,sigma,L,R)
+function [Lb,Ls,B,C] = build_mploewner_data(H,theta,sigma,L,R)
     n = size(H(0),1); elltheta = length(theta); rsigma = length(sigma);
     Lsize = size(L,2); Rsize = size(R,2);
 
