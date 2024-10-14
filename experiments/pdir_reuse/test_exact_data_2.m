@@ -5,7 +5,7 @@ A = randn(n);
 [C,A,B] = eig(A);
 H = @(z) (C*inv(z*eye(n) - A))*B';
 T = @(z) z*eye(n) - A;
-N = 128; contour = Contour.Circle(0,10,N);
+N = 8; contour = Contour.Circle(0,10,N);
 [theta,sigma] = Numerics.interlevedshifts(contour.z,K);
 L = Numerics.SampleData.sampleMatrix(n,K);
 R = Numerics.SampleData.sampleMatrix(n,K);
@@ -68,7 +68,7 @@ c.RealizationData.InterpolationData = Numerics.InterpolationData(theta,sigma);
 c.SampleData.Contour.plot_quadrature = true;
 c.SampleData.L = Lt;
 c.SampleData.R = Rt;
-c.RealizationData.K = K;
+c.RealizationData.K = 4;
 ylim(ax5,[0,c.RealizationData.K])
 c.RealizationData.m = 10;
 %c.auto = true;
