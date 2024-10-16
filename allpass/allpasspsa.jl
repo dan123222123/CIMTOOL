@@ -16,13 +16,15 @@ mat"addpath('/home/dfolescu/version_control/git/math/code/packages/CIMTOOL/allpa
 wgs = 1024
 T = ComplexF64
 g = 1000
-nit = 5
+nit = 2
 ##
 
 ##
 # I can't pass n to the matlab engine...OMGGGGGG
-mat"[Db,Ds] = test_allpass_mploewner(30)"
-n = 30
+#mat"[Db,Ds] = tapmp_2()"
+#n = 2
+mat"[Db,Ds] = test_allpass_mploewner(10)"
+n = 10
 
 Db = @mget Db
 Ds = @mget Ds
@@ -31,9 +33,9 @@ pev = eigvals(Ds, Db)
 ##
 
 ##
-padscale = 2
-rwind = (minimum(real.(pev)),maximum(real.(pev))).*padscale
-iwind = (minimum(imag.(pev)),maximum(imag.(pev))).*padscale
+padscale = (-1,1)
+rwind = (minimum(real.(pev)),maximum(real.(pev))).+padscale
+iwind = (minimum(imag.(pev)),maximum(imag.(pev))).+padscale
 #rwind = (-0.5,0.5)
 #iwind = (-0.5,0.5)
 gx, gy, zg = qgrid(T, rwind, iwind, (g, g))

@@ -3,8 +3,9 @@ arguments
     n
     rsv = 2
 end
-lspc = linspace(-2,-1,n);
-A = diag(lspc); B = rand(n,n); C = B'; D = 0;
+lspc = linspace(-n,-1,n);
+A = diag(lspc); %B = rand(n,n); C = B'; D = 0;
+B = eye(n); C = B'; D = 0;
 sysorg = ss(A,B,C,D);
 sysbt = getrom(reducespec(sysorg,"balanced"));
 sysbr = balreal(sysbt);
@@ -16,7 +17,7 @@ assert(rank(obsv(sysbr)) == n);
 % matlab bt
 A = sysbr.A; B = sysbr.B; C = sysbr.C; D = sysbr.D;
 Gram = gram(sysbr, 'c');
-G = @(s) C*((s*speye(size(A)) - A)\B) + D;
+G = @(s) C*((s*eye(size(A)) - A)\B) + D;
 
 % partition + permute, assumed that rsv is simple
 %rsv = 2;
