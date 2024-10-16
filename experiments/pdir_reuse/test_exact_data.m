@@ -1,5 +1,5 @@
 %% construct system of interest
-n = 10; K = 20;
+n = 10; K = 22;
 A = randn(n);
 [C,A,B] = eig(A);
 H = @(z) (C*inv(z*eye(n) - A))*B';
@@ -9,7 +9,7 @@ N = 128; contour = Contour.Circle(0,10,N);
 L = Numerics.SampleData.sampleMatrix(n,K);
 R = Numerics.SampleData.sampleMatrix(n,K);
 %% exact MPLoewner realization using the exact transfer function
-ell = K; r = ell;
+ell = 2; r = ell;
 Lt = L(:,1:ell); Rt = R(:,1:r);
 [Lbe,Lse,Be,Ce] = Numerics.build_exact_MPLoewner_data(H,theta,sigma,Lt,Rt);
 Lbswe = svd(Lbe); Lsswe = svd(Lse);
@@ -28,8 +28,8 @@ ax2 = axes(f2,'yscale','log');
 cla(ax2);
 title(ax2,"Db/Ds Singular Values")
 legend(ax2);
-semilogy(ax2,1:length(Lbswe),Lbswe,'DisplayName','refLbsw')
-semilogy(ax2,1:length(Lsswe),Lsswe,'DisplayName','refLssw')
+semilogy(ax2,1:length(Lbswe),Lbswe,'DisplayName','refLbsw','Marker',"o")
+%semilogy(ax2,1:length(Lsswe),Lsswe,'DisplayName','refLssw')
 
 f3 = figure(3);
 clf(f3);
@@ -64,9 +64,10 @@ c.SampleData.L = Lt;
 c.SampleData.R = Rt;
 c.RealizationData.K = K;
 ylim(ax5,[0,c.RealizationData.K])
-c.RealizationData.m = 9;
+c.RealizationData.m = n;
 %c.auto = true;
 c.SampleData.NLEVP.refew = diag(A);
+c.RealizationData.ShiftScale = 1.1;
 c.compute();
 %%
 clearpoints(merral);

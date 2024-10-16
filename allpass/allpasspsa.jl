@@ -1,6 +1,7 @@
 ##
 using LinearAlgebra
-using MATLAB
+#using MATLAB
+using MAT
 using KernelAbstractions
 using Plots, LaTeXStrings
 
@@ -8,26 +9,30 @@ using AMDGPU
 backend = ROCBackend()
 
 using KAPseudospectra
-mat"addpath('/home/dfolescu/version_control/git/math/code/packages/CIMTOOL')"
-mat"addpath('/home/dfolescu/version_control/git/math/code/packages/CIMTOOL/allpass')"
+#mat"addpath('/home/dfolescu/version_control/git/math/code/packages/CIMTOOL')"
+#mat"addpath('/home/dfolescu/version_control/git/math/code/packages/CIMTOOL/allpass')"
 ##
 
 ##
-wgs = 1024
+wgs = 16
 T = ComplexF64
 g = 1000
-nit = 2
+nit = 5
 ##
 
 ##
 # I can't pass n to the matlab engine...OMGGGGGG
 #mat"[Db,Ds] = tapmp_2()"
 #n = 2
-mat"[Db,Ds] = test_allpass_mploewner(10)"
-n = 10
 
-Db = @mget Db
-Ds = @mget Ds
+#mat"[Db,Ds] = test_allpass_mploewner(10)"
+
+csd = (@__DIR__)*"/"
+
+d = MAT.matread(csd*"matsucks.mat")
+Db = d["Db"]
+Ds = d["Ds"]
+n = 10
 
 pev = eigvals(Ds, Db)
 ##
