@@ -88,29 +88,29 @@ classdef SampleData < handle
         end
 
         function set.ell(obj,value)
-            % Lsize = size(obj.Lf,2);
-            % if value ~= Lsize % don't mess with L if it was set first and ell is being updated to match it
-            %     if value > obj.ell
-            %         Lnew = Numerics.SampleData.sampleMatrix(obj.NLEVP.n,value-obj.ell);
-            %         obj.Lf = [obj.Lf,Lnew];
-            %     else
-            %         obj.Lf = obj.Lf(:,1:value);
-            %     end
-            % end
+            Lsize = size(obj.Lf,2);
+            if value ~= Lsize % don't mess with Lf if it was set first and ell is being updated to match it
+                if value > obj.ell
+                    Lnew = Numerics.SampleData.sampleMatrix(obj.NLEVP.n,value-obj.ell);
+                    obj.Lf = [obj.Lf,Lnew];
+                else
+                    obj.Lf = obj.Lf(:,1:value);
+                end
+            end
             obj.ell = value;
             obj.loaded = false;
         end
 
         function set.r(obj,value)
-            % Rsize = size(obj.Lf,2);
-            % if value ~= Rsize % don't mess with R if it was set first and r is being updated to match it
-            %     if value > obj.r
-            %         Rnew = Numerics.SampleData.sampleMatrix(obj.NLEVP.n,value-obj.r);
-            %         obj.Rf = [obj.Rf,Rnew];
-            %     else
-            %         obj.Rf = obj.Rf(:,1:value);
-            %     end
-            % end
+            Rsize = size(obj.Rf,2);
+            if value ~= Rsize % don't mess with Rf if it was set first and r is being updated to match it
+                if value > obj.r
+                    Rnew = Numerics.SampleData.sampleMatrix(obj.NLEVP.n,value-obj.r);
+                    obj.Rf = [obj.Rf,Rnew];
+                else
+                    obj.Rf = obj.Rf(:,1:value);
+                end
+            end
             obj.r = value;
             obj.loaded = false;
         end

@@ -48,7 +48,11 @@ classdef NLEVPData < handle
         end
 
         function value = get.n(obj)
-            value = size(obj.T(0),1);
+            if obj.loaded
+                value = size(obj.T(0),1);
+            else
+                value = 0;
+            end
         end
 
         function cla(obj)
