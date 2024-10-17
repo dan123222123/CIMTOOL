@@ -1,11 +1,11 @@
-function [Epsilon,xi] = allpass_error_tf(n,rsv)
+function [Ess,Ef,xi] = allpass_error_sstf(n,rsv)
 arguments
     n
     rsv = 2
 end
-lspc = linspace(-n,-1,n);
-A = diag(lspc); %B = rand(n,n); C = B'; D = 0;
-B = eye(n); C = B'; D = 0;
+lspc = linspace(-n,-1,n); A = diag(lspc);
+B = randn(n,n); C = B'; D = 0;
+%B = eye(n); C = B'; D = 0;
 sysorg = ss(A,B,C,D);
 sysbt = getrom(reducespec(sysorg,"balanced"));
 sysbr = balreal(sysbt);
@@ -53,8 +53,18 @@ Btilde = Gamma\(Sigmahat*B1 - xi*C1'*U);
 Ctilde = C1*Sigmahat - xi*U*B1';
 Dtilde = Dhat + xi*U;
 systilde = ss(Atilde,Btilde,Ctilde,Dtilde);
+Gtilde = @(s) Ctilde*((s*eye(size(Atilde)) - Atilde) \ Btilde) + Dtilde;
+
+% ss of SigmaTilde
+AA = [A zeros(size(A,1),size(Atilde,1));zeros(size(Atilde,1),size(A,1)) Atilde];
+BB = [B; Btilde]; CC = [C -Ctilde]; DD = zeros(n);
+Ess = ss(AA,BB,CC,DD);
+%Ess = ss(A,B,C,D);
+%Ess = ss(Atilde,Btilde,Ctilde,Dtilde);
 
 % tf of SigmaTilde
-Gtilde = @(s) Ctilde*((s*eye(size(Atilde)) - Atilde) \ Btilde) + Dtilde;
-Epsilon = @(s) G(s) - Gtilde(s);
+Ef = @(s) G(s) - Gtilde(s);
+%Ef = G;
+%Ef = Gtilde;
+
 end
