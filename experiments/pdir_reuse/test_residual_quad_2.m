@@ -26,7 +26,7 @@ ax4 = axes(f4,'yscale','log');
 cla(ax4);
 title(ax4,"best relative rank drop ratio")
 xlabel(ax4,"N")
-ylabel(ax4,'argmin m $\frac{\sigma_{m+1}}{\sigma_m}$','Interpreter','latex')
+ylabel(ax4,'min $\frac{\sigma_{m+1}}{\sigma_m}$','Interpreter','latex')
 legend(ax4,'Interpreter','Latex')
 hold(ax4,"on")
 %
@@ -58,7 +58,7 @@ c.RealizationData.ShiftScale = 1.25;
 %% exact MPLoewner realization using the exact transfer function
 c.RealizationData.K = 128;
 ylim(ax5,[0,c.RealizationData.K])
-c.RealizationData.m = 9;
+c.RealizationData.m = 6;
 %
 plength = 0.1; colcount = 1;
 for j = [0:2:floor(log2(n)) 7]
@@ -98,7 +98,7 @@ end
 axis(ax1,"equal");
 xlim(ax1,[-1 0.4])
 ylim(ax1,[-0.5 0.8])
-saveas(f1,sprintf("%s_m%d_cplane.png",prob,c.RealizationData.m))
-saveas(f3,sprintf("%s_m%d_rre.png",prob,c.RealizationData.m))
-saveas(f4,sprintf("%s_m%d_rrd.png",prob,c.RealizationData.m))
-saveas(f5,sprintf("%s_m%d_bgm.png",prob,c.RealizationData.m))
+% saveas(f1,sprintf("%s_m%d_cplane.png",prob,c.RealizationData.m))
+% saveas(f3,sprintf("%s_m%d_rre.png",prob,c.RealizationData.m))
+% saveas(f4,sprintf("%s_m%d_rrd.png",prob,c.RealizationData.m))
+% saveas(f5,sprintf("%s_m%d_bgm.png",prob,c.RealizationData.m))

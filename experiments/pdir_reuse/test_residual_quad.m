@@ -26,7 +26,7 @@ ax4 = axes(f4,'yscale','log');
 cla(ax4);
 title(ax4,"best relative rank drop ratio")
 xlabel(ax4,"N")
-ylabel(ax4,'argmin m $\frac{\sigma_{m+1}}{\sigma_m}$','Interpreter','latex')
+ylabel(ax4,'min $\frac{\sigma_{m+1}}{\sigma_m}$','Interpreter','latex')
 legend(ax4,'Interpreter','Latex')
 hold(ax4,"on")
 %
@@ -58,7 +58,7 @@ c.RealizationData.ShiftScale = 2;
 %% exact MPLoewner realization using the exact transfer function
 c.RealizationData.K = 10;
 ylim(ax5,[0,c.RealizationData.K])
-c.RealizationData.m = 2;
+c.RealizationData.m = 3;
 %
 for j = 1:n
     Lt = L(:,1:j); Rt = R(:,1:j);
@@ -73,18 +73,19 @@ for j = 1:n
     for i=1:length(Nsteps)
         title(ax1,sprintf("N = %d",Nsteps(i)));
         c.SampleData.Contour.N = Nsteps(i);
-        if any(Nsteps(i) == intN(:))
-            saveas(f2,sprintf("%s_m%d_pdir%d_DbDssw_N%d.png",prob,c.RealizationData.m,j,Nsteps(i)));
-        end
+        % if any(Nsteps(i) == intN(:))
+        %     saveas(f2,sprintf("%s_m%d_pdir%d_DbDssw_N%d.png",prob,c.RealizationData.m,j,Nsteps(i)));
+        % end
         try
             c.compute();
+            drawnow limitrate
         catch E
             warning("issue at N = %d",Nsteps(i));
             rethrow(E);
         end
-        if any(Nsteps(i) == intN(:))
-            saveas(f2,sprintf("%s_m%d_pdir%d_DbDssw_N%d.png",prob,c.RealizationData.m,j,Nsteps(i)));
-        end
+        % if any(Nsteps(i) == intN(:))
+        %     saveas(f2,sprintf("%s_m%d_pdir%d_DbDssw_N%d.png",prob,c.RealizationData.m,j,Nsteps(i)));
+        % end
         mresal(i) = Numerics.maxrelresidual(c);
         chsv = c.ResultData.Dbsw;
         [m,d] = findrankdrop(chsv);
@@ -97,7 +98,7 @@ for j = 1:n
     plot(ax5,Nsteps,bgm,'DisplayName',l,'Color',Col);
 end
 axis(ax1,"equal");
-saveas(f1,sprintf("%s_m%d_cplane.png",prob,c.RealizationData.m))
-saveas(f3,sprintf("%s_m%d_rre.png",prob,c.RealizationData.m))
-saveas(f4,sprintf("%s_m%d_rrd.png",prob,c.RealizationData.m))
-saveas(f5,sprintf("%s_m%d_bgm.png",prob,c.RealizationData.m))
+% saveas(f1,sprintf("%s_m%d_cplane.png",prob,c.RealizationData.m))
+% saveas(f3,sprintf("%s_m%d_rre.png",prob,c.RealizationData.m))
+% saveas(f4,sprintf("%s_m%d_rrd.png",prob,c.RealizationData.m))
+% saveas(f5,sprintf("%s_m%d_bgm.png",prob,c.RealizationData.m))

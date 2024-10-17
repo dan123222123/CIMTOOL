@@ -2,20 +2,21 @@
 n = 10; K = 22;
 A = randn(n);
 [C,A,B] = eig(A);
-H = @(z) (C*inv(z*eye(n) - A))*B';
+H = @(z) C*((z*eye(n) - A) \ B');
+%H = @(z) C*inv(z*eye(n) - A) * B';
 T = @(z) z*eye(n) - A;
 N = 128; contour = Contour.Circle(0,10,N);
 [theta,sigma] = Numerics.interlevedshifts(contour.z,K);
 L = Numerics.SampleData.sampleMatrix(n,K);
 R = Numerics.SampleData.sampleMatrix(n,K);
 %% exact MPLoewner realization using the exact transfer function
-ell = 2; r = ell;
+ell = 1; r = ell;
 Lt = L(:,1:ell); Rt = R(:,1:r);
-[Lbe,Lse,Be,Ce] = Numerics.build_exact_MPLoewner_data(H,theta,sigma,Lt,Rt);
+[Lbe,Lse,Be,Ce] = Numerics.build_mploewner_data(H,theta,sigma,Lt,Rt);
 Lbswe = svd(Lbe); Lsswe = svd(Lse);
-[Xe,Sigmae,Ye] = svd(Lbe,"matrix");
-Xe=Xe(:,1:n); Sigmae=Sigmae(1:n,1:n); Ye=Ye(:,1:n);
-[Lambdae,Ve] = Numerics.realize(Xe,Sigmae,Ye,Lse,Ce);
+% [Xe,Sigmae,Ye] = svd(Lbe,"matrix");
+% Xe=Xe(:,1:n); Sigmae=Sigmae(1:n,1:n); Ye=Ye(:,1:n);
+% [Lambdae,Ve] = Numerics.realize(Xe,Sigmae,Ye,Lse,Ce);
 %% Make Axes
 f1 = figure(1);
 clf(f1);
