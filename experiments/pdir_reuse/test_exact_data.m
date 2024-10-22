@@ -1,16 +1,18 @@
 %% construct system of interest
-n = 10; K = 22;
-A = randn(n);
-[C,A,B] = eig(A);
+n = 2; K = 22; dist = 50; ShiftScale = 2;
+A = randn(n); [C,A,B] = eig(A);
+%ep = (-n:-1)+(dist*1i-dist);
+ep = (1:n)+(dist*1i+dist);
+Ap = diag(ep); [Cp,Ap,Bp] = eig(Ap);
 H = @(z) C*((z*eye(n) - A) \ B');
-%H = @(z) C*inv(z*eye(n) - A) * B';
-T = @(z) z*eye(n) - A;
+T = @(z) inv(z*eye(n) - A);
+%T = @(z) inv(H(z) +  Cp*((z*eye(n) - Ap) \ Bp'));
 N = 128; contour = Contour.Circle(0,10,N);
-[theta,sigma] = Numerics.interlevedshifts(contour.z,K);
+[theta,sigma] = Numerics.interlevedshifts(contour.z,K,ShiftScale);
 L = Numerics.SampleData.sampleMatrix(n,K);
 R = Numerics.SampleData.sampleMatrix(n,K);
 %% exact MPLoewner realization using the exact transfer function
-ell = 1; r = ell;
+ell = K; r = ell;
 Lt = L(:,1:ell); Rt = R(:,1:r);
 [Lbe,Lse,Be,Ce] = Numerics.build_mploewner_data(H,theta,sigma,Lt,Rt);
 Lbswe = svd(Lbe); Lsswe = svd(Lse);
@@ -21,7 +23,9 @@ Lbswe = svd(Lbe); Lsswe = svd(Lse);
 f1 = figure(1);
 clf(f1);
 ax1 = axes(f1,DataAspectRatioMode="manual");
+hold(ax1,"on")
 title(ax1,"Complex Plane")
+scatter(ax1,real(ep),imag(ep));
 
 f2 = figure(2);
 clf(f2);
@@ -65,15 +69,19 @@ c.SampleData.L = Lt;
 c.SampleData.R = Rt;
 c.RealizationData.K = K;
 ylim(ax5,[0,c.RealizationData.K])
-c.RealizationData.m = n;
+c.RealizationData.m = 2*n;
 %c.auto = true;
 c.SampleData.NLEVP.refew = diag(A);
-c.RealizationData.ShiftScale = 1.1;
+c.RealizationData.ShiftScale = ShiftScale;
+% c.SampleData.Contour.N = 2*K;
 c.compute();
+% crefew = c.SampleData.NLEVP.refew;
+% cew = c.ResultData.ew;
+% merr = maxeigmderror(crefew,cew);
 %%
 clearpoints(merral);
 
-plength=0.1; y = 10:1:150; steps = length(y);
+plength=0.1; y = 20:1:150; steps = length(y);
 for i=1:length(y)
     title(ax1,sprintf("N = %d",y(i)));
     c.SampleData.Contour.N = y(i);
@@ -85,7 +93,7 @@ for i=1:length(y)
         c.compute();
     catch E
         warning("issue at N = %d",y(i));
-        rethrow(E);
+        %rethrow(E);
     end
     pause(plength);
     crefew = c.SampleData.NLEVP.refew;
