@@ -1,4 +1,4 @@
-classdef CircleComponent < ContourComponentInterface
+classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
 
     % GUI Properties
     properties (Access = private)
@@ -9,13 +9,21 @@ classdef CircleComponent < ContourComponentInterface
         radiusEditFieldLabel     matlab.ui.control.Label
     end
 
-    % Events with associated public callbacks
-    events (HasCallbackProperty, NotifyAccess = public)
-        ContourUpdated
+    properties (Access = public)
+        CIMData
     end
 
-    properties (Access = public)
-        MainApp % app that contains this component, set in constructor
+    methods (Access = public)
+
+        function obj = CircleComponent(Parent,CIMData)
+
+            obj@GUI.Parameter.Contour.ContourComponent(Parent)
+            obj.CIMData = CIMData;
+
+            % obj.addListeners();
+
+        end
+
     end
     
     % Callbacks that handle component events
@@ -24,8 +32,7 @@ classdef CircleComponent < ContourComponentInterface
         % Value changed function: radiusEditField
         function radiusEditFieldValueChanged(comp, event)
             try
-                comp.radius = comp.radiusEditField.Value;
-                notify(comp.MainApp,"ContourDataChanged");
+                comp.CIMData.SampleData.Contour.radius = comp.radiusEditField.Value;
             catch
                 comp.radiusEditField.Value = event.PreviousValue;
                 errordlg("Invalid radius. Please check input and try again.")
@@ -35,8 +42,7 @@ classdef CircleComponent < ContourComponentInterface
         % Value changed function: centerEditField
         function centerEditFieldValueChanged(comp, event)
             try
-                comp.center = str2double(comp.centerEditField.Value);
-                notify(comp.MainApp,"ContourDataChanged");
+                comp.CIMData.SampleData.Contour.center = str2double(comp.centerEditField.Value);
             catch
                 comp.centerEditField.Value = event.PreviousValue;
                 errordlg("Invalid center. Please check input and try again.")
@@ -44,28 +50,10 @@ classdef CircleComponent < ContourComponentInterface
         end
     end
 
-    methods (Access = public)
-        function [z,w] = getNodesWeights(comp,N)
-            [z,w] = circle_trapezoid(N,comp.center,comp.radius);
-        end
-        function phandles = plot(comp,ax,zd)
-            zc = circle_trapezoid(256,comp.center,comp.radius);
-            zc = [comp.center + comp.radius, zc, comp.center + comp.radius];
-            phandles = {};
-            phandles{1} = scatter(ax,real(comp.center),imag(comp.center),200,"black",'filled','LineWidth',10,'Tag',"contour_center");
-            phandles{2} = plot(ax,real(zc),imag(zc),"blue",'LineWidth',5,'Tag',"contour");
-            %phandles{3} = scatter(ax,real(zd),imag(zd),200,"red","x",'Tag',"quadnodes");
-        end
-    end
-
     methods (Access = protected)
         
-        % Code that executes when the value of a public property is changed
         function update(comp)
-            % Use this function to update the underlying components
-            comp.radiusEditField.Value = comp.radius;
-            comp.centerEditField.Value = num2str(comp.center);
-            notify(comp.MainApp,"ContourDataChanged");
+            %nothing
         end
 
         % Create the underlying components

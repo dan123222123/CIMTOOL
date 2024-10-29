@@ -1,91 +1,27 @@
 classdef CIMTOOL < matlab.apps.AppBase
 
-    % Properties that correspond to app components
+    % app components
     properties (Access = public)
         UIFigure                        matlab.ui.Figure
+        Menu                            GUI.Menu
+        %
         GridLayout                      matlab.ui.container.GridLayout
-        %%
-        LeftPanel                       matlab.ui.container.Panel
-        %%
+        %
+        LeftPanel                       GUI.LeftPanel
+        LeftPanelGridLayout             matlab.ui.container.GridLayout
+        %
         RightPanel                      matlab.ui.container.Panel
         RightPanelGridLayout            matlab.ui.container.GridLayout
+        % %
         PlotPanel                       GUI.PlotPanel
+        % %
         ParameterPanel                  GUI.ParameterPanel
-        % FileMenu                       matlab.ui.container.Menu
-        % ImportNLEVPMenu                matlab.ui.container.Menu
-        % WorkspaceMenu                  matlab.ui.container.Menu
-        % ImportNLEVPFileMenu            matlab.ui.container.Menu
-        % NLEVPPackMenu                  matlab.ui.container.Menu
-        % ExportMenu                     matlab.ui.container.Menu
-        % EigenvaluesMenu                matlab.ui.container.Menu
-        % MomentsMenu                    matlab.ui.container.Menu
-        % FigureMenu                     matlab.ui.container.Menu
-        % PreferencesMenu                matlab.ui.container.Menu
-        % ShiftPatternMenu               matlab.ui.container.Menu
-        % equispacedMenu                 matlab.ui.container.Menu
-        % randomMenu                     matlab.ui.container.Menu
-        % PlottingAttributesMenu         matlab.ui.container.Menu
-        % ComputationMenu                matlab.ui.container.Menu
-        % LeftPanel                      matlab.ui.container.Panel
-        % QuadNodesEditField             matlab.ui.control.NumericEditField
-        % QuadNodesEditFieldLabel        matlab.ui.control.Label
-        % IMINEditField                  matlab.ui.control.NumericEditField
-        % IMINEditFieldLabel             matlab.ui.control.Label
-        % RMAXEditField                  matlab.ui.control.NumericEditField
-        % RMAXEditFieldLabel             matlab.ui.control.Label
-        % RMINEditField                  matlab.ui.control.NumericEditField
-        % RMINEditFieldLabel             matlab.ui.control.Label
-        % IMAXEditField                  matlab.ui.control.NumericEditField
-        % IMAXEditFieldLabel             matlab.ui.control.Label
-        % PROBLEMLOADEDTextArea          matlab.ui.control.TextArea
-        % PROBLEMLOADEDTextAreaLabel     matlab.ui.control.Label
-        % ShiftsButton                   matlab.ui.control.Button
-        % ComputeButton                  matlab.ui.control.Button
-        % ComputationalModeButtonGroup   matlab.ui.container.ButtonGroup
-        % MPLoewnerButton                matlab.ui.control.ToggleButton
-        % SPLoewnerButton                matlab.ui.control.ToggleButton
-        % HankelButton                   matlab.ui.control.ToggleButton
-        % RightPanel                     matlab.ui.container.Panel
-        % RightPanelGridLayout           matlab.ui.container.GridLayout
-        % ParameterTabGroup              matlab.ui.container.TabGroup
-        % NLEVPInformationTab            matlab.ui.container.Tab
-        % NLEVPHelpTextArea              matlab.ui.control.TextArea
-        % MethodTab                      matlab.ui.container.Tab
-        % MethodTabGridLayout            matlab.ui.container.GridLayout
-        % MethodDataParameterGridLayout  matlab.ui.container.GridLayout
-        % MaxMomentsEditField            matlab.ui.control.NumericEditField
-        % MaxMomentsEditFieldLabel       matlab.ui.control.Label
-        % EigSearchEditField             matlab.ui.control.NumericEditField
-        % EigSearchEditFieldLabel        matlab.ui.control.Label
-        % ProbingGridLayout              matlab.ui.container.GridLayout
-        % RightProbingSizeEditField      matlab.ui.control.NumericEditField
-        % RightProbingSizeEditFieldLabel matlab.ui.control.Label
-        % LeftProbingSizeEditField       matlab.ui.control.NumericEditField
-        % LeftProbingSizeEditFieldLabel  matlab.ui.control.Label        
-        % ContourTab                     matlab.ui.container.Tab
-        % ContourTabGridLayout           matlab.ui.container.GridLayout
-        % contourparameters              ContourComponentInterface
-        % ContourTypeButtonGroup         matlab.ui.container.ButtonGroup
-        % RectangleButton                matlab.ui.control.RadioButton
-        % EllipseButton                  matlab.ui.control.RadioButton
-        % CircleButton                   matlab.ui.control.RadioButton
-        % ShiftsTab                      matlab.ui.container.Tab
-        % ShiftsTabGridLayout            matlab.ui.container.GridLayout
-        % ShiftsTable                    matlab.ui.control.Table
-        % EigenvaluesTab                 matlab.ui.container.Tab
-        % EigenvaluesTabGridLayout       matlab.ui.container.GridLayout
-        % EigenvaluesTable               matlab.ui.control.Table
-        % PlotTabGroup                   matlab.ui.container.TabGroup
     end
 
-    % Properties that correspond to apps with auto-reflow
-    properties (Access = private)
-        onePanelWidth = 576;
-    end
-
+    % app data
     properties (Access = public)
         idxKey
-        CIMData     Numerics.CIM
+        CIMData                         Numerics.CIM
     end
     
     % % GUI Plot Interactions
@@ -183,37 +119,37 @@ classdef CIMTOOL < matlab.apps.AppBase
         % Create UIFigure and components
         function createComponents(app)
 
-            % Create UIFigure and hide until all components are created
             % app.UIFigure = uifigure('Visible', 'off','WindowKeyPressFcn',@app.recordKey,'WindowKeyReleaseFcn',@app.releaseKey);
             app.UIFigure = uifigure('Visible', 'off');
             app.UIFigure.AutoResizeChildren = 'on';
-            app.UIFigure.Position = [100 100 640 480];
+            % app.UIFigure.Position = [100 100 640 480];
             app.UIFigure.Name = 'CIMTOOL';
             app.UIFigure.CloseRequestFcn = createCallbackFcn(app, @UIFigureCloseRequest, true);
-
-            % Create AppGridLayout
-            app.GridLayout = uigridlayout(app.UIFigure);
+            % %
+            app.Menu = GUI.Menu(app.UIFigure);
+            % %
+            app.GridLayout = uigridlayout(app.UIFigure,[1 2]);
             app.GridLayout.ColumnWidth = {'1x', '3x'};
             app.GridLayout.RowHeight = {'1x'};
             app.GridLayout.ColumnSpacing = 0;
             app.GridLayout.RowSpacing = 0;
             app.GridLayout.Padding = [0 0 0 0];
-            app.GridLayout.Scrollable = 'on';
-
-            app.LeftPanel = uipanel(app.GridLayout);
+            % app.GridLayout.Scrollable = 'on';
+            % %
+            app.LeftPanelGridLayout = uigridlayout(uipanel(app.GridLayout),[1,1]);
+            app.LeftPanel = GUI.LeftPanel(app.LeftPanelGridLayout,app,app.CIMData);
+            % %
             app.RightPanel = uipanel(app.GridLayout);
-
-            % Create RightPanelGridLayout
-            % This Panel will include the Plot and Parameter Tab Groups
-            app.RightPanelGridLayout = uigridlayout(app.RightPanel);
+            app.RightPanelGridLayout = uigridlayout(app.RightPanel,[2,1]);
             app.RightPanelGridLayout.ColumnWidth = {'1x'};
             app.RightPanelGridLayout.RowHeight = {'2x','1x'};
-
+            %
             app.PlotPanel = GUI.PlotPanel(app.RightPanelGridLayout,app,app.CIMData);
-
+            app.PlotPanel.Layout.Row = 1;
+            %
             app.ParameterPanel = GUI.ParameterPanel(app.RightPanelGridLayout,app,app.CIMData);
+            app.ParameterPanel.Layout.Row = 2;
 
-            % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
         end
 
@@ -226,7 +162,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         function app = CIMTOOL
 
             % all numerics and self-consistency are handled in app.CIM
-            app.CIMData = Numerics.CIM(Numerics.NLEVPData(),Contour.Circle());
+            app.CIMData = Numerics.CIM(Numerics.NLEVPData(),Numerics.Contour.Circle());
 
             % Create UIFigure and components
             app.createComponents();

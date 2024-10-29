@@ -1,4 +1,4 @@
-classdef Circle < Contour.Quad
+classdef Circle < Numerics.Contour.Quad
     
     properties (SetObservable)
         center  (1,1) double
@@ -28,8 +28,8 @@ classdef Circle < Contour.Quad
                 N = 8
                 ax = missing
             end
-            [z,w] = Contour.Circle.trapezoid(center,radius,N);
-            obj@Contour.Quad(z,w)
+            [z,w] = Numerics.Contour.Circle.trapezoid(center,radius,N);
+            obj@Numerics.Contour.Quad(z,w)
             obj.center = center;
             obj.radius = radius;
             obj.N = N;
@@ -55,7 +55,7 @@ classdef Circle < Contour.Quad
             if ~isempty(obj.phandles)
                 obj.cla();
             end
-            zp = Contour.Circle.trapezoid(obj.center,obj.radius,512);
+            zp = Numerics.Contour.Circle.trapezoid(obj.center,obj.radius,512);
             zp = [obj.center + obj.radius, zp, obj.center + obj.radius];
             chold = ishold(ax);
             obj.phandles(end+1) = scatter(ax,real(obj.center),imag(obj.center),200,"black",'filled','Tag',"contour_center");
@@ -69,7 +69,7 @@ classdef Circle < Contour.Quad
         end
 
         function update(obj,~,~)
-            [obj.z,obj.w] = Contour.Circle.trapezoid(obj.center,obj.radius,obj.N);
+            [obj.z,obj.w] = Numerics.Contour.Circle.trapezoid(obj.center,obj.radius,obj.N);
             obj.update_plot(missing,missing);
         end
 
