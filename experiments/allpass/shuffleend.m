@@ -6,7 +6,6 @@ function [Ms,P,Q] = shuffleend(M,idx)
     n = size(M,1); P = eye(n); Q = eye(n);
     for i = idx:n-1
         Z = permij(n,i);
-        disp(Z)
         P = Z*P; Q = Q*Z;
     end
     Ms = P*M*Q;

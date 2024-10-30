@@ -29,7 +29,7 @@ classdef Circle < Numerics.Contour.Quad
                 ax = missing
             end
             [z,w] = Numerics.Contour.Circle.trapezoid(center,radius,N);
-            obj@Numerics.Contour.Quad(z,w)
+            obj@Numerics.Contour.Quad(z,w);
             obj.center = center;
             obj.radius = radius;
             obj.N = N;
@@ -39,7 +39,7 @@ classdef Circle < Numerics.Contour.Quad
             addlistener(obj,'center','PostSet',@obj.update);
             addlistener(obj,'radius','PostSet',@obj.update);
             addlistener(obj,'N','PostSet',@obj.update);
-            addlistener(obj,'plot_quadrature','PostSet',@obj.update_plot)
+            addlistener(obj,'plot_quadrature','PostSet',@obj.update_plot);
             addlistener(obj,'ax','PostSet',@obj.update_plot);
         end
 

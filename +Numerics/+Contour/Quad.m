@@ -25,7 +25,7 @@ classdef Quad < handle
             if ~ismissing(ax)
                 obj.plot(ax)
             end
-            addlistener(obj,'z','PostSet',@obj.update_plot)
+            addlistener(obj,'z','PostSet',@obj.update_plot);
         end
 
         function plot(obj,ax)

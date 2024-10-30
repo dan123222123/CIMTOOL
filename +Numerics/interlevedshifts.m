@@ -16,7 +16,7 @@ end
         case 'shift'
             rs = r+d;
     end
-    z = Contour.Circle.trapezoid(c,rs,2*nsw);
+    z = Numerics.Contour.Circle.trapezoid(c,rs,2*nsw);
     theta = double.empty();
     sigma = double.empty();
     for i=1:length(z)

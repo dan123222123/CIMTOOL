@@ -1,11 +1,10 @@
-function [Ess,Ef,xi] = allpass_error_sstf(n,rsv)
+function [Ess,Ef,xi] = allpass_error_nin_sstfout(n,rsv)
 arguments
     n
     rsv = 2
 end
 lspc = linspace(-n,-1,n); A = diag(lspc);
 B = randn(n,n); C = B'; D = 0;
-%B = eye(n); C = B'; D = 0;
 sysorg = ss(A,B,C,D);
 sysbt = getrom(reducespec(sysorg,"balanced"));
 sysbr = balreal(sysbt);
@@ -20,7 +19,6 @@ Gram = gram(sysbr, 'c');
 G = @(s) C*((s*eye(size(A)) - A)\B) + D;
 
 % partition + permute, assumed that rsv is simple
-%rsv = 2;
 ord = 1;
 
 % perm mat
@@ -52,7 +50,7 @@ Atilde = Gamma\(xi^2*A11' + Sigmahat*A11*Sigmahat + xi*C1'*U*B1');
 Btilde = Gamma\(Sigmahat*B1 - xi*C1'*U);
 Ctilde = C1*Sigmahat - xi*U*B1';
 Dtilde = Dhat + xi*U;
-systilde = ss(Atilde,Btilde,Ctilde,Dtilde);
+% systilde = ss(Atilde,Btilde,Ctilde,Dtilde);
 Gtilde = @(s) Ctilde*((s*eye(size(Atilde)) - Atilde) \ Btilde) + Dtilde;
 
 % ss of SigmaTilde
