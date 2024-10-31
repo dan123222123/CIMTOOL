@@ -11,6 +11,8 @@ classdef CIM < handle
         MainAx = missing
         SvAx = missing
         auto = false;
+        auto_compute_samples = false;
+        auto_compute_realization = false;
         auto_update_shifts = true;
     end
     
@@ -50,7 +52,7 @@ classdef CIM < handle
                 case Numerics.ComputationalMode.Hankel
                     obj.RealizationData.InterpolationData = Numerics.InterpolationData(NaN,Inf);
                 case Numerics.ComputationalMode.SPLoewner
-                    obj.RealizationData.InterpolationData = Numerics.InterpolationData(NaN,FindRandomShift(obj.SampleData.Contour));
+                    obj.RealizationData.InterpolationData = Numerics.InterpolationData(NaN,obj.SampleData.Contour.FindRandomShift(obj.RealizationData.ShiftScale));
                 case Numerics.ComputationalMode.MPLoewner
                     obj.interlevedshifts();
             end
@@ -93,7 +95,7 @@ classdef CIM < handle
             else
                 obj.DataDirtiness = 0;
             end
-            if obj.auto
+            if obj.auto % need to check that the contour is ready first
                 obj.compute();
             end
         end

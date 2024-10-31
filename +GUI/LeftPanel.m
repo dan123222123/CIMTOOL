@@ -23,27 +23,66 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
 
     properties (Access = public)
         MainApp
-        CIMData
+        CIMData                     Numerics.CIM
+        MainPlotAxes
     end
 
     methods (Access = public)
         
-        function obj = LeftPanel(Parent,MainApp,CIMData)
+        function obj = LeftPanel(Parent,MainApp,CIMData,MainPlotAxes)
 
             obj@matlab.ui.componentcontainer.ComponentContainer(Parent)
             obj.MainApp = MainApp;
             obj.CIMData = CIMData;
+            obj.MainPlotAxes = MainPlotAxes;
 
             obj.createDynamicComponents();
+
+            obj.NumQuadNodes.Value = CIMData.SampleData.Contour.N;
+
+            obj.addListeners();
 
         end
 
         function createDynamicComponents(comp)
-            comp.PlotViewportControl = GUI.Plot.PlotViewportComplexPlane(comp.GridLayout,comp.MainApp.PlotPanel.MainPlotAxes);
+            comp.PlotViewportControl = GUI.Plot.PlotViewportComplexPlane(comp.GridLayout,comp.MainPlotAxes);
             comp.PlotViewportControl.Layout.Row = 7;
             comp.PlotViewportControl.Layout.Column = [1 3];    
         end
 
+        function addListeners(comp)
+            addlistener(comp.CIMData.SampleData.NLEVP,'loaded','PostSet',@(src,event)comp.NLEVPChangedFcn);
+            addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
+        end
+
+    end
+
+    methods
+        
+        function NLEVPChangedFcn(comp,event)
+            name = comp.CIMData.SampleData.NLEVP.name;
+            n = comp.CIMData.SampleData.NLEVP.n;
+            if all(ismissing(name))
+                comp.ProblemName.Value = "";
+            else
+                comp.ProblemName.Value = name;
+            end
+            comp.ProblemSize.Value = n;
+        end
+
+        function QuadratureChangedFcn(comp,event)
+            N = comp.CIMData.SampleData.Contour.N;
+            comp.NumQuadNodes.Value = N;
+        end
+
+        function ComputeButtonPushed(comp,event)
+            comp.CIMData.compute();
+        end
+
+        function NumQuadNodesChanged(comp,event)
+            comp.CIMData.SampleData.Contour.N = comp.NumQuadNodes.Value;
+        end
+            
     end
     
     methods (Access = protected)
@@ -64,7 +103,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.ProblemNameLabel.Layout.Row = 1;
             comp.ProblemNameLabel.Layout.Column = 1;
             %
-            comp.ProblemName = uitextarea(comp.GridLayout);
+            comp.ProblemName = uieditfield(comp.GridLayout,"text");
             comp.ProblemName.Editable = 'off';
             comp.ProblemName.HorizontalAlignment = 'center';
             comp.ProblemName.FontName = 'Hack';
@@ -79,7 +118,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.ProblemSizeLabel.Layout.Row = 2;
             comp.ProblemSizeLabel.Layout.Column = 1;
             %
-            comp.ProblemSize = uitextarea(comp.GridLayout);
+            comp.ProblemSize = uieditfield(comp.GridLayout,"numeric");
             comp.ProblemSize.Editable = 'off';
             comp.ProblemSize.HorizontalAlignment = 'center';
             comp.ProblemSize.FontName = 'Hack';
@@ -94,12 +133,13 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.NumQuadNodesLabel.Layout.Row = 3;
             comp.NumQuadNodesLabel.Layout.Column = 1;
             %
-            comp.NumQuadNodes = uitextarea(comp.GridLayout);
+            comp.NumQuadNodes = uieditfield(comp.GridLayout,"numeric");
             comp.NumQuadNodes.HorizontalAlignment = 'center';
             comp.NumQuadNodes.FontName = 'Hack';
             comp.NumQuadNodes.Placeholder = 'N/A';
             comp.NumQuadNodes.Layout.Row = 3;
             comp.NumQuadNodes.Layout.Column = [2 3];
+            comp.NumQuadNodes.ValueChangedFcn = matlab.apps.createCallbackFcn(comp,@NumQuadNodesChanged,true);
             % %
             comp.AutoSampleCheckBox = uicheckbox(comp.GridLayout,'Text','Auto Compute Samples');
             comp.AutoSampleCheckBox.WordWrap = 'on';
@@ -112,7 +152,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.AutoRealizationCheckBox.Layout.Column = 3;
             % %
             comp.ComputeButton = uibutton(comp.GridLayout);
-            % app.ComputeButton.ButtonPushedFcn = createCallbackFcn(app, @ComputeButtonPushed, true);
+            comp.ComputeButton.ButtonPushedFcn = matlab.apps.createCallbackFcn(comp, @ComputeButtonPushed, true);
             comp.ComputeButton.Text = 'Compute';
             comp.ComputeButton.Layout.Row = [4 5];
             comp.ComputeButton.Layout.Column = [1 2];

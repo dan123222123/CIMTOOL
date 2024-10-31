@@ -15,5 +15,6 @@ classdef InterpolationData
             obj.sigma = sigma;
         end
     end
+    
 end
 

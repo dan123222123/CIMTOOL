@@ -11,8 +11,63 @@ classdef PlotViewportComplexPlane < GUI.Plot.PlotViewportComponent
         IminLabel
         RminLabel
     end
+
+    properties (Access = public)
+        MainPlotAxes
+    end
+
+    methods (Access = public)
+
+        function obj = PlotViewportComplexPlane(Parent,MainPlotAxes)
+
+            obj@GUI.Plot.PlotViewportComponent(Parent)
+            obj.MainPlotAxes = MainPlotAxes;
+
+            obj.addListeners();
+
+            obj.Rmax.Value = obj.MainPlotAxes.XLim(2);
+            obj.Rmin.Value = obj.MainPlotAxes.XLim(1);
+            obj.Imax.Value = obj.MainPlotAxes.YLim(2);
+            obj.Imin.Value = obj.MainPlotAxes.YLim(1);
+
+        end
+
+    end
     
     methods (Access = protected)
+
+        function addListeners(comp)
+            addlistener(comp.MainPlotAxes,'XLim','PostSet',@(src,event)comp.MainPlotWindowXLimChangedFcn);
+            addlistener(comp.MainPlotAxes,'YLim','PostSet',@(src,event)comp.MainPlotWindowYLimChangedFcn);
+        end
+
+        function MainPlotWindowXLimChangedFcn(comp, src, event)
+            comp.Rmin.Value = comp.MainPlotAxes.XLim(1);
+            comp.Rmax.Value = comp.MainPlotAxes.XLim(2);
+        end
+
+        function MainPlotWindowYLimChangedFcn(comp, src, event)
+            comp.Imin.Value = comp.MainPlotAxes.YLim(1);
+            comp.Imax.Value = comp.MainPlotAxes.YLim(2);
+        end
+
+        function MainPlotAxesWindowChangedFcn(comp, event)
+            2
+            OldXLim = comp.MainPlotAxes.XLim;
+            OldYLim = comp.MainPlotAxes.YLim;
+            NewXLim = [comp.Rmin.Value; comp.Rmax.Value];
+            NewYLim = [comp.Imin.Value; comp.Imax.Value];
+            try
+                comp.MainPlotAxes.XLim = NewXLim;
+                comp.MainPlotAxes.YLim = NewYLim;
+            catch PLE
+                event.Source.Value = event.PreviousValue;
+                comp.MainPlotAxes.XLim = OldXLim;
+                comp.MainPlotAxes.YLim = OldYLim;
+                uialert(comp.UIFigure,'Please ensure that IMIN < IMAX and RMIN < RMAX.','MainPlotAxes Error');
+                return
+            end
+        end
 
         function update(comp)
             %TODO
@@ -30,7 +85,7 @@ classdef PlotViewportComplexPlane < GUI.Plot.PlotViewportComponent
             %
             comp.Imax = uieditfield(comp.GridLayout, 'numeric');
             comp.Imax.HorizontalAlignment = 'center';
-            % comp.Imax.ValueChangedFcn = createCallbackFcn(comp, @MainPlotAxesWindowChangedFcn, true);
+            comp.Imax.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MainPlotAxesWindowChangedFcn, true);
             comp.Imax.Layout.Row = 2;
             comp.Imax.Layout.Column = 3;
             % %
@@ -42,7 +97,7 @@ classdef PlotViewportComplexPlane < GUI.Plot.PlotViewportComponent
             %
             comp.Rmin = uieditfield(comp.GridLayout, 'numeric');
             comp.Rmin.HorizontalAlignment = 'center';
-            % comp.Rmin.ValueChangedFcn = createCallbackFcn(comp, @MainPlotAxesWindowChangedFcn, true);
+            comp.Rmin.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MainPlotAxesWindowChangedFcn, true);
             comp.Rmin.Layout.Row = 3;
             comp.Rmin.Layout.Column = 2;
             % %
@@ -54,21 +109,21 @@ classdef PlotViewportComplexPlane < GUI.Plot.PlotViewportComponent
             %
             comp.Rmax = uieditfield(comp.GridLayout, 'numeric');
             comp.Rmax.HorizontalAlignment = 'center';
-            % comp.RMAXEditField.ValueChangedFcn = createCallbackFcn(comp, @MainPlotAxesWindowChangedFcn, true);
+            comp.Rmax.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MainPlotAxesWindowChangedFcn, true);
             comp.Rmax.Layout.Row = 3;
             comp.Rmax.Layout.Column = 4;
             % %
-            comp.Imax = uieditfield(comp.GridLayout, 'numeric');
-            comp.Imax.HorizontalAlignment = 'center';
-            % comp.IMINEditField.ValueChangedFcn = createCallbackFcn(comp, @MainPlotAxesWindowChangedFcn, true);
-            comp.Imax.Layout.Row = 4;
-            comp.Imax.Layout.Column = 3;
+            comp.Imin = uieditfield(comp.GridLayout, 'numeric');
+            comp.Imin.HorizontalAlignment = 'center';
+            comp.Imin.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MainPlotAxesWindowChangedFcn, true);
+            comp.Imin.Layout.Row = 4;
+            comp.Imin.Layout.Column = 3;
             %
-            comp.ImaxLabel = uilabel(comp.GridLayout);
-            comp.ImaxLabel.HorizontalAlignment = 'center';
-            comp.ImaxLabel.Text = 'IMIN';
-            comp.ImaxLabel.Layout.Row = 5;
-            comp.ImaxLabel.Layout.Column = 3;
+            comp.IminLabel = uilabel(comp.GridLayout);
+            comp.IminLabel.HorizontalAlignment = 'center';
+            comp.IminLabel.Text = 'IMIN';
+            comp.IminLabel.Layout.Row = 5;
+            comp.IminLabel.Layout.Column = 3;
         end
 
     end

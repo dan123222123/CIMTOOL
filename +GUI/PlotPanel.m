@@ -74,7 +74,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.MainPlotAxes.YGrid = 'on';
             comp.MainPlotAxes.YMinorGrid = 'on';
             comp.MainPlotAxes.Title.String = 'NORMAL MODE';
-            comp.MainPlotAxes.DataAspectRatioMode = "manual";
+            axis(comp.MainPlotAxes,'equal');
             hold(comp.MainPlotAxes,"on"); % easier to set hold on here
         
             % Create HSVAxes
@@ -84,6 +84,8 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.HSVAxes.XMinorGrid = 'on';
             comp.HSVAxes.YGrid = 'on';
             comp.HSVAxes.YMinorGrid = 'on';
+            comp.HSVAxes.YScale = 'log';
+            legend(comp.HSVAxes);
 
         end
 

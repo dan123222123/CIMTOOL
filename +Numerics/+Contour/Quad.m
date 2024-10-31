@@ -12,6 +12,17 @@ classdef Quad < handle
 
     methods
 
+        function s = FindRandomShift(obj,scale)
+            arguments
+                obj 
+                scale = 1.5 
+            end
+            c = sum(obj.z)/length(obj.z);
+            d = max(abs(c - obj.z))*scale;
+            r = randn(1,"like",1i); r = r/norm(r);
+            s = c + r*d;
+        end
+
         function obj = Quad(z,w,ax)
             arguments
                 z

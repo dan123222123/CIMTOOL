@@ -16,8 +16,21 @@ classdef NLEVPTab < matlab.ui.componentcontainer.ComponentContainer
             obj@matlab.ui.componentcontainer.ComponentContainer(Parent)
             obj.CIMData = CIMData;
 
-            % obj.addListeners();
+            obj.addListeners();
 
+        end
+
+        function addListeners(comp)
+            addlistener(comp.CIMData.SampleData.NLEVP,'loaded','PostSet',@(src,event)comp.NLEVPChangedFcn);
+        end
+
+        function NLEVPChangedFcn(comp,event)
+            helpstr = comp.CIMData.SampleData.NLEVP.helpstr;
+            if all(ismissing(helpstr))
+                comp.NLEVPHelpTextArea.Value = "";
+            else
+                comp.NLEVPHelpTextArea.Value = helpstr;
+            end
         end
 
     end

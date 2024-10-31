@@ -6,7 +6,7 @@ classdef NLEVPData < handle
         name = missing
         helpstr = missing
         loaded = false
-        compute_reference = false
+        compute_reference = true
         plot_reference = true
         refew = missing
         refev = missing

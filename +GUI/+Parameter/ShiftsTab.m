@@ -75,5 +75,6 @@ classdef ShiftsTab < matlab.ui.componentcontainer.ComponentContainer
             comp.ShiftsTable.CellEditCallback = @comp.ShiftsTableCellEdit;
         end
     end
+    
 end
 

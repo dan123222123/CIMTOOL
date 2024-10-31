@@ -17,8 +17,39 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
         % EstimateMCheckbox
     end
 
+    properties (Access = public)
+        CIMData Numerics.CIM
+    end
+
+    methods (Access = public)
+
+        function obj = GenericMethodComponent(Parent,CIMData)
+
+            obj@GUI.Parameter.Method.MethodComponent(Parent)
+            obj.CIMData = CIMData;
+
+            % obj.addListeners();
+
+        end
+
+    end
+
     methods (Access = protected)
 
+
+
+        % function addListeners(comp)
+        %     addlistener(comp.CIMData.SampleData.NLEVP,'loaded','PostSet',@(src,event)comp.NLEVPChangedFcn);
+        %     addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
+        % end
+
+        function MethodParametersChanged(comp,event)
+            comp.CIMData.SampleData.ell = comp.LeftProbingSizeEditField.Value;
+            comp.CIMData.SampleData.r = comp.RightProbingSizeEditField.Value;
+            comp.CIMData.RealizationData.m = comp.EigSearchEditField.Value;
+            comp.CIMData.RealizationData.K = comp.MaxMomentsEditField.Value;
+        end
+        
         function setup(comp)
 
             % do the layout in the parent grid, not the component
@@ -41,7 +72,7 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             comp.LeftProbingSizeEditField = uieditfield(comp.ProbingGridLayout, 'numeric');
             comp.LeftProbingSizeEditField.Limits = [0 Inf];
             comp.LeftProbingSizeEditField.HorizontalAlignment = 'center';
-            % comp.LeftProbingSizeEditField.ValueChangedFcn = createCallbackFcn(comp, @LeftProbingSizeEditFieldChangedFcn, true);
+            comp.LeftProbingSizeEditField.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MethodParametersChanged, true);
             comp.LeftProbingSizeEditField.Layout.Row = 2;
             comp.LeftProbingSizeEditField.Layout.Column = 1;
         
@@ -56,7 +87,7 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             comp.RightProbingSizeEditField = uieditfield(comp.ProbingGridLayout, 'numeric');
             comp.RightProbingSizeEditField.Limits = [0 Inf];
             comp.RightProbingSizeEditField.HorizontalAlignment = 'center';
-            % comp.RightProbingSizeEditField.ValueChangedFcn = createCallbackFcn(comp, @RightProbingSizeEditFieldChangedFcn, true);
+            comp.RightProbingSizeEditField.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MethodParametersChanged, true);
             comp.RightProbingSizeEditField.Layout.Row = 2;
             comp.RightProbingSizeEditField.Layout.Column = 2;
             %
@@ -77,7 +108,7 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             comp.EigSearchEditField = uieditfield(comp.MethodDataParameterGridLayout, 'numeric');
             comp.EigSearchEditField.Limits = [0 Inf];
             comp.EigSearchEditField.HorizontalAlignment = 'center';
-            % comp.EigSearchEditField.ValueChangedFcn = createCallbackFcn(comp, @EigSearchEditFieldValueChanged, true);
+            comp.EigSearchEditField.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MethodParametersChanged, true);
             comp.EigSearchEditField.Value = 0;
             comp.EigSearchEditField.Layout.Row = 2;
             comp.EigSearchEditField.Layout.Column = 1;
@@ -93,7 +124,7 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             comp.MaxMomentsEditField = uieditfield(comp.MethodDataParameterGridLayout, 'numeric');
             comp.MaxMomentsEditField.Limits = [0 Inf];
             comp.MaxMomentsEditField.HorizontalAlignment = 'center';
-            % comp.MaxMomentsEditField.ValueChangedFcn = createCallbackFcn(comp, @MaxMomentsEditFieldValueChanged, true);
+            comp.MaxMomentsEditField.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MethodParametersChanged, true);
             comp.MaxMomentsEditField.Layout.Row = 2;
             comp.MaxMomentsEditField.Layout.Column = 2;
 
@@ -104,5 +135,6 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
         end
 
     end
+    
 end
 

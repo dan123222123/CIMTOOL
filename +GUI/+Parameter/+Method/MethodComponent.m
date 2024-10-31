@@ -8,6 +8,5 @@ classdef MethodComponent < matlab.ui.componentcontainer.ComponentContainer
         end
     end
 
-
 end
 

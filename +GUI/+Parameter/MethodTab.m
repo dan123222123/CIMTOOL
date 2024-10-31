@@ -10,7 +10,7 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
     end
 
     properties (Access = public)
-        CIMData
+        CIMData Numerics.CIM
     end
     
     methods
@@ -21,11 +21,28 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
             obj.CIMData = CIMData;
 
             % create dynamic component
-            obj.MethodComponent = GUI.Parameter.Method.GenericMethodComponent(obj.GridLayout);
+            obj.MethodComponent = GUI.Parameter.Method.GenericMethodComponent(obj.GridLayout,obj.CIMData);
             obj.MethodComponent.Layout.Row = [1 5];
             obj.MethodComponent.Layout.Column = [3 5];
 
             % obj.addListeners();
+
+        end
+
+        function ComputationalModeChangedFcn(comp,event)
+
+            switch(comp.ComputationalModeButtonGroup.SelectedObject.Text)
+
+                case "Hankel"
+                    comp.CIMData.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
+
+                case "SPLoewner"
+                    comp.CIMData.RealizationData.ComputationalMode = Numerics.ComputationalMode.SPLoewner;
+
+                case "MPLoewner"
+                    comp.CIMData.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+
+            end
 
         end
 
@@ -42,7 +59,7 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
             comp.GridLayout.Padding = [10 10 10 10];
             %
             comp.ComputationalModeButtonGroup = uibuttongroup(comp.GridLayout);
-            % app.ComputationalModeButtonGroup.SelectionChangedFcn = createCallbackFcn(app, @ComputationalModeButtonGroupSelectionChangedFcn, true);
+            comp.ComputationalModeButtonGroup.SelectionChangedFcn = matlab.apps.createCallbackFcn(comp, @ComputationalModeChangedFcn, true);
             comp.ComputationalModeButtonGroup.TitlePosition = 'centertop';
             comp.ComputationalModeButtonGroup.Title = 'Computational Mode';
             comp.ComputationalModeButtonGroup.Layout.Row = [1 5];

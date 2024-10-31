@@ -111,11 +111,6 @@ classdef CIMTOOL < matlab.apps.AppBase
             delete(app)
         end
 
-        % function set_listeners(app)
-        %     addlistener(app.MainPlotAxes,'XLim','PostSet',@(src,event)app.MainPlotWindowXLimChangedFcn);
-        %     addlistener(app.MainPlotAxes,'YLim','PostSet',@(src,event)app.MainPlotWindowYLimChangedFcn);
-        % end
-
         % Create UIFigure and components
         function createComponents(app)
 
@@ -126,7 +121,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.UIFigure.Name = 'CIMTOOL';
             app.UIFigure.CloseRequestFcn = createCallbackFcn(app, @UIFigureCloseRequest, true);
             % %
-            app.Menu = GUI.Menu(app.UIFigure);
+            app.Menu = GUI.Menu(app.UIFigure,app,app.CIMData);
             % %
             app.GridLayout = uigridlayout(app.UIFigure,[1 2]);
             app.GridLayout.ColumnWidth = {'1x', '3x'};
@@ -135,12 +130,8 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.GridLayout.RowSpacing = 0;
             app.GridLayout.Padding = [0 0 0 0];
             % app.GridLayout.Scrollable = 'on';
-            % %
             app.LeftPanelGridLayout = uigridlayout(uipanel(app.GridLayout),[1,1]);
-            app.LeftPanel = GUI.LeftPanel(app.LeftPanelGridLayout,app,app.CIMData);
-            % %
-            app.RightPanel = uipanel(app.GridLayout);
-            app.RightPanelGridLayout = uigridlayout(app.RightPanel,[2,1]);
+            app.RightPanelGridLayout = uigridlayout(uipanel(app.GridLayout),[2,1]);
             app.RightPanelGridLayout.ColumnWidth = {'1x'};
             app.RightPanelGridLayout.RowHeight = {'2x','1x'};
             %
@@ -149,6 +140,9 @@ classdef CIMTOOL < matlab.apps.AppBase
             %
             app.ParameterPanel = GUI.ParameterPanel(app.RightPanelGridLayout,app,app.CIMData);
             app.ParameterPanel.Layout.Row = 2;
+            % %
+            app.LeftPanel = GUI.LeftPanel(app.LeftPanelGridLayout,app,app.CIMData,app.PlotPanel.MainPlotAxes);
+
 
             app.UIFigure.Visible = 'on';
         end
