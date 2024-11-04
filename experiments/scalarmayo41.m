@@ -5,6 +5,9 @@ nu = 1; rho = 1;
 
 n = 1; m = 1; p = 1;
 
+% D = zeros(p,m);
+epsilon = 10^-2; D = randn(p,m); D = epsilon*(D / norm(D));
+
 %% original system and tf
 A = randn(n,n);
 B = randn(n,m);
@@ -26,8 +29,6 @@ LL = (v_1*r_1 - ell_1*w_1)/(mu_1 - lambda_1);
 assert(rank(LL) == nu);
 
 %% realization
-% D = zeros(p,m);
-epsilon = 10^-2; D = randn(p,m); D = epsilon*(D / norm(D));
 
 Atilde = lambda_1 + inv(LL)*(v_1*r_1 - ell_1*D*r_1);
 Btilde = inv(LL)*(v_1 - ell_1*D);
@@ -36,8 +37,8 @@ Ctilde = -1 * (w_1 - D*r_1);
 Htilde = @(s) Ctilde*inv(s*eye(size(Atilde))-Atilde)*Btilde + D;
 
 %% check interpolation
-norm(Htilde(lambda_1)*r_1 - w_1);
-norm(ell_1*Htilde(mu_1) - v_1);
+norm(Htilde(lambda_1)*r_1 - w_1)
+norm(ell_1*Htilde(mu_1) - v_1)
 
 %% check eig
 norm(eig(A) - eig(Atilde))
