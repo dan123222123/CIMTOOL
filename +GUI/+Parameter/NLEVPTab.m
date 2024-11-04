@@ -47,7 +47,7 @@ classdef NLEVPTab < matlab.ui.componentcontainer.ComponentContainer
             %
             comp.NLEVPHelpTextArea = uitextarea(comp.GridLayout);
             comp.NLEVPHelpTextArea.Editable = 'off';
-            comp.NLEVPHelpTextArea.HorizontalAlignment = 'center';
+            % comp.NLEVPHelpTextArea.HorizontalAlignment = 'center';
             comp.NLEVPHelpTextArea.BackgroundColor = [0.8 0.8 0.8];
             comp.NLEVPHelpTextArea.Value = {'No NLEVP Loaded.'};
         end

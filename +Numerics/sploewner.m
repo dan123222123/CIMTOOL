@@ -87,6 +87,7 @@ for i=1:K
 end
 V = Cbb*Y*(Sigma\S);
 Dssw = svd(D1);
+Dssw = Dssw / Dssw(1);
 
 % END NUMERICS
 

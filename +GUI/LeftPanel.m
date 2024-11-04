@@ -1,6 +1,6 @@
 classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
     
-    properties
+    properties (Access = public)
         GridLayout
         %
         ProblemNameLabel
@@ -19,9 +19,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         RefineQuadratureButton
         %
         PlotViewportControl
-    end
-
-    properties (Access = public)
+        % % %
         MainApp
         CIMData                     Numerics.CIM
         MainPlotAxes
@@ -42,6 +40,15 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
 
             obj.addListeners();
 
+        end
+
+        function setFontSize(comp,size,units)
+            arguments
+                comp 
+                size 
+                units = "points"
+            end
+            fontsize(comp.GridLayout.Children,size,units);
         end
 
         function createDynamicComponents(comp)

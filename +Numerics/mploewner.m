@@ -78,6 +78,7 @@ Lambda = diag(Lambda);
 % recover right eigenvectors from right-sided samples
 V = C*Y*(Sigma\S);
 Lssw = svd(Ls);
+Lssw = Lssw / Lssw(1);
 % END NUMERICS
 
     function [Lbrank,X,Sigma,Y,Lbsw] = rankdet

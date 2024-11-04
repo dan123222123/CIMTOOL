@@ -18,10 +18,13 @@ classdef CIMTOOL < matlab.apps.AppBase
         ParameterPanel                  GUI.ParameterPanel
     end
 
-    % app data
     properties (Access = public)
         idxKey
         CIMData                         Numerics.CIM
+    end
+
+    properties (SetObservable)
+        FontSize
     end
     
     % % GUI Plot Interactions
@@ -110,6 +113,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         function UIFigureCloseRequest(app, event)
             delete(app)
         end
+        
 
         % Create UIFigure and components
         function createComponents(app)
@@ -143,7 +147,6 @@ classdef CIMTOOL < matlab.apps.AppBase
             % %
             app.LeftPanel = GUI.LeftPanel(app.LeftPanelGridLayout,app,app.CIMData,app.PlotPanel.MainPlotAxes);
 
-
             app.UIFigure.Visible = 'on';
         end
 
@@ -151,6 +154,41 @@ classdef CIMTOOL < matlab.apps.AppBase
 
     % App creation and deletion
     methods (Access = public)
+
+        % determine the proper font size/scaling for all app components
+        % Update the obvervable FontSize (or FontScale) that components
+        % will use to set their own (appropriate) font sizes
+        function updateFontSize(app, event)
+
+            % base new font off of MATLAB's default font size (assumed that
+            % the user has set according to their preferences)
+            s = settings;
+            defaultFontSize = s.matlab.fonts.codefont.Size.FactoryValue;
+            minFontSize = defaultFontSize/2;
+
+            fig = app.UIFigure;
+
+            % resolution of the screen that the app is on
+            dSS = get(fig.Parent,'ScreenSize');
+            dispwidth = dSS(3);
+            dispheight = dSS(4);
+
+            % resolution of the app itself
+            figwidth = fig.Position(3);
+            figheight = fig.Position(4);
+
+            % percent fill of the app on the screen in the horizontal and
+            % vertical directions
+            wfill = (figwidth/dispwidth);
+            hfill = (figheight/dispheight);
+
+            % a heuristic for setting the font sizes
+            fill = min(wfill,hfill);
+            
+            % update app.FontSize, respecting the min FontSize
+            app.FontSize = double(max(minFontSize,defaultFontSize*fill*(dispwidth/dispheight)));
+
+        end
 
         % Construct app
         function app = CIMTOOL
@@ -167,6 +205,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             if nargout == 0
                 clear app
             end
+            
         end
 
         % Delete app

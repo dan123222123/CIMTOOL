@@ -1,7 +1,7 @@
 classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
 
     % Component Properties
-    properties (Access = private)
+    properties (Access = public)
         PlotTabGridLayout               matlab.ui.container.GridLayout
         PlotTabGroup                    matlab.ui.container.TabGroup
         %
@@ -75,6 +75,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.MainPlotAxes.YMinorGrid = 'on';
             comp.MainPlotAxes.Title.String = 'NORMAL MODE';
             axis(comp.MainPlotAxes,'equal');
+            legend(comp.MainPlotAxes,Location="southoutside",Orientation="horizontal");
             hold(comp.MainPlotAxes,"on"); % easier to set hold on here
         
             % Create HSVAxes
@@ -85,7 +86,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.HSVAxes.YGrid = 'on';
             comp.HSVAxes.YMinorGrid = 'on';
             comp.HSVAxes.YScale = 'log';
-            legend(comp.HSVAxes);
+            legend(comp.HSVAxes,Location="southoutside",Orientation="horizontal");
 
         end
 

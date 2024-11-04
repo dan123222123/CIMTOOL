@@ -1,6 +1,6 @@
 classdef ParameterPanel < matlab.ui.componentcontainer.ComponentContainer
 
-    properties (Access = private)
+    properties (Access = public)
         ParameterTabGridLayout              matlab.ui.container.GridLayout
         ParameterTabGroup                   matlab.ui.container.TabGroup
         %
@@ -8,9 +8,7 @@ classdef ParameterPanel < matlab.ui.componentcontainer.ComponentContainer
         ContourTab                          GUI.Parameter.ContourTab
         MethodTab                           GUI.Parameter.MethodTab
         ShiftsTab                           GUI.Parameter.ShiftsTab
-    end
-
-    properties (Access = public)
+        % % %
         MainApp
         CIMData Numerics.CIM
     end
