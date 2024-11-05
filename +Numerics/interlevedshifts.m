@@ -31,10 +31,6 @@ end
     end
 
     for i=1:length(z)
-        cz = z(i);
-        if ismissing(cz)
-            continue;
-        end
         if mod(i,2) == 1
             theta(end+1) = z(i);
         else
@@ -48,7 +44,7 @@ end
 
 function z = circquad(gamma,rho,N)
     assert(mod(N,2) == 0);
-    q = [((2*pi)/N)*(1:(N/2-1)) missing ((2*pi)/N)*((N/2+1):(N-1))];
+    q = [((2*pi)/N)*(1:(N/2-1)) ((2*pi)/N)*((N/2+1):(N-1))];
     f = @(theta) gamma + rho*exp(1i*theta);
     z = f(q);
 end

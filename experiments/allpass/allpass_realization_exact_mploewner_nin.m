@@ -1,10 +1,12 @@
-function [Db,Ds,refeig,cmpeig] = allpass_realization_exact_mploewner_nin(n,K,rsv,theta,sigma)
+function [Db,Ds,refeig,cmpeig] = allpass_realization_exact_mploewner_nin(n,K,rsv,theta,sigma,DbE,DsE)
     arguments
         n
         K
         rsv
         theta = missing
         sigma = missing
+        DbE = 0;
+        DsE = 0;
     end
 
     % create error system
@@ -28,6 +30,8 @@ function [Db,Ds,refeig,cmpeig] = allpass_realization_exact_mploewner_nin(n,K,rsv
 
     % building the exact data matrices
     [Db,Ds] = Numerics.build_mploewner_data(Etf,theta,sigma,Lt,Rt);
+
+    Db = Db + DbE; Ds = Ds + DsE;
 
     cmpeig = eig(Ds,Db);
 

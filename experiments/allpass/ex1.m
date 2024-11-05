@@ -31,8 +31,11 @@ display(abs(pairedeigs(:,1)-pairedeigs(:,2)))
 display(nmderr)
 
 % try irka interpolants
+
 % optimal weighting of interpolation points
+
 % pseudospectra of "real-world" example -- imaginary axis, etc.
 % optimization of weights given some data -- no more tf evaluations
+
 % another idea, perturb interpolation points a bit and try to backtrace to
 % recover weights that solve the slightly perturbed interpolants
