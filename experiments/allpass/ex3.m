@@ -1,26 +1,18 @@
 format long
 axis equal
-%%
+%% all-pass systems
 n = 4;
-lr = linspace(-n,-1,n);
-refeig = lr;
-% refeig = -1 + 1i*lr;
-A = diag(refeig);
-
-%%
-B = rand(n,n); C = B'; D = 0;
-% B = eye(n); C = B'; D = 0;
-
-L = Numerics.SampleData.sampleMatrix(n,1000*n);
-R = Numerics.SampleData.sampleMatrix(n,1000*n);
-
-%%
-rsv = 2; [Ess,Etf] = allpass_error_ssin_sstfout(A,B,C,D,rsv);
-errpoles = sort(eig(Ess.A));
-
+[A,B,C,D] = sallpass(n);
+%
+Ess = ss(A,B,C,D);
+Etf = @(s) C * ((s * eye(n) - A) \ B);
+errpoles = eig(Ess.A);
+%
+L = Numerics.SampleData.sampleMatrix(size(C,1),1000*n);
+R = Numerics.SampleData.sampleMatrix(size(B,22),1000*n);
 %% construct theta and sigma so that irka points are the majority
-K = n+n-1; % the number of poles in the allpass error system
-% K = 2*n;
+% K = n+n-1; % the number of poles in the allpass error system
+K = n+3;
 % K = 2*n+2;
 % K = 10*n;
 
@@ -49,43 +41,27 @@ scatter(real(theta),imag(theta),"DisplayName","theta-irka");
 hold on;
 scatter(real(sigma),imag(sigma),"DisplayName","sigma-irka");
 
-thetaextra = theta; sigmaextra = sigma;
+thetaextra = []; sigmaextra = [];
 
-while (length(thetaextra) < K || length(sigmaextra) < K)
-
-    mith = min(min(thetaextra),min(errpoles)); misi = min(min(sigmaextra),min(errpoles));
-    math = max(max(thetaextra),max(errpoles)); masi = max(max(sigmaextra),max(errpoles));
-    
-    lth = length(thetaextra); lsi = length(sigmaextra);
-
-    if lth < lsi
-        if abs(mith) >= abs(math)
-            thetaextra(end + 1) = ceil(masi) + 1;
-        else
-            thetaextra(end + 1) = floor(misi) - 1;
-        end
-    else
-        if abs(misi) >= abs(masi)
-            sigmaextra(end + 1) = ceil(math) + 1;
-        else
-            sigmaextra(end + 1) = floor(mith) - 1;
-        end
+for j = 1:ceil(K/length(errpoles))
+    for i=1:min(length(errpoles),K-j*length(errpoles))
+        ceig = errpoles(i);
+        thetaextra(end+1) = (j+1)*ceig;
+        sigmaextra(end+1) = -(j+1)*ceig;
     end
-
 end
 
-thetaint = setdiff(thetaextra,theta);
-sigmaint = setdiff(sigmaextra,sigma);
-
-scatter(real(thetaint),imag(thetaint),"DisplayName","theta-extra");
-scatter(real(sigmaint),imag(sigmaint),"DisplayName","sigma-extra");
+scatter(real(thetaextra),imag(thetaextra),"DisplayName","theta-extra");
+scatter(real(sigmaextra),imag(sigmaextra),"DisplayName","sigma-extra");
 scatter(real(errpoles),imag(errpoles),"DisplayName","Aug A Eigs",Marker="+")
 legend(gca)
 hold off;
 %%
 
-theta = sort(thetaextra); sigma = sort(sigmaextra);
+% theta = sort(thetaextra); sigma = sort(sigmaextra);
 % theta = sort(thetaextra)*1i; sigma = sort(sigmaextra)*1i;
+theta = sort([theta thetaextra]); sigma = sort([sigma sigmaextra]);
+
 
 % delta = 10^-3;
 % Eb = randn(K); DbE = delta*(Eb / norm(Eb));

@@ -42,6 +42,8 @@ function [Db,Ds,refeig,cmpeig,nmderr,pairedcmpeig] = allpass_realization_exact_m
 
     cmpeig = eig(Ds,Db,"qz");
 
+    display(cmpeig)
+
     [nmderr,pairedcmpeig] = Numerics.normmderr(refeig,cmpeig);
 
 end
