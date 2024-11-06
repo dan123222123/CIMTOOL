@@ -57,6 +57,9 @@ Dtilde = Dhat + xi*U;
 %systilde = ss(Atilde,Btilde,Ctilde,Dtilde);
 Gtilde = @(s) Ctilde*((s*eye(size(Atilde)) - Atilde) \ Btilde) + Dtilde;
 
+s = tf("s");
+display(hsvd(Gtilde(s)))
+
 % ss of SigmaTilde
 AA = [A zeros(size(A,1),size(Atilde,1));zeros(size(Atilde,1),size(A,1)) Atilde];
 BB = [B; Btilde]; CC = [C -Ctilde]; DD = zeros(n);

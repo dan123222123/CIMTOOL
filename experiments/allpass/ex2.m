@@ -11,15 +11,20 @@ A = diag(refeig);
 B = rand(n,n); C = B'; D = 0;
 % B = eye(n); C = B'; D = 0;
 
-%%
-rsv = n-1; [Ess,Etf] = allpass_error_ssin_sstfout(A,B,C,D,rsv);
+L = Numerics.SampleData.sampleMatrix(n,1000*n);
+R = Numerics.SampleData.sampleMatrix(n,1000*n);
 
+%%
+rsv = 1; [Ess,Etf] = allpass_error_ssin_sstfout(A,B,C,D,rsv);
 errpoles = sort(eig(Ess.A));
 
 %% construct theta and sigma so that irka points are the majority
 % K = n+n-1; % the number of poles in the allpass error system
-% K = 2*n;
-K = 100*n;
+K = 2*n;
+% K = 2*n+2;
+% K = 1000*n;
+
+ell = K; r = ell; Lt = L(:,1:ell); Rt = R(:,1:r);
 
 theta = double.empty(); sigma = double.empty();
 
@@ -80,15 +85,16 @@ hold off;
 %%
 
 theta = sort(thetaextra); sigma = sort(sigmaextra);
+% theta = sort(thetaextra)*1i; sigma = sort(sigmaextra)*1i;
 
-% delta = 10^-10;
+% delta = 10^-3;
 % Eb = randn(K); DbE = delta*(Eb / norm(Eb));
 % Es = randn(K); DsE = delta*(Es / norm(Es));
 
 DbE = 0;
 DsE = 0;
 
-[Db,Ds,refeig,cmpeig,nmderr,pairedeigs] = allpass_realization_exact_mploewner_sstfin(Ess,Etf,K,theta,sigma,DbE,DsE);
+[Db,Ds,refeig,cmpeig,nmderr,pairedeigs] = allpass_realization_exact_mploewner_sstfin(Ess,Etf,K,theta,sigma,Lt,Rt,DbE,DsE);
 
 figure(2);
 scatter(real(refeig),imag(refeig),200,MarkerFacecolor='r');
@@ -96,14 +102,23 @@ hold on;
 pairedcmpeigs = pairedeigs(:,2);
 scatter(real(pairedcmpeigs),imag(pairedcmpeigs),50,'b');
 hold off;
+axis(gca,"equal")
 
 display(pairedeigs)
 display(abs(pairedeigs(:,1)-pairedeigs(:,2)))
 display(nmderr)
 
+%
+
+figure(3); imagesc(log(abs(Db))); colorbar; clim([-10 1]); title("Db");
+
+figure(4); imagesc(log(abs(Ds))); colorbar; clim([-10 1]); title("Ds");
+
+%%% -7 days
 % try irka interpolants
 % optimal weighting of interpolation points
 % pseudospectra of "real-world" example -- imaginary axis, etc.
 % optimization of weights given some data -- no more tf evaluations
 % another idea, perturb interpolation points a bit and try to backtrace to
 % recover weights that solve the slightly perturbed interpolants
+%%% 11/6/2024

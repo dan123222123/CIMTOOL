@@ -1,10 +1,12 @@
-function [Db,Ds,refeig,cmpeig,nmderr,pairedcmpeig] = allpass_realization_exact_mploewner_sstfin(Ess,Etf,K,theta,sigma,DbE,DsE)
+function [Db,Ds,refeig,cmpeig,nmderr,pairedcmpeig] = allpass_realization_exact_mploewner_sstfin(Ess,Etf,K,theta,sigma,L,R,DbE,DsE)
     arguments
         Ess
         Etf
         K
         theta = missing
         sigma = missing
+        L = missing
+        R = missing
         DbE = 0;
         DsE = 0;
     end
@@ -19,9 +21,13 @@ function [Db,Ds,refeig,cmpeig,nmderr,pairedcmpeig] = allpass_realization_exact_m
         [theta,sigma] = Numerics.interlevedshifts(contour.z,K);
     end
 
-    % sample data matrices
-    L = Numerics.SampleData.sampleMatrix(n,K);
-    R = Numerics.SampleData.sampleMatrix(n,K);
+    % sample data matrices, if not provided
+    if anymissing(L)
+        L = Numerics.SampleData.sampleMatrix(n,K);
+    end
+    if anymissing(R)
+        R = Numerics.SampleData.sampleMatrix(n,K);
+    end
 
     ell = K; r = ell; Lt = L(:,1:ell); Rt = R(:,1:r);
 
@@ -30,7 +36,11 @@ function [Db,Ds,refeig,cmpeig,nmderr,pairedcmpeig] = allpass_realization_exact_m
 
     Db = Db + DbE; Ds = Ds + DsE;
 
-    cmpeig = eig(Ds,Db);
+    % [X,Sigma,Y] = svd(Db); m = length(refeig);
+    % X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
+    % cmpeig = (Sigma \ (X'*Ds*Y));
+
+    cmpeig = eig(Ds,Db,"qz");
 
     [nmderr,pairedcmpeig] = Numerics.normmderr(refeig,cmpeig);
 
