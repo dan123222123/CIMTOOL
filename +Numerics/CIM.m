@@ -40,7 +40,6 @@ classdef CIM < handle
             addlistener(obj.RealizationData,'K','PostSet',@obj.update_shifts);
             addlistener(obj.SampleData.Contour,'z','PostSet',@obj.update_shifts);
 
-
             addlistener(obj,'MainAx','PostSet',@obj.update_plot);
         end
 
@@ -102,6 +101,7 @@ classdef CIM < handle
 
         function compute(obj)
             obj.SampleData.compute();
+            obj.ResultData.loaded = false;
             switch(obj.RealizationData.ComputationalMode)
                 case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
                     [obj.ResultData.ew,obj.ResultData.ev,obj.ResultData.Dbsw,obj.ResultData.Dssw,obj.ResultData.Db,obj.ResultData.Ds] = Numerics.sploewner( ...
@@ -129,6 +129,7 @@ classdef CIM < handle
                     );
             end
             obj.RealizationData.loaded = true;
+            obj.ResultData.loaded = true;
         end
     end
 end

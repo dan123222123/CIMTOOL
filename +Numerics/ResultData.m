@@ -9,6 +9,7 @@ classdef ResultData < handle
         Dssw    = missing % singular values of base data matrix
         MainAx  = missing
         SvAx    = missing
+        loaded  = false
     end
 
     properties
@@ -78,13 +79,14 @@ classdef ResultData < handle
             tstring = "";
             if ~any(ismissing(ax))
                 chold = ishold(ax);
-                if ~ismissing(obj.Dbsw)
-                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(obj.Dbsw),obj.Dbsw,"->","MarkerSize",10,'DisplayName','Dbsw','Color',"b");
+                if ~all(ismissing(obj.Db))
+                    Dbsw = svd(obj.Db); Dbsw = Dbsw / Dbsw(1);
+                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(Dbsw),Dbsw,"->","MarkerSize",10,'DisplayName','Dbsw','Color',"r");
                     tstring = strcat(tstring,sprintf("size(Db) = %d, %d",obj.Dbsize(1),obj.Dbsize(2)));
                 end
-                if ~ismissing(obj.Dbsw)
-                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(obj.Dssw),obj.Dssw,"->","MarkerSize",10,'DisplayName','Dssw','Color',"r");
-                    tstring = strcat(tstring,sprintf("\t||\tsize(Ds) = %d, %d",obj.Dssize(1),obj.Dssize(2)));
+                if ~anymissing(obj.Ds) && all(size(obj.Db) == size(obj.Ds))
+                    Dbscsw = svd([obj.Db;obj.Ds]); Dbscsw = Dbscsw / Dbscsw(1);
+                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(Dbscsw),Dbscsw,"->","MarkerSize",10,'DisplayName','[Db; Ds]','Color',"b");
                 end
                 ax.XLim = [0,max(length(obj.Dbsw),length(obj.Dssw))+1];
                 hold(ax,chold);

@@ -43,6 +43,10 @@ classdef Circle < Numerics.Contour.Quad
             addlistener(obj,'ax','PostSet',@obj.update_plot);
         end
 
+        function tf = inside(obj,pt)
+            tf = (abs(pt-obj.center) < obj.radius);
+        end
+
         function plot(obj,ax)
             arguments
                 obj

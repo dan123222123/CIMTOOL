@@ -10,6 +10,10 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
         %
         HSVPlotTab                      matlab.ui.container.Tab
         HSVPlotTabGridLayout            matlab.ui.container.GridLayout
+        %
+        ResultTab                       matlab.ui.container.Tab
+        ResultTabGridLayout             matlab.ui.container.GridLayout
+        ResultsTable                    matlab.ui.control.Table
     end
 
     properties (Access = public, SetObservable)
@@ -19,7 +23,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
 
     properties (Access = public)
         MainApp % app that contains this component, set in constructor
-        CIMData % underlying computational structure that this component will modify
+        CIMData Numerics.CIM % underlying computational structure that this component will modify
     end
 
     methods (Access=public)
@@ -35,13 +39,62 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             obj.CIMData.MainAx = obj.MainPlotAxes;
             obj.CIMData.SvAx = obj.HSVAxes;
 
-            % set the axes and listeners here, as setup will have already
-            % executed at this point!
+            addlistener(obj.CIMData.SampleData.NLEVP,'refew','PostSet',@(src,event)obj.ResultDataChangedFcn);
+            addlistener(obj.CIMData.ResultData,'ev','PostSet',@(src,event)obj.ResultDataChangedFcn);
+            addlistener(obj.CIMData.SampleData.Contour,'z','PostSet',@(src,event)obj.ResultDataChangedFcn);
+
+        end
+
+        % listen for rd.loaded, NLEVP.refew, etc. to re-do this table display
+        function ResultDataChangedFcn(comp, event)
+
+            rd = comp.CIMData.ResultData;
+            nd = comp.CIMData.SampleData.NLEVP;
+
+            ew = rd.ew; ev = rd.ev;
+            T = nd.T; refew = nd.refew;
+
+            m = max([length(refew),length(ew)]);
+
+            % if reference is present, show it
+            % we have contour information, so we can use it to try and
+            % prune extra reference eigenvalues from the table view at
+            % least
+            if ~all(ismissing(refew))
+                refew = sort(refew(comp.CIMData.SampleData.Contour.inside(refew)));
+                nin = length(refew);
+            else
+                refew = repelem(NaN,m);
+            end
+
+            % if computed eigenvalues are available, show them and the
+            % relative residual (assuming ev are also available)
+            if ~all(ismissing(ew)) && ~comp.CIMData.ResultData.loaded
+                [ew,ewI] = sort(ew);
+                if ~all(ismissing(ev))
+                    ev = ev(:,ewI);
+                end
+                rr = Numerics.relres(T,ew,ev);
+            else
+                ew = repelem(NaN,m);
+                rr = repelem(NaN,m);
+            end
+            
+            % pad out all arrays to match the length of the longest list
+            refew = padarray(refew,m-length(refew),NaN,'post');
+            ew = padarray(ew,m-length(ew),NaN,'post');
+            rr = padarray(rr,m-length(rr),NaN,'post');
+
+            % make the final table
+            comp.ResultsTable.ColumnName = {sprintf('Ref. EW (# Inside Contour %d)',nin),'Comp. EW','Rel. Res.'};
+            comp.ResultsTable.Data = [refew(:),ew(:),rr(:)];
+            comp.ResultsTable.ColumnFormat = {'long','long','longE'};
+
         end
 
     end
 
-    methods (Access=protected)
+    methods (Access=protected)       
         
         % executes when the value of a public property is changed
         % basically, just make sure the axes are still the active ones
@@ -87,6 +140,16 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.HSVAxes.YMinorGrid = 'on';
             comp.HSVAxes.YScale = 'log';
             legend(comp.HSVAxes,Location="southoutside",Orientation="horizontal");
+
+            comp.ResultTab = uitab(comp.PlotTabGroup);
+            comp.ResultTab.Title = 'Numerical Results';
+
+            comp.ResultTabGridLayout = uigridlayout(comp.ResultTab,[1,1]);
+            comp.ResultTabGridLayout.Padding = [10 10 10 10];
+
+            % table of numerical results
+            comp.ResultsTable = uitable(comp.ResultTabGridLayout);
+            comp.ResultsTable.RowName = {};
 
         end
 
