@@ -59,47 +59,38 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
         % Create the underlying components
         function setup(comp)
 
-            comp.Position = [1 1 367 169];
-            comp.BackgroundColor = [0.94 0.94 0.94];
-
-            % Create GridLayout
-            comp.GridLayout = uigridlayout(comp);
-            comp.GridLayout.ColumnWidth = {'1x', 52, 52, '1x'};
-            comp.GridLayout.RowHeight = {'1x', 31, 31, '1x'};
+            comp.GridLayout = uigridlayout(comp,[2 2]);
             comp.GridLayout.ColumnSpacing = 10;
             comp.GridLayout.Padding = [10 10 10 10];
 
-            % Create radiusEditFieldLabel
-            comp.radiusEditFieldLabel = uilabel(comp.GridLayout);
-            comp.radiusEditFieldLabel.HorizontalAlignment = 'center';
-            comp.radiusEditFieldLabel.WordWrap = 'on';
-            comp.radiusEditFieldLabel.Layout.Row = 2;
-            comp.radiusEditFieldLabel.Layout.Column = 3;
-            comp.radiusEditFieldLabel.Text = 'radius';
+            comp.centerEditField = uieditfield(comp.GridLayout, 'text');
+            comp.centerEditField.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @centerEditFieldValueChanged, true);
+            comp.centerEditField.HorizontalAlignment = 'center';
+            comp.centerEditField.Layout.Row = 1;
+            comp.centerEditField.Layout.Column = 1;
+            comp.centerEditField.Value = '0';
 
-            % Create radiusEditField
+            comp.centerEditFieldLabel = uilabel(comp.GridLayout);
+            comp.centerEditFieldLabel.HorizontalAlignment = 'center';
+            comp.centerEditFieldLabel.Layout.Row = 2;
+            comp.centerEditFieldLabel.Layout.Column = 1;
+            comp.centerEditFieldLabel.Text = 'center';
+
             comp.radiusEditField = uieditfield(comp.GridLayout, 'numeric');
             comp.radiusEditField.Limits = [0 Inf];
             comp.radiusEditField.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @radiusEditFieldValueChanged, true);
             comp.radiusEditField.HorizontalAlignment = 'center';
-            comp.radiusEditField.Layout.Row = 3;
-            comp.radiusEditField.Layout.Column = 3;
+            comp.radiusEditField.Layout.Row = 1;
+            comp.radiusEditField.Layout.Column = 2;
             comp.radiusEditField.Value = 1;
 
-            % Create centerEditFieldLabel
-            comp.centerEditFieldLabel = uilabel(comp.GridLayout);
-            comp.centerEditFieldLabel.HorizontalAlignment = 'center';
-            comp.centerEditFieldLabel.Layout.Row = 2;
-            comp.centerEditFieldLabel.Layout.Column = 2;
-            comp.centerEditFieldLabel.Text = 'center';
+            comp.radiusEditFieldLabel = uilabel(comp.GridLayout);
+            comp.radiusEditFieldLabel.HorizontalAlignment = 'center';
+            comp.radiusEditFieldLabel.WordWrap = 'on';
+            comp.radiusEditFieldLabel.Layout.Row = 2;
+            comp.radiusEditFieldLabel.Layout.Column = 2;
+            comp.radiusEditFieldLabel.Text = 'radius';
 
-            % Create centerEditField
-            comp.centerEditField = uieditfield(comp.GridLayout, 'text');
-            comp.centerEditField.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @centerEditFieldValueChanged, true);
-            comp.centerEditField.HorizontalAlignment = 'center';
-            comp.centerEditField.Layout.Row = 3;
-            comp.centerEditField.Layout.Column = 2;
-            comp.centerEditField.Value = '0';
         end
     end
 

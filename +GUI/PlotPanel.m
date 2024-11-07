@@ -43,6 +43,12 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             addlistener(obj.CIMData.ResultData,'ev','PostSet',@(src,event)obj.ResultDataChangedFcn);
             addlistener(obj.CIMData.SampleData.Contour,'z','PostSet',@(src,event)obj.ResultDataChangedFcn);
 
+            addlistener(obj.CIMData.SampleData,'Contour','PostSet',@(src,event)obj.updateContourListeners);
+
+        end
+
+        function updateContourListeners(comp, event)
+            addlistener(comp.CIMData.SampleData.Contour,'z','PostSet',@(src,event)comp.ResultDataChangedFcn);
         end
 
         % listen for rd.loaded, NLEVP.refew, etc. to re-do this table display
@@ -63,8 +69,10 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             if ~all(ismissing(refew))
                 refew = sort(refew(comp.CIMData.SampleData.Contour.inside(refew)));
                 nin = length(refew);
+                cstr = sprintf('Ref. EW (# Inside Contour %d)',nin);
             else
                 refew = repelem(NaN,m);
+                cstr = ('Ref. EW');
             end
 
             % if computed eigenvalues are available, show them and the
@@ -86,7 +94,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             rr = padarray(rr,m-length(rr),NaN,'post');
 
             % make the final table
-            comp.ResultsTable.ColumnName = {sprintf('Ref. EW (# Inside Contour %d)',nin),'Comp. EW','Rel. Res.'};
+            comp.ResultsTable.ColumnName = {cstr,'Comp. EW','Rel. Res.'};
             comp.ResultsTable.Data = [refew(:),ew(:),rr(:)];
             comp.ResultsTable.ColumnFormat = {'long','long','longE'};
 

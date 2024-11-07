@@ -46,6 +46,7 @@ classdef SampleData < handle
             obj.r = r;
             addlistener(obj.NLEVP,'loaded','PostSet',@obj.NLEVPChanged);
             addlistener(obj.Contour,'z','PostSet',@obj.ContourChanged);
+            addlistener(obj,'Contour','PostSet',@obj.updateContourListeners);
             addlistener(obj,'ax','PostSet',@obj.update_plot);
         end
 
@@ -53,6 +54,11 @@ classdef SampleData < handle
             hold(obj.ax,"on");
             obj.Contour.ax = obj.ax;
             obj.NLEVP.ax = obj.ax;
+        end
+
+        function updateContourListeners(obj,~,~)
+            addlistener(obj.Contour,'z','PostSet',@obj.ContourChanged);
+            obj.loaded = false;
         end
 
         function NLEVPChanged(obj,~,~)

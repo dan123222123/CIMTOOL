@@ -9,7 +9,8 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
     end
 
     properties (Access = public)
-        CIMData
+        CIMData Numerics.CIM
+        PlotTab
     end
     
     methods
@@ -33,10 +34,11 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
             selectedButton = comp.ContourTypeButtonGroup.SelectedObject;
             switch(selectedButton.Text)
                 case "Circle"
+                    comp.CIMData.SampleData.Contour = Numerics.Contour.Circle(0,1,8,comp.CIMData.MainAx);
                     comp.ContourComponent = GUI.Parameter.Contour.CircleComponent(comp.GridLayout,comp.CIMData);
-                % case "Ellipse"
-                %     comp.ContourComponent = GUI.Parameter.Contour.EllipseComponent(comp.ContourTabGridLayout,comp.CIMData);
-
+                case "Ellipse"
+                    comp.CIMData.SampleData.Contour = Numerics.Contour.Ellipse(0,1,1,8,comp.CIMData.MainAx);
+                    comp.ContourComponent = GUI.Parameter.Contour.EllipseComponent(comp.GridLayout,comp.CIMData);
             end
             comp.ContourComponent.Layout.Row = [1 5];
             comp.ContourComponent.Layout.Column = [3 5];
@@ -55,7 +57,7 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
             comp.GridLayout.Padding = [10 10 10 10];
             %
             comp.ContourTypeButtonGroup = uibuttongroup(comp.GridLayout);
-            comp.ContourTypeButtonGroup.SelectionChangedFcn = @(src,event)ContourTypeButtonGroupSelectionChanged;
+            comp.ContourTypeButtonGroup.SelectionChangedFcn = matlab.apps.createCallbackFcn(comp, @ContourTypeButtonGroupSelectionChanged, true);
             comp.ContourTypeButtonGroup.TitlePosition = 'centertop';
             comp.ContourTypeButtonGroup.Title = 'Type';
             comp.ContourTypeButtonGroup.Layout.Row = [1 5];
@@ -67,7 +69,6 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
             comp.CircleButton.Value = true; % default
             %
             comp.EllipseButton = uitogglebutton(comp.ContourTypeButtonGroup);
-            comp.EllipseButton.Enable = 'off';
             comp.EllipseButton.Text = 'Ellipse';
             comp.EllipseButton.Position = [10 10 100 30];
         end

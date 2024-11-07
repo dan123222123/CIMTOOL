@@ -60,6 +60,12 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         function addListeners(comp)
             addlistener(comp.CIMData.SampleData.NLEVP,'loaded','PostSet',@(src,event)comp.NLEVPChangedFcn);
             addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
+            addlistener(comp.CIMData.SampleData,'Contour','PostSet',@(src,event)comp.updateContourListeners);
+        end
+
+        function updateContourListeners(comp, event)
+            addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
+            comp.NumQuadNodes.Value = comp.CIMData.SampleData.Contour.N;
         end
 
     end
