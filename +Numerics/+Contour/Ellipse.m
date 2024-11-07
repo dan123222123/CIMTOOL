@@ -66,12 +66,12 @@ classdef Ellipse < Numerics.Contour.Quad
             zp = Numerics.Contour.Ellipse.trapezoid(obj.gamma,obj.alpha,obj.beta,512);
             zp = [obj.gamma + obj.alpha, zp, obj.gamma + obj.alpha];
             chold = ishold(ax);
-            obj.phandles(end+1) = scatter(ax,real(obj.gamma),imag(obj.gamma),200,"black",'filled','Tag',"contour_center");
+            obj.phandles(end+1) = scatter(ax,real(obj.gamma),imag(obj.gamma),200,"black",'filled','Tag',"contour_center","HandleVisibility","off");
             hold(ax,"on");
             if obj.plot_quadrature
-                obj.phandles(end+1) = scatter(ax,real(obj.z),imag(obj.z),200,"red","x",'Tag',"quadrature_nodes");
+                obj.phandles(end+1) = scatter(ax,real(obj.z),imag(obj.z),200,"red","x",'Tag',"quadrature","DisplayName","Quadrature Nodes");
             end
-            obj.phandles(end+1) = plot(ax,real(zp),imag(zp),"blue",'LineWidth',5,'Tag',"contour");
+            obj.phandles(end+1) = plot(ax,real(zp),imag(zp),"blue",'LineWidth',5,'Tag',"contour","HandleVisibility","off");
             hold(ax,chold);
             obj.ax = ax;
         end

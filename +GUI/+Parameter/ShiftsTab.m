@@ -20,6 +20,10 @@ classdef ShiftsTab < matlab.ui.componentcontainer.ComponentContainer
 
         end
 
+        function updateFontSize(comp,update)
+            comp.ShiftsTable.FontSize = update;
+        end
+
     end
 
     methods (Access=private)

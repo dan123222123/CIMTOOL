@@ -30,18 +30,23 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
         end
 
         % change the current contour type
-        function ContourTypeButtonGroupSelectionChanged(comp, event)
+        function ContourTypeButtonGroupSelectionChanged(comp,~)
             selectedButton = comp.ContourTypeButtonGroup.SelectedObject;
+            oc = comp.CIMData.SampleData.Contour;
             switch(selectedButton.Text)
                 case "Circle"
-                    comp.CIMData.SampleData.Contour = Numerics.Contour.Circle(0,1,8,comp.CIMData.MainAx);
+                    comp.CIMData.SampleData.Contour = Numerics.Contour.Circle(0,1,oc.N,comp.CIMData.MainAx);
                     comp.ContourComponent = GUI.Parameter.Contour.CircleComponent(comp.GridLayout,comp.CIMData);
                 case "Ellipse"
-                    comp.CIMData.SampleData.Contour = Numerics.Contour.Ellipse(0,1,1,8,comp.CIMData.MainAx);
+                    comp.CIMData.SampleData.Contour = Numerics.Contour.Ellipse(0,1,1,oc.N,comp.CIMData.MainAx);
                     comp.ContourComponent = GUI.Parameter.Contour.EllipseComponent(comp.GridLayout,comp.CIMData);
             end
             comp.ContourComponent.Layout.Row = [1 5];
             comp.ContourComponent.Layout.Column = [3 5];
+        end
+
+        function updateFontSize(comp,update)
+            comp.ContourComponent.updateFontSize(update);
         end
 
     end

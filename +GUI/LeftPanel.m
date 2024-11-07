@@ -42,13 +42,8 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
 
         end
 
-        function setFontSize(comp,size,units)
-            arguments
-                comp 
-                size 
-                units = "points"
-            end
-            fontsize(comp.GridLayout.Children,size,units);
+        function updateFontSize(comp,event)
+            fontsize(comp.GridLayout.Children,comp.MainApp.FontSize,"points");
         end
 
         function createDynamicComponents(comp)
@@ -61,6 +56,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             addlistener(comp.CIMData.SampleData.NLEVP,'loaded','PostSet',@(src,event)comp.NLEVPChangedFcn);
             addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
             addlistener(comp.CIMData.SampleData,'Contour','PostSet',@(src,event)comp.updateContourListeners);
+            addlistener(comp.MainApp,'FontSize','PostSet',@(src,event)comp.updateFontSize);
         end
 
         function updateContourListeners(comp, event)

@@ -29,6 +29,10 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
 
         end
 
+        function updateFontSize(comp,update)
+            comp.MethodComponent.updateFontSize(update);
+        end
+
         function ComputationalModeChangedFcn(comp,event)
 
             switch(comp.ComputationalModeButtonGroup.SelectedObject.Text)

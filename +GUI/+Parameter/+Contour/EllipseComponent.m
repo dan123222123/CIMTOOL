@@ -26,6 +26,10 @@ classdef EllipseComponent < GUI.Parameter.Contour.ContourComponent
 
         end
 
+        function updateFontSize(comp,update)
+            fontsize(comp.GridLayout.Children,update,"points");
+        end
+
     end
     
     % Callbacks that handle component events

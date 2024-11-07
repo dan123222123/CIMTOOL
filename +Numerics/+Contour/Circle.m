@@ -1,7 +1,7 @@
 classdef Circle < Numerics.Contour.Quad
     
     properties (SetObservable)
-        center  (1,1) double
+        gamma  (1,1) double
         radius  (1,1) double
         N       (1,1) double
         plot_quadrature = false
@@ -21,22 +21,22 @@ classdef Circle < Numerics.Contour.Quad
     
     methods
 
-        function obj = Circle(center,radius,N,ax)
+        function obj = Circle(gamma,radius,N,ax)
             arguments
-                center = 0
+                gamma = 0
                 radius = 1
                 N = 8
                 ax = missing
             end
-            [z,w] = Numerics.Contour.Circle.trapezoid(center,radius,N);
+            [z,w] = Numerics.Contour.Circle.trapezoid(gamma,radius,N);
             obj@Numerics.Contour.Quad(z,w);
-            obj.center = center;
+            obj.gamma = gamma;
             obj.radius = radius;
             obj.N = N;
             if ~ismissing(ax)
                 obj.plot(ax)
             end
-            addlistener(obj,'center','PostSet',@obj.update);
+            addlistener(obj,'gamma','PostSet',@obj.update);
             addlistener(obj,'radius','PostSet',@obj.update);
             addlistener(obj,'N','PostSet',@obj.update);
             addlistener(obj,'plot_quadrature','PostSet',@obj.update_plot);
@@ -44,7 +44,7 @@ classdef Circle < Numerics.Contour.Quad
         end
 
         function tf = inside(obj,pt)
-            tf = (abs(pt-obj.center) < obj.radius);
+            tf = (abs(pt-obj.gamma) < obj.radius);
         end
 
         function plot(obj,ax)
@@ -59,21 +59,21 @@ classdef Circle < Numerics.Contour.Quad
             if ~isempty(obj.phandles)
                 obj.cla();
             end
-            zp = Numerics.Contour.Circle.trapezoid(obj.center,obj.radius,512);
-            zp = [obj.center + obj.radius, zp, obj.center + obj.radius];
+            zp = Numerics.Contour.Circle.trapezoid(obj.gamma,obj.radius,512);
+            zp = [obj.gamma + obj.radius, zp, obj.gamma + obj.radius];
             chold = ishold(ax);
-            obj.phandles(end+1) = scatter(ax,real(obj.center),imag(obj.center),200,"black",'filled','Tag',"contour_center");
+            obj.phandles(end+1) = scatter(ax,real(obj.gamma),imag(obj.gamma),200,"black",'filled','Tag',"contour_center","HandleVisibility","off");
             hold(ax,"on");
             if obj.plot_quadrature
-                obj.phandles(end+1) = scatter(ax,real(obj.z),imag(obj.z),200,"red","x",'Tag',"quadrature_nodes");
+                obj.phandles(end+1) = scatter(ax,real(obj.z),imag(obj.z),200,"red","x",'Tag',"quadrature","DisplayName","Quadrature Nodes");
             end
-            obj.phandles(end+1) = plot(ax,real(zp),imag(zp),"blue",'LineWidth',5,'Tag',"contour");
+            obj.phandles(end+1) = plot(ax,real(zp),imag(zp),"blue",'LineWidth',5,'Tag',"contour","HandleVisibility","off");
             hold(ax,chold);
             obj.ax = ax;
         end
 
         function update(obj,~,~)
-            [obj.z,obj.w] = Numerics.Contour.Circle.trapezoid(obj.center,obj.radius,obj.N);
+            [obj.z,obj.w] = Numerics.Contour.Circle.trapezoid(obj.gamma,obj.radius,obj.N);
             obj.update_plot(missing,missing);
         end
 

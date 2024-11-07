@@ -30,7 +30,6 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
 
         function obj = PlotPanel(Parent,MainApp,CIMData)
 
-            % properly sets the parent
             obj@matlab.ui.componentcontainer.ComponentContainer(Parent)
 
             obj.MainApp = MainApp;

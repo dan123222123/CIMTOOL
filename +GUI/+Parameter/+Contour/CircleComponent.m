@@ -3,9 +3,9 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
     % GUI Properties
     properties (Access = private)
         GridLayout               matlab.ui.container.GridLayout
-        centerEditField          matlab.ui.control.EditField
+        gammaEditField           matlab.ui.control.EditField
         radiusEditField          matlab.ui.control.NumericEditField
-        centerEditFieldLabel     matlab.ui.control.Label
+        gammaEditFieldLabel      matlab.ui.control.Label
         radiusEditFieldLabel     matlab.ui.control.Label
     end
 
@@ -24,12 +24,15 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
 
         end
 
+        function updateFontSize(comp,update)
+            fontsize(comp.GridLayout.Children,update,"points");
+        end
+
     end
     
     % Callbacks that handle component events
     methods (Access = private)
 
-        % Value changed function: radiusEditField
         function radiusEditFieldValueChanged(comp, event)
             try
                 comp.CIMData.SampleData.Contour.radius = comp.radiusEditField.Value;
@@ -39,12 +42,11 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
             end
         end
 
-        % Value changed function: centerEditField
         function centerEditFieldValueChanged(comp, event)
             try
-                comp.CIMData.SampleData.Contour.center = str2double(comp.centerEditField.Value);
+                comp.CIMData.SampleData.Contour.gamma = str2double(comp.gammaEditField.Value);
             catch
-                comp.centerEditField.Value = event.PreviousValue;
+                comp.gammaEditField.Value = event.PreviousValue;
                 errordlg("Invalid center. Please check input and try again.")
             end
         end
@@ -63,18 +65,18 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
             comp.GridLayout.ColumnSpacing = 10;
             comp.GridLayout.Padding = [10 10 10 10];
 
-            comp.centerEditField = uieditfield(comp.GridLayout, 'text');
-            comp.centerEditField.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @centerEditFieldValueChanged, true);
-            comp.centerEditField.HorizontalAlignment = 'center';
-            comp.centerEditField.Layout.Row = 1;
-            comp.centerEditField.Layout.Column = 1;
-            comp.centerEditField.Value = '0';
+            comp.gammaEditField = uieditfield(comp.GridLayout, 'text');
+            comp.gammaEditField.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @centerEditFieldValueChanged, true);
+            comp.gammaEditField.HorizontalAlignment = 'center';
+            comp.gammaEditField.Layout.Row = 1;
+            comp.gammaEditField.Layout.Column = 1;
+            comp.gammaEditField.Value = '0';
 
-            comp.centerEditFieldLabel = uilabel(comp.GridLayout);
-            comp.centerEditFieldLabel.HorizontalAlignment = 'center';
-            comp.centerEditFieldLabel.Layout.Row = 2;
-            comp.centerEditFieldLabel.Layout.Column = 1;
-            comp.centerEditFieldLabel.Text = 'center';
+            comp.gammaEditFieldLabel = uilabel(comp.GridLayout);
+            comp.gammaEditFieldLabel.HorizontalAlignment = 'center';
+            comp.gammaEditFieldLabel.Layout.Row = 2;
+            comp.gammaEditFieldLabel.Layout.Column = 1;
+            comp.gammaEditFieldLabel.Text = 'center';
 
             comp.radiusEditField = uieditfield(comp.GridLayout, 'numeric');
             comp.radiusEditField.Limits = [0 Inf];

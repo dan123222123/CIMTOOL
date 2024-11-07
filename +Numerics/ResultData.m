@@ -60,7 +60,7 @@ classdef ResultData < handle
                 chold = ishold(ax);
                 hold(ax,"on");
                 if ~ismissing(obj.ew)
-                    obj.MainAxphandles(end+1) = scatter(ax,real(obj.ew),imag(obj.ew),50,"red");
+                    obj.MainAxphandles(end+1) = scatter(ax,real(obj.ew),imag(obj.ew),50,"red","Tag","computed_eigenvalues","DisplayName","Computed Eigenvalues");
                 end
                 hold(ax,chold);
             end
@@ -81,7 +81,7 @@ classdef ResultData < handle
                 chold = ishold(ax);
                 if ~all(ismissing(obj.Db))
                     Dbsw = svd(obj.Db); Dbsw = Dbsw / Dbsw(1);
-                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(Dbsw),Dbsw,"->","MarkerSize",10,'DisplayName','Dbsw','Color',"r");
+                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(Dbsw),Dbsw,"->","MarkerSize",10,'DisplayName','Db','Color',"r");
                     tstring = strcat(tstring,sprintf("size(Db) = %d, %d",obj.Dbsize(1),obj.Dbsize(2)));
                 end
                 if ~anymissing(obj.Ds) && all(size(obj.Db) == size(obj.Ds))

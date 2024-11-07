@@ -36,7 +36,6 @@ classdef Menu < matlab.ui.componentcontainer.ComponentContainer
             catch e
                 rethrow(e)
             end
-
         end
 
     end

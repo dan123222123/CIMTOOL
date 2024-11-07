@@ -51,7 +51,7 @@ classdef Quad < handle
             if ~isempty(obj.phandles)
                 obj.cla();
             end
-            obj.phandles(end+1) = scatter(ax,real(obj.z),imag(obj.z),200,"red","x",'Tag',"quadrature_nodes");
+            obj.phandles(end+1) = scatter(ax,real(obj.z),imag(obj.z),200,"red","x",'Tag',"quadrature","DisplayName","Quadrature Nodes");
             obj.ax = ax;
         end
 

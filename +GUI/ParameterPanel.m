@@ -23,20 +23,28 @@ classdef ParameterPanel < matlab.ui.componentcontainer.ComponentContainer
 
             obj.createDynamicComponents();
 
+            addlistener(obj.MainApp,'FontSize','PostSet',@(src,event)obj.updateFontSize);
+
         end
 
         function createDynamicComponents(comp)
+            
+            comp.NLEVPTab = GUI.Parameter.NLEVPTab(uitab(comp.ParameterTabGroup,'Title','NLEVP'),comp.CIMData);
+            %
+            comp.ContourTab = GUI.Parameter.ContourTab(uitab(comp.ParameterTabGroup,'Title','Contour'),comp.CIMData);
+            %
+            comp.MethodTab = GUI.Parameter.MethodTab(uitab(comp.ParameterTabGroup,'Title','Method'),comp.CIMData);
+            %
+            comp.ShiftsTab = GUI.Parameter.ShiftsTab(uitab(comp.ParameterTabGroup,'Title','Shifts(s)'),comp.CIMData);
+            
+        end
 
-            import GUI.Parameter.*
-            
-            comp.NLEVPTab = NLEVPTab(uitab(comp.ParameterTabGroup,'Title','NLEVP'),comp.CIMData);
-            %
-            comp.ContourTab = ContourTab(uitab(comp.ParameterTabGroup,'Title','Contour'),comp.CIMData);
-            %
-            comp.MethodTab = MethodTab(uitab(comp.ParameterTabGroup,'Title','Method'),comp.CIMData);
-            %
-            comp.ShiftsTab = ShiftsTab(uitab(comp.ParameterTabGroup,'Title','Shifts(s)'),comp.CIMData);
-            
+        function updateFontSize(comp,event)
+            update = comp.MainApp.FontSize;
+            fontsize(comp.ParameterTabGridLayout.Children,update,"points");
+            comp.ContourTab.updateFontSize(update);
+            comp.MethodTab.updateFontSize(update);
+            comp.ShiftsTab.updateFontSize(update);
         end
 
     end

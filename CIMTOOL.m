@@ -19,50 +19,61 @@ classdef CIMTOOL < matlab.apps.AppBase
     end
 
     properties (Access = public)
-        idxKey
+        ctrlKey
+        shiftKey
         CIMData                         Numerics.CIM
     end
 
     properties (SetObservable)
         FontSize
     end
+
+    methods
+
+        function recordKey(app,src,event)
+            % if app.shiftKey
+            %     set(app.MainPlotAxes.Title,'String','MOD');
+            %     set(app.UIFigure,'WindowButtonDownFcn',@app.MainPlotAxesWindowButtonDownFcn);
+            %     app.MainPlotAxes.Interactions = dataTipInteraction('SnapToDataVertex','on');
+            %     app.MainPlotAxes.PickableParts = "all";
+            % end
+            if contains(event.Modifier,'control')
+                if event.Key == "equal"
+                    app.updateFontSize(1);
+                elseif event.Key == "hyphen"
+                    app.updateFontSize(-1);
+                end
+            end
+        end
+
+    end
     
     % % GUI Plot Interactions
     % methods (Access = public)
-    % 
-    %     function recordKey(app,src,event)
-    %         app.idxKey = [contains(event.Key,'control'), contains(event.Key,'shift')];
-    %         if any(app.idxKey)
-    %             set(app.MainPlotAxes.Title,'String','MOD');
-    %         end
-    %         set(app.UIFigure,'WindowButtonDownFcn',@app.MainPlotAxesWindowButtonDownFcn);
-    %         app.MainPlotAxes.Interactions = dataTipInteraction('SnapToDataVertex','on');
-    %         app.MainPlotAxes.PickableParts = "all";
-    %     end
-    % 
-    %     function releaseKey(app,src,event)
-    %         set(app.MainPlotAxes.Title,'String','NORMAL');
-    %         app.idxKey = [false false];
-    %         set(app.UIFigure,'WindowButtonDownFcn','');
-    %         set(app.UIFigure,'WindowButtonMotionFcn','');
-    %         set(app.UIFigure,'WindowButtonUpFcn','');
-    %         app.MainPlotAxes.Interactions = [panInteraction('Dimensions','xy') zoomInteraction('Dimensions','xy')];
-    %     end
-    % 
-    %     % this callback will be set when CTRL/SHIFT is pressed
-    %     % should allow for axes interactivity when not selected, while
-    %     % allowing the user to affect CIM parameters when desired
-    %     function MainPlotAxesWindowButtonDownFcn(app,handle,event)
-    %         cf = gco(app.UIFigure);
-    %         switch(cf.Tag)
-    %             case "contour_center"
-    %                 set(app.UIFigure,'WindowButtonMotionFcn',@app.drag_center);
-    %                 set(app.UIFigure,'WindowButtonUpFcn',@app.set_new_center);
-    %             case "contour"
-    %                 set(app.UIFigure,'WindowButtonMotionFcn',@app.drag_radius);
-    %                 set(app.UIFigure,'WindowButtonUpFcn',@app.set_new_radius);
-    %         end
-    %     end
+
+        % % this callback will be set when SHIFT is pressed
+        % % should allow for axes interactivity when not selected, while
+        % % allowing the user to affect CIM parameters when desired
+        % function MainPlotAxesWindowButtonDownFcn(app,handle,event)
+        %     cf = gco(app.UIFigure);
+        %     switch(cf.Tag)
+        %         case "contour_center"
+        %             set(app.UIFigure,'WindowButtonMotionFcn',@app.drag_center);
+        %             set(app.UIFigure,'WindowButtonUpFcn',@app.set_new_center);
+        %         case "contour"
+        %             set(app.UIFigure,'WindowButtonMotionFcn',@app.drag_radius);
+        %             set(app.UIFigure,'WindowButtonUpFcn',@app.set_new_radius);
+        %     end
+        % end
+        % 
+        % function releaseKey(app,src,event)
+        %     set(app.MainPlotAxes.Title,'String','NORMAL');
+        %     app.ctrlKey = [false false];
+        %     set(app.UIFigure,'WindowButtonDownFcn','');
+        %     set(app.UIFigure,'WindowButtonMotionFcn','');
+        %     set(app.UIFigure,'WindowButtonUpFcn','');
+        %     app.MainPlotAxes.Interactions = [panInteraction('Dimensions','xy') zoomInteraction('Dimensions','xy')];
+        % end
     % 
     %     function drag_center(app,handle,event)
     %         cp = app.MainPlotAxes.CurrentPoint;
@@ -119,7 +130,8 @@ classdef CIMTOOL < matlab.apps.AppBase
         function createComponents(app)
 
             % app.UIFigure = uifigure('Visible', 'off','WindowKeyPressFcn',@app.recordKey,'WindowKeyReleaseFcn',@app.releaseKey);
-            app.UIFigure = uifigure('Visible', 'off');
+            % app.UIFigure = uifigure('Visible', 'off');
+            app.UIFigure = uifigure('Visible', 'off','WindowKeyPressFcn',@app.recordKey);
             app.UIFigure.AutoResizeChildren = 'on';
             % app.UIFigure.Position = [100 100 640 480];
             app.UIFigure.Name = 'CIMTOOL';
@@ -158,43 +170,50 @@ classdef CIMTOOL < matlab.apps.AppBase
         % determine the proper font size/scaling for all app components
         % Update the obvervable FontSize (or FontScale) that components
         % will use to set their own (appropriate) font sizes
-        function updateFontSize(app, event)
+        function updateFontSize(app,update)
 
-            % base new font off of MATLAB's default font size (assumed that
-            % the user has set according to their preferences)
-            s = settings;
-            defaultFontSize = s.matlab.fonts.codefont.Size.FactoryValue;
-            minFontSize = defaultFontSize/2;
+            % % base new font off of MATLAB's default font size (assumed that
+            % % the user has set according to their preferences)
+            % s = settings;
+            % defaultFontSize = s.matlab.fonts.codefont.Size.FactoryValue;
+            % minFontSize = defaultFontSize/2;
+            % 
+            % fig = app.UIFigure;
+            % 
+            % % resolution of the screen that the app is on
+            % dSS = get(fig.Parent,'ScreenSize');
+            % dispwidth = dSS(3);
+            % dispheight = dSS(4);
+            % 
+            % % resolution of the app itself
+            % figwidth = fig.Position(3);
+            % figheight = fig.Position(4);
+            % 
+            % % percent fill of the app on the screen in the horizontal and
+            % % vertical directions
+            % wfill = (figwidth/dispwidth);
+            % hfill = (figheight/dispheight);
+            % 
+            % % a heuristic for setting the font sizes
+            % fill = min(wfill,hfill);
+            % 
+            % % update app.FontSize, respecting the min FontSize
+            % app.FontSize = double(max(minFontSize,defaultFontSize*fill*(dispwidth/dispheight)));
 
-            fig = app.UIFigure;
-
-            % resolution of the screen that the app is on
-            dSS = get(fig.Parent,'ScreenSize');
-            dispwidth = dSS(3);
-            dispheight = dSS(4);
-
-            % resolution of the app itself
-            figwidth = fig.Position(3);
-            figheight = fig.Position(4);
-
-            % percent fill of the app on the screen in the horizontal and
-            % vertical directions
-            wfill = (figwidth/dispwidth);
-            hfill = (figheight/dispheight);
-
-            % a heuristic for setting the font sizes
-            fill = min(wfill,hfill);
-            
-            % update app.FontSize, respecting the min FontSize
-            app.FontSize = double(max(minFontSize,defaultFontSize*fill*(dispwidth/dispheight)));
+            app.FontSize = app.FontSize + update;
 
         end
 
         % Construct app
-        function app = CIMTOOL
+        function app = CIMTOOL(CIMData)
+            arguments
+                CIMData = Numerics.CIM(Numerics.NLEVPData(),Numerics.Contour.Circle())
+            end
+
+            s = settings; app.FontSize = double(s.matlab.fonts.codefont.Size.FactoryValue);
 
             % all numerics and self-consistency are handled in app.CIM
-            app.CIMData = Numerics.CIM(Numerics.NLEVPData(),Numerics.Contour.Circle());
+            app.CIMData = CIMData;
 
             % Create UIFigure and components
             app.createComponents();

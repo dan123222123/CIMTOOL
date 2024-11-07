@@ -40,11 +40,18 @@ classdef CIM < handle
             addlistener(obj.RealizationData,'K','PostSet',@obj.update_shifts);
             addlistener(obj.SampleData.Contour,'z','PostSet',@obj.update_shifts);
 
+            addlistener(obj.SampleData,'Contour','PostSet',@obj.updateContourListeners);
+
             addlistener(obj,'MainAx','PostSet',@obj.update_plot);
         end
 
+        function updateContourListeners(obj,~,~)
+            addlistener(obj.SampleData.Contour,'z','PostSet',@obj.update_shifts);
+            obj.update_shifts(missing,missing)
+        end
+
         function update_shifts(obj,src,~)
-            if (src.Name == "z" || src.Name == "K") && ~obj.auto_update_shifts
+            if (ismissing(src) || src.Name == "z" || src.Name == "K") && ~obj.auto_update_shifts
                 return;
             end
             switch obj.RealizationData.ComputationalMode

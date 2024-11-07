@@ -76,7 +76,7 @@ classdef NLEVPData < handle
             end
             if obj.plot_reference
                 if ~any(ismissing(obj.ax)) && ~any(ismissing(obj.refew))
-                    obj.phandles(end+1) = scatter(obj.ax,real(obj.refew),imag(obj.refew),200,"blue","diamond",'Tag',"refew");
+                    obj.phandles(end+1) = scatter(obj.ax,real(obj.refew),imag(obj.refew),200,"blue","diamond",'Tag',"reference_eigenvalues","DisplayName","Reference Eigenvalues");
                 end
             end
             obj.ax = ax;
@@ -90,7 +90,7 @@ classdef NLEVPData < handle
         end
 
         function computeReference(obj,~,~)
-            if obj.compute_reference && ~any(ismissing(obj.coeffs))
+            if obj.compute_reference && ~anymissing(obj.coeffs)
                 obj.refew = polyeig(obj.coeffs{:});
             end
         end
@@ -151,6 +151,7 @@ classdef NLEVPData < handle
                 warndlg("One or more of passed NLEVP parameters is not finite. Please ensure that the passed argument list is correct!")
             end
             obj.loaded = true;
+            obj.computeReference(missing,missing);
         end
 
         function delete(obj)

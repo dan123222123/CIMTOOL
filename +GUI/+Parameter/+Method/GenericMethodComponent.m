@@ -32,11 +32,13 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
 
         end
 
+        function updateFontSize(comp,update)
+            fontsize(comp.GridLayout.Children,update,"points");
+        end
+
     end
 
     methods (Access = protected)
-
-
 
         % function addListeners(comp)
         %     addlistener(comp.CIMData.SampleData.NLEVP,'loaded','PostSet',@(src,event)comp.NLEVPChangedFcn);
@@ -66,7 +68,7 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             comp.LeftProbingSizeEditFieldLabel.HorizontalAlignment = 'center';
             comp.LeftProbingSizeEditFieldLabel.Layout.Row = 1;
             comp.LeftProbingSizeEditFieldLabel.Layout.Column = 1;
-            comp.LeftProbingSizeEditFieldLabel.Text = 'ell';
+            comp.LeftProbingSizeEditFieldLabel.Text = '# Left Tangential Directions';
         
             % Create LeftProbingSizeEditField
             comp.LeftProbingSizeEditField = uieditfield(comp.ProbingGridLayout, 'numeric');
@@ -81,7 +83,7 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             comp.RightProbingSizeEditFieldLabel.HorizontalAlignment = 'center';
             comp.RightProbingSizeEditFieldLabel.Layout.Row = 1;
             comp.RightProbingSizeEditFieldLabel.Layout.Column = 2;
-            comp.RightProbingSizeEditFieldLabel.Text = 'r';
+            comp.RightProbingSizeEditFieldLabel.Text = '# Right Tangential Directions';
         
             % Create RightProbingSizeEditField
             comp.RightProbingSizeEditField = uieditfield(comp.ProbingGridLayout, 'numeric');
@@ -102,7 +104,7 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             comp.EigSearchEditFieldLabel.HorizontalAlignment = 'center';
             comp.EigSearchEditFieldLabel.Layout.Row = 1;
             comp.EigSearchEditFieldLabel.Layout.Column = 1;
-            comp.EigSearchEditFieldLabel.Text = 'm';
+            comp.EigSearchEditFieldLabel.Text = '# Eig Search';
         
             % Create EigSearchEditField
             comp.EigSearchEditField = uieditfield(comp.MethodDataParameterGridLayout, 'numeric');
@@ -118,7 +120,7 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             comp.MaxMomentsEditFieldLabel.HorizontalAlignment = 'center';
             comp.MaxMomentsEditFieldLabel.Layout.Row = 1;
             comp.MaxMomentsEditFieldLabel.Layout.Column = 2;
-            comp.MaxMomentsEditFieldLabel.Text = 'K';
+            comp.MaxMomentsEditFieldLabel.Text = '# Sigma/Theta Shifts';
         
             % Create MaxMomentsEditField
             comp.MaxMomentsEditField = uieditfield(comp.MethodDataParameterGridLayout, 'numeric');
