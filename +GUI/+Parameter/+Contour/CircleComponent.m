@@ -1,16 +1,17 @@
 classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
 
-    % GUI Properties
     properties (Access = private)
-        GridLayout               matlab.ui.container.GridLayout
-        gammaEditField           matlab.ui.control.EditField
-        radiusEditField          matlab.ui.control.NumericEditField
-        gammaEditFieldLabel      matlab.ui.control.Label
-        radiusEditFieldLabel     matlab.ui.control.Label
+        GridLayout              matlab.ui.container.GridLayout
+        %
+        gammaEditField          matlab.ui.control.EditField
+        gammaEditFieldLabel     matlab.ui.control.Label
+        %
+        radiusEditField         matlab.ui.control.NumericEditField
+        radiusEditFieldLabel    matlab.ui.control.Label
     end
 
     properties (Access = public)
-        CIMData
+        CIMData                 Numerics.CIM
     end
 
     methods (Access = public)
@@ -19,9 +20,18 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
 
             obj@GUI.Parameter.Contour.ContourComponent(Parent)
             obj.CIMData = CIMData;
+            assert(isa(obj.CIMData.SampleData.Contour,'Numerics.Contour.Circle'));
+
+            obj.setDefaults();
 
             % obj.addListeners();
 
+        end
+
+        function setDefaults(comp)
+            contour = comp.CIMData.SampleData.Contour;
+            comp.gammaEditField.Value = num2str(contour.gamma);
+            comp.radiusEditField.Value = contour.radius;
         end
 
         function updateFontSize(comp,update)
@@ -34,8 +44,9 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
     methods (Access = private)
 
         function radiusEditFieldValueChanged(comp, event)
+            contour = comp.CIMData.SampleData.Contour;
             try
-                comp.CIMData.SampleData.Contour.radius = comp.radiusEditField.Value;
+                contour.radius = comp.radiusEditField.Value;
             catch
                 comp.radiusEditField.Value = event.PreviousValue;
                 errordlg("Invalid radius. Please check input and try again.")
@@ -43,8 +54,9 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
         end
 
         function centerEditFieldValueChanged(comp, event)
+            contour = comp.CIMData.SampleData.Contour;
             try
-                comp.CIMData.SampleData.Contour.gamma = str2double(comp.gammaEditField.Value);
+                contour.gamma = str2double(comp.gammaEditField.Value);
             catch
                 comp.gammaEditField.Value = event.PreviousValue;
                 errordlg("Invalid center. Please check input and try again.")
@@ -54,7 +66,7 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
 
     methods (Access = protected)
         
-        function update(comp)
+        function update(~)
             %nothing
         end
 

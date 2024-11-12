@@ -36,14 +36,10 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
 
             obj.createDynamicComponents();
 
-            obj.NumQuadNodes.Value = CIMData.SampleData.Contour.N;
+            obj.setDefaults();
 
             obj.addListeners();
 
-        end
-
-        function updateFontSize(comp,event)
-            fontsize(comp.GridLayout.Children,comp.MainApp.FontSize,"points");
         end
 
         function createDynamicComponents(comp)
@@ -52,46 +48,71 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.PlotViewportControl.Layout.Column = [1 3];    
         end
 
+        function setDefaults(comp)
+            CIM = comp.CIMData;
+            comp.NLEVPChangedFcn(missing);
+            comp.NumQuadNodes.Value = CIM.SampleData.Contour.N;
+            comp.AutoSampleCheckBox.Value = CIM.auto_compute_samples;
+            comp.AutoRealizationCheckBox.Value = CIM.auto_compute_realization;
+        end
+
         function addListeners(comp)
             addlistener(comp.CIMData.SampleData.NLEVP,'loaded','PostSet',@(src,event)comp.NLEVPChangedFcn);
             addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
-            addlistener(comp.CIMData.SampleData,'Contour','PostSet',@(src,event)comp.updateContourListeners);
             addlistener(comp.MainApp,'FontSize','PostSet',@(src,event)comp.updateFontSize);
+            % listeners for reference changes
+            addlistener(comp.CIMData.SampleData,'Contour','PostSet',@(src,event)comp.updateContourListeners);
         end
 
-        function updateContourListeners(comp, event)
+        function updateContourListeners(comp,~)
             addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
-            comp.NumQuadNodes.Value = comp.CIMData.SampleData.Contour.N;
+            comp.QuadratureChangedFcn(missing);
+        end
+
+        function updateFontSize(comp,~)
+            fontsize(comp.GridLayout.Children,comp.MainApp.FontSize,"points");
         end
 
     end
 
-    methods
+    methods % CIM -> GUI
         
-        function NLEVPChangedFcn(comp,event)
-            name = comp.CIMData.SampleData.NLEVP.name;
-            n = comp.CIMData.SampleData.NLEVP.n;
-            if all(ismissing(name))
-                comp.ProblemName.Value = "";
+        function NLEVPChangedFcn(comp,~)
+            CIM = comp.CIMData;
+            if CIM.SampleData.NLEVP.loaded
+                if all(ismissing(CIM.SampleData.NLEVP.name))
+                    comp.ProblemName.Value = "";
+                else
+                    comp.ProblemName.Value = CIM.SampleData.NLEVP.name;
+                end
+                comp.ProblemSize.Value = CIM.SampleData.NLEVP.n;
             else
-                comp.ProblemName.Value = name;
+                comp.ProblemName.Value = "Not Loaded";
+                comp.ProblemSize.Value = CIM.SampleData.NLEVP.n;
             end
-            comp.ProblemSize.Value = n;
         end
 
-        function QuadratureChangedFcn(comp,event)
-            N = comp.CIMData.SampleData.Contour.N;
-            comp.NumQuadNodes.Value = N;
+        function QuadratureChangedFcn(comp,~)
+            comp.NumQuadNodes.Value = comp.CIMData.SampleData.Contour.N;
         end
+            
+    end
 
-        function ComputeButtonPushed(comp,event)
+    methods % GUI -> CIM
+
+        function ComputeButtonPushed(comp,~)
             comp.CIMData.compute();
         end
 
-        function NumQuadNodesChanged(comp,event)
+        function NumQuadNodesChanged(comp,~)
             comp.CIMData.SampleData.Contour.N = comp.NumQuadNodes.Value;
         end
-            
+
+        function AutoButtonsChanged(comp,~)
+            comp.CIMData.auto_compute_samples = comp.AutoSampleCheckBox.Value;
+            comp.CIMData.auto_compute_realization = comp.AutoRealizationCheckBox.Value;
+        end
+
     end
     
     methods (Access = protected)
@@ -154,11 +175,13 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.AutoSampleCheckBox.WordWrap = 'on';
             comp.AutoSampleCheckBox.Layout.Row = 4;
             comp.AutoSampleCheckBox.Layout.Column = 3;
+            comp.AutoSampleCheckBox.ValueChangedFcn = matlab.apps.createCallbackFcn(comp,@AutoButtonsChanged,true);
             % %
             comp.AutoRealizationCheckBox = uicheckbox(comp.GridLayout,'Text','Auto Compute Realization');
             comp.AutoRealizationCheckBox.WordWrap = 'on';
             comp.AutoRealizationCheckBox.Layout.Row = 5;
             comp.AutoRealizationCheckBox.Layout.Column = 3;
+            comp.AutoRealizationCheckBox.ValueChangedFcn = matlab.apps.createCallbackFcn(comp,@AutoButtonsChanged,true);
             % %
             comp.ComputeButton = uibutton(comp.GridLayout);
             comp.ComputeButton.ButtonPushedFcn = matlab.apps.createCallbackFcn(comp, @ComputeButtonPushed, true);
@@ -170,6 +193,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.RefineQuadratureButton.Text = 'Refine Quadrature';
             comp.RefineQuadratureButton.Layout.Row = 6;
             comp.RefineQuadratureButton.Layout.Column = [1 3];
+            comp.RefineQuadratureButton.Enable = "off";
         
         end
 

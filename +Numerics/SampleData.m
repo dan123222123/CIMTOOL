@@ -22,8 +22,8 @@ classdef SampleData < handle
     end
 
     properties (SetObservable,Access = public)
-        NLEVP
-        Contour
+        NLEVP       Numerics.NLEVPData
+        Contour     Numerics.Contour.Quad
     end
 
     properties (Dependent)

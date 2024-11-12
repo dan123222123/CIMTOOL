@@ -16,6 +16,8 @@ classdef NLEVPTab < matlab.ui.componentcontainer.ComponentContainer
             obj@matlab.ui.componentcontainer.ComponentContainer(Parent)
             obj.CIMData = CIMData;
 
+            obj.NLEVPChangedFcn(missing);
+
             obj.addListeners();
 
         end
@@ -24,7 +26,7 @@ classdef NLEVPTab < matlab.ui.componentcontainer.ComponentContainer
             addlistener(comp.CIMData.SampleData.NLEVP,'loaded','PostSet',@(src,event)comp.NLEVPChangedFcn);
         end
 
-        function NLEVPChangedFcn(comp,event)
+        function NLEVPChangedFcn(comp,~)
             helpstr = comp.CIMData.SampleData.NLEVP.helpstr;
             if all(ismissing(helpstr))
                 comp.NLEVPHelpTextArea.Value = "";
@@ -37,7 +39,7 @@ classdef NLEVPTab < matlab.ui.componentcontainer.ComponentContainer
 
     methods (Access = protected)
 
-        function update(comp)
+        function update(~)
             %TODO
         end
 
@@ -47,7 +49,6 @@ classdef NLEVPTab < matlab.ui.componentcontainer.ComponentContainer
             %
             comp.NLEVPHelpTextArea = uitextarea(comp.GridLayout);
             comp.NLEVPHelpTextArea.Editable = 'off';
-            % comp.NLEVPHelpTextArea.HorizontalAlignment = 'center';
             comp.NLEVPHelpTextArea.BackgroundColor = [0.8 0.8 0.8];
             comp.NLEVPHelpTextArea.Value = {'No NLEVP Loaded.'};
         end

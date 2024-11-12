@@ -2,17 +2,17 @@ classdef EllipseComponent < GUI.Parameter.Contour.ContourComponent
 
     % GUI Properties
     properties (Access = private)
-        GridLayout               matlab.ui.container.GridLayout
-        gammaEditField           matlab.ui.control.EditField
-        alphaEditField           matlab.ui.control.NumericEditField
-        betaEditField            matlab.ui.control.NumericEditField
-        gammaEditFieldLabel      matlab.ui.control.Label
-        alphaEditFieldLabel      matlab.ui.control.Label
-        betaEditFieldLabel       matlab.ui.control.Label
+        GridLayout              matlab.ui.container.GridLayout
+        gammaEditField          matlab.ui.control.EditField
+        alphaEditField          matlab.ui.control.NumericEditField
+        betaEditField           matlab.ui.control.NumericEditField
+        gammaEditFieldLabel     matlab.ui.control.Label
+        alphaEditFieldLabel     matlab.ui.control.Label
+        betaEditFieldLabel      matlab.ui.control.Label
     end
 
     properties (Access = public)
-        CIMData
+        CIMData                 Numerics.CIM
     end
 
     methods (Access = public)
@@ -21,9 +21,19 @@ classdef EllipseComponent < GUI.Parameter.Contour.ContourComponent
 
             obj@GUI.Parameter.Contour.ContourComponent(Parent)
             obj.CIMData = CIMData;
+            assert(isa(obj.CIMData.SampleData.Contour,'Numerics.Contour.Ellipse'));
+
+            obj.setDefaults();
 
             % obj.addListeners();
 
+        end
+
+        function setDefaults(comp)
+            contour = comp.CIMData.SampleData.Contour;
+            comp.gammaEditField.Value = num2str(contour.gamma);
+            comp.alphaEditField.Value = contour.alpha;
+            comp.betaEditField.Value = contour.beta;
         end
 
         function updateFontSize(comp,update)
@@ -35,7 +45,7 @@ classdef EllipseComponent < GUI.Parameter.Contour.ContourComponent
     % Callbacks that handle component events
     methods (Access = private)
 
-        function alphaEditFieldValueChanged(comp, event)
+        function alphaEditFieldValueChanged(comp,~)
             try
                 comp.CIMData.SampleData.Contour.alpha = comp.alphaEditField.Value;
             catch
@@ -44,7 +54,7 @@ classdef EllipseComponent < GUI.Parameter.Contour.ContourComponent
             end
         end
 
-        function betaEditFieldValueChanged(comp, event)
+        function betaEditFieldValueChanged(comp,~)
             try
                 comp.CIMData.SampleData.Contour.beta = comp.betaEditField.Value;
             catch
@@ -53,7 +63,7 @@ classdef EllipseComponent < GUI.Parameter.Contour.ContourComponent
             end
         end
 
-        function gammaEditFieldValueChanged(comp, event)
+        function gammaEditFieldValueChanged(comp,~)
             try
                 comp.CIMData.SampleData.Contour.gamma = str2double(comp.gammaEditField.Value);
             catch
@@ -66,7 +76,7 @@ classdef EllipseComponent < GUI.Parameter.Contour.ContourComponent
 
     methods (Access = protected)
         
-        function update(comp)
+        function update(~)
             %nothing
         end
 

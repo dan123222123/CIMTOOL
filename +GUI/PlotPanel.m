@@ -46,12 +46,12 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
 
         end
 
-        function updateContourListeners(comp, event)
+        function updateContourListeners(comp,~)
             addlistener(comp.CIMData.SampleData.Contour,'z','PostSet',@(src,event)comp.ResultDataChangedFcn);
         end
 
         % listen for rd.loaded, NLEVP.refew, etc. to re-do this table display
-        function ResultDataChangedFcn(comp, event)
+        function ResultDataChangedFcn(comp,~)
 
             rd = comp.CIMData.ResultData;
             nd = comp.CIMData.SampleData.NLEVP;

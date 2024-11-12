@@ -20,29 +20,43 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
             obj@matlab.ui.componentcontainer.ComponentContainer(Parent)
             obj.CIMData = CIMData;
 
-            % create dynamic component
-            obj.ContourComponent = GUI.Parameter.Contour.CircleComponent(obj.GridLayout,obj.CIMData);
-            obj.ContourComponent.Layout.Row = [1 5];
-            obj.ContourComponent.Layout.Column = [3 5];
+            obj.updateContourComponent();
 
             % obj.addListeners();
 
         end
 
-        % change the current contour type
-        function ContourTypeButtonGroupSelectionChanged(comp,~)
-            selectedButton = comp.ContourTypeButtonGroup.SelectedObject;
-            oc = comp.CIMData.SampleData.Contour;
-            switch(selectedButton.Text)
-                case "Circle"
-                    comp.CIMData.SampleData.Contour = Numerics.Contour.Circle(0,1,oc.N,comp.CIMData.MainAx);
+        function updateContourComponent(comp)
+            switch(class(comp.CIMData.SampleData.Contour))
+                case 'Numerics.Contour.Circle'
+                    comp.CircleButton.Value = true;
                     comp.ContourComponent = GUI.Parameter.Contour.CircleComponent(comp.GridLayout,comp.CIMData);
-                case "Ellipse"
-                    comp.CIMData.SampleData.Contour = Numerics.Contour.Ellipse(0,1,1,oc.N,comp.CIMData.MainAx);
+                case 'Numerics.Contour.Ellipse'
                     comp.ContourComponent = GUI.Parameter.Contour.EllipseComponent(comp.GridLayout,comp.CIMData);
+                    comp.EllipseButton.Value = true;
             end
             comp.ContourComponent.Layout.Row = [1 5];
             comp.ContourComponent.Layout.Column = [3 5];
+        end
+
+        function ContourTypeButtonGroupSelectionChanged(comp,~)
+            selectedButton = comp.ContourTypeButtonGroup.SelectedObject;
+            oc = comp.CIMData.SampleData.Contour;
+            center = oc.gamma; N = oc.N;
+            switch(class(oc))
+                case 'Numerics.Contour.Circle'
+                    radius = comp.CIMData.SampleData.Contour.radius;
+                case 'Numerics.Contour.Ellipse'
+                    radius = max(comp.CIMData.SampleData.Contour.alpha,comp.CIMData.SampleData.Contour.beta);
+            end
+            delete(comp.CIMData.SampleData.Contour); % MATLAB is slow to delete unreferenced objects...
+            switch(selectedButton.Text)
+                case "Circle"
+                    comp.CIMData.SampleData.Contour = Numerics.Contour.Circle(center,radius,N,comp.CIMData.MainAx);
+                case "Ellipse"
+                    comp.CIMData.SampleData.Contour = Numerics.Contour.Ellipse(center,radius,radius,N,comp.CIMData.MainAx);
+            end
+            comp.updateContourComponent();
         end
 
         function updateFontSize(comp,update)
@@ -53,7 +67,7 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
 
     methods (Access = protected)
 
-        function update(comp)
+        function update(~)
             %TODO
         end
 
@@ -71,7 +85,6 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
             comp.CircleButton = uitogglebutton(comp.ContourTypeButtonGroup);
             comp.CircleButton.Text = 'Circle';
             comp.CircleButton.Position = [10 50 100 30];
-            comp.CircleButton.Value = true; % default
             %
             comp.EllipseButton = uitogglebutton(comp.ContourTypeButtonGroup);
             comp.EllipseButton.Text = 'Ellipse';

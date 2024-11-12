@@ -10,11 +10,8 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
         RightProbingSizeEditField
         %
         MethodDataParameterGridLayout
-        EigSearchEditFieldLabel
-        EigSearchEditField
         MaxMomentsEditFieldLabel
         MaxMomentsEditField
-        % EstimateMCheckbox
     end
 
     properties (Access = public)
@@ -28,7 +25,12 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             obj@GUI.Parameter.Method.MethodComponent(Parent)
             obj.CIMData = CIMData;
 
-            % obj.addListeners();
+            % set defaults
+            obj.updateLeftProbingSize();
+            obj.updateRightProbingSize();
+            obj.updateMaxMoments();
+
+            obj.addListeners();
 
         end
 
@@ -38,18 +40,38 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
 
     end
 
-    methods (Access = protected)
+    methods % CIM -> GUI
 
-        % function addListeners(comp)
-        %     addlistener(comp.CIMData.SampleData.NLEVP,'loaded','PostSet',@(src,event)comp.NLEVPChangedFcn);
-        %     addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
-        % end
+        function updateLeftProbingSize(comp,~)
+            comp.LeftProbingSizeEditField.Value = comp.CIMData.SampleData.ell;
+        end
 
-        function MethodParametersChanged(comp,event)
+        function updateRightProbingSize(comp,~)
+            comp.RightProbingSizeEditField.Value = comp.CIMData.SampleData.r;
+        end
+
+        function updateMaxMoments(comp,~)
+            comp.MaxMomentsEditField.Value = comp.CIMData.RealizationData.K;
+        end
+
+    end
+
+    methods % GUI -> CIM
+
+        function MethodParametersChanged(comp,~)
             comp.CIMData.SampleData.ell = comp.LeftProbingSizeEditField.Value;
             comp.CIMData.SampleData.r = comp.RightProbingSizeEditField.Value;
-            comp.CIMData.RealizationData.m = comp.EigSearchEditField.Value;
             comp.CIMData.RealizationData.K = comp.MaxMomentsEditField.Value;
+        end
+
+    end
+
+    methods (Access = protected)
+
+        function addListeners(comp)
+            addlistener(comp.CIMData.SampleData,'ell','PostSet',@(src,event)comp.updateLeftProbingSize);
+            addlistener(comp.CIMData.SampleData,'r','PostSet',@(src,event)comp.updateRightProbingSize);
+            addlistener(comp.CIMData.RealizationData,'K','PostSet',@(src,event)comp.updateMaxMoments);
         end
         
         function setup(comp)
@@ -99,27 +121,11 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             comp.MethodDataParameterGridLayout.Layout.Row = 2;
             comp.MethodDataParameterGridLayout.Layout.Column = 1;
         
-            % Create EigSearchEditFieldLabel
-            comp.EigSearchEditFieldLabel = uilabel(comp.MethodDataParameterGridLayout);
-            comp.EigSearchEditFieldLabel.HorizontalAlignment = 'center';
-            comp.EigSearchEditFieldLabel.Layout.Row = 1;
-            comp.EigSearchEditFieldLabel.Layout.Column = 1;
-            comp.EigSearchEditFieldLabel.Text = '# Eig Search';
-        
-            % Create EigSearchEditField
-            comp.EigSearchEditField = uieditfield(comp.MethodDataParameterGridLayout, 'numeric');
-            comp.EigSearchEditField.Limits = [0 Inf];
-            comp.EigSearchEditField.HorizontalAlignment = 'center';
-            comp.EigSearchEditField.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MethodParametersChanged, true);
-            comp.EigSearchEditField.Value = 0;
-            comp.EigSearchEditField.Layout.Row = 2;
-            comp.EigSearchEditField.Layout.Column = 1;
-        
             % Create MaxMomentsEditFieldLabel
             comp.MaxMomentsEditFieldLabel = uilabel(comp.MethodDataParameterGridLayout);
             comp.MaxMomentsEditFieldLabel.HorizontalAlignment = 'center';
             comp.MaxMomentsEditFieldLabel.Layout.Row = 1;
-            comp.MaxMomentsEditFieldLabel.Layout.Column = 2;
+            comp.MaxMomentsEditFieldLabel.Layout.Column = [1 2];
             comp.MaxMomentsEditFieldLabel.Text = '# Sigma/Theta Shifts';
         
             % Create MaxMomentsEditField
@@ -128,12 +134,8 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             comp.MaxMomentsEditField.HorizontalAlignment = 'center';
             comp.MaxMomentsEditField.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MethodParametersChanged, true);
             comp.MaxMomentsEditField.Layout.Row = 2;
-            comp.MaxMomentsEditField.Layout.Column = 2;
+            comp.MaxMomentsEditField.Layout.Column = [1 2];
 
-            % comp.EstimateMCheckbox = uicheckbox(comp.MethodDataParameterGridLayout,'Text','Auto Estimate m');
-            % comp.EstimateMCheckbox.HorizontalAlignment = 'center';
-            % comp.EstimateMCheckbox.Layout.Row = 2;
-            % comp.EstimateMCheckbox.Layout.Column = 2;
         end
 
     end

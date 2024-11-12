@@ -18,6 +18,8 @@ classdef ShiftsTab < matlab.ui.componentcontainer.ComponentContainer
 
             obj.addListeners();
 
+            obj.InterpolationDataChangedFcn();
+
         end
 
         function updateFontSize(comp,update)
@@ -34,7 +36,7 @@ classdef ShiftsTab < matlab.ui.componentcontainer.ComponentContainer
         end
 
         % make certain table entries editable based on Computational Mode
-        function ShiftsTableEditableFcn(comp, event)
+        function ShiftsTableEditableFcn(comp,~)
             switch(comp.CIMData.RealizationData.ComputationalMode)
                 case Numerics.ComputationalMode.Hankel
                     comp.ShiftsTable.ColumnEditable = [false false];
@@ -46,7 +48,7 @@ classdef ShiftsTab < matlab.ui.componentcontainer.ComponentContainer
         end
 
         % InterpolationData Changed -> update ShiftsTable
-        function InterpolationDataChangedFcn(comp, event)
+        function InterpolationDataChangedFcn(comp,~)
             id = comp.CIMData.RealizationData.InterpolationData;
             theta = id.theta;
             sigma = id.sigma;

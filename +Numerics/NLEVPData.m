@@ -90,7 +90,7 @@ classdef NLEVPData < handle
         end
 
         function computeReference(obj,~,~)
-            if obj.compute_reference && ~anymissing(obj.coeffs)
+            if obj.compute_reference && ~anymissing(obj.coeffs) && any(contains(nlevp('query',obj.name),'pep'))
                 obj.refew = polyeig(obj.coeffs{:});
             end
         end
@@ -102,8 +102,7 @@ classdef NLEVPData < handle
                 arglist = missing
             end
 
-            % disable while we attempt to load in the new NLEVP
-            obj.loaded = false;
+            obj.clearNLEVP();
 
             % check if the given problem exists in the NLEVP pack
             nlevp(probstr);
@@ -150,12 +149,22 @@ classdef NLEVPData < handle
             if ~allfinite
                 warndlg("One or more of passed NLEVP parameters is not finite. Please ensure that the passed argument list is correct!")
             end
-            obj.loaded = true;
             obj.computeReference(missing,missing);
+            obj.loaded = true;
         end
 
         function delete(obj)
             obj.cla();
+        end
+
+        function clearNLEVP(obj)
+            obj.loaded = false;
+            obj.T = missing;
+            obj.name = missing;
+            obj.arglist = missing;
+            obj.helpstr = missing;
+            obj.refew = missing;
+            obj.refev = missing;
         end
 
     end

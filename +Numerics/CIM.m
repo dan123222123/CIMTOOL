@@ -13,7 +13,9 @@ classdef CIM < handle
         auto = false;
         auto_compute_samples = false;
         auto_compute_realization = false;
+        auto_estimate_m = false;
         auto_update_shifts = true;
+        auto_update_K = true;
     end
     
     methods
@@ -42,6 +44,7 @@ classdef CIM < handle
 
             addlistener(obj.SampleData,'Contour','PostSet',@obj.updateContourListeners);
 
+            addlistener(obj.SampleData.NLEVP,'loaded','PostSet',@obj.NLEVPChanged);
             addlistener(obj,'MainAx','PostSet',@obj.update_plot);
         end
 
@@ -61,6 +64,15 @@ classdef CIM < handle
                     obj.RealizationData.InterpolationData = Numerics.InterpolationData(NaN,obj.SampleData.Contour.FindRandomShift(obj.RealizationData.ShiftScale));
                 case Numerics.ComputationalMode.MPLoewner
                     obj.interlevedshifts();
+            end
+        end
+
+        function NLEVPChanged(obj,~,~)
+            if obj.SampleData.NLEVP.loaded
+                obj.ResultData.ew = missing;
+                obj.ResultData.ev = missing;
+                obj.ResultData.Db = missing;
+                obj.ResultData.Ds = missing;
             end
         end
 
