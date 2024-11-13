@@ -67,6 +67,9 @@ AA = [A zeros(size(A,1),size(Atilde,1));zeros(size(Atilde,1),size(A,1)) Atilde];
 BB = [B; Btilde]; CC = [C -Ctilde]; DD = zeros(n);
 Ess = ss(AA,BB,CC,DD);
 
+% display(rank(obsv(Ess)))
+% display(rank(ctrb(Ess)))
+
 % aug tf of SigmaTilde
 Ef = @(s) G(s) - Gtilde(s);
 
