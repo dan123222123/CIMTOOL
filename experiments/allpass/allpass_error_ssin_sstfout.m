@@ -57,19 +57,17 @@ Dtilde = Dhat + xi*U;
 %systilde = ss(Atilde,Btilde,Ctilde,Dtilde);
 Gtilde = @(s) Ctilde*((s*eye(size(Atilde)) - Atilde) \ Btilde) + Dtilde;
 
-s = tf("s");
-display(hsvd(Gtilde(s)))
+% s = tf("s");
+% display(hsvd(Gtilde(s)))
+% display(Gamma)
+% display(Sigmahat)
 
-% ss of SigmaTilde
+% aug ss of SigmaTilde
 AA = [A zeros(size(A,1),size(Atilde,1));zeros(size(Atilde,1),size(A,1)) Atilde];
 BB = [B; Btilde]; CC = [C -Ctilde]; DD = zeros(n);
 Ess = ss(AA,BB,CC,DD);
-%Ess = ss(A,B,C,D);
-%Ess = ss(Atilde,Btilde,Ctilde,Dtilde);
 
-% tf of SigmaTilde
+% aug tf of SigmaTilde
 Ef = @(s) G(s) - Gtilde(s);
-%Ef = G;
-%Ef = Gtilde;
 
 end

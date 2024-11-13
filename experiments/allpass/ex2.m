@@ -104,15 +104,14 @@ scatter(real(pairedcmpeigs),imag(pairedcmpeigs),50,'b');
 hold off;
 axis(gca,"equal")
 
-display(pairedeigs)
-display(abs(pairedeigs(:,1)-pairedeigs(:,2)))
+% display(pairedeigs)
+% display(abs(pairedeigs(:,1)-pairedeigs(:,2)))
 display(nmderr)
 
 %
 
-figure(3); imagesc(log(abs(Db))); colorbar; clim([-10 1]); title("Db");
-
-figure(4); imagesc(log(abs(Ds))); colorbar; clim([-10 1]); title("Ds");
+% figure(3); imagesc(log(abs(Db))); colorbar; clim([-10 1]); title("Db");
+% figure(4); imagesc(log(abs(Ds))); colorbar; clim([-10 1]); title("Ds");
 
 %%% -7 days
 % try irka interpolants

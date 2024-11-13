@@ -1,7 +1,7 @@
 format long
 axis equal
 %% all-pass systems
-n = 4;
+n = 8;
 [A,B,C,D] = sallpass(n);
 %
 Ess = ss(A,B,C,D);
@@ -9,11 +9,11 @@ Etf = @(s) C * ((s * eye(n) - A) \ B);
 errpoles = eig(Ess.A);
 %
 L = Numerics.SampleData.sampleMatrix(size(C,1),1000*n);
-R = Numerics.SampleData.sampleMatrix(size(B,22),1000*n);
+R = Numerics.SampleData.sampleMatrix(size(B,2),1000*n);
 %% construct theta and sigma so that irka points are the majority
-% K = n+n-1; % the number of poles in the allpass error system
-K = n+3;
-% K = 2*n+2;
+% K = n;
+K = 3*n+4;
+% K = 5*n + 3;
 % K = 10*n;
 
 ell = K; r = ell; Lt = L(:,1:ell); Rt = R(:,1:r);
@@ -44,12 +44,19 @@ scatter(real(sigma),imag(sigma),"DisplayName","sigma-irka");
 thetaextra = []; sigmaextra = [];
 
 for j = 1:ceil(K/length(errpoles))
-    for i=1:min(length(errpoles),K-j*length(errpoles))
+    for i=1:min(K-(length(theta)+length(thetaextra)),length(errpoles))
         ceig = errpoles(i);
         thetaextra(end+1) = (j+1)*ceig;
         sigmaextra(end+1) = -(j+1)*ceig;
     end
 end
+
+% i = 1;
+% while (length(theta) + length(thetaextra)) < K
+%     thetaextra(end+1) = ((-1)^(i-1))*1i*((i+1)+max(abs(errpoles)));
+%     sigmaextra(end+1) = ((-1)^(i))*1i*((i+1)+max(abs(errpoles)));
+%     i = i + 1;
+% end
 
 scatter(real(thetaextra),imag(thetaextra),"DisplayName","theta-extra");
 scatter(real(sigmaextra),imag(sigmaextra),"DisplayName","sigma-extra");
@@ -86,9 +93,8 @@ display(nmderr)
 
 %
 
-figure(3); imagesc(log(abs(Db))); colorbar; clim([-10 1]); title("Db");
-
-figure(4); imagesc(log(abs(Ds))); colorbar; clim([-10 1]); title("Ds");
+% figure(3); imagesc(log(abs(Db))); colorbar; clim([-10 1]); title("Db");
+% figure(4); imagesc(log(abs(Ds))); colorbar; clim([-10 1]); title("Ds");
 
 %%% -7 days
 % try irka interpolants
