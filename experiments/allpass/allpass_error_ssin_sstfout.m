@@ -59,7 +59,7 @@ Gtilde = @(s) Ctilde*((s*eye(size(Atilde)) - Atilde) \ Btilde) + Dtilde;
 
 % s = tf("s");
 % display(hsvd(Gtilde(s)))
-% display(Gamma)
+display(Gamma)
 % display(Sigmahat)
 
 % aug ss of SigmaTilde
