@@ -10,7 +10,8 @@ classdef Circle < Numerics.Contour.Quad
     methods (Static)
 
         function [z,w] = trapezoid(gamma,rho,N)
-            q = @(N) ((2*pi)/N)*((1:N) - (1/2));
+            % q = @(N) ((2*pi)/N)*((1:N) - (1/2));
+            q = @(N) ((2*pi)/N)*(1:N);
             f = @(theta) gamma + rho*exp(1i*theta);
             wfun = @(theta) (rho/N)*exp(1i*theta);
             z = f(q(N));
@@ -45,6 +46,19 @@ classdef Circle < Numerics.Contour.Quad
 
         function tf = inside(obj,pt)
             tf = (abs(pt-obj.gamma) < obj.radius);
+        end
+
+        function [z,w] = trapezoidContour(obj)
+            [z,w] = Numerics.Contour.Circle.trapezoid(obj.gamma,obj.radius,obj.N);
+        end
+
+        function refineQuadrature(obj,rf)
+            arguments
+                obj
+                rf = 2
+            end
+            obj.N = rf*obj.N;
+            [obj.z,obj.w] = trapezoidContour(obj);
         end
 
         function plot(obj,ax)

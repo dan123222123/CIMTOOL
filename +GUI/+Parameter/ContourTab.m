@@ -9,15 +9,17 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
     end
 
     properties (Access = public)
+        MainApp
         CIMData Numerics.CIM
         PlotTab
     end
     
     methods
 
-        function obj = ContourTab(Parent,CIMData)
+        function obj = ContourTab(Parent,MainApp,CIMData)
 
             obj@matlab.ui.componentcontainer.ComponentContainer(Parent)
+            obj.MainApp = MainApp;
             obj.CIMData = CIMData;
 
             obj.updateContourComponent();
@@ -37,6 +39,7 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
             end
             comp.ContourComponent.Layout.Row = [1 5];
             comp.ContourComponent.Layout.Column = [3 5];
+            comp.updateFontSize(comp.MainApp.FontSize);
         end
 
         function ContourTypeButtonGroupSelectionChanged(comp,~)

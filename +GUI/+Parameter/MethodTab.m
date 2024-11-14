@@ -148,6 +148,7 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
             comp.EstimateMCheckbox = uicheckbox(comp.GridLayout,'Text','Auto Estimate # Eig Search');
             comp.EstimateMCheckbox.Layout.Row = [1 2];
             comp.EstimateMCheckbox.Layout.Column = 2;
+            comp.EstimateMCheckbox.Enable = "off";
             %
             comp.EigSearchEditFieldLabel = uilabel(comp.GridLayout);
             comp.EigSearchEditFieldLabel.HorizontalAlignment = 'center';

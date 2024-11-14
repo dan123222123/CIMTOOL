@@ -11,7 +11,8 @@ classdef Ellipse < Numerics.Contour.Quad
     methods (Static)
 
         function [z,w] = trapezoid(gamma,alpha,beta,N)
-            q = @(N) ((2*pi)/N)*((1:N) - (1/2));
+            % q = @(N) ((2*pi)/N)*((1:N) - (1/2));
+            q = @(N) ((2*pi)/N)*(1:N);
             f = @(theta) gamma + alpha*cos(theta) + 1i*beta*sin(theta);
             wfun = @(theta) (1/N)*(beta*cos(theta) + 1i*alpha*sin(theta));
             z = f(q(N));
@@ -49,6 +50,19 @@ classdef Ellipse < Numerics.Contour.Quad
 
         function tf = inside(obj,pt)
             tf = (((real(pt) - real(obj.gamma)).^2/obj.alpha^2) + ((imag(pt) - imag(obj.gamma)).^2/obj.beta^2) < 1);
+        end
+
+        function [z,w] = trapezoidContour(obj)
+            [z,w] = Numerics.Contour.Ellipse.trapezoid(obj.gamma,obj.alpha,obj.beta,obj.N);
+        end
+
+        function refineQuadrature(obj,rf)
+            arguments
+                obj
+                rf = 2
+            end
+            obj.N = rf*obj.N;
+            [obj.z,obj.w] = trapezoidContour(obj);
         end
 
         function plot(obj,ax)

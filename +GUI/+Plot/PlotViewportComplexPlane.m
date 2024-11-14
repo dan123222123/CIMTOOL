@@ -32,6 +32,10 @@ classdef PlotViewportComplexPlane < GUI.Plot.PlotViewportComponent
 
         end
 
+        function updateFontSize(comp,update)
+            fontsize(comp.GridLayout.Children,update,"points");
+        end
+
     end
     
     methods (Access = protected)
@@ -41,18 +45,17 @@ classdef PlotViewportComplexPlane < GUI.Plot.PlotViewportComponent
             addlistener(comp.MainPlotAxes,'YLim','PostSet',@(src,event)comp.MainPlotWindowYLimChangedFcn);
         end
 
-        function MainPlotWindowXLimChangedFcn(comp, src, event)
+        function MainPlotWindowXLimChangedFcn(comp,~,~)
             comp.Rmin.Value = comp.MainPlotAxes.XLim(1);
             comp.Rmax.Value = comp.MainPlotAxes.XLim(2);
         end
 
-        function MainPlotWindowYLimChangedFcn(comp, src, event)
+        function MainPlotWindowYLimChangedFcn(comp,~,~)
             comp.Imin.Value = comp.MainPlotAxes.YLim(1);
             comp.Imax.Value = comp.MainPlotAxes.YLim(2);
         end
 
         function MainPlotAxesWindowChangedFcn(comp, event)
-            2
             OldXLim = comp.MainPlotAxes.XLim;
             OldYLim = comp.MainPlotAxes.YLim;
             NewXLim = [comp.Rmin.Value; comp.Rmax.Value];

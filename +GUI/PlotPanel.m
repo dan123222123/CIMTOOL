@@ -44,6 +44,16 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
 
             addlistener(obj.CIMData.SampleData,'Contour','PostSet',@(src,event)obj.updateContourListeners);
 
+            addlistener(obj.MainApp,'FontSize','PostSet',@(src,event)obj.updateFontSize);
+
+        end
+
+        function updateFontSize(comp,~)
+            update = comp.MainApp.FontSize;
+            fontsize(comp.PlotTabGridLayout.Children,update,"points");
+            % comp.ContourTab.updateFontSize(update);
+            % comp.MethodTab.updateFontSize(update);
+            % comp.ShiftsTab.updateFontSize(update);
         end
 
         function updateContourListeners(comp,~)

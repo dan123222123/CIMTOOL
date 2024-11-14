@@ -71,6 +71,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
 
         function updateFontSize(comp,~)
             fontsize(comp.GridLayout.Children,comp.MainApp.FontSize,"points");
+            comp.PlotViewportControl.updateFontSize(comp.MainApp.FontSize);
         end
 
     end
@@ -102,6 +103,10 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
 
         function ComputeButtonPushed(comp,~)
             comp.CIMData.compute();
+        end
+
+        function RefineQuadratureButtonPushed(comp,~)
+            comp.CIMData.refineQuadrature();
         end
 
         function NumQuadNodesChanged(comp,~)
@@ -176,12 +181,14 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.AutoSampleCheckBox.Layout.Row = 4;
             comp.AutoSampleCheckBox.Layout.Column = 3;
             comp.AutoSampleCheckBox.ValueChangedFcn = matlab.apps.createCallbackFcn(comp,@AutoButtonsChanged,true);
+            comp.AutoSampleCheckBox.Enable = "off";
             % %
             comp.AutoRealizationCheckBox = uicheckbox(comp.GridLayout,'Text','Auto Compute Realization');
             comp.AutoRealizationCheckBox.WordWrap = 'on';
             comp.AutoRealizationCheckBox.Layout.Row = 5;
             comp.AutoRealizationCheckBox.Layout.Column = 3;
             comp.AutoRealizationCheckBox.ValueChangedFcn = matlab.apps.createCallbackFcn(comp,@AutoButtonsChanged,true);
+            comp.AutoRealizationCheckBox.Enable = "off";
             % %
             comp.ComputeButton = uibutton(comp.GridLayout);
             comp.ComputeButton.ButtonPushedFcn = matlab.apps.createCallbackFcn(comp, @ComputeButtonPushed, true);
@@ -190,10 +197,10 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.ComputeButton.Layout.Column = [1 2];
             % %
             comp.RefineQuadratureButton = uibutton(comp.GridLayout);
+            comp.RefineQuadratureButton.ButtonPushedFcn = matlab.apps.createCallbackFcn(comp, @RefineQuadratureButtonPushed, true);
             comp.RefineQuadratureButton.Text = 'Refine Quadrature';
             comp.RefineQuadratureButton.Layout.Row = 6;
             comp.RefineQuadratureButton.Layout.Column = [1 3];
-            comp.RefineQuadratureButton.Enable = "off";
         
         end
 

@@ -31,7 +31,7 @@ classdef ParameterPanel < matlab.ui.componentcontainer.ComponentContainer
             
             comp.NLEVPTab = GUI.Parameter.NLEVPTab(uitab(comp.ParameterTabGroup,'Title','NLEVP'),comp.CIMData);
             %
-            comp.ContourTab = GUI.Parameter.ContourTab(uitab(comp.ParameterTabGroup,'Title','Contour'),comp.CIMData);
+            comp.ContourTab = GUI.Parameter.ContourTab(uitab(comp.ParameterTabGroup,'Title','Contour'),comp.MainApp,comp.CIMData);
             %
             comp.MethodTab = GUI.Parameter.MethodTab(uitab(comp.ParameterTabGroup,'Title','Method'),comp.CIMData);
             %
@@ -39,7 +39,7 @@ classdef ParameterPanel < matlab.ui.componentcontainer.ComponentContainer
             
         end
 
-        function updateFontSize(comp,event)
+        function updateFontSize(comp,~)
             update = comp.MainApp.FontSize;
             fontsize(comp.ParameterTabGridLayout.Children,update,"points");
             comp.ContourTab.updateFontSize(update);

@@ -108,18 +108,22 @@ classdef CIM < handle
         function checkdirty(obj,~,~)
             if ~obj.SampleData.loaded
                 obj.DataDirtiness = 2;
+                if obj.auto_compute_samples
+                    obj.SampleData.compute();
+                    obj.checkdirty(missing,missing);
+                end
             elseif ~obj.RealizationData.loaded
                 obj.DataDirtiness = 1;
+                if obj.auto_compute_realization
+                    obj.computeRealization();
+                    obj.checkdirty(missing,missing);
+                end
             else
                 obj.DataDirtiness = 0;
             end
-            if obj.auto % need to check that the contour is ready first
-                obj.compute();
-            end
         end
 
-        function compute(obj)
-            obj.SampleData.compute();
+        function computeRealization(obj)
             obj.ResultData.loaded = false;
             switch(obj.RealizationData.ComputationalMode)
                 case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
@@ -150,6 +154,25 @@ classdef CIM < handle
             obj.RealizationData.loaded = true;
             obj.ResultData.loaded = true;
         end
+
+        function compute(obj)
+            obj.SampleData.compute();
+            obj.computeRealization()
+        end
+
+        function refineQuadrature(obj)
+            % old auto values -- we set them back at the end
+            acs = obj.auto_compute_samples; acr = obj.auto_compute_realization; aem = obj.auto_estimate_m;
+            obj.auto_compute_samples = false; obj.auto_compute_realization = false; obj.auto_estimate_m = false;
+
+            % refine the quadrature and compute
+            obj.SampleData.refineQuadrature();
+            obj.compute();
+
+            obj.auto_compute_samples = acs; obj.auto_compute_realization = acr; obj.auto_estimate_m = aem;
+            
+        end
+
     end
 end
 
