@@ -74,9 +74,8 @@ X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
 M = X'*Ls*Y / Sigma;
 [S,Lambda] = eig(M);
 Lambda = diag(Lambda);
+V = C*Y*(Sigma\S); % recover right eigenvectors from right-sided samples
 
-% recover right eigenvectors from right-sided samples
-V = C*Y*(Sigma\S);
 Lssw = svd(Ls);
 Lssw = Lssw / Lssw(1);
 % END NUMERICS

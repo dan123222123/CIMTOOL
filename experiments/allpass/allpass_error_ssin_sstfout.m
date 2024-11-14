@@ -55,7 +55,7 @@ Btilde = Gamma\(Sigmahat*B1 - xi*C1'*U);
 Ctilde = C1*Sigmahat - xi*U*B1';
 Dtilde = Dhat + xi*U;
 %systilde = ss(Atilde,Btilde,Ctilde,Dtilde);
-Gtilde = @(s) Ctilde*((s*eye(size(Atilde)) - Atilde) \ Btilde) + Dtilde;
+Gtilde = @(s) Ctilde*((s*eye(size(Atilde)) - Atilde) \ Btilde);% + Dtilde;
 
 % s = tf("s");
 % display(hsvd(Gtilde(s)))

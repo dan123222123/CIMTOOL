@@ -38,7 +38,7 @@ function [Db,Ds,refeig,cmpeig,nmderr,pairedcmpeig] = allpass_realization_exact_m
 
     % [X,Sigma,Y] = svd(Db); m = length(refeig);
     % X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
-    % cmpeig = (Sigma \ (X'*Ds*Y));
+    % cmpeig = ((X'*Ds*Y) / Sigma);
 
     cmpeig = eig(Ds,Db,"qz");
 

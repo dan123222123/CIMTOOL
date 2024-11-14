@@ -28,78 +28,78 @@ ell = K; r = ell; Lt = L(:,1:ell); Rt = R(:,1:r);
 
 theta = double.empty(); sigma = double.empty();
 
-for i=1:min(K,length(errpoles))
-    ceig = errpoles(i);
-    theta(end+1) = ceig + 3*1i;
-    sigma(end+1) = ceig - 3*1i;
-end
+% for i=1:min(K,length(errpoles))
+%     ceig = errpoles(i);
+%     theta(end+1) = ceig + 10*1i;
+%     sigma(end+1) = ceig - 10*1i;
+% end
 
 % graph of the rank of L, Ls as the interpolation points are moved away
 % from the eigenvalues?
 
-i = 1;
-while length(theta) < K
-    theta(end+1) = ((-1)^(i-1))*(max(abs(errpoles))+i);
-    sigma(end+1) = ((-1)^(i))*(max(abs(errpoles))+i);
+% i = 1;
+% while length(theta) < K
+%     theta(end+1) = ((-1)^(i-1))*(max(abs(errpoles))+i);
+%     sigma(end+1) = ((-1)^(i))*(max(abs(errpoles))+i);
+% end
+
+tol = 10^-2;
+for i=1:length(errpoles)
+    ceig = errpoles(i);
+    cerrpoles = errpoles;
+    cerrpoles(i) = [];
+    md = min(abs(cerrpoles+ceig));
+    if md >= tol
+        if mod(i,2) == 1
+            theta(end+1) = -ceig;
+        else
+            sigma(end+1) = -ceig;
+        end
+    end
 end
 
-% tol = 10^-2;
-% for i=1:length(errpoles)
-%     ceig = errpoles(i);
-%     cerrpoles = errpoles;
-%     cerrpoles(i) = [];
-%     md = min(abs(cerrpoles+ceig));
-%     if md >= tol
-%         if mod(i,2) == 1
-%             theta(end+1) = -ceig;
-%         else
-%             sigma(end+1) = -ceig;
-%         end
-%     end
-% end
-% 
 figure(1)
 
 scatter(real(theta),imag(theta),"DisplayName","theta-irka");
 hold on;
 scatter(real(sigma),imag(sigma),"DisplayName","sigma-irka");
-% 
-% thetaextra = theta; sigmaextra = sigma;
-% 
-% while (length(thetaextra) < K || length(sigmaextra) < K)
-% 
-%     mith = min(min(thetaextra),min(errpoles)); misi = min(min(sigmaextra),min(errpoles));
-%     math = max(max(thetaextra),max(errpoles)); masi = max(max(sigmaextra),max(errpoles));
-% 
-%     lth = length(thetaextra); lsi = length(sigmaextra);
-% 
-%     if lth < lsi
-%         if abs(mith) >= abs(math)
-%             thetaextra(end + 1) = ceil(masi) + 1;
-%         else
-%             thetaextra(end + 1) = floor(misi) - 1;
-%         end
-%     else
-%         if abs(misi) >= abs(masi)
-%             sigmaextra(end + 1) = ceil(math) + 1;
-%         else
-%             sigmaextra(end + 1) = floor(mith) - 1;
-%         end
-%     end
-% 
-% end
-% 
-% thetaint = setdiff(thetaextra,theta);
-% sigmaint = setdiff(sigmaextra,sigma);
-% 
-% scatter(real(thetaint),imag(thetaint),"DisplayName","theta-extra");
-% scatter(real(sigmaint),imag(sigmaint),"DisplayName","sigma-extra");
+
+thetaextra = theta; sigmaextra = sigma;
+
+while (length(thetaextra) < K || length(sigmaextra) < K)
+
+    mith = min(min(thetaextra),min(errpoles)); misi = min(min(sigmaextra),min(errpoles));
+    math = max(max(thetaextra),max(errpoles)); masi = max(max(sigmaextra),max(errpoles));
+
+    lth = length(thetaextra); lsi = length(sigmaextra);
+
+    if lth < lsi
+        if abs(mith) >= abs(math)
+            thetaextra(end + 1) = ceil(masi) + 1;
+        else
+            thetaextra(end + 1) = floor(misi) - 1;
+        end
+    else
+        if abs(misi) >= abs(masi)
+            sigmaextra(end + 1) = ceil(math) + 1;
+        else
+            sigmaextra(end + 1) = floor(mith) - 1;
+        end
+    end
+
+end
+
+thetaint = setdiff(thetaextra,theta);
+sigmaint = setdiff(sigmaextra,sigma);
+
+scatter(real(thetaint),imag(thetaint),"DisplayName","theta-extra");
+scatter(real(sigmaint),imag(sigmaint),"DisplayName","sigma-extra");
 scatter(real(errpoles),imag(errpoles),"DisplayName","Aug A Eigs",Marker="+")
 legend(gca)
 hold off;
 %%
 
-% theta = sort(thetaextra); sigma = sort(sigmaextra);
+theta = sort(thetaextra); sigma = sort(sigmaextra);
 % theta = sort(thetaextra)*1i; sigma = sort(sigmaextra)*1i;
 
 % delta = 10^-6;
