@@ -34,7 +34,9 @@ classdef NLEVPData < handle
             obj.T = T;
             obj.name = name;
             obj.arglist = arglist;
-            if any(ismissing(T)) && ~any(ismissing(name))
+            if ~any(ismissing(T))
+                obj.loaded = true;
+            elseif any(ismissing(T)) && ~any(ismissing(name))
                 obj.loadNLEVPpack(name,arglist)
             end
             if ~ismissing(ax)
