@@ -3,7 +3,7 @@ n=50; c=0.015; tau=8; E0 = diag(-1*logspace(-4,10));
 T = @(z) z*eye(n) + c*exp(-tau*z)*eye(n) - E0;
 
 nlevp = Numerics.NLEVPData(T,'delay');
-contour = Numerics.Contour.Circle(0,0.2,8);
+contour = Numerics.Contour.Circle(-0.5,0.2,8);
 
 CIM = Numerics.CIM(nlevp,contour);
 CIM.RealizationData.m = 11;

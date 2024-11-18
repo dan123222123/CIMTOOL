@@ -69,8 +69,6 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             ew = rd.ew; ev = rd.ev;
             T = nd.T; refew = nd.refew;
 
-            m = max([length(refew),length(ew)]);
-
             % if reference is present, show it
             % we have contour information, so we can use it to try and
             % prune extra reference eigenvalues from the table view at
@@ -80,9 +78,11 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
                 nin = length(refew);
                 cstr = sprintf('Ref. EW (# Inside Contour %d)',nin);
             else
-                refew = repelem(NaN,m);
+                refew = repelem(NaN,length(ew));
                 cstr = ('Ref. EW');
             end
+
+            m = max([length(refew),length(ew)]);
 
             % if computed eigenvalues are available, show them and the
             % relative residual (assuming ev are also available)
