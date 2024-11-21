@@ -32,18 +32,27 @@ end
 innerewidx = contour.inside(er);
 Hi = @(z) V(:,innerewidx) * inv(z*eye(nnz(innerewidx)) - diag(er(innerewidx))) * W(:,innerewidx)';
 %%
-K = 3; CIM.RealizationData.K = K;
-ell = K; r = ell; Lt = L(:,1:ell); Rt = R(:,1:r);
-[theta,sigma] = Numerics.interlevedshifts(contour.z,K);
-[Db,Ds] = Numerics.build_mploewner_data(Hi,theta,sigma,Lt,Rt);
-cmpeig = eig(Ds,Db);
-
-%% now to check the inexact version with quadrature
 c = CIMTOOL(CIM);
-
-CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
-CIM.RealizationData.InterpolationData = Numerics.InterpolationData(theta,sigma);
+ell = 3; r = ell;
+Lt = L(:,1:ell); Rt = R(:,1:r);
 CIM.SampleData.Lf = L; CIM.SampleData.Rf = R;
-CIM.SampleData.ell = K; CIM.SampleData.r = K;
-
+CIM.SampleData.ell = ell; CIM.SampleData.r = r;
+%% Hankel
+K = 1;
+M = Numerics.build_moments(diag(er(innerewidx)),W(:,innerewidx)'*Rt,Lt'*V(:,innerewidx),K);
+[Db,Ds] = Numerics.build_sploewner_data(M,Inf);
+refew = eig(Ds,Db);
+CIM.SampleData.NLEVP.refew = refew;
+CIM.RealizationData.K = K;
+CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
+CIM.compute();
+%% Loewner
+K = 3;
+[theta,sigma] = Numerics.interlevedshifts(contour.z,K);
+CIM.RealizationData.InterpolationData = Numerics.InterpolationData(theta,sigma);
+[Lb,Ls] = Numerics.build_mploewner_data(Hi,theta,sigma,Lt,Rt);
+refew = eig(Ls,Lb);
+CIM.SampleData.NLEVP.refew = refew;
+CIM.RealizationData.K = K;
+CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
 CIM.compute();

@@ -1,4 +1,8 @@
-function [Db,Ds] = build_sploewner_data(M,ell,r,sigma,K)
+function [Db,Ds] = build_sploewner_data(M,sigma)
+
+   [ell,r,K] = size(M);
+
+   assert(mod(K,2) == 0); K = K/2;
 
     D = zeros(ell*K,r*(K+1));
     for k=1:K

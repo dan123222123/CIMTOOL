@@ -76,7 +76,7 @@ classdef Circle < Numerics.Contour.Quad
             zp = Numerics.Contour.Circle.trapezoid(obj.gamma,obj.radius,512);
             zp = [obj.gamma + obj.radius, zp, obj.gamma + obj.radius];
             chold = ishold(ax);
-            obj.phandles(end+1) = scatter(ax,real(obj.gamma),imag(obj.gamma),200,"black",'filled','Tag',"contour_center","HandleVisibility","off");
+            obj.phandles(end+1) = scatter(ax,real(obj.gamma),imag(obj.gamma),200,"black",'filled','Tag',"contour_center","HandleVisibility","off","Visible","off");
             hold(ax,"on");
             if obj.plot_quadrature
                 obj.phandles(end+1) = scatter(ax,real(obj.z),imag(obj.z),200,"red","x",'Tag',"quadrature","DisplayName","Quadrature Nodes");
