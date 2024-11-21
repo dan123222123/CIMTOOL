@@ -71,7 +71,7 @@ end
 [Drank,X,Sigma,Y,Dbsw] = rankdet;
 
 if Drank < m
-    error("could not generate rank %d base data matrix",m);
+    error("generated rank %d < %d data matrix",Drank,m);
 end
 
 % solve (X'*D1*Y,Sigma) GEP to get eigenvalues of underlying NLEVP in D.

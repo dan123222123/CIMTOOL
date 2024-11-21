@@ -12,6 +12,9 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         NumQuadNodesLabel
         NumQuadNodes
         %
+        DataMatrixSizeLabel
+        DataMatrixSize
+        %
         ComputeButton
         AutoSampleCheckBox
         AutoRealizationCheckBox
@@ -59,6 +62,8 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         function addListeners(comp)
             addlistener(comp.CIMData.SampleData.NLEVP,'loaded','PostSet',@(src,event)comp.NLEVPChangedFcn);
             addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
+            addlistener(comp.CIMData.ResultData,'Db','PostSet',@(src,event)comp.DataMatrixSizeChangedFcn);
+            addlistener(comp.CIMData,'DataDirtiness','PostSet',@(src,event)comp.DataDirtinessChangedFcn);
             addlistener(comp.MainApp,'FontSize','PostSet',@(src,event)comp.updateFontSize);
             % listeners for reference changes
             addlistener(comp.CIMData.SampleData,'Contour','PostSet',@(src,event)comp.updateContourListeners);
@@ -96,17 +101,40 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         function QuadratureChangedFcn(comp,~)
             comp.NumQuadNodes.Value = comp.CIMData.SampleData.Contour.N;
         end
+
+        function DataMatrixSizeChangedFcn(comp,~)
+            comp.DataMatrixSize.Value = size(comp.CIMData.ResultData.Db,1);
+        end
+
+        function DataDirtinessChangedFcn(comp,~)
+            CIM = comp.CIMData;
+            if CIM.DataDirtiness == 2
+                comp.ComputeButton.BackgroundColor = "r";
+            elseif CIM.DataDirtiness == 1
+                comp.ComputeButton.BackgroundColor = "y";
+            else
+                comp.ComputeButton.BackgroundColor = "g";
+            end
+        end
             
     end
 
     methods % GUI -> CIM
 
         function ComputeButtonPushed(comp,~)
-            comp.CIMData.compute();
+            try
+                comp.CIMData.compute();
+            catch e
+                uialert(comp.MainApp.UIFigure,e.message,"Compute Error","Interpreter","html");
+            end
         end
 
         function RefineQuadratureButtonPushed(comp,~)
-            comp.CIMData.refineQuadrature();
+            try
+                comp.CIMData.refineQuadrature();
+            catch e
+                uialert(comp.MainApp.UIFigure,e.message,"Refine Quadrature Error","Interpreter","html");
+            end
         end
 
         function NumQuadNodesChanged(comp,~)
@@ -176,25 +204,40 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.NumQuadNodes.Layout.Column = [2 3];
             comp.NumQuadNodes.ValueChangedFcn = matlab.apps.createCallbackFcn(comp,@NumQuadNodesChanged,true);
             % %
-            comp.AutoSampleCheckBox = uicheckbox(comp.GridLayout,'Text','Auto Compute Samples');
-            comp.AutoSampleCheckBox.WordWrap = 'on';
-            comp.AutoSampleCheckBox.Layout.Row = 4;
-            comp.AutoSampleCheckBox.Layout.Column = 3;
-            comp.AutoSampleCheckBox.ValueChangedFcn = matlab.apps.createCallbackFcn(comp,@AutoButtonsChanged,true);
-            comp.AutoSampleCheckBox.Enable = "off";
-            % %
-            comp.AutoRealizationCheckBox = uicheckbox(comp.GridLayout,'Text','Auto Compute Realization');
-            comp.AutoRealizationCheckBox.WordWrap = 'on';
-            comp.AutoRealizationCheckBox.Layout.Row = 5;
-            comp.AutoRealizationCheckBox.Layout.Column = 3;
-            comp.AutoRealizationCheckBox.ValueChangedFcn = matlab.apps.createCallbackFcn(comp,@AutoButtonsChanged,true);
-            comp.AutoRealizationCheckBox.Enable = "off";
+            % comp.AutoSampleCheckBox = uicheckbox(comp.GridLayout,'Text','Auto Compute Samples');
+            % comp.AutoSampleCheckBox.WordWrap = 'on';
+            % comp.AutoSampleCheckBox.Layout.Row = 4;
+            % comp.AutoSampleCheckBox.Layout.Column = 3;
+            % comp.AutoSampleCheckBox.ValueChangedFcn = matlab.apps.createCallbackFcn(comp,@AutoButtonsChanged,true);
+            % comp.AutoSampleCheckBox.Enable = "off";
+            % % %
+            % comp.AutoRealizationCheckBox = uicheckbox(comp.GridLayout,'Text','Auto Compute Realization');
+            % comp.AutoRealizationCheckBox.WordWrap = 'on';
+            % comp.AutoRealizationCheckBox.Layout.Row = 5;
+            % comp.AutoRealizationCheckBox.Layout.Column = 3;
+            % comp.AutoRealizationCheckBox.ValueChangedFcn = matlab.apps.createCallbackFcn(comp,@AutoButtonsChanged,true);
+            % comp.AutoRealizationCheckBox.Enable = "off";
             % %
             comp.ComputeButton = uibutton(comp.GridLayout);
             comp.ComputeButton.ButtonPushedFcn = matlab.apps.createCallbackFcn(comp, @ComputeButtonPushed, true);
             comp.ComputeButton.Text = 'Compute';
-            comp.ComputeButton.Layout.Row = [4 5];
-            comp.ComputeButton.Layout.Column = [1 2];
+            comp.ComputeButton.Layout.Row = 4;
+            comp.ComputeButton.Layout.Column = [1 3];
+            % %
+            comp.DataMatrixSizeLabel = uilabel(comp.GridLayout);
+            comp.DataMatrixSizeLabel.HorizontalAlignment = 'center';
+            comp.DataMatrixSizeLabel.Text = 'Data Matrix Size';
+            comp.DataMatrixSizeLabel.WordWrap = 'on';
+            comp.DataMatrixSizeLabel.Layout.Row = 5;
+            comp.DataMatrixSizeLabel.Layout.Column = 1;
+            %
+            comp.DataMatrixSize = uieditfield(comp.GridLayout,"numeric");
+            comp.DataMatrixSize.HorizontalAlignment = 'center';
+            comp.DataMatrixSize.FontName = 'Hack';
+            comp.DataMatrixSize.Placeholder = 'N/A';
+            comp.DataMatrixSize.Layout.Row = 5;
+            comp.DataMatrixSize.Layout.Column = [2 3];
+            comp.DataMatrixSize.Editable = 'off';
             % %
             comp.RefineQuadratureButton = uibutton(comp.GridLayout);
             comp.RefineQuadratureButton.ButtonPushedFcn = matlab.apps.createCallbackFcn(comp, @RefineQuadratureButtonPushed, true);

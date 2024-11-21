@@ -78,7 +78,7 @@ classdef NLEVPData < handle
             end
             if obj.plot_reference
                 if ~any(ismissing(obj.ax)) && ~any(ismissing(obj.refew))
-                    obj.phandles(end+1) = scatter(obj.ax,real(obj.refew),imag(obj.refew),200,"blue","diamond",'Tag',"reference_eigenvalues","DisplayName","Reference Eigenvalues");
+                    obj.phandles(end+1) = scatter(obj.ax,real(obj.refew),imag(obj.refew),100,"diamond","MarkerEdgeColor","#E66100","LineWidth",1.5,'Tag',"reference_eigenvalues","DisplayName","Reference Eigenvalues");
                 end
             end
             obj.ax = ax;

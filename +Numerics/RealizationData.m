@@ -72,11 +72,11 @@ classdef RealizationData < handle
                     else
                         dn = "Right Interpolation Points";
                     end
-                    obj.phandles(end+1) = scatter(ax,real(sigma),imag(sigma),50,"blue","square","Tag","sigma","DisplayName",dn);
+                    obj.phandles(end+1) = scatter(ax,real(sigma),imag(sigma),50,"blue","square","Tag","sigma","DisplayName",dn,'Linewidth',1.5);
                     hold(ax,"on");
                 end
                 if obj.ComputationalMode == Numerics.ComputationalMode.MPLoewner
-                    obj.phandles(end+1) = scatter(ax,real(theta),imag(theta),50,"red","square","Tag","theta","DisplayName","Left Interpolation Points");
+                    obj.phandles(end+1) = scatter(ax,real(theta),imag(theta),50,"red","square","Tag","theta","DisplayName","Left Interpolation Points",'Linewidth',1.5);
                 end
                 hold(ax,chold);
             end

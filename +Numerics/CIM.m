@@ -1,13 +1,13 @@
 classdef CIM < handle
     
     properties (Access = public)
-        DataDirtiness       = 2
         SampleData          Numerics.SampleData
         RealizationData     Numerics.RealizationData
         ResultData          Numerics.ResultData
     end
 
     properties (SetObservable)
+        DataDirtiness = 2
         MainAx = missing
         SvAx = missing
         auto = false;

@@ -145,14 +145,14 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
             comp.MPLoewnerButton.Text = 'MPLoewner';
             comp.MPLoewnerButton.Position = [10 10 150 30];
             %
-            comp.EstimateMCheckbox = uicheckbox(comp.GridLayout,'Text','Auto Estimate # Eig Search');
-            comp.EstimateMCheckbox.Layout.Row = [1 2];
-            comp.EstimateMCheckbox.Layout.Column = 2;
-            comp.EstimateMCheckbox.Enable = "off";
+            % comp.EstimateMCheckbox = uicheckbox(comp.GridLayout,'Text','Auto Estimate # Eig Search');
+            % comp.EstimateMCheckbox.Layout.Row = [1 2];
+            % comp.EstimateMCheckbox.Layout.Column = 2;
+            % comp.EstimateMCheckbox.Enable = "off";
             %
             comp.EigSearchEditFieldLabel = uilabel(comp.GridLayout);
             comp.EigSearchEditFieldLabel.HorizontalAlignment = 'center';
-            comp.EigSearchEditFieldLabel.Layout.Row = [2 3];
+            comp.EigSearchEditFieldLabel.Layout.Row = [1 3];
             comp.EigSearchEditFieldLabel.Layout.Column = 2;
             comp.EigSearchEditFieldLabel.Text = '# Eig Search';
             %

@@ -150,7 +150,7 @@ classdef SampleData < handle
         function refineQuadrature(obj)
 
             if ~(obj.NLEVP.loaded && obj.loaded)
-                error("SampleData must be loaded/computed before refining...")
+                error(sprintf("Contour/NLEVP sample data not loaded.\n Please 'compute' before refining the quadrature."))
             end
 
             % now assumed that the full sampling data is reflective of the
