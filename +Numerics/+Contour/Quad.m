@@ -1,18 +1,27 @@
 classdef Quad < handle
+    % Quad Generic contour
+    %   Prototype/minimal contour specification, requiring only a
+    %   quadrature and associated weights.
 
-    properties
-        phandles = gobjects(0);
+    properties (Access = private)
+        phandles = gobjects(0); % array of graphics handles associated to this contour
     end
 
     properties (SetObservable)
-        z (1,:) double = NaN
-        w (1,:) double = NaN
-        ax = missing
+        z (1,:) double = NaN        % quadrature nodes
+        w (1,:) double = NaN        % quadrature weights
+        ax             = missing    % axis to manage plots on
     end
 
     methods
 
         function s = FindRandomShift(obj,scale)
+            % Returns a random point outside of the convex hull of the
+            % given Quad contour.
+            % First, the maximum distance (d) between any quadrature node and
+            % the geometric center (c) of the nodes is determined.
+            % Then, the point is chosen to from the boundary of the circle
+            % centered at c with radius d*scale.
             arguments
                 obj 
                 scale = 1.5 

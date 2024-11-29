@@ -3,12 +3,25 @@
 
 ## Description
 
-Quadratic eigenvalue problem (QEP) that arises from the wave equation on $[0, 1]$: $$ \frac{d^2 p}{d x^2} + 4 \pi^2 \lambda^2 p = 0, \quad p(0) = 0, \quad \chi p'(1) + 2 \pi i \lambda p(1) = 0. $$
+Quadratic eigenvalue problem (QEP) that arises from the wave equation on \( [0, 1] \):
 
-$p$ is the acoustic pressure, $\lambda$ is the frequency, and $\chi$ is the impedance.
-We aim to find eigenpairs $(\lambda,\vec{x})$ such that $$\mathbf{T}(\lambda) \vec{x} = \vec{0}$$ where $$\mathbf{T}(\lambda) = \lambda^2 \mathbf{M} + \lambda \mathbf{D} + \mathbf{K}, \quad \mathbf{M},\mathbf{K} \in \mathbb{R}^{n \times n}, \mathbf{D} \in \mathbb{C}^{n \times n}.$$
+\[ \frac{d^2 p}{d x^2} + 4 \pi^2 \lambda^2 p = 0, \quad p(0) = 0, \quad \chi p'(1) + 2 \pi i \lambda p(1) = 0. \]
 
-Reference eigenvalues can be computed explicitly as: $$\lambda_k = \frac{\tan^{-1}(i \chi)}{2 \pi} + \frac{k}{2}, \quad k \in \mathbb{Z}$$ when $\tan^{-1}(i \chi)$ is defined.
+\(p\) is the acoustic pressure, \( \lambda \) is the frequency, and \( \chi \) is the impedance.
+
+We aim to find eigenpairs \( (\lambda,\vec{x}) \) such that
+
+\[ \mathbf{T}(\lambda) \vec{x} = \vec{0} \]
+
+where
+
+\[ \mathbf{T}(\lambda) = \lambda^2 \mathbf{M} + \lambda \mathbf{D} + \mathbf{K}, \quad \mathbf{M},\mathbf{K} \in \mathbb{R}^{n \times n}, \mathbf{D} \in \mathbb{C}^{n \times n}. \]
+
+Reference eigenvalues can be computed explicitly as
+
+\[ \lambda_k = \frac{\tan^{-1}(i \chi)}{2 \pi} + \frac{k}{2}, \quad k \in \mathbb{Z} \]
+
+when \( \tan^{-1}(i \chi) \) is defined.
 
 ## Method
 
