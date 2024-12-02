@@ -2,11 +2,9 @@
 
 N = 500; Z = 1.0001; nlevp = Numerics.NLEVPData(missing,'acoustic_wave_1d',sprintf("%f,%f",N,Z));
 contour = Numerics.Contour.Circle(0.8i,10);
-
 CIM = Numerics.CIM(nlevp,contour);
 
 nref = 50; refew = zeros(2*nref,1);
-
 for k=-nref:nref
     refew(k+nref+1) = atan(1i*Z)/(2*pi) + k/2;
 end

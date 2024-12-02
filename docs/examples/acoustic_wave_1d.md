@@ -1,5 +1,5 @@
 
-# Acoustic Wave 1D (acoustic_wave_1d)
+# Acoustic Wave 1D (acoustic_wave_1d)[^1]
 
 ## Description
 
@@ -17,29 +17,65 @@ where
 
 \[ \mathbf{T}(\lambda) = \lambda^2 \mathbf{M} + \lambda \mathbf{D} + \mathbf{K}, \quad \mathbf{M},\mathbf{K} \in \mathbb{R}^{n \times n}, \mathbf{D} \in \mathbb{C}^{n \times n}. \]
 
+## Getting Started
+
+We put $n = 500, \chi = 1.0001$, and let $\Omega = \mathcal{B}(0.8i,10)$ be the circular contour centered at $\gamma = 0.8i$ with radius $\rho = 10$.
+
+``` matlabsession
+>> n = 500; Xi = 1.0001;
+>> nlevp = Numerics.NLEVPData(missing,'acoustic_wave_1d',sprintf("%f,%f",n,Xi));
+>> contour = Numerics.Contour.Circle(0.8i,10);
+>> CIM = Numerics.CIM(nlevp,contour)
+```
+
+/// details | Output
+```matlabsession
+CIM =
+
+  CIM with properties:
+
+                  SampleData: [1×1 Numerics.SampleData]
+             RealizationData: [1×1 Numerics.RealizationData]
+                  ResultData: [1×1 Numerics.ResultData]
+               DataDirtiness: 2
+                      MainAx: <missing>
+                        SvAx: <missing>
+                        auto: 0
+        auto_compute_samples: 0
+    auto_compute_realization: 0
+             auto_estimate_m: 0
+          auto_update_shifts: 1
+               auto_update_K: 1
+```
+///
+
 Reference eigenvalues can be computed explicitly as
 
 \[ \lambda_k = \frac{\tan^{-1}(i \chi)}{2 \pi} + \frac{k}{2}, \quad k \in \mathbb{Z} \]
 
 when \( \tan^{-1}(i \chi) \) is defined.
 
-## Method
-
-We put $n = 500$ and $\chi = 1.0001$.
-
-Let $\Omega = \mathcal{B}(0.8i,10)$ be the circular contour centered at $\gamma = 0.8i$ with radius $\rho = 10$.
+/// details | Computing Reference Eigenvalues
+``` matlab
+nref = 50; refew = zeros(2*nref,1);
+for k=-nref:nref
+    refew(k+nref+1) = atan(1i*Z)/(2*pi) + k/2;
+end
+```
+///
 
 $\mathbf{T}$ is meromorphic with $m = 40$ simple poles in $\Omega$.
-
-Hankel and MPLoewner-based CIMs build up relevant data matrices and utilize a rank-$m$ truncated SVD, where, with exact data, $m$ is exactly the number of poles of $\mathbf{T}$ withing $\Omega$ (counting multiplicities).
-
-Inexact data is derived through contour integration of $f_k(z) \left( \mathbf{L}^* \left[ \mathbf{T}(z) \right]^{-1} \mathbf{R} \right)$, approximated via quadrature rule -- $f_k(z)$ depends on the choice of Hankel/SPLoewner/MPLoewner formulations and, in the case of the latter two, on the choice of shift $\sigma$.
-
-Generally, left and right probing matrices are used to reduce the computational burden of full inversion of $\mathbf{T}$ at each quadrature node, and we will denote the number of left/right probing directions by $\ell$ and $r$, respectively.
+Hankel and MPLoewner-based CIMs build up relevant data matrices and utilize a rank-$m$ truncated SVD, where, with exact data, $m$ is exactly the number of poles of $\mathbf{T}$ within $\Omega$ (counting multiplicities).
+Inexact data is derived through contour integration of $f_k(z) \left( \left[ \mathbf{T}(z) \right]^{-1} \right)$, approximated via quadrature rule.
+$f_k(z)$ depends on the choice of Hankel/SPLoewner/MPLoewner formulations and, in the case of the latter two, on the choice of shift $\sigma$.
+In practice, left ($\mathbf{L} \in \mathbb{C}^{n \times \ell}$) and right ($\mathbf{R} \in \mathbb{C}^{n \times r}$) probing matrices are used to reduce the computational burden of full inversion of $\mathbf{T}$ at each quadrature node, so that the integrand becomes $f_k(z) \left( \mathbf{L}^* \left[ \mathbf{T}(z) \right]^{-1} \mathbf{R} \right)$.
 
 ## Experiments
 
 ### Quadrature Approximation, $m = 40; \ell = r = 15; \mathbb{D},\mathbb{D_s} \in \mathbb{C}^{60 \times 60}$
+
+```matlabsession
+```
 
 - For $N=128$, Hankel and MPLoewner yield a roughly equivalent maximum relative residual (MRR) -- $4.4*10^{-5}$ and $3.9*10^{-5}$, respectively.
 - MRR does not decrease to below $\sim 10^{-10}$ for Hankel until $N = 32768$. For MPLoewner, the MRR is below $\sim 10^{-12}$ for the same $N$.
@@ -58,3 +94,5 @@ Generally, left and right probing matrices are used to reduce the computational 
 - Even with only $N = 128$ quadrature nodes, MPLoewner appears to more accurately match computed eigenvalues to the underlying reference (in the eyeball norm).
 - SPLoewner with $\sigma = -13i$ produces results comparable to MPLoewner.
 - For $N = 128$, in both Hankel and MPLoewner cases the singular values after position 44/42 of the data matrix are "paired", and enlarging $m$ in steps of two appears to improve the MRR of the "target eigenvalues" (those within the contour).
+
+[^1]: F. Chaitin-Chatelin and M. B. van Gijzen, “Analysis of parameterized quadratic eigenvalue problems in computational acoustics with homotopic deviation theory,” Numerical Linear Algebra with Applications, vol. 13, no. 6, pp. 487–512, 2006, doi: 10.1002/nla.484.
