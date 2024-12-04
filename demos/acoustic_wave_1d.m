@@ -1,6 +1,6 @@
 %% loading the problem+contour and starting the GUI
 
-N = 500; Xi = 1.0001; nlevp = Numerics.NLEVPData(missing,'acoustic_wave_1d',sprintf("%f,%f",N,Xi));
+N = 506; Xi = 1.0001; nlevp = Numerics.NLEVPData(missing,'acoustic_wave_1d',sprintf("%f,%f",N,Xi));
 contour = Numerics.Contour.Circle(0.8i,10);
 CIM = Numerics.CIM(nlevp,contour);
 

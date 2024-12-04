@@ -1,75 +1,93 @@
 ##
 using LinearAlgebra
-#using MATLAB
+using MATLAB
 using MAT
 using KernelAbstractions
 using Plots, LaTeXStrings
-using DoubleFloats
+#using DoubleFloats
 
 using AMDGPU
 backend = ROCBackend()
 
 using KAPseudospectra
-#mat"addpath('/home/dfolescu/version_control/git/math/code/packages/CIMTOOL')"
-#mat"addpath('/home/dfolescu/version_control/git/math/code/packages/CIMTOOL/allpass')"
+mat"addpath('/home/dfolescu/version_control/git/math/code/packages/CIMTOOL')"
+mat"addpath('/home/dfolescu/version_control/git/math/code/packages/CIMTOOL/experiments/allpass')"
+
+function cpsa(Db,Ds,ereig,γ,δ)
+    T = ComplexF64
+    Db = convert.(T,Db)
+    Ds = convert.(T,Ds)
+    ereig = convert.(T,ereig)
+    #
+    U,Σ,V = svd(Db);
+    Σ = diagm(Σ);
+    Dbpsa = Σ
+    Dspsa = U'*Ds*V
+    pewfull = eigvals(Dspsa, Dbpsa)
+    pew = filter!(!isnan,pewfull)
+    #
+    wgs = 1024
+    g = 1000
+    nit = 4
+    padscale = (-minimum(abs.(pew)),minimum(abs.(pew)))
+    rwind = (minimum(real.([ereig;pew])),maximum(real.([ereig;pew]))).+padscale
+    iwind = (minimum(imag.([ereig;pew])),maximum(imag.([ereig;pew]))).+(4 .* padscale)
+    gx, gy, zg = qgrid(T, rwind, iwind, (g, g))
+    P = MatrixPencil(schur(Dspsa, Dbpsa))
+    srg = ihlpsa(backend, zg, P, nit, γ, δ; wgs, zpd=10000,progress=true)
+
+    return srg,pew,gx,gy,rwind,iwind
+end
+
+function ppsa(srg, gx, gy, rwind, iwind, pew, ereig; tv=(-10:0.1:-1))
+    pyplot()
+    tl = [L"10^{%$i}" for i in tv]
+    levels = tv
+    plt = plot(size=(1000, 1000))
+    color = :darkrainbow
+    clabels = false
+    contourf!(gx, gy, log10.(srg); color,
+    colorbar_ticks=(tv, tl), levels,
+    line=(1, :solid), clabels, legend=:outertop, legend_column = -1)
+    scatter!(pew, markershape=:octagon, markersize=7, label="cmp")
+    scatter!(ComplexF64.(ereig), markershape=:diamond, label="ref")
+    xlims!(rwind...)
+    ylims!(iwind...)
+
+    return plt
+
+end
+
+function pcpsa(Db,Ds,ereig,γ,δ;tv=-7:0.1:-1)
+    srg,pew,gx,gy,rwind,iwind = cpsa(Db,Ds,ereig,γ,δ)
+    ppsa(srg,gx,gy,rwind,iwind,pew,ereig;tv)
+end
 ##
 
 ##
 n = 4.0
-Db,Ds,ereig = mxcall(:test_allpass_error_mploewner,3,n)
-#m = Int(3*n);
-#m = Int(n);
-#m = Int(n-1)
-U,Σ,V = svd(Db);
-Σ = diagm(Σ);
-#U = U[:,1:m];
-#Σ = Σ[1:m,1:m];
-#V = V[:,1:m];
-Dbpsa = Σ
-Dspsa = U'*Ds*V
-#Dbpsa = Db;
-#Dspsa = Ds;
-pewfull = eigvals(Dspsa, Dbpsa)
-pew = filter!(!isnan,pewfull)
+Db,Ds,ereig = mxcall(:test_allpass_error_mploewner,3,n,2)
+pcpsa(Db,Ds,ereig,1,1)
 ##
 
 ##
-wgs = 1024
-T = ComplexF64
-g = 1000
-nit = 4
-padscale = (-minimum(abs.(pew)),minimum(abs.(pew)))
-rwind = (minimum(real.(pew)),maximum(real.(pew))).+padscale
-iwind = (minimum(imag.(pew)),maximum(imag.(pew))).+padscale
-#rwind = (-3,3)
-#iwind = (-1,3)
-gx, gy, zg = qgrid(T, rwind, iwind, (g, g))
-P = MatrixPencil(schur(Dspsa, Dbpsa))
-#P = MatrixPencil(schur(Dbpsa))
-srg = ihlpsa(backend, zg, P, nit; wgs)
-#srg = ℂsvdpsa(zg,Dbpsa)
+tv=-5:0.05:-2
+d = (@__DIR__) * "/"
+savefig(pcpsa(Db,Ds,ereig,1,0;tv),d*"srg1_0.png")
+savefig(pcpsa(Db,Ds,ereig,0.75,0.25;tv),d*"srg0.75_0.25.png")
+savefig(pcpsa(Db,Ds,ereig,0.5,0.5;tv),d*"srg0.5_0.5.png")
+savefig(pcpsa(Db,Ds,ereig,0.25,0.75;tv),d*"srg0.25_0.75.png")
+savefig(pcpsa(Db,Ds,ereig,0,1;tv),d*"srg0_1.png")
 ##
 
-###
-#zgeig = reshape(pew,length(pew),1);
-#zgeig[37] = zgeig[37] + 0.1
-#srgeig = vec(ihlpsa(backend,zgeig,P,nit;wgs))
-#pewkeep = findall((eps()), srgeig)
-#plt = scatter!(pew[pewkeep], markershape=:octagon, markersize=7, label="",markercolor=:red)
-###
+##
+mat"ex2"
+@mget Db
+@mget Ds
+ereig = @mget errpoles
+##
 
 ##
-tv = -20:0.25:1
-tl = [L"10^{%$i}" for i in tv]
-levels = tv
-plt = plot(size=(1000, 1000))
-color = :darkrainbow
-clabels = false
-contour!(gx, gy, log10.(srg); color,
-colorbar_ticks=(tv, tl), levels,
-line=(1, :solid), clabels)
-scatter!(pew, markershape=:octagon, markersize=7, label="")
-scatter!(ComplexF64.(ereig), markershape=:diamond, label="")
-xlims!(rwind...)
-ylims!(iwind...)
-###
+srg,pew,gx,gy,rwind,iwind = cpsa(Db,Ds,ereig,0.5,0.5)
+savefig(ppsa(srg,gx,gy,rwind,iwind,pew,ereig; tv=-7:0.05:-5),d*"noisy_srg0.5_0.5.png")
+##

@@ -3,7 +3,7 @@ classdef Quad < handle
     %   Prototype/minimal contour specification, requiring only a
     %   quadrature and associated weights.
 
-    properties (Access = private)
+    properties
         phandles = gobjects(0); % array of graphics handles associated to this contour
     end
 

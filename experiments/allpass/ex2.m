@@ -15,12 +15,12 @@ L = Numerics.SampleData.sampleMatrix(n,1000*n);
 R = Numerics.SampleData.sampleMatrix(n,1000*n);
 
 %%
-rsv = n; [Ess,Etf] = allpass_error_ssin_sstfout(A,B,C,D,rsv);
+rsv = 1; [Ess,Etf] = allpass_error_ssin_sstfout(A,B,C,D,rsv);
 errpoles = sort(eig(Ess.A));
 
 %% construct theta and sigma so that irka points are the majority
-% K = n+n-1; % the number of poles in the allpass error system
-K = 2*n;
+K = n+n-1; % the number of poles in the allpass error system
+% K = 2*n;
 % K = 2*n+2;
 % K = 10*n;
 
@@ -43,7 +43,7 @@ theta = double.empty(); sigma = double.empty();
 %     sigma(end+1) = ((-1)^(i))*(max(abs(errpoles))+i);
 % end
 
-tol = 10^-2;
+tol = 10^0;
 for i=1:length(errpoles)
     ceig = errpoles(i);
     cerrpoles = errpoles;
@@ -59,10 +59,14 @@ for i=1:length(errpoles)
 end
 
 figure(1)
-
-scatter(real(theta),imag(theta),"DisplayName","theta-irka");
+cla
+if ~isempty(theta)
+    scatter(real(theta),imag(theta),"DisplayName","theta-irka");
+end
 hold on;
-scatter(real(sigma),imag(sigma),"DisplayName","sigma-irka");
+if ~isempty(sigma)
+    scatter(real(sigma),imag(sigma),"DisplayName","sigma-irka");
+end
 
 thetaextra = theta; sigmaextra = sigma;
 
@@ -70,6 +74,11 @@ while (length(thetaextra) < K || length(sigmaextra) < K)
 
     mith = min(min(thetaextra),min(errpoles)); misi = min(min(sigmaextra),min(errpoles));
     math = max(max(thetaextra),max(errpoles)); masi = max(max(sigmaextra),max(errpoles));
+
+    if isempty(mith); mith = min(errpoles); end
+    if isempty(math); math = max(errpoles); end
+    if isempty(misi); misi = min(errpoles); end
+    if isempty(masi); masi = max(errpoles); end
 
     lth = length(thetaextra); lsi = length(sigmaextra);
 
@@ -92,6 +101,9 @@ end
 thetaint = setdiff(thetaextra,theta);
 sigmaint = setdiff(sigmaextra,sigma);
 
+thetaint = 1i*thetaint;
+sigmaint = 1i*sigmaint;
+
 scatter(real(thetaint),imag(thetaint),"DisplayName","theta-extra");
 scatter(real(sigmaint),imag(sigmaint),"DisplayName","sigma-extra");
 scatter(real(errpoles),imag(errpoles),"DisplayName","Aug A Eigs",Marker="+")
@@ -100,14 +112,14 @@ hold off;
 %%
 
 theta = sort(thetaextra); sigma = sort(sigmaextra);
-% theta = sort(thetaextra)*1i; sigma = sort(sigmaextra)*1i;
 
-% delta = 10^-6;
-% Eb = randn(K); DbE = delta*(Eb / norm(Eb));
-% Es = randn(K); DsE = delta*(Es / norm(Es));
+epsilon = 10^-5;
+gamma = 0.5*epsilon; delta = 0.5*epsilon;
+Eb = randn(K); DbE = delta*(Eb / norm(Eb,2));
+Es = randn(K); DsE = delta*(Es / norm(Es,2));
 
-DbE = 0;
-DsE = 0;
+% DbE = 0;
+% DsE = 0;
 
 [Db,Ds,refeig,cmpeig,nmderr,pairedeigs] = allpass_realization_exact_mploewner_sstfin(Ess,Etf,K,theta,sigma,Lt,Rt,DbE,DsE);
 
