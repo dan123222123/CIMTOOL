@@ -109,11 +109,11 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         function DataDirtinessChangedFcn(comp,~)
             CIM = comp.CIMData;
             if CIM.DataDirtiness == 2
-                comp.ComputeButton.BackgroundColor = "r";
+                comp.ComputeButton.BackgroundColor = "g";
             elseif CIM.DataDirtiness == 1
                 comp.ComputeButton.BackgroundColor = "y";
             else
-                comp.ComputeButton.BackgroundColor = "g";
+                comp.ComputeButton.BackgroundColor = [0.96 0.96 0.96];
             end
         end
             
@@ -125,6 +125,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             try
                 comp.CIMData.compute();
             catch e
+                comp.ComputeButton.BackgroundColor = "r";
                 uialert(comp.MainApp.UIFigure,e.message,"Compute Error","Interpreter","html");
             end
         end
@@ -133,6 +134,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             try
                 comp.CIMData.refineQuadrature();
             catch e
+                comp.ComputeButton.BackgroundColor = "r";
                 uialert(comp.MainApp.UIFigure,e.message,"Refine Quadrature Error","Interpreter","html");
             end
         end
@@ -223,6 +225,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.ComputeButton.Text = 'Compute';
             comp.ComputeButton.Layout.Row = 4;
             comp.ComputeButton.Layout.Column = [1 3];
+            comp.ComputeButton.BackgroundColor = "r";
             % %
             comp.DataMatrixSizeLabel = uilabel(comp.GridLayout);
             comp.DataMatrixSizeLabel.HorizontalAlignment = 'center';

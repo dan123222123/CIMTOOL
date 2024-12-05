@@ -31,17 +31,37 @@ assert(all([l1,l2]==[n,n]));
 Ql = zeros(ell,n,N);
 Qr = zeros(n,r,N);
 Qlr = zeros(ell,r,N);
-% Tz = zeros(n,n,N);
-% % first evaluate T at z(i)
-% for i = 1:N
-%     Tz(:,:,i) = T(z(i));
+f(1:N) = parallel.FevalFuture;
+% pm = ParforProgressbar(N,"showWorkerProgress",true,'title','Sampling Quadrature Data...');
+% parfor i=1:N
+%     Ql(:,:,i) = L' / T(z(i));
+%     Qr(:,:,i) = T(z(i)) \ R;
+%     Qlr(:,:,i) = L' * Qr(:,:,i);
+%     pm.increment;
 % end
-% then compute left/right/two-sided samples
-parfor i=1:N
-    Ql(:,:,i) = L' / T(z(i));
-    Qr(:,:,i) = T(z(i)) \ R;
-    Qlr(:,:,i) = L' * Qr(:,:,i);
+% delete(pm);
+h = waitbar(0,'Sampling Quadrature Data...');
+updateWaitbar = @(~) waitbar(mean({f.State} == "finished"),h);
+for i=1:N
+    f(i) = parfeval(backgroundPool,@sample,1,T(z(i)),L,R);
+end
+updateWaitbarFutures = afterEach(f,updateWaitbar,0);
+afterAll(updateWaitbarFutures,@(~) delete(h),0);
+s = fetchOutputs(f);
+for i=1:N
+    Ql(:,:,i) = s(i).Ql;
+    Qr(:,:,i) = s(i).Qr;
+    Qlr(:,:,i) = s(i).Qlr;
 end
 % END NUMERICS
-
 end
+
+function s = sample(Tz,L,R)
+    Ql = L' / Tz;
+    Qr = Tz \ R;
+    Qlr = L' * Qr;
+    s.Ql = Ql;
+    s.Qr = Qr;
+    s.Qlr = Qlr;
+end
+
