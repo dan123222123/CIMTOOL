@@ -32,26 +32,25 @@ Ql = zeros(ell,n,N);
 Qr = zeros(n,r,N);
 Qlr = zeros(ell,r,N);
 f(1:N) = parallel.FevalFuture;
-% pm = ParforProgressbar(N,"showWorkerProgress",true,'title','Sampling Quadrature Data...');
-% parfor i=1:N
-%     Ql(:,:,i) = L' / T(z(i));
-%     Qr(:,:,i) = T(z(i)) \ R;
-%     Qlr(:,:,i) = L' * Qr(:,:,i);
-%     pm.increment;
-% end
-% delete(pm);
-h = waitbar(0,'Sampling Quadrature Data...');
-updateWaitbar = @(~) waitbar(mean({f.State} == "finished"),h);
 for i=1:N
-    f(i) = parfeval(backgroundPool,@sample,1,T(z(i)),L,R);
+    f(i) = parfeval(@sample,1,T(z(i)),L,R);
 end
-updateWaitbarFutures = afterEach(f,updateWaitbar,0);
-afterAll(updateWaitbarFutures,@(~) delete(h),0);
-s = fetchOutputs(f);
+function updateWaitbar(~)
+    waitbar(mean({f.State} == "finished"),h)
+end
+h = waitbar(0, 'Sampling Quadrature Data...', 'CreateCancelBtn', ...
+                   @(src, event) setappdata(gcbf(), 'Cancelled', true));
+setappdata(h, 'Cancelled', false);
+afterEach(f,@(~)updateWaitbar(),0);
 for i=1:N
-    Ql(:,:,i) = s(i).Ql;
-    Qr(:,:,i) = s(i).Qr;
-    Qlr(:,:,i) = s(i).Qlr;
+    if getappdata(h, 'Cancelled')
+        cancel(f); delete(h);
+        error("Canceled Quadrature Sampling...");
+    end
+    [idx,s] = fetchNext(f);
+    Ql(:,:,idx) = s.Ql;
+    Qr(:,:,idx) = s.Qr;
+    Qlr(:,:,idx) = s.Qlr;
 end
 % END NUMERICS
 end
