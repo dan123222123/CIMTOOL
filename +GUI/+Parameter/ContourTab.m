@@ -48,7 +48,7 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
             center = oc.gamma; N = oc.N;
             switch(class(oc))
                 case 'Numerics.Contour.Circle'
-                    radius = comp.CIMData.SampleData.Contour.radius;
+                    radius = comp.CIMData.SampleData.Contour.rho;
                 case 'Numerics.Contour.Ellipse'
                     radius = max(comp.CIMData.SampleData.Contour.alpha,comp.CIMData.SampleData.Contour.beta);
             end

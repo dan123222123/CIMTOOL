@@ -22,17 +22,19 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
     end
 
     properties (Access = public)
+        MainAppUIFigure
         MainApp % app that contains this component, set in constructor
         CIMData Numerics.CIM % underlying computational structure that this component will modify
     end
 
     methods (Access=public)
 
-        function obj = PlotPanel(Parent,MainApp,CIMData)
+        function obj = PlotPanel(Parent,MainApp,MainAppUIFigure,CIMData)
 
             obj@matlab.ui.componentcontainer.ComponentContainer(Parent)
 
             obj.MainApp = MainApp;
+            obj.MainAppUIFigure = MainAppUIFigure;
             obj.CIMData = CIMData;
 
             obj.CIMData.MainAx = obj.MainPlotAxes;
@@ -108,6 +110,11 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.ResultsTable.ColumnFormat = {'long','long','longE'};
 
         end
+
+    end
+
+    % % GUI Plot Interactions
+    methods (Static,Access = public)
 
     end
 

@@ -22,16 +22,19 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
             obj.CIMData = CIMData;
             assert(isa(obj.CIMData.SampleData.Contour,'Numerics.Contour.Circle'));
 
-            obj.setDefaults();
+            obj.setDefaults(0,0);
 
             % obj.addListeners();
 
+            addlistener(obj.CIMData.SampleData.Contour,'gamma','PostSet',@(src,event)obj.setDefaults);
+            addlistener(obj.CIMData.SampleData.Contour,'rho','PostSet',@(src,event)obj.setDefaults);
+
         end
 
-        function setDefaults(comp)
+        function setDefaults(comp,src,event)
             contour = comp.CIMData.SampleData.Contour;
             comp.gammaEditField.Value = num2str(contour.gamma);
-            comp.radiusEditField.Value = contour.radius;
+            comp.radiusEditField.Value = contour.rho;
         end
 
         function updateFontSize(comp,update)
@@ -46,7 +49,7 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
         function radiusEditFieldValueChanged(comp, event)
             contour = comp.CIMData.SampleData.Contour;
             try
-                contour.radius = comp.radiusEditField.Value;
+                contour.rho = comp.radiusEditField.Value;
             catch
                 comp.radiusEditField.Value = event.PreviousValue;
                 errordlg("Invalid radius. Please check input and try again.")

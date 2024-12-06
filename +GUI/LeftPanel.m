@@ -127,6 +127,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             catch e
                 comp.ComputeButton.BackgroundColor = "r";
                 uialert(comp.MainApp.UIFigure,e.message,"Compute Error","Interpreter","html");
+                % rethrow(e);
             end
         end
 

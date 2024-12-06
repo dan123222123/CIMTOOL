@@ -19,104 +19,12 @@ classdef CIMTOOL < matlab.apps.AppBase
     end
 
     properties (Access = public)
-        ctrlKey
-        shiftKey
         CIMData                         Numerics.CIM
     end
 
     properties (SetObservable)
         FontSize
     end
-
-    methods
-
-        function recordKey(app,src,event)
-            % if app.shiftKey
-            %     set(app.MainPlotAxes.Title,'String','MOD');
-            %     set(app.UIFigure,'WindowButtonDownFcn',@app.MainPlotAxesWindowButtonDownFcn);
-            %     app.MainPlotAxes.Interactions = dataTipInteraction('SnapToDataVertex','on');
-            %     app.MainPlotAxes.PickableParts = "all";
-            % end
-            if contains(event.Modifier,'control')
-                if event.Key == "equal"
-                    app.updateFontSize(1);
-                elseif event.Key == "hyphen"
-                    app.updateFontSize(-1);
-                end
-            end
-        end
-
-    end
-    
-    % % GUI Plot Interactions
-    % methods (Access = public)
-
-        % % this callback will be set when SHIFT is pressed
-        % % should allow for axes interactivity when not selected, while
-        % % allowing the user to affect CIM parameters when desired
-        % function MainPlotAxesWindowButtonDownFcn(app,handle,event)
-        %     cf = gco(app.UIFigure);
-        %     switch(cf.Tag)
-        %         case "contour_center"
-        %             set(app.UIFigure,'WindowButtonMotionFcn',@app.drag_center);
-        %             set(app.UIFigure,'WindowButtonUpFcn',@app.set_new_center);
-        %         case "contour"
-        %             set(app.UIFigure,'WindowButtonMotionFcn',@app.drag_radius);
-        %             set(app.UIFigure,'WindowButtonUpFcn',@app.set_new_radius);
-        %     end
-        % end
-        % 
-        % function releaseKey(app,src,event)
-        %     set(app.MainPlotAxes.Title,'String','NORMAL');
-        %     app.ctrlKey = [false false];
-        %     set(app.UIFigure,'WindowButtonDownFcn','');
-        %     set(app.UIFigure,'WindowButtonMotionFcn','');
-        %     set(app.UIFigure,'WindowButtonUpFcn','');
-        %     app.MainPlotAxes.Interactions = [panInteraction('Dimensions','xy') zoomInteraction('Dimensions','xy')];
-        % end
-    % 
-    %     function drag_center(app,handle,event)
-    %         cp = app.MainPlotAxes.CurrentPoint;
-    %         onc = findobj(app.MainPlotAxes,'Tag','new_contour_center');
-    %         if ~isempty(onc)
-    %             delete(onc)
-    %         end
-    %         scatter(app.MainPlotAxes,cp(1,1),cp(1,2),200,"red",'filled','Tag',"new_contour_center");
-    %     end
-    % 
-    %     function set_new_center(app,handle,event)
-    %         cp = app.MainPlotAxes.CurrentPoint;
-    %         cp = cp(1,1) + cp(1,2)*1i;
-    %         delete(findobj(app.MainPlotAxes,'Tag','new_contour_center'));
-    %         app.contourparameters.center = cp;
-    %         app.releaseKey(handle,event);
-    %     end
-    % 
-    %     function drag_radius(app,handle,event)
-    %         cp = app.MainPlotAxes.CurrentPoint;
-    %         cp = cp(1,1) + cp(1,2)*1i;
-    %         center = app.contourparameters.center;
-    %         radius = sqrt((real(center) - real(cp))^2 + (imag(center) - imag(cp))^2);
-    %         onc = findobj(app.MainPlotAxes,'Tag','new_contour');
-    %         if ~isempty(onc)
-    %             delete(onc)
-    %         end
-    %         zc = circle_trapezoid(256,center,radius);
-    %         zc = [center + radius, zc, center + radius];
-    %         plot(app.MainPlotAxes,real(zc),imag(zc),"red",'LineWidth',5,'Tag',"new_contour");
-    %     end
-    % 
-    %     function set_new_radius(app,handle,event)
-    %         cp = app.MainPlotAxes.CurrentPoint;
-    %         cp = cp(1,1) + cp(1,2)*1i;
-    %         center = app.contourparameters.center;
-    %         radius = sqrt((real(center) - real(cp))^2 + (imag(center) - imag(cp))^2);
-    %         delete(findobj(app.MainPlotAxes,'Tag','new_contour'));
-    %         app.contourparameters.radius = radius;
-    %         app.releaseKey(handle,event);
-    %     end
-    % 
-    % end
 
     methods (Access = private)
 
@@ -130,7 +38,6 @@ classdef CIMTOOL < matlab.apps.AppBase
         function createComponents(app)
 
             % app.UIFigure = uifigure('Visible', 'off','WindowKeyPressFcn',@app.recordKey,'WindowKeyReleaseFcn',@app.releaseKey);
-            % app.UIFigure = uifigure('Visible', 'off');
             app.UIFigure = uifigure('Visible', 'off','WindowKeyPressFcn',@app.recordKey);
             app.UIFigure.AutoResizeChildren = 'on';
             % app.UIFigure.Position = [100 100 640 480];
@@ -151,7 +58,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             app.RightPanelGridLayout.ColumnWidth = {'1x'};
             app.RightPanelGridLayout.RowHeight = {'2x','1x'};
             %
-            app.PlotPanel = GUI.PlotPanel(app.RightPanelGridLayout,app,app.CIMData);
+            app.PlotPanel = GUI.PlotPanel(app.RightPanelGridLayout,app,app.UIFigure,app.CIMData);
             app.PlotPanel.Layout.Row = 1;
             %
             app.ParameterPanel = GUI.ParameterPanel(app.RightPanelGridLayout,app,app.CIMData);
@@ -166,6 +73,106 @@ classdef CIMTOOL < matlab.apps.AppBase
 
     % App creation and deletion
     methods (Access = public)
+
+        function recordKey(app,src,event)
+            set(app.UIFigure,'WindowKeyPressFcn','');
+            if contains(event.Modifier,'shift')
+                set(app.UIFigure,'WindowButtonDownFcn',@app.MainPlotAxesWindowButtonDownFcn);
+                set(app.UIFigure,'WindowKeyReleaseFcn',@app.shiftReleaseKey)
+                set(app.PlotPanel.MainPlotAxes.Title,'String','MOD');
+                app.PlotPanel.MainPlotAxes.Interactions = dataTipInteraction('SnapToDataVertex','off');
+                app.PlotPanel.MainPlotAxes.PickableParts = "visible";
+                app.CIMData.SampleData.Contour.toggleVisibility("on");
+            end
+            if contains(event.Modifier,'control')
+                set(app.UIFigure,'WindowKeyPressFcn','');
+                if event.Key == "equal"
+                    app.updateFontSize(1);
+                elseif event.Key == "hyphen"
+                    app.updateFontSize(-1);
+                end
+            end
+        end
+
+        % this callback will be set when SHIFT is pressed
+        % should allow for axes interactivity when not selected, while
+        % allowing the user to affect CIM parameters when desired
+        function MainPlotAxesWindowButtonDownFcn(app,handle,event)
+            cf = gco(app.UIFigure);
+            switch(cf.Tag)
+                case "contour_center"
+                    set(app.UIFigure,'WindowButtonMotionFcn',@app.drag_center);
+                    set(app.UIFigure,'WindowButtonUpFcn',@app.set_new_center);
+                case "contour"
+                    set(app.UIFigure,'WindowButtonMotionFcn',@app.drag_contour);
+                    set(app.UIFigure,'WindowButtonUpFcn',@app.set_new_contour);
+            end
+        end
+
+        function drag_center(app,handle,event)
+            % get current point
+            cp = app.PlotPanel.MainPlotAxes.CurrentPoint; cp = cp(1,1) + cp(1,2)*1i;
+            % delete previous ghost center
+            onc = findobj(app.PlotPanel.MainPlotAxes,'Tag','ghost_contour_center');
+            if ~isempty(onc)
+                delete(onc)
+            end
+            scatter(app.PlotPanel.MainPlotAxes,real(cp),imag(cp),200,"red",'filled','Tag',"ghost_contour_center");
+        end
+
+        function drag_contour(app,handle,event)
+            % get current point
+            cp = app.PlotPanel.MainPlotAxes.CurrentPoint; cp = cp(1,1) + cp(1,2)*1i;
+            % delete previous ghost contour
+            onc = findobj(app.PlotPanel.MainPlotAxes,'Tag','ghost_contour');
+            if ~isempty(onc)
+                delete(onc)
+            end
+            % compute ghost quadrature according to previous contour
+            c = app.CIMData.SampleData.Contour;
+            switch(class(c))
+                case 'Numerics.Contour.Circle'
+                    rho = sqrt((real(c.gamma) - real(cp))^2 + (imag(c.gamma) - imag(cp))^2);
+                    zc = c.trapezoid(c.gamma,rho,256);
+                    zc = [c.gamma + rho, zc, c.gamma + rho];
+                case 'Numerics.Contour.Ellipse'
+                    error("not yet implemented");
+            end
+            plot(app.PlotPanel.MainPlotAxes,real(zc),imag(zc),"red",'LineWidth',5,'Tag','ghost_contour');
+        end
+
+        function set_new_center(app,handle,event)
+            % get current point
+            cp = app.PlotPanel.MainPlotAxes.CurrentPoint; cp = cp(1,1) + cp(1,2)*1i;
+            delete(findobj(app.PlotPanel.MainPlotAxes,'Tag','ghost_contour_center'));
+            app.CIMData.SampleData.Contour.gamma = cp;
+            shiftReleaseKey(app,handle,event);
+        end
+
+        function set_new_contour(app,handle,event)
+            % get current point
+            cp = app.PlotPanel.MainPlotAxes.CurrentPoint; cp = cp(1,1) + cp(1,2)*1i;
+            delete(findobj(app.PlotPanel.MainPlotAxes,'Tag','ghost_contour'));
+            % set new contour
+            c = app.CIMData.SampleData.Contour;
+            switch(class(c))
+                case 'Numerics.Contour.Circle'
+                    c.rho = sqrt((real(c.gamma) - real(cp))^2 + (imag(c.gamma) - imag(cp))^2);
+                case 'Numerics.Contour.Ellipse'
+                    error("not yet implemented");
+            end
+            shiftReleaseKey(app,handle,event);
+        end
+
+        function shiftReleaseKey(app,src,event)
+            set(app.PlotPanel.MainPlotAxes.Title,'String','NORMAL');
+            app.CIMData.SampleData.Contour.toggleVisibility("off");
+            set(app.UIFigure,'WindowButtonDownFcn','');
+            set(app.UIFigure,'WindowButtonMotionFcn','');
+            set(app.UIFigure,'WindowButtonUpFcn','');
+            app.PlotPanel.MainPlotAxes.Interactions = [panInteraction('Dimensions','xy') zoomInteraction('Dimensions','xy')];
+            set(app.UIFigure,'WindowKeyPressFcn',@app.recordKey);
+        end
 
         % determine the proper font size/scaling for all app components
         % Update the obvervable FontSize (or FontScale) that components

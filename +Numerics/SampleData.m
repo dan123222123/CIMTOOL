@@ -135,6 +135,9 @@ classdef SampleData < handle
             if ismissing(obj.Contour)
                 error("Contour data required to sample %s. Please set a contour and try again.",obj.NLEVP.name);
             end
+            if ~obj.NLEVP.loaded
+                error("Please load a problem before computing.");
+            end
             if ~obj.loaded
                 % seems possible to compare sT,sL,sR,squad BEFORE sampling
                 % save some work if possible!
