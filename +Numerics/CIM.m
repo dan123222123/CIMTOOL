@@ -157,7 +157,7 @@ classdef CIM < handle
 
         function compute(obj)
             obj.SampleData.compute();
-            obj.computeRealization()
+            obj.computeRealization();
         end
 
         function refineQuadrature(obj)
@@ -166,11 +166,19 @@ classdef CIM < handle
             obj.auto_compute_samples = false; obj.auto_compute_realization = false; obj.auto_estimate_m = false; obj.auto_update_shifts = false;
 
             % refine the quadrature and compute
-            obj.SampleData.refineQuadrature();
-            obj.compute();
+            try
+                obj.SampleData.refineQuadrature();
+                obj.compute();
+                obj.auto_compute_samples = acs; obj.auto_compute_realization = acr; obj.auto_estimate_m = aem; obj.auto_update_shifts = aus;
+            catch e
+                obj.auto_compute_samples = acs; obj.auto_compute_realization = acr; obj.auto_estimate_m = aem; obj.auto_update_shifts = aus;
+                rethrow(e);
+            end
+        end
 
-            obj.auto_compute_samples = acs; obj.auto_compute_realization = acr; obj.auto_estimate_m = aem; obj.auto_update_shifts = aus;
-            
+        function [Db,Ds] = getData(obj)
+            Db = obj.ResultData.Db;
+            Ds = obj.ResultData.Ds;
         end
 
     end

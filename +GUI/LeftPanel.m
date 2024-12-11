@@ -54,9 +54,10 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         function setDefaults(comp)
             CIM = comp.CIMData;
             comp.NLEVPChangedFcn(missing);
+            comp.DataDirtinessChangedFcn(missing);
             comp.NumQuadNodes.Value = CIM.SampleData.Contour.N;
-            comp.AutoSampleCheckBox.Value = CIM.auto_compute_samples;
-            comp.AutoRealizationCheckBox.Value = CIM.auto_compute_realization;
+            % comp.AutoSampleCheckBox.Value = CIM.auto_compute_samples;
+            % comp.AutoRealizationCheckBox.Value = CIM.auto_compute_realization;
         end
 
         function addListeners(comp)
@@ -126,8 +127,8 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
                 comp.CIMData.compute();
             catch e
                 comp.ComputeButton.BackgroundColor = "r";
-                uialert(comp.MainApp.UIFigure,e.message,"Compute Error","Interpreter","html");
-                % rethrow(e);
+                % uialert(comp.MainApp.UIFigure,e.message,"Compute Error","Interpreter","html");
+                rethrow(e);
             end
         end
 
@@ -226,7 +227,6 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.ComputeButton.Text = 'Compute';
             comp.ComputeButton.Layout.Row = 4;
             comp.ComputeButton.Layout.Column = [1 3];
-            comp.ComputeButton.BackgroundColor = "r";
             % %
             comp.DataMatrixSizeLabel = uilabel(comp.GridLayout);
             comp.DataMatrixSizeLabel.HorizontalAlignment = 'center';

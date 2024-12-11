@@ -12,7 +12,11 @@ function [Ql,Qr,Qlr] = samplequadrature(T,L,R,z)
 
 % BEGIN SANITY CHECKS
 % check that T yields square matrices
+orig_state = warning;
+warning('off','all');
 [n1,n2] = size(T(0));
+warning(orig_state);
+
 assert(n1==n2);
 n = n1;
 
@@ -24,13 +28,14 @@ N = length(z);
 [l1,ell] = size(L);
 [l2,r] = size(R);
 assert(all([l1,l2]==[n,n]));
-assert(ell <= n && r <= n);
+% assert(ell <= n && r <= n);
 % END SANITY CHECKS
 
 % BEGIN NUMERICS
 Ql = zeros(ell,n,N);
 Qr = zeros(n,r,N);
 Qlr = zeros(ell,r,N);
+tic
 f(1:N) = parallel.FevalFuture;
 for i=1:N
     f(i) = parfeval(@sample,1,T(z(i)),L,R);
@@ -42,6 +47,8 @@ h = waitbar(0, 'Sampling Quadrature Data...', 'CreateCancelBtn', ...
                    @(src, event) setappdata(gcbf(), 'Cancelled', true));
 setappdata(h, 'Cancelled', false);
 afterEach(f,@(~)updateWaitbar(),0);
+% this loop is very slow for large N since fetchNext is slow and its in
+% serial. I should make another futures array 
 for i=1:N
     if getappdata(h, 'Cancelled')
         cancel(f); delete(h);

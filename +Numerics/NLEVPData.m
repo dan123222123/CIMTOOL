@@ -51,7 +51,10 @@ classdef NLEVPData < handle
 
         function value = get.n(obj)
             if obj.loaded
+                orig_state = warning;
+                warning('off','all');
                 value = size(obj.T(0),1);
+                warning(orig_state);
             else
                 value = 0;
             end

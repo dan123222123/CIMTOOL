@@ -48,6 +48,8 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
 
             addlistener(obj.MainApp,'FontSize','PostSet',@(src,event)obj.updateFontSize);
 
+            obj.ResultDataChangedFcn(0);
+
         end
 
         function updateFontSize(comp,~)
@@ -89,9 +91,27 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             % if computed eigenvalues are available, show them and the
             % relative residual (assuming ev are also available)
             if ~all(ismissing(ew)) && ~comp.CIMData.ResultData.loaded
-                [ew,ewI] = sort(ew);
-                if ~all(ismissing(ev))
-                    ev = ev(:,ewI);
+                if ~all(ismissing(refew)) % greedy matching between comp and ref if ref is available
+                    cew = ew; cev = ev;
+                    new = zeros(size(cew)); nev = zeros(size(cev));
+                    % greedily match as many ew/ev as we can to reference
+                    for i=1:min(length(refew),length(ew))
+                        mdist = Inf; midx = -1;
+                        for j=1:length(cew)
+                            if norm(refew(i)-cew(j)) < mdist
+                                mdist = norm(refew(i)-cew(j)); midx = j;
+                            end
+                        end
+                        new(i) = cew(midx); nev(:,i) = cev(:,midx);
+                        cew(midx) = []; cev(:,midx) = [];
+                    end
+                    % now append any remaining ew/ev
+                    [cew,cewI] = sort(cew); cev = cev(:,cewI);
+                    new(min(length(refew),length(ew))+1:end) = cew;
+                    nev(:,min(length(refew),length(ew))+1:end) = cev;
+                    ew = new; ev = nev;
+                else % dumb sort
+                    [ew,ewI] = sort(ew); ev = ev(:,ewI);
                 end
                 rr = Numerics.relres(T,ew,ev);
             else

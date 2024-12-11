@@ -31,6 +31,10 @@ n=n1; N=N1;
 % check that the length of qs, z, and w match
 assert(N==length(z));
 assert(N==length(w));
+
+% check that m, # of left/right shifts are greater than 0
+assert(m > 0, "# Eig Search should be > 0");
+assert(elltheta > 0 && rsigma > 0, "# of left/right shifts should be > 0");
 % END SANITY CHECKS
 
 % BEGIN NUMERICS
