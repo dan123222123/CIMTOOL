@@ -80,7 +80,7 @@ classdef CIMTOOL < matlab.apps.AppBase
                 set(app.UIFigure,'WindowButtonDownFcn',@app.MainPlotAxesWindowButtonDownFcn);
                 set(app.UIFigure,'WindowKeyReleaseFcn',@app.shiftReleaseKey)
                 set(app.PlotPanel.MainPlotAxes.Title,'String','MOD');
-                app.PlotPanel.MainPlotAxes.Interactions = dataTipInteraction('SnapToDataVertex','off');
+                app.PlotPanel.MainPlotAxes.Interactions = dataTipInteraction('SnapToDataVertex','on');
                 app.PlotPanel.MainPlotAxes.PickableParts = "visible";
                 app.CIMData.SampleData.Contour.toggleVisibility("on");
             end
@@ -136,7 +136,9 @@ classdef CIMTOOL < matlab.apps.AppBase
                     zc = c.trapezoid(c.gamma,rho,256);
                     zc = [c.gamma + rho, zc, c.gamma + rho];
                 case 'Numerics.Contour.Ellipse'
-                    error("not yet implemented");
+                    alpha = abs(real(c.gamma)-real(cp)); beta = abs(imag(c.gamma)-imag(cp));
+                    zc = c.trapezoid(c.gamma,alpha,beta,256);
+                    zc = [c.gamma + alpha, zc, c.gamma + alpha];
             end
             plot(app.PlotPanel.MainPlotAxes,real(zc),imag(zc),"red",'LineWidth',5,'Tag','ghost_contour');
         end
@@ -159,7 +161,7 @@ classdef CIMTOOL < matlab.apps.AppBase
                 case 'Numerics.Contour.Circle'
                     c.rho = sqrt((real(c.gamma) - real(cp))^2 + (imag(c.gamma) - imag(cp))^2);
                 case 'Numerics.Contour.Ellipse'
-                    error("not yet implemented");
+                    c.alpha = abs(real(c.gamma)-real(cp)); c.beta = abs(imag(c.gamma)-imag(cp));
             end
             shiftReleaseKey(app,handle,event);
         end

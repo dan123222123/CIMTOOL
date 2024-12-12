@@ -42,6 +42,15 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
 
     methods % CIM -> GUI
 
+        function updateKText(comp,~)
+            switch(comp.CIMData.RealizationData.ComputationalMode)
+                case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
+                    comp.MaxMomentsEditFieldLabel.Text = '# Moments';
+                case Numerics.ComputationalMode.MPLoewner
+                    comp.MaxMomentsEditFieldLabel.Text = '# Left/Right Interpolants';
+            end
+        end
+
         function updateLeftProbingSize(comp,~)
             comp.LeftProbingSizeEditField.Value = comp.CIMData.SampleData.ell;
         end
@@ -72,6 +81,7 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             addlistener(comp.CIMData.SampleData,'ell','PostSet',@(src,event)comp.updateLeftProbingSize);
             addlistener(comp.CIMData.SampleData,'r','PostSet',@(src,event)comp.updateRightProbingSize);
             addlistener(comp.CIMData.RealizationData,'K','PostSet',@(src,event)comp.updateMaxMoments);
+            addlistener(comp.CIMData.RealizationData,'ComputationalMode','PostSet',@(src,event)comp.updateKText);
         end
         
         function setup(comp)
@@ -126,7 +136,7 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             comp.MaxMomentsEditFieldLabel.HorizontalAlignment = 'center';
             comp.MaxMomentsEditFieldLabel.Layout.Row = 1;
             comp.MaxMomentsEditFieldLabel.Layout.Column = [1 2];
-            comp.MaxMomentsEditFieldLabel.Text = '# Sigma/Theta Shifts';
+            comp.MaxMomentsEditFieldLabel.Text = '# Moments';
         
             % Create MaxMomentsEditField
             comp.MaxMomentsEditField = uieditfield(comp.MethodDataParameterGridLayout, 'numeric');

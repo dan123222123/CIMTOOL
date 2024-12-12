@@ -80,7 +80,9 @@ classdef Ellipse < Numerics.Contour.Quad
             zp = Numerics.Contour.Ellipse.trapezoid(obj.gamma,obj.alpha,obj.beta,512);
             zp = [obj.gamma + obj.alpha, zp, obj.gamma + obj.alpha];
             chold = ishold(ax);
-            obj.phandles(end+1) = scatter(ax,real(obj.gamma),imag(obj.gamma),200,"black",'filled','Tag',"contour_center","HandleVisibility","off");
+            of = max(obj.alpha,obj.beta)*0.05;
+            % obj.phandles(end+1) = scatter(ax,real(obj.gamma),imag(obj.gamma),200,"black",'filled','Tag',"contour_center","HandleVisibility","off");
+            obj.phandles(end+1) = rectangle(ax,'Position',[real(obj.gamma)-of/2 imag(obj.gamma)-of/2 of of], 'Curvature',[1 1], 'Facecolor','k', 'Edgecolor','k','Tag','contour_center',"HandleVisibility","off","Visible","off");
             hold(ax,"on");
             if obj.plot_quadrature
                 obj.phandles(end+1) = scatter(ax,real(obj.z),imag(obj.z),200,"red","x",'Tag',"quadrature","DisplayName","Quadrature Nodes");
@@ -93,6 +95,16 @@ classdef Ellipse < Numerics.Contour.Quad
         function update(obj,~,~)
             [obj.z,obj.w] = Numerics.Contour.Ellipse.trapezoid(obj.gamma,obj.alpha,obj.beta,obj.N);
             obj.update_plot(missing,missing);
+        end
+
+        function toggleVisibility(obj,mode)
+            p = findobj(obj.phandles,'Tag','contour_center');
+            uistack(p,'top');
+            set(p,'HandleVisibility',mode);
+            set(p,'Visible',mode);
+            p = findobj(obj.phandles,'Tag','contour');
+            set(p,'HandleVisibility',mode);
+            uistack(p,'top');
         end
 
     end
