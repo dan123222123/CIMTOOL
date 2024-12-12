@@ -31,26 +31,29 @@ function saveData(fname,CIM)
     save(fname,"Db","Ds","rew");
 end
 %%
-CIM.RealizationData.m = 1;
+CIM.RealizationData.m = length(errpoles(CIM.SampleData.Contour.inside(errpoles)));
 CIM.RealizationData.K = 1;
 CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
 saveData(strcat(ddir,"ex1Hankel"),CIM);
 CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+CIM.RealizationData.K = 4;
 saveData(strcat(ddir,"ex1MPLoewner"),CIM);
 %%
 CIM.SampleData.Contour.rho = 1.5100041833175553;
-CIM.RealizationData.m = 2;
-CIM.RealizationData.K = 2;
+CIM.RealizationData.m = length(errpoles(CIM.SampleData.Contour.inside(errpoles)));
+CIM.RealizationData.K = 1;
 CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
 saveData(strcat(ddir,"ex2Hankel"),CIM);
 CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+CIM.RealizationData.K = 4;
 saveData(strcat(ddir,"ex2MPLoewner"),CIM);
 %%
 CIM.SampleData.Contour.gamma = 0;
 CIM.SampleData.Contour.rho = 2.409524284426337;
-CIM.RealizationData.m = 3;
-CIM.RealizationData.K = 3;
+CIM.RealizationData.m = length(errpoles(CIM.SampleData.Contour.inside(errpoles)));
+CIM.RealizationData.K = 1;
 CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
 saveData(strcat(ddir,"ex3Hankel"),CIM);
 CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+CIM.RealizationData.K = 4;
 saveData(strcat(ddir,"ex3MPLoewner"),CIM);
