@@ -26,6 +26,10 @@ classdef Menu < matlab.ui.componentcontainer.ComponentContainer
         function ImportNLEVPPackFcn(comp,event)
             prompt = {"problem","arglist (comma-separated list)"};
             answer = inputdlg(prompt,"NLEVP pack import");
+            if isempty(answer)
+                warndlg("No NLEVP entered...");
+                return;
+            end
             probstr = answer{1};
             strarg = answer{2};
             if isempty(strarg)

@@ -1,24 +1,24 @@
 %% construct system of interest
-% n = 5; K = 20;
-% 
-% L = Numerics.SampleData.sampleMatrix(n,K);
-% R = Numerics.SampleData.sampleMatrix(n,K);
-% 
-% dist = 20;
-% 
-% Agc = dist*-1i+dist;
-% A = randn(n);
-% A = A + Agc*eye(n);
-% [C,A,B] = eig(A);
-% 
-% Apgc = dist*1i+1.3*dist;
-% ep = (1:n)+Apgc;
-% Ap = diag(ep);
-% [Cp,Ap,Bp] = eig(Ap);
-% 
-% M = randn(n); M = M*M';
-% CC = randn(n); CC = CC*CC';
-% KK = randn(n); KK = KK*KK';
+n = 5; K = 20;
+
+L = Numerics.SampleData.sampleMatrix(n,K);
+R = Numerics.SampleData.sampleMatrix(n,K);
+
+dist = 20;
+
+Agc = dist*-1i+dist;
+A = randn(n);
+A = A + Agc*eye(n);
+[C,A,B] = eig(A);
+
+Apgc = dist*1i+1.3*dist;
+ep = (1:n)+Apgc;
+Ap = diag(ep);
+[Cp,Ap,Bp] = eig(Ap);
+
+M = randn(n); M = M*M';
+CC = randn(n); CC = CC*CC';
+KK = randn(n); KK = KK*KK';
 
 %% go
 ShiftScale = 3; K = 20;
@@ -34,7 +34,7 @@ N = @(z) z^2 * M + z * CC + KK;
 T = @(z) inv(H(z) + N(z));
 ep = polyeig(KK,CC,M);
  
-contour = Contour.Circle(dist*-1i+dist,n,128);
+contour = Numerics.Contour.Circle(dist*-1i+dist,n,128);
 [theta,sigma] = Numerics.interlevedshifts(contour.z,K,ShiftScale,'shift');
 %% exact MPLoewner realization using the exact transfer function
 ell = K; r = ell;

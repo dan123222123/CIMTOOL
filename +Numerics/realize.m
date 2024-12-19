@@ -1,9 +1,9 @@
-function [Lambda,V,Lbsw,Lssw] = realize(X,Sigma,Y,Ls,C)
-    M = X'*Ls*Y / Sigma;
-    [S,Lambda] = eig(M);
+function [Lambda,V] = realize(m,Db,Ds,C)
+    [X,Sigma,Y] = svd(Db,"matrix");
+    X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
+    % [S,Lambda] = eig(X'*Ds*Y/Sigma);
+    [S,Lambda] = eig(X'*Ds*Y,Sigma);
     Lambda = diag(Lambda);
     V = C*Y*(Sigma\S);
-    Lbsw = diag(Sigma);
-    Lssw = svd(Ls);
 end
 

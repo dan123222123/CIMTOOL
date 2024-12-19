@@ -1,4 +1,11 @@
-function [Ql,Qr,Qlr] = samplequadrature(T,L,R,z)
+function [Ql,Qr,Qlr] = samplequadrature(T,L,R,z,show_progress)
+arguments
+    T 
+    L 
+    R 
+    z 
+    show_progress = false
+end
 % INPUTS
 %   T -- function handle from C -> nXn matrices, meromorphic on domain D
 %   L -- left nXell probing/sketching matrix
@@ -32,34 +39,29 @@ assert(all([l1,l2]==[n,n]));
 % END SANITY CHECKS
 
 % BEGIN NUMERICS
-Ql = zeros(ell,n,N);
-Qr = zeros(n,r,N);
-Qlr = zeros(ell,r,N);
-tic
 f(1:N) = parallel.FevalFuture;
-for i=1:N
-    f(i) = parfeval(@sample,1,T(z(i)),L,R);
+% start function evaluations
+
+if show_progress
+    h = waitbar(0, 'Sampling Quadrature Data...', 'CreateCancelBtn', ...
+                       @(src, event) setappdata(gcbf(), 'Cancelled', true));
+    setappdata(h, 'Cancelled', false);
 end
-function updateWaitbar(~)
-    waitbar(mean({f.State} == "finished"),h)
-end
-h = waitbar(0, 'Sampling Quadrature Data...', 'CreateCancelBtn', ...
-                   @(src, event) setappdata(gcbf(), 'Cancelled', true));
-setappdata(h, 'Cancelled', false);
-afterEach(f,@(~)updateWaitbar(),0);
-% this loop is very slow for large N since fetchNext is slow and its in
-% serial. I should make another futures array 
+% don't see a way to delay execution of futures... >:(
 for i=1:N
-    if getappdata(h, 'Cancelled')
-        cancel(f); delete(h);
-        error("Canceled Quadrature Sampling...");
+    f(i) = parfeval(backgroundPool,@sample,1,T(z(i)),L,R);
+end
+if show_progress
+    while mean({f.State} == "finished") < 1
+        if getappdata(h, 'Cancelled')
+            cancel(f); delete(h);
+            error("Canceled Quadrature Sampling...");
+        end
+        waitbar(mean({f.State} == "finished"),h);
     end
-    [idx,s] = fetchNext(f);
-    Ql(:,:,idx) = s.Ql;
-    Qr(:,:,idx) = s.Qr;
-    Qlr(:,:,idx) = s.Qlr;
+    delete(h);
 end
-delete(h);
+s = fetchOutputs(f); Ql = cat(3,s.Ql); Qr = cat(3,s.Qr); Qlr = cat(3,s.Qlr);
 % END NUMERICS
 end
 
@@ -71,4 +73,3 @@ function s = sample(Tz,L,R)
     s.Qr = Qr;
     s.Qlr = Qlr;
 end
-
