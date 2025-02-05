@@ -2,3 +2,4 @@ experiments/outputs
 *.asv
 mkdocs
 experiments/allpass/ex*Data
+*.png

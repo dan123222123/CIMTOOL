@@ -27,7 +27,7 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
             % obj.addListeners();
 
             addlistener(obj.CIMData.SampleData.Contour,'gamma','PostSet',@(src,event)obj.setDefaults);
-            addlistener(obj.CIMData.SampleData.Contour,'rho','PostSet',@(src,event)obj.setDefaults);
+            addlistener(obj.CIMData.SampleData.Contour,'z','PostSet',@(src,event)obj.setDefaults);
 
         end
 
