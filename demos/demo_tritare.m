@@ -1,6 +1,6 @@
 %%
 theta = 2*pi/3;
-[T,TV,gamma,nodes,edges,ew] = tritare(theta);% T = @(s) inv(H(s));
+[T,TV,gamma,nodes,edges,ew] = tritare(theta);
 
 nlevp = Numerics.NLEVPData(T);
 contour = Numerics.Contour.Ellipse(0,0.5,4);
@@ -15,14 +15,14 @@ CIM.SampleData.Contour.N = 64;
 CIM.SampleData.Contour.gamma = 2.25i;
 CIM.SampleData.Contour.alpha = 0.5;
 CIM.SampleData.Contour.beta = 2;
-CIM.SampleData.ell = 64; CIM.SampleData.r = 64;
+CIM.SampleData.ell = 12; CIM.SampleData.r = 12;
 CIM.RealizationData.m = 11;
 
 % CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
 % CIM.RealizationData.K = 4;
 
 CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
-CIM.RealizationData.K = 64;
+CIM.RealizationData.K = 48;
 
 CIM.compute();
 %%
