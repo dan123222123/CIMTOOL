@@ -1,4 +1,4 @@
-function [Lambda,V,Dbsw,Dssw,D0,D1] = sploewner(Qlr,Qr,sigma,z,w,m,K,abstol)
+function [Lambda,V,W,Dbsw,Dssw,D0,D1,Bbb,Cbb] = sploewner(Qlr,Qr,Ql,sigma,z,w,m,K,abstol)
 % Suppose T : C -> nXn matrices is meromorphic on a domain D.
 % The boundary of D is a closed curve in C approximated with {z_k,w_k}
 % nodes and weights associated to a particular quadrature rule.
@@ -35,8 +35,7 @@ assert(K > 0, "# of moments should be > 0");
 
 % BEGIN NUMERICS
 % allocate maximum size moment and data matrix
-Mlr = zeros(ell,r,2*K);
-Mr = zeros(n,r,K);
+Mlr = zeros(ell,r,2*K); Mr = zeros(n,r,K); Ml = zeros(ell,n,K);
 D = zeros(ell*K,r*(K+1));
 
 % choose "hankel" or "loewner" moment functions based on shift finite/Inf
@@ -52,6 +51,7 @@ for k=1:K
         Mlr(:,:,2*k-1) = Mlr(:,:,2*k-1) + w(nn) * f(2*k-2,z(nn)) * Qlr(:,:,nn);
         Mlr(:,:,2*k) = Mlr(:,:,2*k) + w(nn) * f(2*k-1,z(nn)) * Qlr(:,:,nn);
         Mr(:,:,k) = Mr(:,:,k) + w(nn) * f(k,z(nn)) * Qr(:,:,nn);
+        Ml(:,:,k) = Ml(:,:,k) + w(nn) * f(k,z(nn)) * Ql(:,:,nn);
     end
     % update k-th block-row and (k+1)-st block-column of D
     for i=1:k
@@ -90,6 +90,15 @@ for i=1:K
     Cbb(:,(i-1)*size(Mr,2)+1:i*size(Mr,2)) = Mr(:,:,i);
 end
 V = Cbb*Y*(Sigma\S);
+
+% recover left eigenvectors from left-sided samples
+Bbb = zeros(size(Ml,1)*K,size(Ml,2));
+for i=1:K
+    Bbb((i-1)*size(Ml,1)+1:i*size(Ml,1),:) = Ml(:,:,i);
+end
+W = S\(X'*Bbb);
+
+% shifted singular values
 Dssw = svd(D1);
 Dssw = Dssw / Dssw(1);
 

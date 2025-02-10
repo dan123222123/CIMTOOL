@@ -41,7 +41,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             obj.CIMData.SvAx = obj.HSVAxes;
 
             addlistener(obj.CIMData.SampleData.NLEVP,'refew','PostSet',@(src,event)obj.ResultDataChangedFcn);
-            addlistener(obj.CIMData.ResultData,'ev','PostSet',@(src,event)obj.ResultDataChangedFcn);
+            addlistener(obj.CIMData.ResultData,'rev','PostSet',@(src,event)obj.ResultDataChangedFcn);
             addlistener(obj.CIMData.SampleData.Contour,'z','PostSet',@(src,event)obj.ResultDataChangedFcn);
 
             addlistener(obj.CIMData.SampleData,'Contour','PostSet',@(src,event)obj.updateContourListeners);
@@ -70,7 +70,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             rd = comp.CIMData.ResultData;
             nd = comp.CIMData.SampleData.NLEVP;
 
-            ew = rd.ew; ev = rd.ev;
+            ew = rd.ew; ev = rd.rev;
             T = nd.T; refew = nd.refew;
 
             % if reference is present, show it

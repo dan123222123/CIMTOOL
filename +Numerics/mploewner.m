@@ -1,4 +1,4 @@
-function [Lambda,V,Lbsw,Lssw,Lb,Ls] = mploewner(Ql,Qr,theta,sigma,L,R,z,w,m,abstol)
+function [Lambda,V,W,Lbsw,Lssw,Lb,Ls,B,C] = mploewner(Ql,Qr,theta,sigma,L,R,z,w,m,abstol)
 % Suppose T : C -> nXn matrices is meromorphic on a domain D.
 % The boundary of D is a closed curve in C approximated with {z_k,w_k}
 % nodes and weights associated to a particular quadrature rule.
@@ -79,6 +79,7 @@ M = X'*Ls*Y / Sigma;
 [S,Lambda] = eig(M);
 Lambda = diag(Lambda);
 V = C*Y*(Sigma\S); % recover right eigenvectors from right-sided samples
+W = S\(X'*B);
 
 Lssw = svd(Ls);
 Lssw = Lssw / Lssw(1);

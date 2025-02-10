@@ -3,8 +3,11 @@ classdef ResultData < handle
     properties (SetObservable)
         Db      = missing
         Ds      = missing
+        B       = missing
+        C       = missing
         ew      = missing % computed eigenvalues
-        ev      = missing % computed eigenvectors
+        rev     = missing % computed right eigenvectors
+        lev     = missing % computed left eigenvectors
         Dbsw    = missing % singular values of base data matrix
         Dssw    = missing % singular values of base data matrix
         MainAx  = missing
