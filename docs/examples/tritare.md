@@ -23,7 +23,6 @@ If we apply the ansatz \( u(x,t) = f(x) e^{\lambda t}  \), where \( \lambda \in 
 \[ f_{xx}(x) = - \left( \frac{\lambda}{c} \right)^2 f(x). \]
 
 Fixing \( c = 1 \), say, a simple computation shows that \( f(x) = \sin{( \lambda x )} \) satisfies the equation above.
-
 Further, the right-hand boundary equation implies that
 
 \[
@@ -35,7 +34,19 @@ T(\lambda) \coloneqq \tan{ \lambda } - \lambda = 0.
 
 \( T(\lambda) = 0 \) is a scalar-valued, nonlinear eigenvalue problem in \( \lambda \) -- finding the roots of this equation enables us to directly construct the corresponding eigenmode \( f(x) \), which can then be used to solve the original PDE.
 
-\( \textcolor{red}{\text{need to add demo example walk-through here}} \)
+/// details | Finding Eigenvalues of \(T\) (within \(10^{-6}\) tolerance)|
+```matlab
+T = @(s) tan(s) - s;
+
+tol = 10^-6; Ni = 2000; x = linspace(0,20,Ni); ew = zeros(size(x));
+for i = 1:length(x)
+    ew(i) = fzero(T,x(i));
+end
+ew = ew(ew > 2); ew = ew(abs(T(ew)) < tol); ew = uniquetol(ew,sqrt(tol));
+```
+///
+
+
 
 \( \textcolor{red}{\text{maybe add some plots of the first few mode shapes as well?}} \)
 
