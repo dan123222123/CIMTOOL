@@ -71,7 +71,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             nd = comp.CIMData.SampleData.NLEVP;
 
             ew = rd.ew; ev = rd.rev;
-            T = nd.T; refew = nd.refew;
+            T = nd.T; refew = reshape(nd.refew,[length(nd.refew) 1]);
 
             % if reference is present, show it
             % we have contour information, so we can use it to try and
@@ -115,8 +115,8 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
                 end
                 rr = Numerics.relres(T,ew,ev);
             else
-                ew = repelem(NaN,m);
-                rr = repelem(NaN,m);
+                ew = repelem(NaN,m)';
+                rr = repelem(NaN,m)';
             end
             
             % pad out all arrays to match the length of the longest list
@@ -126,7 +126,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
 
             % make the final table
             comp.ResultsTable.ColumnName = {cstr,'Comp. EW','Rel. Res.'};
-            comp.ResultsTable.Data = [refew(:),ew(:),rr(:)];
+            comp.ResultsTable.Data = [refew(1:m),ew(1:m),rr(1:m)];
             comp.ResultsTable.ColumnFormat = {'long','long','longE'};
 
         end

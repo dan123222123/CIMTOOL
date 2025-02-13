@@ -153,6 +153,7 @@ classdef CIM < handle
                     );
             end
             obj.RealizationData.loaded = true;
+            obj.ResultData.ComputationalMode = obj.RealizationData.ComputationalMode;
             obj.ResultData.loaded = true;
         end
 

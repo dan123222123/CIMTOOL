@@ -1,6 +1,7 @@
 classdef ResultData < handle
     
     properties (SetObservable)
+        ComputationalMode = missing
         Db      = missing
         Ds      = missing
         B       = missing
@@ -48,6 +49,37 @@ classdef ResultData < handle
 
         function value = get.Dssize(obj)
             value = size(obj.Ds);
+        end
+
+        function [H,V,W,M1,M2] = rtf(obj,abstol)
+            arguments
+                obj 
+                abstol = NaN
+            end
+            [X, Sigma, Y] = svd(obj.Db,"matrix");
+            if isnan(abstol)
+                tol = max(size(Sigma))*eps(Sigma(1,1));
+            else
+                tol = abstol;
+            end
+            r = sum(diag(Sigma)>=tol);
+            X=X(:,1:r); Sigma=Sigma(1:r,1:r); Y=Y(:,1:r);
+            V = obj.C*Y; W = X'*obj.B; M1 = X'*obj.Ds*Y; M2 = Sigma;
+
+            switch(obj.ComputationalMode)
+                case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
+                    H = @(z) V*((z*M2 - M1) \ W);
+                case Numerics.ComputationalMode.MPLoewner
+                    H = @(z) V*((M1 - z*M2) \ W);
+            end
+            
+            % switch(obj.ComputationalMode)
+            %     case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
+            %         H = @(z) V*((z*Sigma - X'*obj.Ds*Y) \ W);
+            %     case Numerics.ComputationalMode.MPLoewner
+            %         H = @(z) V*((X'*obj.Ds*Y - z*Sigma) \ W);
+            % end
+
         end
 
         function plot_main(obj)

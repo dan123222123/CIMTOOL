@@ -50,8 +50,8 @@ for k=1:K
     for nn=1:N
         Mlr(:,:,2*k-1) = Mlr(:,:,2*k-1) + w(nn) * f(2*k-2,z(nn)) * Qlr(:,:,nn);
         Mlr(:,:,2*k) = Mlr(:,:,2*k) + w(nn) * f(2*k-1,z(nn)) * Qlr(:,:,nn);
-        Mr(:,:,k) = Mr(:,:,k) + w(nn) * f(k,z(nn)) * Qr(:,:,nn);
-        Ml(:,:,k) = Ml(:,:,k) + w(nn) * f(k,z(nn)) * Ql(:,:,nn);
+        Mr(:,:,k) = Mr(:,:,k) + w(nn) * f(k-1,z(nn)) * Qr(:,:,nn);
+        Ml(:,:,k) = Ml(:,:,k) + w(nn) * f(k-1,z(nn)) * Ql(:,:,nn);
     end
     % update k-th block-row and (k+1)-st block-column of D
     for i=1:k
@@ -80,23 +80,16 @@ end
 
 % solve (X'*D1*Y,Sigma) GEP to get eigenvalues of underlying NLEVP in D.
 X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
-M = X'*D1*Y / Sigma;
-[S,Lambda] = eig(M);
-Lambda = diag(Lambda);
+M = X'*D1*Y / Sigma; [S,Lambda] = eig(M); Lambda = diag(Lambda);
 
 % recover right eigenvectors from right-sided samples
+Bbb = zeros(size(Ml,1)*K,size(Ml,2));
 Cbb = zeros(size(Mr,1),size(Mr,2)*K);
 for i=1:K
+    Bbb((i-1)*size(Ml,1)+1:i*size(Ml,1),:) = Ml(:,:,i);
     Cbb(:,(i-1)*size(Mr,2)+1:i*size(Mr,2)) = Mr(:,:,i);
 end
-V = Cbb*Y*(Sigma\S);
-
-% recover left eigenvectors from left-sided samples
-Bbb = zeros(size(Ml,1)*K,size(Ml,2));
-for i=1:K
-    Bbb((i-1)*size(Ml,1)+1:i*size(Ml,1),:) = Ml(:,:,i);
-end
-W = S\(X'*Bbb);
+V = Cbb*Y*(Sigma\S); W = S\(X'*Bbb);
 
 % shifted singular values
 Dssw = svd(D1);
