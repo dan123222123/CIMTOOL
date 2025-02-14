@@ -46,6 +46,9 @@ ew = ew(ew > 2); ew = ew(abs(T(ew)) < tol); ew = uniquetol(ew,sqrt(tol));
 ```
 ///
 
+Eigenvalues/Poles of \(T\) |  First 5 eigenmodes of \(T\)
+:-------------------------:|:-------------------------:
+![](../figures/tritare/pzT.png)|![](../figures/tritare/f5ms.png)
 
 
 \( \textcolor{red}{\text{maybe add some plots of the first few mode shapes as well?}} \)

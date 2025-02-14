@@ -7,9 +7,12 @@ for i = 1:length(x)
 end
 ew = ew(ew > tol); ew = ew(ew < 30); ew = ew(abs(T(ew)) < tol); ew = uniquetol(ew,sqrt(tol));
 %% roots of T and singularities of tan(z)
-figure; hold on; scatter(ew,0,'b',"DisplayName","Roots of $T$");
-scatter((pi/2)*2*(1:9 + 1),0,'r',"DisplayName","");
-fplot(T); hold off;
+figure; hold on;
+h1 = scatter(ew,0,'b',"DisplayName","Roots of $T$");
+Tcz = (pi/2)*2*(1:9 + 1);
+h2 = scatter(Tcz,0,'r',"DisplayName","Zeros of $\cos{(z)}$");
+h3 = fplot(T,"DisplayName","$T$"); 
+hold off; legend([h1(1),h2(1),h3(1)],"Interpreter","latex","Location","northoutside","Orientation","horizontal");
 xlim([0,35]); ylim([-1,1]);
 %% first 5 mode shapes of underlying wave equation
 figure; hold on; xlim([-1,1]); ylim([-1,1]);
