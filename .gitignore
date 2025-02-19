@@ -2,4 +2,6 @@ experiments/outputs
 *.asv
 mkdocs
 experiments/allpass/ex*Data
+*.jpg
 *.png
+*.mat

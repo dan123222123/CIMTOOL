@@ -1,14 +1,16 @@
 %% construct fn in tf and pole-residue form
-n = 4; m = n; p = n;
-um = 2; % set unstable pole multiplicity
-ewref = [(-1:-1:-n+um) ones(1,2)]; A = diag(ewref);
+n = 50; m = n; p = n;
+% um = 2; ewref = [(-1:-1:-n+um) ones(1,2)];
+% ewref = [(-1:-1:-n+um) 1:1:n-um];
+ewref = (5*(rand(n,1) + 1i*rand(n,1)));
+A = diag(ewref);
 %
 B = randn(n,m); C = randn(p,n);
 % B = eye(n,m); C = eye(p,n);
 %
 H = @(z) C*((z*eye(n) - A) \ B); G = @(z) ihml(z,n,ewref,B,C);
 Th = @(z) pinv(B)*(z*eye(n) - A)*pinv(C); Tg = @(z) iihml(z,n,ewref,B,C);
-s = tf('s'); bode(Th(s),Tg(s));
+w = logspace(-3,3); Nbode(w,H,G);
 %% setup CIMTOOL
 nlevp = Numerics.NLEVPData(Tg);
 contour = Numerics.Contour.Ellipse(-1,n+0.1,0.5,1e2);
@@ -33,10 +35,7 @@ CIM.SampleData.ell = n; CIM.SampleData.r = n; CIM.RealizationData.K = n;
 CIM.compute(); [~,V2,W2,M21,M22] = CIM.ResultData.rtf();
 Hrmpl = @(z) V2*((M21-z*M22)\W2);
 %
-close all;
-nyquistplot(H(s),Hrhnk(s),Hrmpl(s));
-figure;
-bode(H(s),Hrhnk(s),Hrmpl(s));
+close all; Nbode(w,H,Hrhnk,Hrmpl);
 %% changing radius bode, fixed N
 CIM.SampleData.Contour.gamma = -1.5; alphas = 3; CIM.SampleData.Contour.N = 64;
 %
@@ -57,5 +56,6 @@ for i=1:length(x)
         warning("failed at alpha=%d",x(i))
     end
     G = @(z) ihml(z,nec,ewref,B,C); Hr = CIM.ResultData.rtf();
-    nyquist(G(s)-Hr(s)); drawnow;
+    Nbode(w,H,Hr);
+    drawnow;
 end
