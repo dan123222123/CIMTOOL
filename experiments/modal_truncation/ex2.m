@@ -31,36 +31,46 @@ CIM.compute(); [~,V2,W2,M21,M22] = CIM.ResultData.rtf();
 Hrmpl = @(z) V2*((M21-z*M22)\W2);
 %
 close all; Nbode(w,H,Hrhnk,Hrmpl);
-%% changing radius bode, fixed N
-sradius = norm(A)+d; CIM.SampleData.Contour.N = 64;
-%
-% CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
-% CIM.SampleData.ell = 25; CIM.SampleData.r = 25; CIM.RealizationData.K = 4;
-%
-CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
-K = n; CIM.SampleData.ell = n; CIM.SampleData.r = n; CIM.RealizationData.K = K;
 
-x = linspace(sradius,5,30);
-for i=1:length(x)
-    CIM.SampleData.Contour.rho = x(i);
-    nec = length(ewref(CIM.SampleData.Contour.inside(ewref)));
-    CIM.RealizationData.m = nec; CIM.compute();
-    G = @(z) ihml(z,nec,ewref,B,C); Hr = CIM.ResultData.rtf();
-    Nbode(w,H,G,Hr); legend('H','Gr','Hr','Location','northoutside','Orientation','horizontal'); drawnow; pause(0.1)
-end
+% %% changing radius bode, fixed N
+% sradius = norm(A)+d; CIM.SampleData.Contour.N = 64;
+% %
+% % CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
+% % CIM.SampleData.ell = 25; CIM.SampleData.r = 25; CIM.RealizationData.K = 4;
+% %
+% CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+% K = n; CIM.SampleData.ell = n; CIM.SampleData.r = n; CIM.RealizationData.K = K;
+% 
+% x = linspace(sradius,5,30);
+% for i=1:length(x)
+%     CIM.SampleData.Contour.rho = x(i);
+%     nec = length(ewref(CIM.SampleData.Contour.inside(ewref)));
+%     CIM.RealizationData.m = nec; CIM.compute();
+%     G = @(z) ihml(z,nec,ewref,B,C); Hr = CIM.ResultData.rtf();
+%     Nbode(w,H,G,Hr); legend('H','Gr','Hr','Location','northoutside','Orientation','horizontal'); drawnow; pause(0.1)
+% end
 %% changing N bode, fixed radius
 CIM.SampleData.Contour.rho = 10; CIM.SampleData.Contour.N = 8;
 % %
 CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
-CIM.SampleData.ell = 25; CIM.SampleData.r = 25; CIM.RealizationData.K = 4;
+% CIM.SampleData.ell = n; CIM.SampleData.r = n; CIM.RealizationData.K = 1;
+% CIM.SampleData.ell = 25; CIM.SampleData.r = 25; CIM.RealizationData.K = 4;
+% CIM.SampleData.ell = 10; CIM.SampleData.r = 10; CIM.RealizationData.K = 5;
+CIM.SampleData.ell = 6; CIM.SampleData.r = 6; CIM.RealizationData.K = 7;
 % %
 % CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
 % K = n; CIM.SampleData.ell = 25; CIM.SampleData.r = 25; CIM.RealizationData.K = K;
 
-for i=25:25:300
-    CIM.SampleData.Contour.N = i;
+CIM.compute();
+
+for i=1:10
+    CIM.refineQuadrature();
     nec = length(ewref(CIM.SampleData.Contour.inside(ewref)));
     CIM.RealizationData.m = nec; CIM.compute();
-    G = @(z) ihml(z,nec,ewref,B,C); Hr = CIM.ResultData.rtf();
-    Nbode(w,H,G,Hr); legend('H','Gr','Hr','Location','northoutside','Orientation','horizontal'); drawnow; pause(0.1)
+    Gr = @(z) ihml(z,nec,ewref,B,C); Hr = CIM.ResultData.rtf();
+    GrHe = @(z) H(z) - Gr(z); GrHre = @(z) Gr(z) - Hr(z);
+    % Nbode(w,H,Gr,Hr); legend('H','Gr','Hr','Location','northoutside','Orientation','horizontal'); drawnow; pause(0.1)
+    Nbode(w,GrHre); hold on;
+    drawnow;
 end
+hold off;
