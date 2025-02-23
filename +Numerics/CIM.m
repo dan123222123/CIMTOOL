@@ -82,10 +82,9 @@ classdef CIM < handle
         % then scale that distance and interleve the nodes on a 
         % circle with geo center and max_dist*scale
         function interlevedshifts(obj)
-            z = obj.SampleData.Contour.z;
             nsw = obj.RealizationData.K;
             d = obj.RealizationData.ShiftScale;
-            [theta,sigma] = Numerics.interlevedshifts(z,nsw,d);
+            [theta,sigma] = obj.SampleData.Contour.interlevedshifts(nsw,d);
             obj.RealizationData.InterpolationData = Numerics.InterpolationData(theta,sigma);
         end
 

@@ -51,9 +51,10 @@ classdef ResultData < handle
             value = size(obj.Ds);
         end
 
-        function [H,V,W,M1,M2] = rtf(obj,abstol)
+        function [H,V,W,M1,M2] = rtf(obj,m,abstol)
             arguments
-                obj 
+                obj
+                m = Inf
                 abstol = NaN
             end
             [X, Sigma, Y] = svd(obj.Db,"matrix");
@@ -62,7 +63,7 @@ classdef ResultData < handle
             else
                 tol = abstol;
             end
-            r = sum(diag(Sigma)>=tol);
+            r = sum(diag(Sigma)>=tol); r = min(m,r);
             X=X(:,1:r); Sigma=Sigma(1:r,1:r); Y=Y(:,1:r);
             V = obj.C*Y; W = X'*obj.B; M1 = X'*obj.Ds*Y; M2 = Sigma;
 
