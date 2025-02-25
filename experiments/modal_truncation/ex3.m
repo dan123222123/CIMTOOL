@@ -62,18 +62,18 @@ aa = @(x) aaprox(ewc,x); plot(x,a(x)); hold on; plot(x,aa(x)); hold off;
 CIM.SampleData.show_progress = false;
 sradius = 50; CIM.SampleData.Contour.N = 128;
 %
-% CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
-% CIM.SampleData.ell = 32; CIM.SampleData.r = 32; CIM.RealizationData.K = 1;
+CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
+CIM.SampleData.ell = 32; CIM.SampleData.r = 32; CIM.RealizationData.K = 1;
 % CIM.SampleData.ell = 16; CIM.SampleData.r = 16; CIM.RealizationData.K = 2;
 % CIM.SampleData.ell = 8; CIM.SampleData.r = 8; CIM.RealizationData.K = 4;
 % CIM.SampleData.ell = 4; CIM.SampleData.r = 4; CIM.RealizationData.K = 4;
 %
-CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
-K = 32; CIM.SampleData.ell = K; CIM.SampleData.r = K; CIM.RealizationData.K = K;
+% CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+% K = 32; CIM.SampleData.ell = K; CIM.SampleData.r = K; CIM.RealizationData.K = K;
 % K = 32; CIM.SampleData.ell = 5; CIM.SampleData.r = 5; CIM.RealizationData.K = K;
 % K = 16; CIM.SampleData.ell = 2; CIM.SampleData.r = 2; CIM.RealizationData.K = K;
 
-rls = linspace(sradius,5,200);
+rls = linspace(sradius,5,20);
 for i=1:length(rls)
     CIM.SampleData.Contour.beta = rls(i);
     nec = length(ewref(CIM.SampleData.Contour.inside(ewref)));
