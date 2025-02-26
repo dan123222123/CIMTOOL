@@ -10,7 +10,7 @@ function [Lambda,V,W,Dbsw,Dssw,D0,D1,Bbb,Cbb] = sploewner(Qlr,Qr,Ql,sigma,z,w,m,
 %   m       -- number of poles of T in D
 %   maxK    -- max number of moments to use in construction of data 
 %              matrices should be >=1
-%   abstol  -- absolute tolerance for rank determination of base data matrix
+%   abstol -- absolute tolerance for base data matrix rank determination
 % OUTPUTS
 %   E       -- mXm matrix of eigenvalues of T within D
 %   Dbsw    -- singular valuse of base data matrix
@@ -72,7 +72,7 @@ else
     D1 = sigma*D(1:K*ell,r+1:(K+1)*r) + D(1:K*ell,1:K*r);
 end
 
-[Drank,X,Sigma,Y,Dbsw] = rankdet;
+[Drank,X,Sigma,Y,Dbsw] = rankdet(D0,abstol);
 
 if Drank < m
     error("generated rank %d < %d data matrix",Drank,m);
@@ -96,16 +96,5 @@ Dssw = svd(D1);
 Dssw = Dssw / Dssw(1);
 
 % END NUMERICS
-
-    function [Drank,X,Sigma,Y,Dbsw] = rankdet
-        [X, Sigma, Y] = svd(D0,"matrix");
-        if isnan(abstol)
-            tol = max(size(Sigma))*eps(Sigma(1,1));
-        else
-            tol = abstol;
-        end
-        Dbsw = diag(Sigma)/Sigma(1,1);
-        Drank = sum(diag(Sigma)>=tol);
-    end
 
 end

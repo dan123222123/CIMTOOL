@@ -12,6 +12,7 @@ function [Lambda,V,W,Lbsw,Lssw,Lb,Ls,B,C] = mploewner(Ql,Qr,theta,sigma,L,R,z,w,
 %   z -- points on C (coming from some quadrature rule)
 %   w -- quadrature weights associated to z
 %   m -- number of poles of T in D
+%   abstol -- absolute tolerance for base data matrix rank determination
 % OUTPUTS
 %   E -- mXm matrix of eigenvalues of T within D
 % BEGIN
@@ -67,7 +68,7 @@ for i=1:elltheta
     end
 end
 
-[Lbrank,X,Sigma,Y,Lbsw] = rankdet;
+[Lbrank,X,Sigma,Y,Lbsw] = Numerics.rankdet(Lb,abstol);
 
 if Lbrank < m
     error("generated rank %d < %d data matrix",Lbrank,m);
@@ -84,16 +85,5 @@ W = S\(X'*B);
 Lssw = svd(Ls);
 Lssw = Lssw / Lssw(1);
 % END NUMERICS
-
-    function [Lbrank,X,Sigma,Y,Lbsw] = rankdet
-        [X, Sigma, Y] = svd(Lb,"matrix");
-        if isnan(abstol)
-            tol = max(size(Sigma))*eps(Sigma(1,1));
-        else
-            tol = abstol;
-        end
-        Lbsw = diag(Sigma)/Sigma(1,1);
-        Lbrank = sum(diag(Sigma)>=tol);
-    end
 
 end

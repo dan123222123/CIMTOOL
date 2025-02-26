@@ -1,10 +1,11 @@
-function [Ql,Qr,Qlr] = samplequadrature(T,L,R,z,show_progress)
+function [Ql,Qr,Qlr] = samplequadrature(T,L,R,z,show_progress,smode)
 arguments
     T 
     L 
     R 
     z 
     show_progress = false
+    smode = []
 end
 % INPUTS
 %   T -- function handle from C -> nXn matrices, meromorphic on domain D
@@ -32,11 +33,17 @@ N = length(z);
 
 % verify that L and R are compatible with T
 % further, the outer dimensions should be <= n!
-[l1,ell] = size(L);
-[l2,r] = size(R);
+[l1,~] = size(L);
+[l2,~] = size(R);
 assert(all([l1,l2]==[n,n]));
 % assert(ell <= n && r <= n);
 % END SANITY CHECKS
+
+if smode == "direct"
+    sample_function = sample_T;
+else
+    sample_function = sample_Ti;
+end
 
 % BEGIN NUMERICS
 f(1:N) = parallel.FevalFuture;
@@ -49,7 +56,7 @@ if show_progress
 end
 % don't see a way to delay execution of futures... >:(
 for i=1:N
-    f(i) = parfeval(backgroundPool,@sample,1,T(z(i)),L,R);
+    f(i) = parfeval(backgroundPool,@sample_Ti,1,T(z(i)),L,R);
 end
 if show_progress
     while mean({f.State} == "finished") < 1
@@ -65,7 +72,16 @@ s = fetchOutputs(f); Ql = cat(3,s.Ql); Qr = cat(3,s.Qr); Qlr = cat(3,s.Qlr);
 % END NUMERICS
 end
 
-function s = sample(Tz,L,R)
+function s = sample_Ti(Tz,L,R)
+    Ql = L' / Tz;
+    Qr = Tz \ R;
+    Qlr = L' * Qr;
+    s.Ql = Ql;
+    s.Qr = Qr;
+    s.Qlr = Qlr;
+end
+
+function s = sample_T(Tz,L,R)
     Ql = L' / Tz;
     Qr = Tz \ R;
     Qlr = L' * Qr;
