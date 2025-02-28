@@ -1,14 +1,12 @@
 %% load CDplayer
 load('./CDplayer.mat'); n = size(A,1);
-A = full(A); B = full(B); C = full(C);
-[V,Lambda] = eig(A); ewref = diag(Lambda);
+[V,Lambda] = eig(full(A)); ewref = diag(Lambda);
 BB = V\B; CC = C*V;
 %
-H = @(z) C*((z*eye(n) - A) \ B); G = @(z) ihml(z,n,ewref,BB,CC);
-Th = @(z) pinv(H(z)); Tg = @(z) iihml(z,n,ewref,BB,CC);
-w = logspace(-1,6,500);
+H = @(z) C*((z*speye(n) - A) \ B); G = @(z) ihml(z,n,ewref,BB,CC);
+w = logspace(-1,6,1000); Nbode(w,H,G);
 %%
-nlevp = Numerics.NLEVPData(Tg);
+nlevp = Numerics.NLEVPData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
 contour = Numerics.Contour.Ellipse(mean(ewref),800,6e4,1e2);
 CIM = Numerics.CIM(nlevp,contour);
 CIM.SampleData.show_progress = false;
@@ -34,8 +32,13 @@ for i=1:length(x)
     fprintf("done with %d\n",i);
 end
 figure(1);
-plot(x,rarr); title(gca, "Db Rank vs N"); saveas
+plot(x,rarr); title(gca, "Db Rank vs N");
+saveas(gcf,"dbr_N.png");
+%
 figure(2);
 plot(x,ewrrarr); title(gca, "Mean EW Relative Residual vs N");
+saveas(gcf,"mewrr_N.png");
+%
 figure(3);
 plot(x,L2pe); title(gca, "Mean L2 Frequency Error vs N");
+saveas(gcf,"ml2fe_N.png");

@@ -116,14 +116,15 @@ classdef ResultData < handle
             if ~any(ismissing(ax))
                 chold = ishold(ax);
                 if ~all(ismissing(obj.Db))
-                    Dbsw = svd(obj.Db); Dbsw = Dbsw / Dbsw(1);
-                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(Dbsw),Dbsw,"->","MarkerSize",10,'DisplayName','Base Data Matrix (Db)','Color',"r");
+                    % obj.Dbsw = svd(obj.Db); obj.Dbsw = obj.Dbsw / obj.Dbsw(1);
+                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(obj.Dbsw),obj.Dbsw,"->","MarkerSize",10,'DisplayName','Base Data Matrix (Db)','Color',"r");
                     % tstring = strcat(tstring,sprintf("size(Db) = %d, %d",obj.Dbsize(1),obj.Dbsize(2)));
                 end
-                if ~anymissing(obj.Ds) && all(size(obj.Db) == size(obj.Ds))
-                    Dbscsw = svd([obj.Db;obj.Ds]); Dbscsw = Dbscsw / Dbscsw(1);
-                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(Dbscsw),Dbscsw,"->","MarkerSize",10,'DisplayName','[Db; Ds]','Color',"b");
-                end
+                % this should be disabled unless it's needed because it can cause a lot of slow-down
+                % if ~anymissing(obj.Ds) && all(size(obj.Db) == size(obj.Ds))
+                %     Dbscsw = svd([obj.Db;obj.Ds]); Dbscsw = Dbscsw / Dbscsw(1);
+                %     obj.SvAxphandles(end+1) = semilogy(ax,1:length(Dbscsw),Dbscsw,"->","MarkerSize",10,'DisplayName','[Db; Ds]','Color',"b");
+                % end
                 ax.XLim = [0,max(length(obj.Dbsw),length(obj.Dssw))+1];
                 hold(ax,chold);
             end

@@ -1,16 +1,12 @@
 %% construct fn in tf and pole-residue form
 load('./CDplayer.mat'); n = size(A,1);
-A = full(A); B = full(B); C = full(C);
-[V,Lambda] = eig(A); ewref = diag(Lambda);
+[V,Lambda] = eig(full(A)); ewref = diag(Lambda);
 BB = V\B; CC = C*V;
 %
-H = @(z) C*((z*eye(n) - A) \ B); G = @(z) ihml(z,n,ewref,BB,CC);
-Th = @(z) pinv(H(z)); Tg = @(z) iihml(z,n,ewref,BB,CC);
-w = logspace(-1,3,500);
-% Nbode(w,H,G);
-Nbode(w,Th,Tg);
+H = @(z) C*((z*speye(n) - A) \ B); G = @(z) ihml(z,n,ewref,BB,CC);
+w = logspace(-1,3,500); Nbode(w,H,G);
 %% setup CIMTOOL
-nlevp = Numerics.NLEVPData(Tg);
+nlevp = Numerics.NLEVPData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
 contour = Numerics.Contour.Ellipse(mean(ewref),800,6e4,1e2);
 CIM = Numerics.CIM(nlevp,contour);
 CIM.SampleData.show_progress = false;

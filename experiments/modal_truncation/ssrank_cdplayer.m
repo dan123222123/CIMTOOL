@@ -1,14 +1,12 @@
 %% load CDplayer
 load('./CDplayer.mat'); n = size(A,1);
-A = full(A); B = full(B); C = full(C);
-[V,Lambda] = eig(A); ewref = diag(Lambda);
+[V,Lambda] = eig(full(A)); ewref = diag(Lambda);
 BB = V\B; CC = C*V;
 %
-H = @(z) C*((z*eye(n) - A) \ B); G = @(z) ihml(z,n,ewref,BB,CC);
-Th = @(z) pinv(H(z)); Tg = @(z) iihml(z,n,ewref,BB,CC);
-w = logspace(-1,6,500);
+H = @(z) C*((z*speye(n) - A) \ B); G = @(z) ihml(z,n,ewref,BB,CC);
+w = logspace(-1,6,1000); Nbode(w,H,G);
 %%
-nlevp = Numerics.NLEVPData(Tg);
+nlevp = Numerics.NLEVPData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
 contour = Numerics.Contour.Ellipse(mean(ewref),800,6e4,1e3);
 CIM = Numerics.CIM(nlevp,contour);
 CIM.SampleData.show_progress = false;
@@ -22,7 +20,7 @@ CIM.RealizationData.m = nec;
 %% Data Matrix Rank with changing ShiftScale
 CIM.RealizationData.ShiftScale = 2; CIM.compute();
 
-x = linspace(2,1.05,50);
+x = linspace(2,1.05,100);
 rarr = zeros(length(x),1); % Db rank
 ewrrarr = zeros(length(x),1); % computed ew relative residual
 L2pe = zeros(length(x),1); % L2 error vs H

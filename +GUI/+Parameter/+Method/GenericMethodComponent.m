@@ -68,9 +68,12 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
     methods % GUI -> CIM
 
         function MethodParametersChanged(comp,~)
+            comp.CIMData.RealizationData.K = comp.MaxMomentsEditField.Value;
+        end
+
+        function ProbingParametersChanged(comp,~)
             comp.CIMData.SampleData.ell = comp.LeftProbingSizeEditField.Value;
             comp.CIMData.SampleData.r = comp.RightProbingSizeEditField.Value;
-            comp.CIMData.RealizationData.K = comp.MaxMomentsEditField.Value;
         end
 
     end
@@ -106,7 +109,7 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             comp.LeftProbingSizeEditField = uieditfield(comp.ProbingGridLayout, 'numeric');
             comp.LeftProbingSizeEditField.Limits = [0 Inf];
             comp.LeftProbingSizeEditField.HorizontalAlignment = 'center';
-            comp.LeftProbingSizeEditField.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MethodParametersChanged, true);
+            comp.LeftProbingSizeEditField.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @ProbingParametersChanged, true);
             comp.LeftProbingSizeEditField.Layout.Row = 2;
             comp.LeftProbingSizeEditField.Layout.Column = 1;
         
@@ -121,7 +124,7 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             comp.RightProbingSizeEditField = uieditfield(comp.ProbingGridLayout, 'numeric');
             comp.RightProbingSizeEditField.Limits = [0 Inf];
             comp.RightProbingSizeEditField.HorizontalAlignment = 'center';
-            comp.RightProbingSizeEditField.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MethodParametersChanged, true);
+            comp.RightProbingSizeEditField.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @ProbingParametersChanged, true);
             comp.RightProbingSizeEditField.Layout.Row = 2;
             comp.RightProbingSizeEditField.Layout.Column = 2;
             %

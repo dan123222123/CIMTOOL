@@ -43,28 +43,29 @@ assert(elltheta > 0 && rsigma > 0, "# of left/right shifts should be > 0");
 B = zeros(elltheta,n); C = zeros(n,rsigma);
 Lb = zeros(elltheta,rsigma); Ls = zeros(elltheta,rsigma);
 
+% pre-construct cyclical probing matrices
+RR = zeros(n,elltheta); LL = zeros(n,rsigma);
+
 % construct B and C matrices
 for i=1:elltheta
-    for k=1:N
-        ldir = mod(i-1,Lsize)+1;
-        B(i,:) = B(i,:) + (w(k)/(theta(i)-z(k)))*Ql(ldir,:,k);
-    end
+    B(i,:) = sum((w ./ (theta(i) - z)) .* reshape(Ql(mod(i-1,Lsize)+1,:,:),n1,N),2);
+    RR(:,i) = R(:,mod(i-1,Rsize)+1);
 end
 
 for j=1:rsigma
-    for k=1:N
-        rdir = mod(j-1,Rsize)+1;
-        C(:,j) = C(:,j) + (w(k)/(sigma(j)-z(k)))*Qr(:,rdir,k);
-    end
+    C(:,j) = sum((w ./ (sigma(j) - z)) .* reshape(Qr(:,mod(j-1,Rsize)+1,:),n2,N),2);
+    LL(:,j) = L(:,mod(j-1,Lsize)+1);
 end
+
+BB = B*RR; CC = LL'*C;
 
 % construct Lb and Ls matrices
 for i=1:elltheta
     for j=1:rsigma
-        ldir = mod(i-1,Lsize)+1;
-        rdir = mod(j-1,Rsize)+1;
-        Lb(i,j) = (B(i,:)*R(:,rdir) - L(:,ldir)'*C(:,j))/(theta(i)-sigma(j));
-        Ls(i,j) = (theta(i)*B(i,:)*R(:,rdir) - sigma(j)*L(:,ldir)'*C(:,j))/(theta(i)-sigma(j));
+        % ldir = mod(i-1,Lsize)+1; rdir = mod(j-1,Rsize)+1;
+        % bb = B(i,:)*R(:,rdir); cc = L(:,ldir)'*C(:,j);
+        Lb(i,j) = (BB(i,j) - CC(i,j))/(theta(i)-sigma(j));
+        Ls(i,j) = (theta(i)*BB(i,j) - sigma(j)*CC(i,j))/(theta(i)-sigma(j));
     end
 end
 

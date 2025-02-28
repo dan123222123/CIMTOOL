@@ -142,7 +142,7 @@ classdef SampleData < handle
             if ~obj.loaded
                 % seems possible to compare sT,sL,sR,squad BEFORE sampling
                 % save some work if possible!
-                [obj.Ql,obj.Qr,obj.Qlr] = Numerics.samplequadrature(obj.NLEVP.T,obj.Lf,obj.Rf,obj.Contour.z,obj.show_progress);
+                [obj.Ql,obj.Qr,obj.Qlr] = Numerics.samplequadrature(obj.NLEVP.T,obj.Lf,obj.Rf,obj.Contour.z,obj.show_progress,obj.NLEVP.sample_mode);
                 obj.squad = obj.Contour.z;
                 obj.sL = obj.Lf;
                 obj.sR = obj.Rf;
@@ -165,7 +165,7 @@ classdef SampleData < handle
             obj.Contour.refineQuadrature(2);
             zadded = obj.Contour.z(1:2:end);
 
-            [Qladded,Qradded,Qlradded] = Numerics.samplequadrature(obj.NLEVP.T,obj.Lf,obj.Rf,zadded,obj.show_progress);
+            [Qladded,Qradded,Qlradded] = Numerics.samplequadrature(obj.NLEVP.T,obj.Lf,obj.Rf,zadded,obj.show_progress,obj.NLEVP.sample_mode);
 
             Qlnew   = zeros(size(obj.Ql,1),size(obj.Ql,2),2*N);
             Qrnew   = zeros(size(obj.Qr,1),size(obj.Qr,2),2*N);

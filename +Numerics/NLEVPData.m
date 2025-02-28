@@ -8,6 +8,7 @@ classdef NLEVPData < handle
         loaded = false
         compute_reference = true
         plot_reference = true
+        sample_mode = Numerics.SampleMode.Inverse
         refew = missing
         refev = missing
         ax = missing

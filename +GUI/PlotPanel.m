@@ -40,9 +40,11 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             obj.CIMData.MainAx = obj.MainPlotAxes;
             obj.CIMData.SvAx = obj.HSVAxes;
 
-            addlistener(obj.CIMData.SampleData.NLEVP,'refew','PostSet',@(src,event)obj.ResultDataChangedFcn);
-            addlistener(obj.CIMData.ResultData,'rev','PostSet',@(src,event)obj.ResultDataChangedFcn);
-            addlistener(obj.CIMData.SampleData.Contour,'z','PostSet',@(src,event)obj.ResultDataChangedFcn);
+            % addlistener(obj.CIMData.SampleData.NLEVP,'refew','PostSet',@(src,event)obj.ResultDataChangedFcn);
+            % addlistener(obj.CIMData.ResultData,'rev','PostSet',@(src,event)obj.ResultDataChangedFcn);
+            % addlistener(obj.CIMData.SampleData.Contour,'z','PostSet',@(src,event)obj.ResultDataChangedFcn);
+
+            addlistener(obj.CIMData.ResultData,'loaded','PostSet',@(src,event)obj.ResultDataChangedFcn);
 
             addlistener(obj.CIMData.SampleData,'Contour','PostSet',@(src,event)obj.updateContourListeners);
 
@@ -61,11 +63,15 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
         end
 
         function updateContourListeners(comp,~)
-            addlistener(comp.CIMData.SampleData.Contour,'z','PostSet',@(src,event)comp.ResultDataChangedFcn);
+            % addlistener(comp.CIMData.SampleData.Contour,'z','PostSet',@(src,event)comp.ResultDataChangedFcn);
         end
 
         % listen for rd.loaded, NLEVP.refew, etc. to re-do this table display
         function ResultDataChangedFcn(comp,~)
+
+            if ~comp.CIMData.ResultData.loaded
+                return
+            end
 
             rd = comp.CIMData.ResultData;
             nd = comp.CIMData.SampleData.NLEVP;
@@ -90,7 +96,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
 
             % if computed eigenvalues are available, show them and the
             % relative residual (assuming ev are also available)
-            if ~all(ismissing(ew)) && ~comp.CIMData.ResultData.loaded
+            if ~all(ismissing(ew)) %&& ~comp.CIMData.ResultData.loaded
                 if ~all(ismissing(refew)) % greedy matching between comp and ref if ref is available
                     cew = ew; cev = ev;
                     new = zeros(size(cew)); nev = zeros(size(cev));

@@ -1,20 +1,24 @@
 %% construct fn in tf and pole-residue form
 load('./iss.mat'); n = size(A,1);
-A = full(A); B = full(B); C = full(C);
-[V,Lambda] = eig(A); ewref = diag(Lambda);
+% A = full(A); B = full(B); C = full(C);
+[V,Lambda] = eig(full(A)); ewref = diag(Lambda);
 BB = V\B; CC = C*V;
 %
-H = @(z) C*((z*eye(n) - A) \ B); G = @(z) ihml(z,n,ewref,BB,CC);
-Th = @(z) pinv(H(z)); Tg = @(z) iihml(z,n,ewref,BB,CC);
+H = @(z) C*((z*speye(n) - A) \ B); G = @(z) ihml(z,n,ewref,BB,CC);
+% Th = @(z) pinv(H(z)); Tg = @(z) iihml(z,n,ewref,BB,CC);
 w = logspace(-1,3,500);
-% Nbode(w,H,G);
-Nbode(w,Th,Tg);
+Nbode(w,H,G);
+% Nbode(w,Th,Tg);
 %% setup CIMTOOL
-nlevp = Numerics.NLEVPData(Tg);
+nlevp = Numerics.NLEVPData(G); nlevp.sample_mode = Numerics.SampleMode.Direct;
 contour = Numerics.Contour.Ellipse(mean(ewref),1,norm(Lambda)*2,1e2);
 CIM = Numerics.CIM(nlevp,contour);
-CIM.SampleData.show_progress = false;
+%
 CIM.SampleData.NLEVP.refew = ewref;
+CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+CIM.SampleData.ell = 50; CIM.SampleData.r = 50;
+CIM.RealizationData.m = 270; CIM.RealizationData.K = 1200;
+CIM.SampleData.show_progress = false;
 c = CIMTOOL(CIM); daspect(CIM.MainAx,'auto');
 xlim(CIM.MainAx,[-1.5 1.5]); ylim(CIM.MainAx,[-125 125]);
 %% check initial bode
@@ -35,9 +39,9 @@ Hrmpl = @(z) V2*((M21-z*M22)\W2);
 close all; Nbode(w,H,Hrmpl); legend('H','Hmpl','Location','northoutside','Orientation','horizontal');
 %% changing radius bode, fixed N
 
-CIM.SampleData.Contour.N = 1028;
+% CIM.SampleData.Contour.N = 2048;
 
-x = linspace(75,5,5);
+x = linspace(75,5,20);
 for i=1:length(x)
     % CIM.RealizationData.ShiftScale = x(i);
     CIM.SampleData.Contour.beta = x(i);

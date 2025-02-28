@@ -72,7 +72,7 @@ else
     D1 = sigma*D(1:K*ell,r+1:(K+1)*r) + D(1:K*ell,1:K*r);
 end
 
-[Drank,X,Sigma,Y,Dbsw] = rankdet(D0,abstol);
+[Drank,X,Sigma,Y,Dbsw] = Numerics.rankdet(D0,abstol);
 
 if Drank < m
     error("generated rank %d < %d data matrix",Drank,m);
