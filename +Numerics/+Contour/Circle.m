@@ -145,7 +145,7 @@ classdef Circle < Numerics.Contour.Quad
             end
             obj.phandles(end+1) = plot(ax,real(zp),imag(zp),"blue",'LineWidth',5,'Tag',"contour","HandleVisibility","off","DisplayName","Contour");
             % hold(ax,chold);
-            hold(ax,"off");
+            % hold(ax,"off");
             obj.ax = ax;
         end
 

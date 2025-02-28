@@ -30,7 +30,7 @@ CIM.SampleData.show_progress = false;
 % plot_cim_response(f,CIM,H,Hrmpl,w,x,y);
 
 %% contour conga
-g = @(x) x - 200*1i*x; gx = linspace(-0.3,0,1);
+g = @(x) x - 200*1i*x; gx = linspace(-0.3,0,2);
 % axes(f.Children(end)); hold on; plot(real(g(gx)),imag(g(gx))); hold off;
 %
 wobj = VideoWriter('cc_iss_1.avi'); wobj.FrameRate = 1; open(wobj);
