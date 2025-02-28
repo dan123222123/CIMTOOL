@@ -63,7 +63,7 @@ classdef RealizationData < handle
                 obj.cla();
             end
             if ~any(ismissing(obj.ax))
-                chold = ishold(ax);
+                % chold = ishold(ax);
                 theta = obj.InterpolationData.theta;
                 sigma = obj.InterpolationData.sigma;
                 if obj.ComputationalMode ~= Numerics.ComputationalMode.Hankel
@@ -78,7 +78,8 @@ classdef RealizationData < handle
                 if obj.ComputationalMode == Numerics.ComputationalMode.MPLoewner
                     obj.phandles(end+1) = scatter(ax,real(theta),imag(theta),50,"red","square","Tag","theta","DisplayName","Left Interpolation Points",'Linewidth',1.5);
                 end
-                hold(ax,chold);
+                % hold(ax,chold);
+                hold(ax,"off");
             end
             obj.ax = ax;
         end

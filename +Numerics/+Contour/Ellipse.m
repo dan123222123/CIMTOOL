@@ -137,7 +137,7 @@ classdef Ellipse < Numerics.Contour.Quad
             end
             zp = Numerics.Contour.Ellipse.trapezoid(obj.gamma,obj.alpha,obj.beta,512);
             zp = [obj.gamma + obj.alpha, zp, obj.gamma + obj.alpha];
-            chold = ishold(ax);
+            % chold = ishold(ax);
             of = max(obj.alpha,obj.beta)*0.05;
             % obj.phandles(end+1) = scatter(ax,real(obj.gamma),imag(obj.gamma),200,"black",'filled','Tag',"contour_center","HandleVisibility","off");
             obj.phandles(end+1) = rectangle(ax,'Position',[real(obj.gamma)-of/2 imag(obj.gamma)-of/2 of of], 'Curvature',[1 1], 'Facecolor','k', 'Edgecolor','k','Tag','contour_center',"HandleVisibility","off","Visible","off");
@@ -146,7 +146,8 @@ classdef Ellipse < Numerics.Contour.Quad
                 obj.phandles(end+1) = scatter(ax,real(obj.z),imag(obj.z),200,"red","x",'Tag',"quadrature","DisplayName","Quadrature Nodes");
             end
             obj.phandles(end+1) = plot(ax,real(zp),imag(zp),"blue",'LineWidth',5,'Tag',"contour","HandleVisibility","off");
-            hold(ax,chold);
+            % hold(ax,chold);
+            hold(ax,"off")
             obj.ax = ax;
         end
 

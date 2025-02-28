@@ -86,12 +86,13 @@ classdef ResultData < handle
                 obj.cla_main();
             end
             if ~any(ismissing(ax))
-                chold = ishold(ax);
+                % chold = ishold(ax);
                 hold(ax,"on");
                 if ~ismissing(obj.ew)
                     obj.MainAxphandles(end+1) = scatter(ax,real(obj.ew),imag(obj.ew),30,"Tag","computed_eigenvalues","MarkerFaceColor","#1AFF1A","DisplayName","Computed Eigenvalues",'Linewidth',1.5);
                 end
-                hold(ax,chold);
+                % hold(ax,chold);
+                hold(ax,"off");
             end
             obj.MainAx = ax;
         end
