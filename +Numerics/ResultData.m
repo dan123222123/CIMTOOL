@@ -73,13 +73,6 @@ classdef ResultData < handle
                 case Numerics.ComputationalMode.MPLoewner
                     H = @(z) V*((M1 - z*M2) \ W);
             end
-            
-            % switch(obj.ComputationalMode)
-            %     case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
-            %         H = @(z) V*((z*Sigma - X'*obj.Ds*Y) \ W);
-            %     case Numerics.ComputationalMode.MPLoewner
-            %         H = @(z) V*((X'*obj.Ds*Y - z*Sigma) \ W);
-            % end
 
         end
 

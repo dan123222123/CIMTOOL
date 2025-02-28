@@ -5,6 +5,6 @@ function Nbode(w,varargin)
     for i=1:length(varargin)
         nbode(varargin{i},w); hold on;
     end
-    hold off;
+    hold off; linestyleorder(gca,"mixedstyles");
 end
     

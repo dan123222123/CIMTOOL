@@ -69,10 +69,6 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
         % listen for rd.loaded, NLEVP.refew, etc. to re-do this table display
         function ResultDataChangedFcn(comp,~)
 
-            if ~comp.CIMData.ResultData.loaded
-                return
-            end
-
             rd = comp.CIMData.ResultData;
             nd = comp.CIMData.SampleData.NLEVP;
 
@@ -84,19 +80,28 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             % prune extra reference eigenvalues from the table view at
             % least
             if ~all(ismissing(refew))
-                refew = sort(refew(comp.CIMData.SampleData.Contour.inside(refew)));
+                % sort reference eigenvalues by magnitude
+                [~,refewidx] = sort(abs(refew(comp.CIMData.SampleData.Contour.inside(refew))));
+                refew = refew(refewidx);
                 nin = length(refew);
                 cstr = sprintf('Ref. EW (# Inside Contour %d)',nin);
             else
                 refew = repelem(NaN,length(ew));
                 cstr = ('Ref. EW');
             end
+            comp.ResultsTable.ColumnName = {cstr,'Comp. EW','Rel. Res.'};
+
+            % after updating the table, there is no point going farther if
+            % the ResultData is not ready to be updated
+            if ~comp.CIMData.ResultData.loaded
+                return
+            end
 
             m = max([length(refew),length(ew)]);
 
             % if computed eigenvalues are available, show them and the
             % relative residual (assuming ev are also available)
-            if ~all(ismissing(ew)) %&& ~comp.CIMData.ResultData.loaded
+            if ~all(ismissing(ew))
                 if ~all(ismissing(refew)) % greedy matching between comp and ref if ref is available
                     cew = ew; cev = ev;
                     new = zeros(size(cew)); nev = zeros(size(cev));
@@ -131,7 +136,6 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             rr = padarray(rr,m-length(rr),NaN,'post');
 
             % make the final table
-            comp.ResultsTable.ColumnName = {cstr,'Comp. EW','Rel. Res.'};
             comp.ResultsTable.Data = [refew(1:m),ew(1:m),rr(1:m)];
             comp.ResultsTable.ColumnFormat = {'long','long','longE'};
 
