@@ -1,5 +1,5 @@
 classdef RealizationData < handle
-    
+
     properties (SetObservable)
         InterpolationData
         ComputationalMode
@@ -79,7 +79,7 @@ classdef RealizationData < handle
                     obj.phandles(end+1) = scatter(ax,real(theta),imag(theta),50,"red","square","Tag","theta","DisplayName","Left Interpolation Points",'Linewidth',1.5);
                 end
                 % hold(ax,chold);
-                hold(ax,"off");
+                % hold(ax,"off");
             end
             obj.ax = ax;
         end
@@ -101,4 +101,3 @@ classdef RealizationData < handle
     end
 
 end
-
