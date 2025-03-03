@@ -8,12 +8,12 @@ w = logspace(-1,3,5000);
 % Nbode(w,H,G); legend('H','G','Location','northoutside','Orientation','horizontal');
 %% setup CIM
 nlevp = Numerics.NLEVPData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
-contour = Numerics.Contour.Ellipse(-0.3+62i,0.025,5,4e3);
+contour = Numerics.Contour.Ellipse(-0.3+62i,0.05,15,5e3);
 CIM = Numerics.CIM(nlevp,contour);
 %
 CIM.SampleData.NLEVP.refew = ewref;
 CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
-CIM.SampleData.ell = 3; CIM.SampleData.r = 3; CIM.RealizationData.K = 50;
+CIM.SampleData.ell = 3; CIM.SampleData.r = 3; CIM.RealizationData.K = 300;
 CIM.SampleData.show_progress = false;
 % c = CIMTOOL(CIM); daspect(CIM.MainAx,'auto');
 % xlim(CIM.MainAx,[-1.5 1.5]); ylim(CIM.MainAx,[-125 125]);
@@ -33,8 +33,8 @@ CIM.SampleData.show_progress = false;
 g = @(x) x - 200*1i*x; gx = linspace(-0.3,0,600);
 % axes(f.Children(end)); hold on; plot(real(g(gx)),imag(g(gx))); hold off;
 %
-wobj = VideoWriter('cc_iss_1.avi'); wobj.FrameRate = 60; open(wobj);
-mkdir('tmp_madness');
+wobj = VideoWriter('cc_iss_3.avi'); wobj.FrameRate = 60; open(wobj);
+tmpdir = 'tmp_madness_3/'; mkdir(tmpdir);
 
 f = figure(1); f.Visible = false; f.Position = [100 100 1920 1080];
 
@@ -47,10 +47,14 @@ for i=1:length(gls)
     CIM.compute(); [~,V2,W2,M21,M22] = CIM.ResultData.rtf(nec);
     Hrmpl = @(z) V2*((M21-z*M22)\W2);
     %
-    x = linspace(-5,5,100); y = [-logspace(1,2,10) linspace(-10,10,80) logspace(1,2,10)];
-    plot_cim_response(f,CIM,H,Hrmpl,w,x,y); drawnow;
+    x = linspace(-3,3,150); y = linspace(-5,60,600);
+    clf(f)
+    %axes(f); nboderelerr_surf(H,Hrmpl,x,y); zlim([1e-3,5e1]);
+    %axes(f); nbode_surf(H,x,y); zlim([1e-7,1]);
+    %campos([-12.5,-20,2]);
+    plot_cim_response(f,CIM,H,Hrmpl,w,x,y);
     % you suffer 1 point of madness
-    fname = strcat('tmp_madness/f',num2str(i)); print('-djpeg','-r100',fname)
+    fname = strcat(tmpdir,'f',num2str(i)); print('-djpeg','-r200',fname)
     writeVideo(wobj,im2frame(imread([fname '.jpg'])));
 end
 close(wobj);

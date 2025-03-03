@@ -15,4 +15,3 @@ function nboderelerr(H,Hr,w)
     xlabel("$\omega$","Interpreter","latex");
     ylabel("$\frac{\Vert H(i \omega) - H_r(i \omega) \Vert_F}{\Vert H(i \omega) \Vert_F}$","Interpreter","latex");
 end
-    
