@@ -1,5 +1,5 @@
 %% construct fn in tf and pole-residue form
-load('./iss.mat'); n = size(A,1);
+load('/home/dan1345/CIMTOOL/experiments/modal_truncation/iss.mat'); n = size(A,1);
 [V,Lambda] = eig(full(A)); ewref = diag(Lambda);
 % BB = V\B; CC = C*V;
 %
@@ -8,7 +8,7 @@ w = logspace(-1,3,5000);
 % Nbode(w,H,G); legend('H','G','Location','northoutside','Orientation','horizontal');
 %% setup CIM
 nlevp = Numerics.NLEVPData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
-contour = Numerics.Contour.Ellipse(-0.3+62i,0.05,15,5e3);
+contour = Numerics.Contour.Ellipse(-0.3+62i,0.01,3,5e3);
 CIM = Numerics.CIM(nlevp,contour);
 %
 CIM.SampleData.NLEVP.refew = ewref;
@@ -30,7 +30,7 @@ CIM.SampleData.show_progress = false;
 % plot_cim_response(f,CIM,H,Hrmpl,w,x,y);
 
 %% contour conga
-g = @(x) x - 200*1i*x; gx = linspace(-0.3,0,600);
+g = @(x) x - 200*1i*x; gx = linspace(-0.3,0,3);
 % axes(f.Children(end)); hold on; plot(real(g(gx)),imag(g(gx))); hold off;
 %
 wobj = VideoWriter('cc_iss_3.avi'); wobj.FrameRate = 60; open(wobj);
@@ -43,18 +43,16 @@ for i=1:length(gls)
     CIM.SampleData.Contour.gamma = gls(i);
     %
     nec = length(ewref(CIM.SampleData.Contour.inside(ewref))); CIM.RealizationData.m = nec;
-    CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
-    CIM.compute(); [~,V2,W2,M21,M22] = CIM.ResultData.rtf(nec);
-    Hrmpl = @(z) V2*((M21-z*M22)\W2);
+    if nec ~= 0
+        CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+        CIM.compute(); [~,V2,W2,M21,M22] = CIM.ResultData.rtf(nec);
+        Hrmpl = @(z) V2*((M21-z*M22)\W2);
+    end
     %
     x = linspace(-3,3,150); y = linspace(-5,60,600);
-    clf(f)
-    %axes(f); nboderelerr_surf(H,Hrmpl,x,y); zlim([1e-3,5e1]);
-    %axes(f); nbode_surf(H,x,y); zlim([1e-7,1]);
-    %campos([-12.5,-20,2]);
-    plot_cim_response(f,CIM,H,Hrmpl,w,x,y);
+    clf(f); plot_cim_response(f,CIM,H,Hrmpl,w,x,y);
     % you suffer 1 point of madness
-    fname = strcat(tmpdir,'f',num2str(i)); print('-djpeg','-r200',fname)
+    fname = strcat(tmpdir,'f',num2str(i)); print('-djpeg','-r100',fname)
     writeVideo(wobj,im2frame(imread([fname '.jpg'])));
 end
 close(wobj);

@@ -1,6 +1,6 @@
 function plot_cim_response(f,CIM,H,Hr,w,x,y)
     drawnow nocallbacks;
-    axes(f); subplot(2,2,1);
+    axes(f); subplot(3,1,1);
     % these lines below should probably be moved to a "plot" function in CIM.m
     scatter(real(CIM.SampleData.NLEVP.refew),imag(CIM.SampleData.NLEVP.refew),50,"diamond","MarkerEdgeColor","#E66100","LineWidth",1.5,"DisplayName","$\lambda$");
     hold on;
@@ -14,16 +14,16 @@ function plot_cim_response(f,CIM,H,Hr,w,x,y)
     legend('Interpreter','latex','Location','northoutside','Orientation','horizontal')%,'NumColumns',2);
     xlim([-0.4 0.05]); ylim([-20 80]);
     %
-    subplot(2,2,2);
+    subplot(3,1,2);
     Nbode(w,H,Hr); legend('H','Hr','Location','northoutside','Orientation','horizontal');
     grid;
     %
-    subplot(2,2,3);
+    subplot(3,1,3);
     nboderelerr(H,Hr,w);
     ylim([1e-5,5e1])
     grid;
-    %
-    subplot(2,2,4);
-    nboderelerr_surf(H,Hr,x,y);
-    zlim([1e-3,5e1]); campos([-12.5,-20,40]);
+    %%
+    %subplot(2,2,4);
+    %nboderelerr_surf(H,Hr,x,y);
+    %zlim([1e-3,5e1]); campos([-12.5,-20,40]);
 end
