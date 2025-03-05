@@ -1,5 +1,6 @@
-% cd("/home/dan1345/CIMTOOL/experiments/modal_truncation")
-% addpath("/home/dan1345/CIMTOOL/")
+cd("/home/dan1345/CIMTOOL/experiments/modal_truncation")
+addpath("/home/dan1345/CIMTOOL/")
+parpool("Threads")
 
 %% construct fn in tf form
 load('./iss.mat'); n = size(A,1); [V,Lambda] = eig(full(A)); ewref = diag(Lambda);
@@ -37,17 +38,17 @@ for i=1:length(gx)
         CIM.compute(); [~,V2,W2,M21,M22] = CIM.ResultData.rtf(nec); Hrmpl = @(z) V2*((M21-z*M22)\W2);
         plot_cim_response(f,w,CIM,H,Hrmpl);
     else
-        plot_cim_response(f,w,CIM,H,[],w); sgtitle(f,fprintf("at i=%d, nec was %d\n",i,nec))
+        plot_cim_response(f,w,CIM,H,[]); sgtitle(f,fprintf("at i=%d, nec was %d\n",i,nec))
     end
     exportgraphics(gcf,wobj,'Append',true,'Resolution',100)
 end
 
 function plot_cim_response(f,w,CIM,H,Hr)
     arguments
-        f 
-        w 
-        CIM 
-        H 
+        f
+        w
+        CIM
+        H
         Hr = []
     end
     drawnow nocallbacks;

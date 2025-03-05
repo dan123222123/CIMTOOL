@@ -1,5 +1,6 @@
-% cd("/home/dan1345/CIMTOOL/experiments/modal_truncation")
-% addpath("/home/dan1345/CIMTOOL/")
+cd("/home/dan1345/CIMTOOL/experiments/modal_truncation")
+addpath("/home/dan1345/CIMTOOL/")
+parpool("Threads")
 
 %% construct fn in tf form
 load('./iss.mat'); n = size(A,1); [V,Lambda] = eig(full(A)); ewref = diag(Lambda);
@@ -22,13 +23,13 @@ CIM.SampleData.show_progress = false;
 % xlim(CIM.MainAx,[-1.5 1.5]); ylim(CIM.MainAx,[-125 125]);
 
 %% contour conga
-gx = linspace(2*max(abs(real(ewref)))*s,min(abs(real(ewref)))*s,10);
+gx = linspace(2*max(abs(real(ewref)))*s,min(abs(real(ewref)))*s,500);
 
 f = figure(1); f.Visible = false; f.Position = [100 100 1920 1080];
 % the line along which gamma evolves
 % axes(f.Children(end)); hold on; plot(real(gls),imag(gls)); hold off;
 
-wobj = 'cc_iss_centered.gif'; delete(wobj);
+wobj = sprintf('cc_iss_centered-N%d.gif',CIM.SampleData.Contour.N); delete(wobj);
 for i=1:length(gx)
     clf(f);
     % test if there are ew inside the contour
@@ -39,17 +40,17 @@ for i=1:length(gx)
         CIM.compute(); [~,V2,W2,M21,M22] = CIM.ResultData.rtf(nec); Hrmpl = @(z) V2*((M21-z*M22)\W2);
         plot_cim_response(f,w,CIM,H,Hrmpl);
     else
-        plot_cim_response(f,w,CIM,H,[],w); sgtitle(f,fprintf("at i=%d, nec was %d\n",i,nec))
+        plot_cim_response(f,w,CIM,H,[]); sgtitle(f,fprintf("at i=%d, nec was %d\n",i,nec))
     end
     exportgraphics(gcf,wobj,'Append',true,'Resolution',100)
 end
 
 function plot_cim_response(f,w,CIM,H,Hr)
     arguments
-        f 
-        w 
-        CIM 
-        H 
+        f
+        w
+        CIM
+        H
         Hr = []
     end
     drawnow nocallbacks;
