@@ -19,9 +19,9 @@ p = 15; CIM.SampleData.ell = p; CIM.SampleData.r = p;
 CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
 CIM.RealizationData.K = 4;
 CIM.compute();
-max(Numerics.relres(nlevp.T,CIM.ResultData.ew,CIM.ResultData.ev))
+max(Numerics.relres(nlevp.T,CIM.ResultData.ew,CIM.ResultData.rev))
 %%
 CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
 CIM.RealizationData.K = 4*p;
 CIM.compute();
-max(Numerics.relres(nlevp.T,CIM.ResultData.ew,CIM.ResultData.ev))
+max(Numerics.relres(nlevp.T,CIM.ResultData.ew,CIM.ResultData.rev))
