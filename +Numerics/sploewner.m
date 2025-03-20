@@ -1,4 +1,4 @@
-function [Lambda,V,W,Dbsw,Dssw,D0,D1,Bbb,Cbb] = sploewner(Qlr,Qr,Ql,sigma,z,w,m,K,abstol)
+function [Lambda,V,W,Db,Ds,B,C,X,Sigma,Y] = sploewner(Qlr,Qr,Ql,sigma,z,w,m,K,abstol)
 % Suppose T : C -> nXn matrices is meromorphic on a domain D.
 % The boundary of D is a closed curve in C approximated with {z_k,w_k}
 % nodes and weights associated to a particular quadrature rule.
@@ -62,39 +62,24 @@ for k=1:K
 end
 
 % extract data matrix from D
-D0 = D(1:K*ell,1:K*r);
+Db = D(1:K*ell,1:K*r);
 
 % construct base and shifted data matrix based on sigma and D
 if sigma == Inf
-    D1 = D(1:K*ell,r+1:(K+1)*r);
+    Ds = D(1:K*ell,r+1:(K+1)*r);
 else
-    D0 = D(1:K*ell,r+1:(K+1)*r);
-    D1 = sigma*D(1:K*ell,r+1:(K+1)*r) + D(1:K*ell,1:K*r);
+    Db = D(1:K*ell,r+1:(K+1)*r);
+    Ds = sigma*D(1:K*ell,r+1:(K+1)*r) + D(1:K*ell,1:K*r);
 end
 
-[Drank,X,Sigma,Y,Dbsw] = Numerics.rankdet(D0,abstol);
-
-if Drank < m
-    error("generated rank %d < %d data matrix",Drank,m);
-end
-
-% solve (X'*D1*Y,Sigma) GEP to get eigenvalues of underlying NLEVP in D.
-X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
-M = X'*D1*Y / Sigma; [S,Lambda] = eig(M); Lambda = diag(Lambda);
-
-% recover right eigenvectors from right-sided samples
-Bbb = zeros(size(Ml,1)*K,size(Ml,2));
-Cbb = zeros(size(Mr,1),size(Mr,2)*K);
+B = zeros(size(Ml,1)*K,size(Ml,2));
+C = zeros(size(Mr,1),size(Mr,2)*K);
 for i=1:K
-    Bbb((i-1)*size(Ml,1)+1:i*size(Ml,1),:) = Ml(:,:,i);
-    Cbb(:,(i-1)*size(Mr,2)+1:i*size(Mr,2)) = Mr(:,:,i);
+    B((i-1)*size(Ml,1)+1:i*size(Ml,1),:) = Ml(:,:,i);
+    C(:,(i-1)*size(Mr,2)+1:i*size(Mr,2)) = Mr(:,:,i);
 end
-V = Cbb*Y*(Sigma\S); W = S\(X'*Bbb);
 
-% shifted singular values
-Dssw = svd(D1);
-Dssw = Dssw / Dssw(1);
-
+[Lambda,V,W,X,Sigma,Y] = Numerics.realize(m,Db,Ds,B,C,abstol);
 % END NUMERICS
 
 end

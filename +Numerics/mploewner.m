@@ -1,4 +1,4 @@
-function [Lambda,V,W,Lbsw,Lssw,Lb,Ls,B,C] = mploewner(Ql,Qr,theta,sigma,L,R,z,w,m,abstol)
+function [Lambda,V,W,Db,Ds,B,C,X,Sigma,Y] = mploewner(Ql,Qr,theta,sigma,L,R,z,w,m,abstol)
 % Suppose T : C -> nXn matrices is meromorphic on a domain D.
 % The boundary of D is a closed curve in C approximated with {z_k,w_k}
 % nodes and weights associated to a particular quadrature rule.
@@ -41,7 +41,7 @@ assert(elltheta > 0 && rsigma > 0, "# of left/right shifts should be > 0");
 % BEGIN NUMERICS
 % allocate left/right data and base/shifted Loewner matrices
 B = zeros(elltheta,n); C = zeros(n,rsigma);
-Lb = zeros(elltheta,rsigma); Ls = zeros(elltheta,rsigma);
+Db = zeros(elltheta,rsigma); Ds = zeros(elltheta,rsigma);
 
 % pre-construct cyclical probing matrices
 RR = zeros(n,elltheta); LL = zeros(n,rsigma);
@@ -64,27 +64,12 @@ for i=1:elltheta
     for j=1:rsigma
         % ldir = mod(i-1,Lsize)+1; rdir = mod(j-1,Rsize)+1;
         % bb = B(i,:)*R(:,rdir); cc = L(:,ldir)'*C(:,j);
-        Lb(i,j) = (BB(i,j) - CC(i,j))/(theta(i)-sigma(j));
-        Ls(i,j) = (theta(i)*BB(i,j) - sigma(j)*CC(i,j))/(theta(i)-sigma(j));
+        Db(i,j) = (BB(i,j) - CC(i,j))/(theta(i)-sigma(j));
+        Ds(i,j) = (theta(i)*BB(i,j) - sigma(j)*CC(i,j))/(theta(i)-sigma(j));
     end
 end
 
-[Lbrank,X,Sigma,Y,Lbsw] = Numerics.rankdet(Lb,abstol);
-
-if Lbrank < m
-    error("generated rank %d < %d data matrix",Lbrank,m);
-end
-
-% solve (X'*D1*Y,Sigma) GEP to get eigenvalues of underlying NLEVP in D.
-X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
-M = X'*Ls*Y / Sigma;
-[S,Lambda] = eig(M);
-Lambda = diag(Lambda);
-V = C*Y*(Sigma\S); % recover right eigenvectors from right-sided samples
-W = S\(X'*B);
-
-Lssw = svd(Ls);
-Lssw = Lssw / Lssw(1);
+[Lambda,V,W,X,Sigma,Y] = Numerics.realize(m,Db,Ds,B,C,abstol);
 % END NUMERICS
 
 end

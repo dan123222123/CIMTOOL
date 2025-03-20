@@ -1,9 +1,10 @@
-function [Lambda,V] = realize(m,Db,Ds,C)
-    [X,Sigma,Y] = svd(Db,"matrix");
-    X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
-    % [S,Lambda] = eig(X'*Ds*Y/Sigma);
+function [Lambda,V,W,Xf,Sigmaf,Yf] = realize(m,Db,Ds,BB,CC,abstol)
+    [Dbrank,Xf,Sigmaf,Yf] = Numerics.rankdet(Db,abstol);
+    if Dbrank < m
+        error("generated rank %d < %d data matrix",Dbrank,m);
+    end
+    X=Xf(:,1:m); Sigma=Sigmaf(1:m,1:m); Y=Yf(:,1:m);
     [S,Lambda] = eig(X'*Ds*Y,Sigma);
-    Lambda = diag(Lambda);
-    V = C*Y*(Sigma\S);
+    Lambda = diag(Lambda); V = CC*Y*S; W = (Sigma*S)\(X'*BB);
 end
 

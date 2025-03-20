@@ -6,11 +6,12 @@ classdef ResultData < handle
         Ds      = missing
         B       = missing
         C       = missing
+        X       = missing
+        Sigma   = missing
+        Y       = missing
         ew      = missing % computed eigenvalues
         rev     = missing % computed right eigenvectors
         lev     = missing % computed left eigenvectors
-        Dbsw    = missing % singular values of base data matrix
-        Dssw    = missing % singular values of base data matrix
         MainAx  = missing
         SvAx    = missing
         loaded  = false
@@ -39,8 +40,7 @@ classdef ResultData < handle
             addlistener(obj,'SvAx','PostSet',@obj.update_sv_ax);
 
             addlistener(obj,'ew','PostSet',@obj.update_main_ax);
-            addlistener(obj,'Db','PostSet',@obj.update_sv_ax);
-            addlistener(obj,'Ds','PostSet',@obj.update_sv_ax);
+            addlistener(obj,'Sigma','PostSet',@obj.update_sv_ax);
         end
 
         function value = get.Dbsize(obj)
@@ -51,29 +51,28 @@ classdef ResultData < handle
             value = size(obj.Ds);
         end
 
-        function [H,V,W,M1,M2] = rtf(obj,m,abstol)
+        function [Lambda,V,W] = rtfm(obj,m,abstol)
             arguments
                 obj
                 m = Inf
                 abstol = NaN
             end
-            [X, Sigma, Y] = svd(obj.Db,"matrix");
-            if isnan(abstol)
-                tol = max(size(Sigma))*eps(Sigma(1,1));
-            else
-                tol = abstol;
+            if m == length(obj.ew)
+                Lambda = diag(obj.ew); V = obj.rev; W = obj.lev;
+            else % need to do realization for m
+                if isnan(abstol)
+                    tol = max(size(obj.Sigma))*eps(obj.Sigma(1,1));
+                else
+                    tol = abstol;
+                end
+                r = sum(diag(obj.Sigma)>=tol);
+                if r < m
+                    error("Db has numerical rank %d < %d. Cannot recover TF!",r,m);
+                end
+                X=obj.X(:,1:m); Sigma=obj.Sigma(1:m,1:m); Y=obj.Y(:,1:m);
+                [S,Lambda] = eig(X'*obj.Ds*Y,Sigma);
+                Lambda = diag(Lambda); V = obj.C*Y*(Sigma\S); W = S\(X'*obj.B);
             end
-            r = sum(diag(Sigma)>=tol); r = min(m,r);
-            X=X(:,1:r); Sigma=Sigma(1:r,1:r); Y=Y(:,1:r);
-            V = obj.C*Y; W = X'*obj.B; M1 = X'*obj.Ds*Y; M2 = Sigma;
-
-            switch(obj.ComputationalMode)
-                case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
-                    H = @(z) V*((z*M2 - M1) \ W);
-                case Numerics.ComputationalMode.MPLoewner
-                    H = @(z) V*((M1 - z*M2) \ W);
-            end
-
         end
 
         function plot_main(obj)
@@ -86,13 +85,10 @@ classdef ResultData < handle
                 obj.cla_main();
             end
             if ~any(ismissing(ax))
-                % chold = ishold(ax);
                 hold(ax,"on");
                 if ~ismissing(obj.ew)
                     obj.MainAxphandles(end+1) = scatter(ax,real(obj.ew),imag(obj.ew),30,"Tag","computed_eigenvalues","MarkerFaceColor","#1AFF1A","DisplayName","Computed Eigenvalues",'Linewidth',1.5);
                 end
-                % hold(ax,chold);
-                % hold(ax,"off");
             end
             obj.MainAx = ax;
         end
@@ -106,23 +102,15 @@ classdef ResultData < handle
             if ~isempty(obj.SvAxphandles)
                 obj.cla_sv();
             end
-            % tstring = "";
             if ~any(ismissing(ax))
                 chold = ishold(ax);
-                if ~all(ismissing(obj.Db))
-                    % obj.Dbsw = svd(obj.Db); obj.Dbsw = obj.Dbsw / obj.Dbsw(1);
-                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(obj.Dbsw),obj.Dbsw,"->","MarkerSize",10,'DisplayName','Base Data Matrix (Db)','Color',"r");
-                    % tstring = strcat(tstring,sprintf("size(Db) = %d, %d",obj.Dbsize(1),obj.Dbsize(2)));
+                if ~all(ismissing(obj.Sigma))
+                    Dbsw = diag(obj.Sigma) / obj.Sigma(1,1);
+                    obj.SvAxphandles(end+1) = semilogy(ax,1:length(Dbsw),Dbsw,"->","MarkerSize",10,'DisplayName','Base Data Matrix (Db)','Color',"r");
+                    ax.XLim = [0,length(Dbsw)+1];
                 end
-                % this should be disabled unless it's needed because it can cause a lot of slow-down
-                % if ~anymissing(obj.Ds) && all(size(obj.Db) == size(obj.Ds))
-                %     Dbscsw = svd([obj.Db;obj.Ds]); Dbscsw = Dbscsw / Dbscsw(1);
-                %     obj.SvAxphandles(end+1) = semilogy(ax,1:length(Dbscsw),Dbscsw,"->","MarkerSize",10,'DisplayName','[Db; Ds]','Color',"b");
-                % end
-                ax.XLim = [0,max(length(obj.Dbsw),length(obj.Dssw))+1];
                 hold(ax,chold);
             end
-            % title(ax,tstring);
             obj.SvAx = ax;
         end
 
