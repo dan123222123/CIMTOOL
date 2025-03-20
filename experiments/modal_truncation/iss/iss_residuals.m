@@ -1,0 +1,99 @@
+sdir = "/home/dfolescu/version_control/git/math/code/packages/CIMTOOL/experiments/modal_truncation/iss/animations_v2/";
+issloc = "/home/dfolescu/version_control/git/math/code/packages/CIMTOOL/experiments/modal_truncation/iss/iss.mat";
+%% construct fn in tf form
+load(issloc); n = size(A,1); [V,Lambda] = eig(full(A)); ewref = diag(Lambda);
+H = @(z) full(C*((z*speye(n) - A) \ B)); w = logspace(-1,3,5000);
+
+%% setup CIM
+nlevp = Numerics.NLEVPData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
+s = 1.2;
+contour = Numerics.Contour.Ellipse(0,2*max(abs(real(ewref)))*s,max(abs(imag(ewref)))*s,8e3);
+tc =      Numerics.Contour.Ellipse(0,2*max(abs(real(ewref)))*s,max(abs(imag(ewref)))*s,8e3);
+CIM = Numerics.CIM(nlevp,contour);
+%
+CIM.SampleData.NLEVP.refew = ewref;
+CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+CIM.SampleData.ell = 3; CIM.SampleData.r = 3; CIM.RealizationData.K = 1000;
+CIM.SampleData.show_progress = false;
+
+%% CIMTOOl investigation (if necessary)
+% c = CIMTOOL(CIM); daspect(CIM.MainAx,'auto');
+% xlim(CIM.MainAx,[-1.5 1.5]); ylim(CIM.MainAx,[-125 125]);
+
+%% single frame test
+f = figure(1); %f.Position = [100 100 1920 1080];
+tc.alpha = 2*max(abs(real(ewref)))*s; nec = length(ewref(tc.inside(ewref)));
+% compute and plot realized tf response
+if nec ~= 0
+    CIM.SampleData.Contour.alpha = 2*max(abs(real(ewref)))*s; CIM.RealizationData.m = nec;
+    CIM.compute(); [~,V2,W2,M21,M22] = CIM.ResultData.rtf(nec);
+    M = M21 / M22; [S,Lambda] = eig(M); Lambda = diag(Lambda);
+    V = V2*(M22\S); W = S\W2;
+    % Hrmpl = @(z) V2*((M21-z*M22)\W2);
+    Hrmpl = @(z) V*((diag(Lambda)-z*eye(nec,nec))\W);
+    nres = nresidues(V,W); nrres = Numerics.relres(H,CIM.ResultData.ew,CIM.ResultData.rev);
+    plot_cim_response(f,w,CIM,H,Hrmpl);
+else
+    plot_cim_response(f,w,CIM,H,[]); sgtitle(f,fprintf("at i=%d, nec was %d\n",i,nec))
+end
+
+%% contour conga
+gx = linspace(2*max(abs(real(ewref)))*s,min(abs(real(ewref)))*s,500);
+
+f = figure(1); f.Visible = false; f.Position = [100 100 1920 1080];
+
+wobj = sprintf(strcat(sdir,'cc_iss_centered-N%d.gif'),CIM.SampleData.Contour.N); delete(wobj);
+for i=1:length(gx)
+    clf(f);
+    % test if there are ew inside the contour
+    tc.alpha = gx(i); nec = length(ewref(tc.inside(ewref)));
+    % compute and plot realized tf response
+    if nec ~= 0
+        CIM.SampleData.Contour.alpha = gx(i); CIM.RealizationData.m = nec;
+        CIM.compute(); [~,V2,W2,M21,M22] = CIM.ResultData.rtf(nec); Hrmpl = @(z) V2*((M21-z*M22)\W2);
+        plot_cim_response(f,w,CIM,H,Hrmpl);
+    else
+        plot_cim_response(f,w,CIM,H,[]); sgtitle(f,fprintf("at i=%d, nec was %d\n",i,nec))
+    end
+    exportgraphics(gcf,wobj,'Append',true,'Resolution',100)
+end
+
+function plot_cim_response(f,w,CIM,H,Hr)
+    arguments
+        f
+        w
+        CIM
+        H
+        Hr = []
+    end
+    drawnow nocallbacks;
+    axes(f); tiledlayout(2,3); nexttile(1,[2 1]);
+    % these lines below should probably be moved to a "plot" function in CIM.m
+    scatter(real(CIM.SampleData.NLEVP.refew),imag(CIM.SampleData.NLEVP.refew),50,"diamond","MarkerEdgeColor","#E66100","LineWidth",1.5,"DisplayName","$\lambda$");
+    hold on;
+    scatter(real(CIM.ResultData.ew),imag(CIM.ResultData.ew),15,"MarkerFaceColor","#1AFF1A",'DisplayName',"$\hat{\lambda}$");
+    hold on;
+    CIM.SampleData.Contour.plot(gca); hold on;
+    CIM.RealizationData.plot(gca); hold on;
+    hold off; grid;
+    title(sprintf("Complex Plane (%d ew inside contour)",CIM.RealizationData.m));
+    xlabel("$\bf{R}$",'Interpreter','latex'); ylabel("$i\bf{R}$",'Interpreter','latex');
+    legend('Interpreter','latex','Location','northoutside','Orientation','horizontal')%,'NumColumns',2);
+    xlim([-0.4 0.05]); ylim([-100 100]);
+    %
+    nexttile(2);
+    if ~isempty(Hr)
+        Nbode(w,H,Hr); legend('H','Hr','Location','northoutside','Orientation','horizontal');
+        ylim([1e-10,1]); grid;
+        %
+        nexttile(5);
+        nboderelerr(H,Hr,w);
+        ylim([1e-5,5e1]);
+        grid;
+    else
+        Nbode(w,H); legend('H','Location','northoutside','Orientation','horizontal');
+        ylim([1e-10,1]); grid;
+        nexttile(5);
+    end
+
+end
