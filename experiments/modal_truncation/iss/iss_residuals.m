@@ -1,8 +1,8 @@
 scdir = strcat(fileparts(mfilename("fullpath")),"/");
-issloc = strcat(scdir,"iss.mat");
+issloc = strcat(scdir,"iss.mat"); load(issloc);
 sdir = strcat(scdir,"animations_v2/"); mkdir(sdir);
 %% construct fn in tf form
-load(issloc); n = size(A,1); [V,Lambda] = eig(full(A)); ewref = diag(Lambda);
+n = size(A,1); [V,Lambda] = eig(full(A)); ewref = diag(Lambda);
 H = @(z) full(C*((z*speye(n) - A) \ B)); w = logspace(-1,3,500);
 %% setup CIM
 nlevp = Numerics.NLEVPData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
@@ -16,8 +16,8 @@ CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
 CIM.SampleData.ell = 3; CIM.SampleData.r = 3; CIM.RealizationData.K = 1000;
 CIM.SampleData.show_progress = false;
 %% CIMTOOl investigation (if necessary)
-% c = CIMTOOL(CIM); daspect(CIM.MainAx,'auto');
-% xlim(CIM.MainAx,[-1.5 1.5]); ylim(CIM.MainAx,[-125 125]);
+c = CIMTOOL(CIM); daspect(CIM.MainAx,'auto');
+xlim(CIM.MainAx,[-1.5 1.5]); ylim(CIM.MainAx,[-125 125]);
 lims = {{[-0.4 0.05],[-100 100]},{[],[1e-10 1]},{[],[eps 5e1]},{[eps,5e1],[eps 5e1]}};
 tol = 10^-1;
 

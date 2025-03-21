@@ -1,15 +1,15 @@
 classdef SampleData < handle
 
     properties
-        Ql      (:,:,:) double = missing
-        Qr      (:,:,:) double = missing
-        Qlr     (:,:,:) double = missing
+        Ql      (:,:,:) double = []
+        Qr      (:,:,:) double = []
+        Qlr     (:,:,:) double = []
         % s* properties can be used in sample to re-use any of the info in
         % Ql/Qr/Qlr if info was valid during the prior sampling
-        sT = missing
-        squad = missing
-        sL = missing
-        sR = missing
+        sT = []
+        squad = []
+        sL = []
+        sR = []
     end
     
     properties (SetObservable)
@@ -19,7 +19,7 @@ classdef SampleData < handle
         Rf       (:,:) double
         loaded = false
         show_progress = true
-        ax = missing
+        ax = []
     end
 
     properties (SetObservable,Access = public)
@@ -72,10 +72,10 @@ classdef SampleData < handle
                 end
                 obj.ell = min(obj.ell,n);
                 obj.r = min(obj.r,n);
-                obj.sT = missing;
-                obj.sL = missing;
-                obj.sR = missing;
-                obj.squad = missing;
+                obj.sT = [];
+                obj.sL = [];
+                obj.sR = [];
+                obj.squad = [];
                 obj.loaded = false;
             end
         end
@@ -133,7 +133,7 @@ classdef SampleData < handle
         end
 
         function compute(obj)
-            if ismissing(obj.Contour)
+            if isempty(obj.Contour)
                 error("Contour data required to sample %s. Please set a contour and try again.",obj.NLEVP.name);
             end
             if ~obj.NLEVP.loaded

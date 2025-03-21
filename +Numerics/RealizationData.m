@@ -8,7 +8,7 @@ classdef RealizationData < handle
         ShiftScale = 1.25;
         tol = NaN
         loaded = false
-        ax = missing
+        ax = []
     end
 
     properties
@@ -22,12 +22,12 @@ classdef RealizationData < handle
                 theta = NaN
                 sigma = Inf
                 mode = Numerics.ComputationalMode.Hankel
-                ax = missing
+                ax = []
             end
             obj.InterpolationData = Numerics.InterpolationData(theta,sigma);
             obj.ComputationalMode = mode;
             obj.ax = ax;
-            if ~ismissing(ax)
+            if ~isempty(ax)
                 obj.plot(ax)
             end
             %addlistener(obj,'ComputationalMode','PostSet',@obj.RealizationDataChanged);
@@ -55,14 +55,14 @@ classdef RealizationData < handle
                 obj
                 ax = obj.ax
             end
-            if ismissing(ax)
+            if isempty(ax)
                 ax = gca();
             end
             if ~isgraphics(ax), ax = axes(gcf); end
             if ~isempty(obj.phandles)
                 obj.cla();
             end
-            if ~any(ismissing(obj.ax))
+            if ~isempty(obj.ax)
                 % chold = ishold(ax);
                 theta = obj.InterpolationData.theta;
                 sigma = obj.InterpolationData.sigma;
@@ -93,7 +93,7 @@ classdef RealizationData < handle
 
         function update_plot(obj,~,~)
             obj.cla();
-            if ~ismissing(obj.ax)
+            if ~isempty(obj.ax)
                 obj.plot(obj.ax);
             end
         end

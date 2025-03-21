@@ -8,8 +8,8 @@ classdef CIM < handle
 
     properties (SetObservable)
         DataDirtiness = 2
-        MainAx = missing
-        SvAx = missing
+        MainAx = []
+        SvAx = []
         auto = false;
         auto_compute_samples = false;
         auto_compute_realization = false;
@@ -24,8 +24,8 @@ classdef CIM < handle
             arguments
                 nep 
                 contour 
-                MainAx = missing
-                SvAx = missing
+                MainAx = []
+                SvAx = []
             end
             obj.SampleData = Numerics.SampleData(nep,contour);
             % default to Hankel realization
@@ -33,7 +33,7 @@ classdef CIM < handle
             obj.ResultData = Numerics.ResultData(MainAx,SvAx);
             obj.MainAx = MainAx;
             obj.SvAx = SvAx;
-            obj.update_plot(missing,missing);
+            obj.update_plot([],[]);
             addlistener(obj.SampleData,'loaded','PostSet',@obj.checkdirty);
             addlistener(obj.RealizationData,'loaded','PostSet',@obj.checkdirty);
             %
@@ -50,11 +50,11 @@ classdef CIM < handle
 
         function updateContourListeners(obj,~,~)
             addlistener(obj.SampleData.Contour,'z','PostSet',@obj.update_shifts);
-            obj.update_shifts(missing,missing)
+            obj.update_shifts([],[])
         end
 
         function update_shifts(obj,src,~)
-            if (ismissing(src) || src.Name == "z" || src.Name == "K") && ~obj.auto_update_shifts
+            if (isempty(src) || src.Name == "z" || src.Name == "K") && ~obj.auto_update_shifts
                 return;
             end
             switch obj.RealizationData.ComputationalMode
@@ -69,10 +69,10 @@ classdef CIM < handle
 
         function NLEVPChanged(obj,~,~)
             if obj.SampleData.NLEVP.loaded
-                obj.ResultData.ew = missing;
-                obj.ResultData.ev = missing;
-                obj.ResultData.Db = missing;
-                obj.ResultData.Ds = missing;
+                obj.ResultData.ew = [];
+                obj.ResultData.ev = [];
+                obj.ResultData.Db = [];
+                obj.ResultData.Ds = [];
             end
         end
 
@@ -89,7 +89,7 @@ classdef CIM < handle
         end
 
         function update_plot(obj,~,~)
-            if ~ismissing(obj.MainAx)
+            if ~isempty(obj.MainAx)
                 ax = obj.MainAx;
                 hold(ax,"on");
                 obj.SampleData.ax = ax;
@@ -97,7 +97,7 @@ classdef CIM < handle
                 obj.ResultData.MainAx = ax;
             end
 
-            if ~ismissing(obj.SvAx)
+            if ~isempty(obj.SvAx)
                 ax = obj.SvAx;
                 hold(ax,"on");
                 obj.ResultData.SvAx = ax;
@@ -109,13 +109,13 @@ classdef CIM < handle
                 obj.DataDirtiness = 2;
                 if obj.auto_compute_samples
                     obj.SampleData.compute();
-                    obj.checkdirty(missing,missing);
+                    obj.checkdirty([],[]);
                 end
             elseif ~obj.RealizationData.loaded
                 obj.DataDirtiness = 1;
                 if obj.auto_compute_realization
                     obj.computeRealization();
-                    obj.checkdirty(missing,missing);
+                    obj.checkdirty([],[]);
                 end
             else
                 obj.DataDirtiness = 0;

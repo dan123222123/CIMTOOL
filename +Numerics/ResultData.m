@@ -1,19 +1,19 @@
 classdef ResultData < handle
     
     properties (SetObservable)
-        ComputationalMode = missing
-        Db      = missing
-        Ds      = missing
-        B       = missing
-        C       = missing
-        X       = missing
-        Sigma   = missing
-        Y       = missing
-        ew      = missing % computed eigenvalues
-        rev     = missing % computed right eigenvectors
-        lev     = missing % computed left eigenvectors
-        MainAx  = missing
-        SvAx    = missing
+        ComputationalMode = []
+        Db      = []
+        Ds      = []
+        B       = []
+        C       = []
+        X       = []
+        Sigma   = []
+        Y       = []
+        ew      = [] % computed eigenvalues
+        rev     = [] % computed right eigenvectors
+        lev     = [] % computed left eigenvectors
+        MainAx  = []
+        SvAx    = []
         loaded  = false
     end
 
@@ -31,8 +31,8 @@ classdef ResultData < handle
 
         function obj = ResultData(MainAx,SvAx)
             arguments
-                MainAx = missing
-                SvAx = missing
+                MainAx = []
+                SvAx = []
             end
             obj.MainAx = MainAx;
             obj.SvAx = SvAx;
@@ -77,16 +77,16 @@ classdef ResultData < handle
 
         function plot_main(obj)
             ax = obj.MainAx;
-            if ismissing(ax)
+            if isempty(ax)
                 ax = gca();
             end
             if ~isgraphics(ax), ax = axes(gcf); end
             if ~isempty(obj.MainAxphandles)
                 obj.cla_main();
             end
-            if ~any(ismissing(ax))
+            if ~isempty(ax)
                 hold(ax,"on");
-                if ~ismissing(obj.ew)
+                if ~isempty(obj.ew)
                     obj.MainAxphandles(end+1) = scatter(ax,real(obj.ew),imag(obj.ew),30,"Tag","computed_eigenvalues","MarkerFaceColor","#1AFF1A","DisplayName","Computed Eigenvalues",'Linewidth',1.5);
                 end
             end
@@ -95,16 +95,16 @@ classdef ResultData < handle
 
         function plot_sv(obj)
             ax = obj.SvAx;
-            if ismissing(ax)
+            if isempty(ax)
                 ax = gca();
             end
             if ~isgraphics(ax), ax = axes(gcf); end
             if ~isempty(obj.SvAxphandles)
                 obj.cla_sv();
             end
-            if ~any(ismissing(ax))
+            if ~isempty(ax)
                 chold = ishold(ax);
-                if ~all(ismissing(obj.Sigma))
+                if ~isempty(obj.Sigma)
                     Dbsw = diag(obj.Sigma) / obj.Sigma(1,1);
                     obj.SvAxphandles(end+1) = semilogy(ax,1:length(Dbsw),Dbsw,"->","MarkerSize",10,'DisplayName','Base Data Matrix (Db)','Color',"r");
                     ax.XLim = [0,length(Dbsw)+1];
@@ -135,14 +135,14 @@ classdef ResultData < handle
 
         function update_main_ax(obj,~,~)
             obj.cla_main();
-            if ~ismissing(obj.MainAx)
+            if ~isempty(obj.MainAx)
                 obj.plot_main();
             end
         end
 
         function update_sv_ax(obj,~,~)
             obj.cla_sv();
-            if ~ismissing(obj.SvAx)
+            if ~isempty(obj.SvAx)
                 obj.plot_sv();
             end
         end

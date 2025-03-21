@@ -1,17 +1,17 @@
 classdef NLEVPData < handle
 
     properties (SetObservable)
-        T = missing
-        coeffs = missing
-        name = missing
-        helpstr = missing
+        T = []
+        coeffs = []
+        name = []
+        helpstr = []
         loaded = false
         compute_reference = true
         plot_reference = true
         sample_mode = Numerics.SampleMode.Inverse
-        refew = missing
-        refev = missing
-        ax = missing
+        refew = []
+        refev = []
+        ax = []
     end
 
     properties (Dependent)
@@ -19,7 +19,7 @@ classdef NLEVPData < handle
     end
     
     properties
-        arglist = missing
+        arglist = []
         phandles = gobjects(0);
     end
     
@@ -27,20 +27,20 @@ classdef NLEVPData < handle
 
         function obj = NLEVPData(T,name,arglist,ax)
             arguments
-                T = missing
-                name = missing
-                arglist = missing
-                ax = missing
+                T = []
+                name = []
+                arglist = []
+                ax = []
             end
             obj.T = T;
             obj.name = name;
             obj.arglist = arglist;
-            if ~any(ismissing(T))
+            if ~isempty(T)
                 obj.loaded = true;
-            elseif any(ismissing(T)) && ~any(ismissing(name))
+            elseif isempty(T) && ~isempty(name)
                 obj.loadNLEVPpack(name,arglist)
             end
-            if ~ismissing(ax)
+            if ~isempty(ax)
                 obj.plot(ax)
             end
             addlistener(obj,'coeffs','PostSet',@obj.computeReference);
@@ -73,7 +73,7 @@ classdef NLEVPData < handle
                 obj
                 ax = obj.ax
             end
-            if ismissing(ax)
+            if isempty(ax)
                 ax = gca();
             end
             if ~isgraphics(ax), ax = axes(gcf); end
@@ -81,7 +81,7 @@ classdef NLEVPData < handle
                 obj.cla();
             end
             if obj.plot_reference
-                if ~any(ismissing(obj.ax)) && ~any(ismissing(obj.refew))
+                if ~isempty(obj.ax) && ~isempty(obj.refew)
                     obj.phandles(end+1) = scatter(obj.ax,real(obj.refew),imag(obj.refew),100,"diamond","MarkerEdgeColor","#E66100","LineWidth",1.5,'Tag',"reference_eigenvalues","DisplayName","Reference Eigenvalues");
                 end
             end
@@ -90,13 +90,13 @@ classdef NLEVPData < handle
 
         function update_plot(obj,~,~)
             obj.cla();
-            if ~ismissing(obj.ax)
+            if ~isempty(obj.ax)
                 obj.plot(obj.ax);
             end
         end
 
         function computeReference(obj,~,~)
-            if obj.compute_reference && ~anymissing(obj.coeffs) && any(contains(nlevp('query',obj.name),'pep'))
+            if obj.compute_reference && ~isempty(obj.coeffs) && any(contains(nlevp('query',obj.name),'pep'))
                 obj.refew = polyeig(obj.coeffs{:});
             end
         end
@@ -105,7 +105,7 @@ classdef NLEVPData < handle
             arguments
                 obj 
                 probstr 
-                arglist = missing
+                arglist = []
             end
 
             obj.clearNLEVP();
@@ -123,9 +123,9 @@ classdef NLEVPData < handle
                 obj.helpstr = help(sprintf('%sprivate/%s', nlevp_home, probstr));
             end
 
-            % now deal with any NLEVP arguments, if not missing
+            % now deal with any NLEVP arguments, if not empty
             allfinite=true;
-            if ismissing(arglist)
+            if isempty(arglist)
                 [obj.coeffs,~,obj.T] = nlevp(probstr);
             else
                 strarglist = split(arglist,",");
@@ -155,7 +155,7 @@ classdef NLEVPData < handle
             if ~allfinite
                 warndlg("One or more of passed NLEVP parameters is not finite. Please ensure that the passed argument list is correct!")
             end
-            obj.computeReference(missing,missing);
+            obj.computeReference([],[]);
             obj.loaded = true;
         end
 
@@ -165,12 +165,12 @@ classdef NLEVPData < handle
 
         function clearNLEVP(obj)
             obj.loaded = false;
-            obj.T = missing;
-            obj.name = missing;
-            obj.arglist = missing;
-            obj.helpstr = missing;
-            obj.refew = missing;
-            obj.refev = missing;
+            obj.T = [];
+            obj.name = [];
+            obj.arglist = [];
+            obj.helpstr = [];
+            obj.refew = [];
+            obj.refev = [];
         end
 
     end
