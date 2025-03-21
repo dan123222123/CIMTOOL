@@ -90,18 +90,36 @@ classdef CIM < handle
 
         function update_plot(obj,~,~)
             if ~isempty(obj.MainAx)
-                ax = obj.MainAx;
-                hold(ax,"on");
-                obj.SampleData.ax = ax;
-                obj.RealizationData.ax = ax;
-                obj.ResultData.MainAx = ax;
+                ax = obj.MainAx; hold(ax,"on");
+                obj.SampleData.ax = ax; hold(ax,"on");
+                obj.RealizationData.ax = ax; hold(ax,"on");
+                obj.ResultData.MainAx = ax; hold(ax,"off");
             end
 
             if ~isempty(obj.SvAx)
-                ax = obj.SvAx;
-                hold(ax,"on");
-                obj.ResultData.SvAx = ax;
+                ax = obj.SvAx; hold(ax,"on");
+                obj.ResultData.SvAx = ax; hold(ax,"off");
             end
+        end
+
+        function plot(obj)
+
+            ew = obj.ResultData.ew; refew = obj.SampleData.NLEVP.refew;
+
+            if ~isempty(refew)
+                scatter(real(refew),imag(refew),50,"diamond","MarkerEdgeColor","#E66100","LineWidth",1.5,"DisplayName","$\lambda$"); hold on;
+            end
+            if ~isempty(ew)
+                scatter(real(ew),imag(ew),15,"MarkerFaceColor","#1AFF1A",'DisplayName',"$\hat{\lambda}$"); hold on;
+            end
+            obj.SampleData.Contour.plot(gca); hold on;
+            obj.RealizationData.plot(gca); hold on;
+            grid;
+            title(sprintf("Complex Plane (%d reference eigenvalues inside contour)",obj.RealizationData.m));
+            xlabel("$\bf{R}$",'Interpreter','latex'); ylabel("$i\bf{R}$",'Interpreter','latex');
+            legend('Interpreter','latex','Location','northoutside','Orientation','horizontal')
+            hold off
+            
         end
 
         function checkdirty(obj,~,~)

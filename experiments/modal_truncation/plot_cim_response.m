@@ -11,19 +11,8 @@ function plot_cim_response(f,w,CIM,H,Hr,V,W,tol,lims)
         lims = {{[],[]},{[],[]},{[],[]},{[],[]}}
     end
     drawnow nocallbacks;
-    axes(f); tiledlayout(2,3); nexttile(1,[2 1]);
-    % these lines below should probably be moved to a "plot" function in CIM.m
-    scatter(real(CIM.SampleData.NLEVP.refew),imag(CIM.SampleData.NLEVP.refew),50,"diamond","MarkerEdgeColor","#E66100","LineWidth",1.5,"DisplayName","$\lambda$");
-    hold on;
-    scatter(real(CIM.ResultData.ew),imag(CIM.ResultData.ew),15,"MarkerFaceColor","#1AFF1A",'DisplayName',"$\hat{\lambda}$");
-    hold on;
-    CIM.SampleData.Contour.plot(gca); hold on;
-    CIM.RealizationData.plot(gca); hold on;
-    hold off; grid;
-    title(sprintf("Complex Plane (%d ew inside contour)",CIM.RealizationData.m));
-    xlabel("$\bf{R}$",'Interpreter','latex'); ylabel("$i\bf{R}$",'Interpreter','latex');
-    legend('Interpreter','latex','Location','northoutside','Orientation','horizontal')%,'NumColumns',2);
-    limsetter(lims{1}); grid;
+    axes(f); tiledlayout(2,3); nexttile(1,[2 1]); CIM.plot();
+    limsetter(lims{1});
     %
     nexttile(2);
     if ~isempty(Hr)
