@@ -1,4 +1,4 @@
-classdef NLEVPData < handle
+classdef NLEVPData < matlab.mixin.Copyable
 
     properties (SetObservable)
         T = []
@@ -85,7 +85,6 @@ classdef NLEVPData < handle
                     obj.phandles(end+1) = scatter(obj.ax,real(obj.refew),imag(obj.refew),100,"diamond","MarkerEdgeColor","#E66100","LineWidth",1.5,'Tag',"reference_eigenvalues","DisplayName","Reference Eigenvalues");
                 end
             end
-            obj.ax = ax;
         end
 
         function update_plot(obj,~,~)

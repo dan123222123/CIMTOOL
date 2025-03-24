@@ -1,4 +1,4 @@
-classdef Quad < handle
+classdef Quad < matlab.mixin.Copyable
     % Quad Generic contour
     %   Prototype/minimal contour specification, requiring only a
     %   quadrature and associated weights.
@@ -10,7 +10,7 @@ classdef Quad < handle
     properties (SetObservable)
         z (1,:) double = NaN        % quadrature nodes
         w (1,:) double = NaN        % quadrature weights
-        ax             = missing    % axis to manage plots on
+        ax             = []    % axis to manage plots on
     end
 
     methods
@@ -36,16 +36,17 @@ classdef Quad < handle
             arguments
                 z
                 w
-                ax = missing
+                ax = []
             end
             obj.z = z;
             obj.w = w;
             obj.ax = ax;
             obj.phandles = gobjects(0);
-            if ~ismissing(ax)
-                obj.plot(ax)
+            if ~isempty(ax)
+                obj.plot(ax); obj.ax = ax; obj.update_plot();
             end
             addlistener(obj,'z','PostSet',@obj.update_plot);
+            addlistener(obj,'ax','PostSet',@obj.update_plot);
         end
 
         function plot(obj,ax)
@@ -53,10 +54,10 @@ classdef Quad < handle
                 obj
                 ax = obj.ax
             end
-            if ismissing(ax)
-                ax = gca();
+            if isempty(ax)
+                ax = gca;
             end
-            if ~isgraphics(ax), ax = axes(gcf); end
+            % if ~isgraphics(ax), ax = axes(gcf); end
             if ~isempty(obj.phandles)
                 obj.cla();
             end
@@ -73,7 +74,7 @@ classdef Quad < handle
 
         function update_plot(obj,~,~)
             obj.cla();
-            if ~ismissing(obj.ax)
+            if ~isempty(obj.ax)
                 obj.plot(obj.ax);
             end
         end

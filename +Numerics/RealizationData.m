@@ -28,7 +28,7 @@ classdef RealizationData < handle
             obj.ComputationalMode = mode;
             obj.ax = ax;
             if ~isempty(ax)
-                obj.plot(ax)
+                obj.plot(ax); obj.ax = ax;
             end
             %addlistener(obj,'ComputationalMode','PostSet',@obj.RealizationDataChanged);
             addlistener(obj,'K','PostSet',@obj.RealizationDataChanged);
@@ -56,14 +56,12 @@ classdef RealizationData < handle
                 ax = obj.ax
             end
             if isempty(ax)
-                ax = gca();
+                ax = gca;
             end
-            if ~isgraphics(ax), ax = axes(gcf); end
             if ~isempty(obj.phandles)
                 obj.cla();
             end
-            if ~isempty(obj.ax)
-                % chold = ishold(ax);
+            if ~isempty(ax)
                 theta = obj.InterpolationData.theta;
                 sigma = obj.InterpolationData.sigma;
                 if obj.ComputationalMode ~= Numerics.ComputationalMode.Hankel
@@ -78,10 +76,8 @@ classdef RealizationData < handle
                 if obj.ComputationalMode == Numerics.ComputationalMode.MPLoewner
                     obj.phandles(end+1) = scatter(ax,real(theta),imag(theta),50,"red","square","Tag","theta","DisplayName","Left Interpolation Points",'Linewidth',1.5);
                 end
-                % hold(ax,chold);
-                % hold(ax,"off");
+                hold(ax,"off");
             end
-            obj.ax = ax;
         end
 
         function cla(obj)

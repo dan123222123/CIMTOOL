@@ -35,15 +35,15 @@ classdef Circle < Numerics.Contour.Quad
                 gamma = 0
                 radius = 1
                 N = 8
-                ax = missing
+                ax = []
             end
             [z,w] = Numerics.Contour.Circle.trapezoid(gamma,radius,N);
             obj@Numerics.Contour.Quad(z,w);
             obj.gamma = gamma;
             obj.rho = radius;
             obj.N = N;
-            if ~ismissing(ax)
-                obj.plot(ax)
+            if ~isempty(ax)
+                obj.plot(ax); obj.ax = ax;
             end
             addlistener(obj,'gamma','PostSet',@obj.update);
             addlistener(obj,'rho','PostSet',@obj.update);
@@ -124,12 +124,12 @@ classdef Circle < Numerics.Contour.Quad
         function plot(obj,ax)
             arguments
                 obj
-                ax = obj.ax
+                ax = obj.ax;
             end
-            if ismissing(ax)
-                ax = gca();
+            if isempty(ax)
+                ax = gca;
             end
-            if ~isgraphics(ax), ax = axes(gcf); end
+            % if ~isgraphics(ax), ax = axes(gcf); end
             if ~isempty(obj.phandles)
                 obj.cla();
             end
@@ -144,12 +144,11 @@ classdef Circle < Numerics.Contour.Quad
             end
             obj.phandles(end+1) = plot(ax,real(zp),imag(zp),"blue",'LineWidth',5,'Tag',"contour","HandleVisibility","off","DisplayName","Contour");
             hold(ax,"off");
-            obj.ax = ax;
-        end
+         end
 
         function update(obj,~,~)
             [obj.z,obj.w] = Numerics.Contour.Circle.trapezoid(obj.gamma,obj.rho,obj.N);
-            obj.update_plot(missing,missing);
+            obj.update_plot([],[]);
         end
 
         function toggleVisibility(obj,mode)

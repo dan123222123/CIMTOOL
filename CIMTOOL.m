@@ -33,7 +33,6 @@ classdef CIMTOOL < matlab.apps.AppBase
             delete(app)
         end
         
-
         % Create UIFigure and components
         function createComponents(app)
 

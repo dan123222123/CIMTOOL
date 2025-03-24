@@ -38,7 +38,7 @@ classdef Ellipse < Numerics.Contour.Quad
                 alpha = 1
                 beta = 1
                 N = 8
-                ax = missing
+                ax = []
             end
             [z,w] = Numerics.Contour.Ellipse.trapezoid(gamma,alpha,beta,N);
             obj@Numerics.Contour.Quad(z,w);
@@ -46,8 +46,8 @@ classdef Ellipse < Numerics.Contour.Quad
             obj.alpha = alpha;
             obj.beta = beta;
             obj.N = N;
-            if ~ismissing(ax)
-                obj.plot(ax)
+            if ~isempty(ax)
+                obj.ax = ax; obj.plot();
             end
             addlistener(obj,'gamma','PostSet',@obj.update);
             addlistener(obj,'alpha','PostSet',@obj.update);
@@ -126,12 +126,11 @@ classdef Ellipse < Numerics.Contour.Quad
         function plot(obj,ax)
             arguments
                 obj
-                ax = obj.ax
+                ax = obj.ax;
             end
-            if ismissing(ax)
-                ax = gca();
+            if isempty(ax)
+                ax = gca;
             end
-            if ~isgraphics(ax), ax = axes(gcf); end
             if ~isempty(obj.phandles)
                 obj.cla();
             end
@@ -146,12 +145,11 @@ classdef Ellipse < Numerics.Contour.Quad
             end
             obj.phandles(end+1) = plot(ax,real(zp),imag(zp),"blue",'LineWidth',5,'Tag',"contour","HandleVisibility","off");
             hold(ax,"off");
-            obj.ax = ax;
         end
 
         function update(obj,~,~)
             [obj.z,obj.w] = Numerics.Contour.Ellipse.trapezoid(obj.gamma,obj.alpha,obj.beta,obj.N);
-            obj.update_plot(missing,missing);
+            obj.update_plot([],[]);
         end
 
         function toggleVisibility(obj,mode)

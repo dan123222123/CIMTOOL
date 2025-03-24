@@ -34,17 +34,19 @@ classdef SampleData < handle
     
     methods
 
-        function obj = SampleData(NLEVP,Contour,ell,r)
+        function obj = SampleData(NLEVP,Contour,ell,r,ax)
             arguments
                 NLEVP
                 Contour
-                ell = min(NLEVP.n,10)
-                r = min(NLEVP.n,10)
+                ell = 0
+                r = 0
+                ax = []
             end
             obj.NLEVP = NLEVP;
             obj.Contour = Contour;
             obj.ell = ell;
             obj.r = r;
+            obj.ax = ax;
             addlistener(obj.NLEVP,'loaded','PostSet',@obj.NLEVPChanged);
             addlistener(obj.Contour,'z','PostSet',@obj.ContourChanged);
             addlistener(obj,'Contour','PostSet',@obj.updateContourListeners);
@@ -52,9 +54,11 @@ classdef SampleData < handle
         end
 
         function update_plot(obj,~,~)
-            hold(obj.ax,"on");
-            obj.Contour.ax = obj.ax;
-            obj.NLEVP.ax = obj.ax;
+            obj.Contour.ax = obj.ax; obj.NLEVP.ax = obj.ax;
+            if ~isempty(obj.ax)
+                obj.Contour.plot();
+                obj.NLEVP.plot();
+            end
         end
 
         function updateContourListeners(obj,~,~)
