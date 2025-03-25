@@ -17,6 +17,22 @@ classdef CIM < matlab.mixin.Copyable
         auto_update_shifts = true;
         auto_update_K = true;
     end
+
+    methods(Access = protected)
+        function cp = copyElement(obj)
+            cp = Numerics.CIM(copy(obj.SampleData.NLEVP),copy(obj.SampleData.Contour),[],[]);
+            cp.auto = obj.auto; cp.auto_compute_samples = obj.auto_compute_samples;
+            cp.auto_compute_realization = obj.auto_compute_realization;
+            cp.auto_estimate_m = obj.auto_estimate_m;
+            cp.auto_update_shifts = obj.auto_update_shifts;
+            cp.auto_update_K = obj.auto_update_K;
+            %
+            cp.SampleData = copy(obj.SampleData);
+            cp.updateSampleDataListeners([],[]);
+            cp.RealizationData = copy(obj.RealizationData);
+            cp.updateRealizationDataListeners([],[]);
+        end
+    end
     
     methods
 
@@ -34,23 +50,39 @@ classdef CIM < matlab.mixin.Copyable
             obj.MainAx = MainAx;
             obj.SvAx = SvAx;
             obj.update_plot([],[]);
-            addlistener(obj.SampleData,'loaded','PostSet',@obj.checkdirty);
-            addlistener(obj.RealizationData,'loaded','PostSet',@obj.checkdirty);
-            %
-            addlistener(obj.RealizationData,'ComputationalMode','PostSet',@obj.update_shifts);
-            addlistener(obj.RealizationData,'ShiftScale','PostSet',@obj.update_shifts);
-            addlistener(obj.RealizationData,'K','PostSet',@obj.update_shifts);
-            addlistener(obj.SampleData.Contour,'z','PostSet',@obj.update_shifts);
 
-            addlistener(obj.SampleData,'Contour','PostSet',@obj.updateContourListeners);
+            obj.updateListeners([],[]);
 
-            addlistener(obj.SampleData.NLEVP,'loaded','PostSet',@obj.NLEVPChanged);
-            addlistener(obj,'MainAx','PostSet',@obj.update_plot);
         end
 
         function updateContourListeners(obj,~,~)
             addlistener(obj.SampleData.Contour,'z','PostSet',@obj.update_shifts);
-            obj.update_shifts([],[])
+            obj.update_shifts([],[]);
+        end
+
+        function updateNLEVPListeners(obj,~,~)
+            addlistener(obj.SampleData.NLEVP,'loaded','PostSet',@obj.NLEVPChanged);
+        end
+
+        function updateRealizationDataListeners(obj,~,~)
+            addlistener(obj.RealizationData,'loaded','PostSet',@obj.checkdirty);
+            addlistener(obj.RealizationData,'ComputationalMode','PostSet',@obj.update_shifts);
+            addlistener(obj.RealizationData,'ShiftScale','PostSet',@obj.update_shifts);
+            addlistener(obj.RealizationData,'K','PostSet',@obj.update_shifts);
+            obj.update_shifts([],[]);
+        end
+
+        function updateSampleDataListeners(obj,~,~)
+            addlistener(obj.SampleData,'loaded','PostSet',@obj.checkdirty);
+            addlistener(obj.SampleData,'Contour','PostSet',@obj.updateContourListeners);
+            addlistener(obj.SampleData,'NLEVP','PostSet',@obj.updateNLEVPListeners);
+            obj.updateNLEVPListeners([],[]); obj.updateContourListeners([],[]);
+        end
+
+        function updateListeners(obj,~,~)
+            addlistener(obj,'MainAx','PostSet',@obj.update_plot);
+            obj.updateSampleDataListeners([],[]);
+            obj.updateRealizationDataListeners([],[]);
         end
 
         function update_shifts(obj,src,~)

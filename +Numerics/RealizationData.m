@@ -1,4 +1,4 @@
-classdef RealizationData < handle
+classdef RealizationData < matlab.mixin.Copyable
 
     properties (SetObservable)
         InterpolationData
@@ -13,6 +13,13 @@ classdef RealizationData < handle
 
     properties
         phandles = gobjects(0);
+    end
+
+    methods(Access = protected)
+        function cp = copyElement(obj)
+            cp = Numerics.RealizationData(obj.InterpolationData.theta,obj.InterpolationData.sigma,obj.ComputationalMode,[]);
+            cp.K = obj.K; cp.m = obj.m; cp.ShiftScale = obj.ShiftScale; cp.tol = obj.tol; cp.loaded = obj.loaded;
+        end
     end
 
     methods

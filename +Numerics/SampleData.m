@@ -1,4 +1,4 @@
-classdef SampleData < handle
+classdef SampleData < matlab.mixin.Copyable
 
     properties
         Ql      (:,:,:) double = []
@@ -30,6 +30,18 @@ classdef SampleData < handle
     properties (Dependent)
         L
         R
+    end
+
+    methods(Access = protected)
+        function cp = copyElement(obj)
+            cp = Numerics.SampleData(copy(obj.NLEVP),copy(obj.Contour),obj.ell,obj.r,[]);
+            cp.Lf = obj.Lf; cp.Rf = obj.Rf;
+            cp.show_progress = obj.show_progress;
+            cp.loaded = obj.loaded;
+            %
+            cp.Ql = []; cp.Qr = []; cp.Qlr = [];
+            cp.sT = []; cp.squad = []; cp.sL = []; cp.sR = [];
+        end
     end
     
     methods

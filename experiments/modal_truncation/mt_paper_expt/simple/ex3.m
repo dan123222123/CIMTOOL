@@ -1,30 +1,26 @@
 %% construct fn in tf and pole-residue form
-n = 5; m = n; p = n;
-ewref = (-1:-1:-n);
-% ewref = [(-1:-1:-n) 1:1:n];
+n = 6; ewref = [(-n:1:-1) 1:1:n]; ewref = flip(ewref);
+n = 2*n; m = n; p = n;
 A = diag(ewref); B = randn(n,m); C = randn(p,n);
 %
 H = @(z) C*((z*eye(size(A)) - A) \ B); G = @(z) ihml(z,n,ewref,B,C);
 %
 w = logspace(-3,3); % Nbode(w,H,G);
 %% setup CIMTOOL
-nlevp1 = Numerics.NLEVPData(H); nlevp1.sample_mode = Numerics.SampleMode.Direct;
-contour1 = Numerics.Contour.Ellipse(0,n+1,0.5,100);
-nlevp2 = Numerics.NLEVPData(H); nlevp2.sample_mode = Numerics.SampleMode.Direct;
-contour2 = Numerics.Contour.Ellipse(0,n+1,0.5,100);
+nlevp = Numerics.NLEVPData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
+contour = Numerics.Contour.Ellipse(3.5,11,0.5,5e2);
+CIM = Numerics.CIM(nlevp,contour);
+CIM.SampleData.show_progress = false; CIM.SampleData.NLEVP.refew = ewref;
+CIM.auto_update_shifts = false;
+CIM.SampleData.ell = n; CIM.SampleData.r = n;
 %
-CIMHNK = Numerics.CIM(nlevp1,contour1);
+CIMHNK = copy(CIM);
 CIMHNK.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
-CIMHNK.SampleData.show_progress = false;
-CIMHNK.SampleData.NLEVP.refew = ewref;
-CIMHNK.SampleData.ell = n; CIMHNK.SampleData.r = n;
+CIMHNK.RealizationData.K = 1;
 %
-CIMMPL = Numerics.CIM(nlevp2,contour2);
+CIMMPL = copy(CIM);
 CIMMPL.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
-CIMMPL.SampleData.show_progress = false;
-CIMMPL.SampleData.NLEVP.refew = ewref;
-CIMMPL.auto_update_shifts = false;
-CIMMPL.SampleData.ell = n; CIMMPL.SampleData.r = n;
+CIMMPL.RealizationData.K = n;
 
 ip = 1i*(100:-1:-100); [~,idx] = sort(abs(ip));
 ip = ip(idx); ip(1) = [];
@@ -50,7 +46,7 @@ nec = length(ewref(CIMMPL.SampleData.Contour.inside(ewref)));
 %
 f = figure(1); plot_mt(f,w,nec,ewref,B,C,CIMHNK,CIMMPL);
 %% modal truncation investigation
-x = linspace(n+1,1.5,100); 
+x = linspace(11,3,100);
 for i = 1:length(x)
     CIMHNK.SampleData.Contour.alpha = x(i);
     CIMMPL.SampleData.Contour.alpha = x(i);
@@ -60,21 +56,18 @@ for i = 1:length(x)
     plot_mt(f,w,nec,ewref,B,C,CIMHNK,CIMMPL);
     drawnow;
 end
-%%
-%
-%
-%
+
 function plot_mt(f,w,m,ewref,B,C,CIMHNK,CIMMPL)
     t = tiledlayout(f,4,4);
     HrMT = @(z) ihml(z,m,ewref,B,C);
-    CIMHNK.RealizationData.m = m; CIMHNK.RealizationData.K = 1;
+    CIMHNK.RealizationData.m = m;
     CIMHNK.compute(); HrHNK = cimmt(CIMHNK,m);
-    nexttile(t,1,[2 2]); CIMHNK.plot(gca);
+    nexttile(t,1,[2 2]); CIMHNK.plot(gca); ylim([-1 1]);
     %
-    CIMMPL.RealizationData.m = m; CIMMPL.RealizationData.K = 5;
+    CIMMPL.RealizationData.m = m;
     CIMMPL.compute(); HrMPL = cimmt(CIMMPL,m);
-    nexttile(t,9,[2 2]); CIMMPL.plot(gca);
+    nexttile(t,9,[2 2]); CIMMPL.plot(gca); ylim([-1 1]);
     %
-    nexttile(t,3,[4,2]); Nbode(w,HrMT,HrHNK,HrMPL)
-    legend('HrMT','HrHNK','HrMPL','Location','northoutside','Orientation','horizontal')
+    nexttile(t,3,[4,2]);
+    Nbode(w,HrMT,HrHNK,HrMPL); legend('HrMT','HrHNK','HrMPL','Location','northoutside','Orientation','horizontal')
 end

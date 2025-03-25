@@ -27,6 +27,13 @@ classdef Circle < Numerics.Contour.Quad
         end
 
     end
+
+   methods(Access = protected)
+      function cp = copyElement(obj)
+          cp = Numerics.Contour.Circle(obj.gamma,obj.rho,obj.N,[]);
+          cp.plot_quadrature = obj.plot_quadrature;
+      end
+   end
     
     methods
 

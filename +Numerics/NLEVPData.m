@@ -22,6 +22,17 @@ classdef NLEVPData < matlab.mixin.Copyable
         arglist = []
         phandles = gobjects(0);
     end
+
+    methods(Access = protected)
+      function cp = copyElement(obj)
+         cp = Numerics.NLEVPData(obj.T,obj.name,obj.arglist,[]);
+         cp.sample_mode = obj.sample_mode;
+         cp.plot_reference = obj.plot_reference;
+         cp.compute_reference = obj.compute_reference;
+         cp.refew = obj.refew; cp.refev = obj.refev;
+         cp.loaded = obj.loaded;
+      end
+   end
     
     methods
 

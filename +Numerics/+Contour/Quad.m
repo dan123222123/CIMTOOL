@@ -13,6 +13,12 @@ classdef Quad < matlab.mixin.Copyable
         ax             = []    % axis to manage plots on
     end
 
+    methods(Access = protected)
+      function cp = copyElement(obj)
+         cp = Numerics.Contour.Quad(obj.z,obj.w,[]);
+      end
+   end
+
     methods
 
         function s = FindRandomShift(obj,scale)

@@ -29,6 +29,13 @@ classdef Ellipse < Numerics.Contour.Quad
         end
 
     end
+
+   methods(Access = protected)
+      function cp = copyElement(obj)
+          cp = Numerics.Contour.Ellipse(obj.gamma,obj.alpha,obj.beta,obj.N,[]);
+          cp.plot_quadrature = obj.plot_quadrature;
+      end
+   end
     
     methods
 
