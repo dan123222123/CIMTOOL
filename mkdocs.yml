@@ -1,12 +1,17 @@
-site_name: CIMTOOL Documentation
-site_url: https://mydomain.org/mysite
+site_name: CIMTOOL
+#site_url: https://mydomain.org/mysite
+
 theme:
   name: material
-  #features:
-  #  - navigation.tabs
-  #  - navigation.tabs.sticky
   features:
     - content.code.copy
+
+watch:
+  - src
+  - src/+GUI
+  - src/+Test
+  - src/+Numerics
+  - src/+Numerics/+Contour
 
 markdown_extensions:
   - pymdownx.arithmatex:
@@ -23,13 +28,20 @@ markdown_extensions:
   - pymdownx.blocks.details
   - pymdownx.blocks.admonition
 
-#nav:
-#  - Home: index.md
-#  - Examples: examples
-
-#extra_javascript:
-#  - javascripts/mathjax.js
-#  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: matlab
+      handlers:
+        matlab:
+          paths: [src]
+          options:
+            parse_arguments: true
+            show_source: false
+            show_if_no_docstring: false
+            docstring_options:
+              warn_unknown_params: true
+            docstring_style: google
 
 extra_javascript:
   - javascripts/katex.js

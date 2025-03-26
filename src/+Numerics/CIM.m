@@ -1,5 +1,6 @@
 classdef CIM < matlab.mixin.Copyable
-    
+    % Docstring of CIM class.
+
     properties (Access = public)
         SampleData          Numerics.SampleData
         RealizationData     Numerics.RealizationData
@@ -33,13 +34,13 @@ classdef CIM < matlab.mixin.Copyable
             cp.updateRealizationDataListeners([],[]);
         end
     end
-    
+
     methods
 
         function obj = CIM(nep,contour,MainAx,SvAx)
             arguments
-                nep 
-                contour 
+                nep
+                contour
                 MainAx = []
                 SvAx = []
             end
@@ -111,7 +112,7 @@ classdef CIM < matlab.mixin.Copyable
         % using the underlying quadrature
         % determine the geometric center and the maximum distance
         % between the center and a quadrature node.
-        % then scale that distance and interleve the nodes on a 
+        % then scale that distance and interleve the nodes on a
         % circle with geo center and max_dist*scale
         function interlevedshifts(obj)
             nsw = obj.RealizationData.K;
@@ -136,7 +137,7 @@ classdef CIM < matlab.mixin.Copyable
 
         function plot(obj,ax)
             arguments
-                obj 
+                obj
                 ax = gca
             end
 
@@ -155,7 +156,7 @@ classdef CIM < matlab.mixin.Copyable
             xlabel("$\bf{R}$",'Interpreter','latex'); ylabel("$i\bf{R}$",'Interpreter','latex');
             legend('Interpreter','latex','Location','northoutside','Orientation','horizontal')
             hold off
-            
+
         end
 
         function checkdirty(obj,~,~)
@@ -238,4 +239,3 @@ classdef CIM < matlab.mixin.Copyable
 
     end
 end
-

@@ -1,8 +1,9 @@
 function [A,B,C,D] = allpass(n)
-% allpass (all-pass system)
-% by Christian Himpe, 2020
-% released under BSD 2-Clause License
-%*
+    % """Allpass.
+    % 
+    % Parameters:
+    %     n: This is n
+    % """
     A = gallery('tridiag',n,-1,0,1);
     A(1,1) = -0.5;
     B = sparse(1,1,1,n,1);

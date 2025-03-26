@@ -1,23 +1,46 @@
 function [Lambda,V,W,Db,Ds,B,C,X,Sigma,Y] = mploewner(Ql,Qr,theta,sigma,L,R,z,w,m,abstol)
-% Suppose T : C -> nXn matrices is meromorphic on a domain D.
-% The boundary of D is a closed curve in C approximated with {z_k,w_k}
-% nodes and weights associated to a particular quadrature rule.
-% INPUTS
-%   Ql -- vector of left-sided samples L*T^{-1} at z_k in z
-%   Qr -- vector of right-sided samples of T^{-1}R at z_k in z
-%   theta -- left interpolation points
-%   sigma -- right interpolation points
-%   L -- nXell matrix of left probing directions
-%   R -- nXr matrix of right probing directions
-%   z -- points on C (coming from some quadrature rule)
-%   w -- quadrature weights associated to z
-%   m -- number of poles of T in D
-%   abstol -- absolute tolerance for base data matrix rank determination
-% OUTPUTS
-%   E -- mXm matrix of eigenvalues of T within D
-% BEGIN
+% Given left/right quadrature data `Ql`/`Qr`, compute probed left/right transfer function samples at left/right interpolation points (theta/sigma) via contour integration approximated by a quadrature rule with nodes and weights \( ( z_k, w_k ) \).
+%
+%% Args:
+%%   Ql:
+%%   Qr: vector of right-sided samples of T^{-1}R at z_k in z
+%%   theta: left interpolation points
+%%   sigma: right interpolation points
+%%   L: nXell matrix of left probing directions
+%%   R: nXr matrix of right probing directions
+%%   z: points on C (coming from some quadrature rule)
+%%   w: quadrature weights associated to z
+%%   m: number of poles of T in D
+%%   abstol: absolute tolerance for base data matrix rank determination
+%%
+%% Returns:
+%%   E: mXm matrix of eigenvalues of T within D
+arguments (Inputs)
+    Ql double % vector of left-sided samples L*T^{-1} at z_k in z
+    Qr double
+    theta double
+    sigma double
+    L
+    R
+    z
+    w
+    m
+    abstol
+end
 
-% BEGIN SANITY CHECKS
+arguments (Output)
+    Lambda double % diagonal matrix with eigenvalues of \( ( \mathbb{L}_s, \mathbb{L} ) \)
+    V
+    W
+    Db
+    Ds
+    B
+    C
+    X
+    Sigma
+    Y
+end
+
 % check that elements of qs have the same dimension
 [Lsize,n1,N1] = size(Ql);
 [n2,Rsize,N2] = size(Qr);
@@ -36,9 +59,7 @@ assert(N==length(w));
 % check that m, # of left/right shifts are greater than 0
 assert(m > 0, "# Eig Search should be > 0");
 assert(elltheta > 0 && rsigma > 0, "# of left/right shifts should be > 0");
-% END SANITY CHECKS
 
-% BEGIN NUMERICS
 % allocate left/right data and base/shifted Loewner matrices
 B = zeros(elltheta,n); C = zeros(n,rsigma);
 Db = zeros(elltheta,rsigma); Ds = zeros(elltheta,rsigma);
@@ -70,6 +91,5 @@ for i=1:elltheta
 end
 
 [Lambda,V,W,X,Sigma,Y] = Numerics.realize(m,Db,Ds,B,C,abstol);
-% END NUMERICS
 
 end
