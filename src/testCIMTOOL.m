@@ -31,6 +31,6 @@ CIM.RealizationData.K = 200;
 % CIM.SampleData.ell = 32;
 % CIM.SampleData.r = 32;
 
-% c = CIMTOOL(CIM);
-
 CIM.compute();
+
+c = CIMTOOL(CIM);

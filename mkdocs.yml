@@ -38,10 +38,16 @@ plugins:
           options:
             parse_arguments: true
             show_source: false
-            show_if_no_docstring: false
+            show_if_no_docstring: true
             docstring_options:
               warn_unknown_params: true
             docstring_style: google
+            docstring_section_style: list
+            separate_signature: true
+            signature_crossrefs: true
+            show_object_full_path: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
 
 extra_javascript:
   - javascripts/katex.js

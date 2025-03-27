@@ -122,6 +122,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
                     nev(:,min(length(refew),length(ew))+1:end) = cev;
                     ew = new; ev = nev;
                 else % dumb sort
+                    refew = repelem(NaN,m)';
                     [ew,ewI] = sort(ew); ev = ev(:,ewI);
                 end
                 rr = Numerics.relres(T,ew,ev);
@@ -140,11 +141,6 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.ResultsTable.ColumnFormat = {'long','long','longE'};
 
         end
-
-    end
-
-    % % GUI Plot Interactions
-    methods (Static,Access = public)
 
     end
 

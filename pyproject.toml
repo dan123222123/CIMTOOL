@@ -1,4 +1,0 @@
-[project]
-dependencies = [
-    "mkdocstrings-matlab>=0.9.5",
-]

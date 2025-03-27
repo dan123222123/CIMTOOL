@@ -63,12 +63,12 @@ classdef Quad < matlab.mixin.Copyable
             if isempty(ax)
                 ax = gca;
             end
-            % if ~isgraphics(ax), ax = axes(gcf); end
             if ~isempty(obj.phandles)
                 obj.cla();
             end
+            hold(ax,"on");
             obj.phandles(end+1) = scatter(ax,real(obj.z),imag(obj.z),200,"red","x",'Tag',"quadrature","DisplayName","Quadrature Nodes");
-            obj.ax = ax;
+            hold(ax,"off");
         end
 
         function cla(obj)

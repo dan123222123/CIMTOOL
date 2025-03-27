@@ -71,6 +71,7 @@ classdef RealizationData < matlab.mixin.Copyable
             if ~isempty(ax)
                 theta = obj.InterpolationData.theta;
                 sigma = obj.InterpolationData.sigma;
+                hold(ax,"on");
                 if obj.ComputationalMode ~= Numerics.ComputationalMode.Hankel
                     if obj.ComputationalMode == Numerics.ComputationalMode.SPLoewner
                         dn = "SPLoewner Shift";
@@ -78,7 +79,6 @@ classdef RealizationData < matlab.mixin.Copyable
                         dn = "Right Interpolation Points";
                     end
                     obj.phandles(end+1) = scatter(ax,real(sigma),imag(sigma),50,"blue","square","Tag","sigma","DisplayName",dn,'Linewidth',1.5);
-                    hold(ax,"on");
                 end
                 if obj.ComputationalMode == Numerics.ComputationalMode.MPLoewner
                     obj.phandles(end+1) = scatter(ax,real(theta),imag(theta),50,"red","square","Tag","theta","DisplayName","Left Interpolation Points",'Linewidth',1.5);

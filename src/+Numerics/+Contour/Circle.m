@@ -136,16 +136,14 @@ classdef Circle < Numerics.Contour.Quad
             if isempty(ax)
                 ax = gca;
             end
-            % if ~isgraphics(ax), ax = axes(gcf); end
             if ~isempty(obj.phandles)
                 obj.cla();
             end
             zp = Numerics.Contour.Circle.trapezoid(obj.gamma,obj.rho,512);
             zp = [obj.gamma + obj.rho, zp, obj.gamma + obj.rho];
             of = obj.rho*0.05;
-            obj.phandles(end+1) = rectangle(ax,'Position',[real(obj.gamma)-of/2 imag(obj.gamma)-of/2 of of], 'Curvature',[1 1], 'Facecolor','k', 'Edgecolor','k','Tag','contour_center',"HandleVisibility","off","Visible","off");
-            % obj.phandles(end+1) = scatter(ax,real(obj.gamma),imag(obj.gamma),200,"black",'filled','Tag',"contour_center","HandleVisibility","off","Visible","off","DisplayName","Center");
             hold(ax,"on");
+            obj.phandles(end+1) = rectangle(ax,'Position',[real(obj.gamma)-of/2 imag(obj.gamma)-of/2 of of], 'Curvature',[1 1], 'Facecolor','k', 'Edgecolor','k','Tag','contour_center',"HandleVisibility","off","Visible","off");
             if obj.plot_quadrature
                 obj.phandles(end+1) = scatter(ax,real(obj.z),imag(obj.z),200,"red","x",'Tag',"quadrature","DisplayName","Quadrature Nodes");
             end
