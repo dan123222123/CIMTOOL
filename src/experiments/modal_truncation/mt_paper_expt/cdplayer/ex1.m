@@ -17,7 +17,7 @@ CIM.SampleData.show_progress = false; CIM.auto_update_shifts = false;
 %
 CIMMPL = copy(CIM);
 CIMMPL.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
-ss = 2.5;
+ss = 3;
 
 NN = 250; CIMMPL.SampleData.ell = 15; CIMMPL.SampleData.r = 15;
 lep = [5 1]; offset = (gamma+alpha)*ss;
@@ -77,7 +77,7 @@ function plot_mt(f,w,m,ewref,B,C,CIMMPL)
     try
         CIMMPL.compute(); HrMPL = cimmt(CIMMPL,m);
         nexttile(t); CIMMPL.plot(gca);
-        xlim([-1100 400]); ylim([-6e4 6e4]);
+        xlim([-1100 600]); ylim([-6e4 6e4]);
         %
         nexttile(t);
         Nbode(w,HrMT,HrMPL); legend('HrMT','HrMPL','Location','northoutside','Orientation','horizontal')

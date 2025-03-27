@@ -10,17 +10,18 @@ w = logspace(-1,3,500); Nbode(w,H,G);
 %% setup CIMTOOL
 nlevp = Numerics.NLEVPData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
 gamma = -140; alpha = 220; beta = 2.7e4;
-contour = Numerics.Contour.Ellipse(gamma,alpha,beta,1e5);
+contour = Numerics.Contour.Ellipse(gamma,alpha,beta,3e3);
 CIM = Numerics.CIM(nlevp,contour);
 CIM.SampleData.NLEVP.refew = ewref;
 CIM.SampleData.show_progress = false; CIM.auto_update_shifts = false;
 %
 CIMMPL = copy(CIM);
 CIMMPL.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+ss = 3;
 
-NN = 120; CIMMPL.SampleData.ell = 1; CIMMPL.SampleData.r = 1;
+NN = 250; CIMMPL.SampleData.ell = 15; CIMMPL.SampleData.r = 15;
 
-lep = [7 1]; offset = gamma+alpha+5;
+lep = [7 2]; offset = (gamma+alpha)*ss;
 
 CIMMPL.RealizationData.InterpolationData = vertshiftline(NN,lep,offset);
 CIMMPL.RealizationData.K = min(length(CIMMPL.RealizationData.InterpolationData.theta),length(CIMMPL.RealizationData.InterpolationData.sigma));
@@ -32,9 +33,9 @@ nec = length(ewref(CIMMPL.SampleData.Contour.inside(ewref)));
 %
 f = figure(1); plot_mt(f,w,nec,ewref,BB,CC,CIMMPL);
 %% modal truncation investigation
-NL = 500; x = linspace(7,1,NL);
+NL = 100; x = linspace(7,3,NL);
 for i = 1:NL
-    CIMMPL.RealizationData.InterpolationData = vertshiftline(NN,[x(i),1],offset);
+    CIMMPL.RealizationData.InterpolationData = vertshiftline(NN,[x(i),2],offset);
     %
     nec = length(ewref(CIMMPL.SampleData.Contour.inside(ewref)));
     %
