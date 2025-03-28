@@ -7,7 +7,7 @@ arguments (Input) % NOTE/TODO -- it is possible to write validation functions so
     Qlr              % vector of two-sided samples \( L^* T^{-1} R \) at \( z_k \) in \(z\)
     Ql               % vector of left-sided samples \( L^* T^{-1} \) at \( z_k \) in \(z\)
     Qr               % vector of right-sided samples of \( T^{-1} R \) at \( z_k \) in \(z\)
-    sigma            % shift value -- \( \infty \Rightleftarrow \) Hankel, \( < \infty \Leftrightarrow \) SPLoewner
+    sigma            % shift value \( = \infty \Leftrightarrow \) Hankel, \( < \infty \Leftrightarrow \) SPLoewner
     m                % number of poles to search for in \( \Omega \)
     K                % number of moments to use in data matrix construction
     abstol  = NaN    % absolute tolerance for base data matrix rank determination

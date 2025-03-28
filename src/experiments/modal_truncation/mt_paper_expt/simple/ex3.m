@@ -6,9 +6,10 @@ A = diag(ewref); B = randn(n,m); C = randn(p,n);
 H = @(z) C*((z*eye(size(A)) - A) \ B); G = @(z) ihml(z,n,ewref,B,C);
 %
 w = logspace(-3,3); % Nbode(w,H,G);
+scatter(real(ewref),imag(ewref));
 %% setup CIMTOOL
 nlevp = Numerics.NLEVPData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
-contour = Numerics.Contour.Ellipse(3.5,11,0.5,5e2);
+contour = Numerics.Contour.Ellipse(3.5,11,0.5,128);
 CIM = Numerics.CIM(nlevp,contour);
 CIM.SampleData.show_progress = false; CIM.SampleData.NLEVP.refew = ewref;
 CIM.auto_update_shifts = false;

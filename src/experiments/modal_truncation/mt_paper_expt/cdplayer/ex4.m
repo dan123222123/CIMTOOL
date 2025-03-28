@@ -10,7 +10,8 @@ H = @(z) C*((z*speye(n) - A) \ B);
 % and our pole-residue form
 BB = V\B; CC = C*V; G = @(z) ihml(z,n,ewref,BB,CC);
 % construct an unstable transfer function/pole residue form with same i/o dimensions as above
-nu = 20; uewref = 0.5+1i*linspace(-5e1,5e1,nu)'; vc = 100;
+% nu = 2; uewref = 0.5+1i*linspace(-5e1,5e1,nu)'; vc = 300;
+nu = 2; uewref = 0.5+1i*linspace(-1e1,1e1,nu)'; vc = 300;
 Au = diag(uewref); Bu = vc*randn(size(Au,1),m,"like",1i); Cu = vc*randn(p,size(Au,1),"like",1i);
 Hu = @(z) Cu*((z*eye(size(Au)) - Au) \ Bu); Gu = @(z) ihml(z,nu,uewref,Bu,Cu);
 % Construct "combined" transfer and pole-residue forms
@@ -25,7 +26,8 @@ nexttile(2); scatter(real(cewref),imag(cewref));
 nexttile(4); scatter(real(cewref),imag(cewref)); xlim([-10,6]); ylim([-100,100]);
 %% setup unstable contour problem
 nlevp = Numerics.NLEVPData(Hc); nlevp.sample_mode = Numerics.SampleMode.Direct;
-gamma = 0.5; alpha = 0.25; beta = 65;
+% gamma = 0.5; alpha = 0.25; beta = 65;
+gamma = 0.5; alpha = 0.25; beta = 20;
 contour = Numerics.Contour.Ellipse(gamma,alpha,beta,2048);
 CIM = Numerics.CIM(nlevp,contour);
 CIM.SampleData.NLEVP.refew = cewref;
@@ -43,8 +45,8 @@ CIM.RealizationData.K = min(length(CIM.RealizationData.InterpolationData.theta),
 CIM.compute();
 %
 %% check in CIMTOOL
-% c = CIMTOOL(CIM); daspect(CIM.MainAx,'auto');
-% xlim(CIM.MainAx,[-10,6]); ylim(CIM.MainAx,[-100,100]);
+c = CIMTOOL(CIM); daspect(CIM.MainAx,'auto');
+xlim(CIM.MainAx,[-10,6]); ylim(CIM.MainAx,[-100,100]);
 %%
 Hur = cimmt(CIM,nec); Hsr = @(z) Hc(z) - Hur(z);
 figure(2); tiledlayout(2,2);

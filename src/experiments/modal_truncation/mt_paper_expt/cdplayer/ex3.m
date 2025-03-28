@@ -19,7 +19,7 @@ CIMMPL = copy(CIM);
 CIMMPL.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
 ss = 3;
 
-NN = 250; CIMMPL.SampleData.ell = 15; CIMMPL.SampleData.r = 15;
+NN = 70; CIMMPL.SampleData.ell = 15; CIMMPL.SampleData.r = 15;
 
 lep = [7 2]; offset = (gamma+alpha)*ss;
 
@@ -33,7 +33,7 @@ nec = length(ewref(CIMMPL.SampleData.Contour.inside(ewref)));
 %
 f = figure(1); plot_mt(f,w,nec,ewref,BB,CC,CIMMPL);
 %% modal truncation investigation
-NL = 100; x = linspace(7,3,NL);
+NL = 500; x = linspace(7,3,NL);
 for i = 1:NL
     CIMMPL.RealizationData.InterpolationData = vertshiftline(NN,[x(i),2],offset);
     %

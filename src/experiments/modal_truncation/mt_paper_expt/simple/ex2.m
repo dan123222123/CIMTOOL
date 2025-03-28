@@ -6,6 +6,7 @@ A = diag(ewref); B = randn(n,m); C = randn(p,n);
 H = @(z) C*((z*eye(size(A)) - A) \ B); G = @(z) ihml(z,n,ewref,B,C);
 %
 w = logspace(-3,3); % Nbode(w,H,G);
+scatter(real(ewref),imag(ewref));
 %% setup CIMTOOL
 nlevp = Numerics.NLEVPData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
 contour = Numerics.Contour.Ellipse(0,n+1,0.5,5e2);
