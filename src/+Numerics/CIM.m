@@ -17,6 +17,7 @@ classdef CIM < matlab.mixin.Copyable
         auto_estimate_m = false;
         auto_update_shifts = true;
         auto_update_K = true;
+        options = struct("PadStrategy","cyclical","AbsTol",NaN,"Verbose",true);
     end
 
     methods(Access = protected)
@@ -179,6 +180,7 @@ classdef CIM < matlab.mixin.Copyable
 
         function computeRealization(obj)
             obj.ResultData.loaded = false;
+            opts = namedargs2cell(obj.options);
             switch(obj.RealizationData.ComputationalMode)
                 case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
                     [obj.ResultData.ew,obj.ResultData.rev,obj.ResultData.lev,obj.ResultData.Db,obj.ResultData.Ds,obj.ResultData.B,obj.ResultData.C,obj.ResultData.X,obj.ResultData.Sigma,obj.ResultData.Y] = Numerics.sploewner( ...
@@ -203,7 +205,7 @@ classdef CIM < matlab.mixin.Copyable
                         obj.RealizationData.InterpolationData.theta, ...
                         obj.RealizationData.InterpolationData.sigma, ...
                         obj.RealizationData.m, ...
-                        obj.RealizationData.tol ...
+                        opts{:} ...
                     );
             end
             obj.RealizationData.loaded = true;

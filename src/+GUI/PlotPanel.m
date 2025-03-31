@@ -80,11 +80,11 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             % prune extra reference eigenvalues from the table view at
             % least
             if ~all(ismissing(refew))
-                % sort reference eigenvalues by magnitude
-                [~,refewidx] = sort(abs(refew(comp.CIMData.SampleData.Contour.inside(refew))));
-                refew = refew(refewidx);
-                nin = length(refew);
-                cstr = sprintf('Ref. EW (# Inside Contour %d)',nin);
+                % sort reference eigenvalues by magnitude, only those
+                % inside the contour
+                refew = refew(comp.CIMData.SampleData.Contour.inside(refew));
+                [~,refewidx] = sort(abs(refew)); refew = refew(refewidx);
+                nin = length(refew); cstr = sprintf('Ref. EW (# Inside Contour %d)',nin);
             else
                 refew = repelem(NaN,length(ew));
                 cstr = ('Ref. EW');
@@ -93,15 +93,15 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
 
             % after updating the table, there is no point going farther if
             % the ResultData is not ready to be updated
-            if ~comp.CIMData.ResultData.loaded
-                return
-            end
+            % if ~comp.CIMData.ResultData.loaded
+            %     return
+            % end
 
             m = max([length(refew),length(ew)]);
 
             % if computed eigenvalues are available, show them and the
             % relative residual (assuming ev are also available)
-            if ~all(ismissing(ew))
+            if comp.CIMData.ResultData.loaded && ~all(ismissing(ew))
                 if ~all(ismissing(refew)) % greedy matching between comp and ref if ref is available
                     cew = ew; cev = ev;
                     new = zeros(size(cew)); nev = zeros(size(cev));
@@ -125,7 +125,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
                     refew = repelem(NaN,m)';
                     [ew,ewI] = sort(ew); ev = ev(:,ewI);
                 end
-                rr = Numerics.relres(T,ew,ev);
+                rr = Numerics.relres(T,ew,ev,nd.sample_mode);
             else
                 ew = repelem(NaN,m)';
                 rr = repelem(NaN,m)';

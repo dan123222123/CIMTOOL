@@ -28,7 +28,7 @@ nexttile(4); scatter(real(cewref),imag(cewref)); xlim([-10,6]); ylim([-100,100])
 nlevp = Numerics.NLEVPData(Hc); nlevp.sample_mode = Numerics.SampleMode.Direct;
 % gamma = 0.5; alpha = 0.25; beta = 65;
 gamma = 0.5; alpha = 0.25; beta = 20;
-contour = Numerics.Contour.Ellipse(gamma,alpha,beta,2048);
+contour = Numerics.Contour.Ellipse(gamma,alpha,beta,1024);
 CIM = Numerics.CIM(nlevp,contour);
 CIM.SampleData.NLEVP.refew = cewref;
 CIM.SampleData.show_progress = false; CIM.auto_update_shifts = false;
@@ -45,8 +45,8 @@ CIM.RealizationData.K = min(length(CIM.RealizationData.InterpolationData.theta),
 CIM.compute();
 %
 %% check in CIMTOOL
-c = CIMTOOL(CIM); daspect(CIM.MainAx,'auto');
-xlim(CIM.MainAx,[-10,6]); ylim(CIM.MainAx,[-100,100]);
+% c = CIMTOOL(CIM); daspect(CIM.MainAx,'auto');
+% xlim(CIM.MainAx,[-10,6]); ylim(CIM.MainAx,[-100,100]);
 %%
 Hur = cimmt(CIM,nec); Hsr = @(z) Hc(z) - Hur(z);
 figure(2); tiledlayout(2,2);

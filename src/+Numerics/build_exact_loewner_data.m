@@ -9,7 +9,7 @@ function [BB,CC] = build_exact_loewner_data(n,H,theta,sigma,L,R)
         R = randn(n,length(sigma))
     end
     arguments (Output)
-        BB %
+        BB
         CC
     end
 

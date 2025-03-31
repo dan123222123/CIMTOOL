@@ -1,8 +1,13 @@
-function rr = relres(T,ew,ev)
+function rr = relres(T,ew,ev,mode)
     orig_state = warning; warning('off','all');
+    if mode == Numerics.SampleMode.Inverse
+        rrf = @(i) norm(T(ew(i))*ev(:,i)) / norm(T(ew(i)),"fro");
+    else
+        rrf = @(i) norm(T(ew(i))\ev(:,i)) / norm(inv(T(ew(i))),"fro");
+    end
     m = length(ew); rr = zeros(m,1);
     for j = 1:m
-        rr(j) = norm(T(ew(j))*(ev(:,j)/norm(ev(:,j))))/norm(T(ew(j)),"fro");
+        rr(j) = rrf(j);
     end
     warning(orig_state);
 end
