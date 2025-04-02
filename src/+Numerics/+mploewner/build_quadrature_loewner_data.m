@@ -29,11 +29,11 @@ function [B,BB,C,CC] = build_quadrature_loewner_data(z,w,Ql,Qr,L,R,theta,sigma,P
     % choose an appropriate padding strategy, if necessary
     if Lsize < elltheta || Rsize < rsigma
         RR = zeros(n,elltheta); LL = zeros(n,rsigma);
-        if PadStrategy == "cyclical"
+        if strcmp(PadStrategy,"cyclical")
             Qli = @(i) Ql(mod(i-1,Lsize)+1,:,:); Qri = @(i) Qr(:,mod(i-1,Rsize)+1,:);
             Li = @(i) L(:,mod(i-1,Lsize)+1); Ri = @(i) R(:,mod(i-1,Rsize)+1);
         else
-            error('Fewer tangential directions than required and an invalid pad strategy "%s" was specified.', options.PadStrategy)
+            error('Fewer tangential directions than required and an invalid pad strategy "%s" was specified.', PadStrategy)
         end
     else
         RR = R; LL = L;
