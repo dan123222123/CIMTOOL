@@ -1,4 +1,4 @@
-function [B,BB,C,CC] = build_exact_loewner_data(H,theta,sigma,L,R,PadStrategy,Verbose)
+function [B,BB,C,CC] = build_exact_data(H,theta,sigma,L,R,PadStrategy,Verbose)
     % construct left/right interpolation data BB/CC from exact transfer function evaluations at theta/sigma
     arguments (Input)
         H

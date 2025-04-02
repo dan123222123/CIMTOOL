@@ -15,14 +15,14 @@ arguments % NOTE/TODO -- it is possible to write validation functions so that th
     options.Verbose = true      % verbose output (or not)
     options.AbsTol = NaN        % absolute tolerance for base data matrix rank determination
 end
-import Numerics.mploewner.*;
+import Numerics.mploewner.* Numerics.realize;
 
 % simple sanity checks
 assert(m > 0, "# Eig Search should be > 0");
 assert(~(isempty(theta) || isempty(sigma)), "# of left/right shifts should be > 0");
 
-[B,BB,C,CC] = build_quadrature_loewner_data(z,w,Ql,Qr,L,R,theta,sigma,options.PadStrategy,options.Verbose);
+[B,BB,C,CC] = build_quadrature_data(z,w,Ql,Qr,L,R,theta,sigma,options.PadStrategy,options.Verbose);
 [Db,Ds] = build_loewner(BB,CC,theta,sigma);
-[Lambda,V,W,X,Sigma,Y] = Numerics.realize(m,Db,Ds,B,C,options.AbsTol);
+[Lambda,V,W,X,Sigma,Y] = realize(m,Db,Ds,B,C,options.AbsTol);
 
 end

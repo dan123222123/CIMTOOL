@@ -1,4 +1,4 @@
-function [B,BB,C,CC] = build_quadrature_loewner_data(z,w,Ql,Qr,L,R,theta,sigma,PadStrategy,Verbose)
+function [B,BB,C,CC] = build_quadrature_data(z,w,Ql,Qr,L,R,theta,sigma,PadStrategy,Verbose)
     % construct left/right interpolation data BB/CC from left/right quadrature evaluations given quadrature nodes/weights z and w
     arguments (Input)
         z

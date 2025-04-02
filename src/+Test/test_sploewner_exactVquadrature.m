@@ -8,24 +8,26 @@ contour = Numerics.Contour.Ellipse(-(n+1)/2,((n+1)/2),0.5,8);
 CIM = Numerics.CIM(nlevp,contour);
 %
 CIM.SampleData.show_progress = false; CIM.SampleData.NLEVP.refew = ewref;
-CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
-CIM.SampleData.ell = 1; CIM.SampleData.r = 1;
-CIM.RealizationData.K = n; CIM.RealizationData.m = n;
+CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.SPLoewner;
+CIM.auto_update_shifts = false; CIM.RealizationData.InterpolationData.sigma(1) = -(n+1)/2 + 1i;
+CIM.SampleData.ell = n; CIM.SampleData.r = n;
+CIM.RealizationData.K = 1; CIM.RealizationData.m = n;
 % c = CIMTOOL(CIM);
+%%
 cla;
 ndir = [n floor(n/2) 1];
 for j = 1:length(ndir)
     CIM.SampleData.ell = ndir(j); CIM.SampleData.r = ndir(j);
+    CIM.RealizationData.K = ceil(m/ndir(j));
     % exact
-    theta = CIM.RealizationData.InterpolationData.theta;
-    sigma = CIM.RealizationData.InterpolationData.sigma;
+    sigma = CIM.RealizationData.InterpolationData.sigma(1);
     L = CIM.SampleData.L; R = CIM.SampleData.R;
-    m = CIM.RealizationData.m;
+    K = CIM.RealizationData.K; m = CIM.RealizationData.m;
     %
-    eew = Numerics.mploewner.mploewner_exact(H,theta,sigma,L,R,m,"PadStrategy","cyclical");
+    eew = Numerics.sploewner.sploewner_exact(sigma,A,B,C,K,m,L,R);
     eew = sort(eew);
     %% quadrature
-    N = floor([8:100 logspace(2,3,30)]); nmdl = []; cNl = [];
+    N = floor([2:100 logspace(2,3,30)]); nmdl = []; cNl = [];
     for i = 1:length(N)
         CIM.SampleData.Contour.N = N(i);
         try CIM.compute(); catch e; warning("failed for ndir=%d, N=%d",ndir(j),N(i)); continue; end
@@ -36,6 +38,6 @@ for j = 1:length(ndir)
     semilogy(cNl,nmdl,"DisplayName",sprintf("TID=%d",ndir(j))); hold on;
     ylabel("Greedy Matching Distance to Exact"); xlabel("N");
 end
-title("Exact vs Quadrature MPLoewner Convergence");
+title("Exact vs Quadrature SPLoewner Convergence");
 legend("Location","northoutside","Orientation","horizontal");
 hold off;
