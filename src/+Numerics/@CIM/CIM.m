@@ -36,6 +36,12 @@ classdef CIM < matlab.mixin.Copyable
         end
     end
 
+    methods (Access = public)
+        interlevedshifts(obj);
+        computeRealization(obj);
+        refineQuadrature(obj);
+    end
+
     methods
 
         function obj = CIM(nep,contour,MainAx,SvAx)
@@ -109,18 +115,6 @@ classdef CIM < matlab.mixin.Copyable
             end
         end
 
-        % using the underlying quadrature
-        % determine the geometric center and the maximum distance
-        % between the center and a quadrature node.
-        % then scale that distance and interleve the nodes on a
-        % circle with geo center and max_dist*scale
-        function interlevedshifts(obj)
-            nsw = obj.RealizationData.K;
-            d = obj.RealizationData.ShiftScale;
-            [theta,sigma] = obj.SampleData.Contour.interlevedshifts(nsw,d);
-            obj.RealizationData.InterpolationData = Numerics.InterpolationData(theta,sigma);
-        end
-
         function update_plot(obj,~,~)
             if ~isempty(obj.MainAx)
                 ax = obj.MainAx; hold(ax,"on");
@@ -177,62 +171,9 @@ classdef CIM < matlab.mixin.Copyable
             end
         end
 
-        function computeRealization(obj)
-            import Numerics.sploewner.sploewner_quadrature;
-            import Numerics.mploewner.mploewner_quadrature;
-            obj.ResultData.loaded = false;
-            opts = namedargs2cell(obj.options);
-            switch(obj.RealizationData.ComputationalMode)
-                case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
-                    [obj.ResultData.ew,obj.ResultData.rev,obj.ResultData.lev,obj.ResultData.Db,obj.ResultData.Ds,obj.ResultData.B,obj.ResultData.C,obj.ResultData.X,obj.ResultData.Sigma,obj.ResultData.Y] = sploewner_quadrature( ...
-                        obj.RealizationData.InterpolationData.sigma(1), ...
-                        obj.SampleData.Contour.z, ...
-                        obj.SampleData.Contour.w, ...
-                        obj.SampleData.Ql, ...
-                        obj.SampleData.Qr, ...
-                        obj.SampleData.Qlr, ...
-                        obj.RealizationData.K, ...
-                        obj.RealizationData.m, ...
-                        obj.options ...
-                    );
-                case Numerics.ComputationalMode.MPLoewner
-                    [obj.ResultData.ew,obj.ResultData.rev,obj.ResultData.lev,obj.ResultData.Db,obj.ResultData.Ds,obj.ResultData.B,obj.ResultData.C,obj.ResultData.X,obj.ResultData.Sigma,obj.ResultData.Y] = mploewner_quadrature( ...
-                        obj.SampleData.Contour.z, ...
-                        obj.SampleData.Contour.w, ...
-                        obj.SampleData.Ql, ...
-                        obj.SampleData.Qr, ...
-                        obj.SampleData.L, ...
-                        obj.SampleData.R, ...
-                        obj.RealizationData.InterpolationData.theta, ...
-                        obj.RealizationData.InterpolationData.sigma, ...
-                        obj.RealizationData.m, ...
-                        opts{:} ...
-                    );
-            end
-            obj.RealizationData.loaded = true;
-            obj.ResultData.ComputationalMode = obj.RealizationData.ComputationalMode;
-            obj.ResultData.loaded = true;
-        end
-
         function compute(obj)
             obj.SampleData.compute();
             obj.computeRealization();
-        end
-
-        function refineQuadrature(obj)
-            % old auto values -- we set them back at the end
-            acs = obj.auto_compute_samples; acr = obj.auto_compute_realization; aem = obj.auto_estimate_m; aus = obj.auto_update_shifts;
-            obj.auto_compute_samples = false; obj.auto_compute_realization = false; obj.auto_estimate_m = false; obj.auto_update_shifts = false;
-
-            % refine the quadrature and compute
-            try
-                obj.SampleData.refineQuadrature();
-                obj.compute();
-                obj.auto_compute_samples = acs; obj.auto_compute_realization = acr; obj.auto_estimate_m = aem; obj.auto_update_shifts = aus;
-            catch e
-                obj.auto_compute_samples = acs; obj.auto_compute_realization = acr; obj.auto_estimate_m = aem; obj.auto_update_shifts = aus;
-                rethrow(e);
-            end
         end
 
         function [Db,Ds] = getData(obj)
