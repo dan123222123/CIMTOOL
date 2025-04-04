@@ -2,7 +2,7 @@ classdef Circle < Numerics.Contour.Quad
     
     properties (SetObservable)
         gamma   (1,1) double
-        rho  (1,1) double
+        rho     (1,1) double
         N       (1,1) double
         plot_quadrature = false
     end

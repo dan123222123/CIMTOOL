@@ -40,7 +40,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             obj.CIMData.MainAx = obj.MainPlotAxes;
             obj.CIMData.SvAx = obj.HSVAxes;
 
-            % addlistener(obj.CIMData.SampleData.NLEVP,'refew','PostSet',@(src,event)obj.ResultDataChangedFcn);
+            % addlistener(obj.CIMData.SampleData.NLEVPData,'refew','PostSet',@(src,event)obj.ResultDataChangedFcn);
             % addlistener(obj.CIMData.ResultData,'rev','PostSet',@(src,event)obj.ResultDataChangedFcn);
             % addlistener(obj.CIMData.SampleData.Contour,'z','PostSet',@(src,event)obj.ResultDataChangedFcn);
 
@@ -66,11 +66,11 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             % addlistener(comp.CIMData.SampleData.Contour,'z','PostSet',@(src,event)comp.ResultDataChangedFcn);
         end
 
-        % listen for rd.loaded, NLEVP.refew, etc. to re-do this table display
+        % listen for rd.loaded, NLEVPData.refew, etc. to re-do this table display
         function ResultDataChangedFcn(comp,~)
 
             rd = comp.CIMData.ResultData;
-            nd = comp.CIMData.SampleData.NLEVP;
+            nd = comp.CIMData.SampleData.NLEVPData;
 
             ew = rd.ew; ev = rd.rev;
             T = nd.T; refew = reshape(nd.refew,[length(nd.refew) 1]);

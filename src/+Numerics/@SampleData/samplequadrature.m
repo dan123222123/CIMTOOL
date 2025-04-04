@@ -34,9 +34,9 @@ assert(all([l1,l2]==[n,n]));
 % END SANITY CHECKS
 
 if show_progress == true
-    [Ql,Qr,Qlr] = Numerics.samplequadrature_progress(T,L,R,z,sample_mode);
+    [Ql,Qr,Qlr] = samplequadrature_progress(T,L,R,z,sample_mode);
 else
-    [Ql,Qr,Qlr] = Numerics.samplequadrature_noprogress(T,L,R,z,sample_mode);
+    [Ql,Qr,Qlr] = samplequadrature_noprogress(T,L,R,z,sample_mode);
 end
 
 end

@@ -32,6 +32,6 @@ CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
 % CIM.SampleData.ell = 32;
 % CIM.SampleData.r = 32;
 
-% CIM.compute();
+CIM.compute();
 
 c = CIMTOOL(CIM);

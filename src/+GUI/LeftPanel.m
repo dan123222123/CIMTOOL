@@ -53,7 +53,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
 
         function setDefaults(comp)
             CIM = comp.CIMData;
-            comp.NLEVPChangedFcn(missing);
+            comp.NLEVPDataChangedFcn(missing);
             comp.DataDirtinessChangedFcn(missing);
             comp.NumQuadNodes.Value = CIM.SampleData.Contour.N;
             % comp.AutoSampleCheckBox.Value = CIM.auto_compute_samples;
@@ -61,7 +61,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         end
 
         function addListeners(comp)
-            addlistener(comp.CIMData.SampleData.NLEVP,'loaded','PostSet',@(src,event)comp.NLEVPChangedFcn);
+            addlistener(comp.CIMData.SampleData.NLEVPData,'loaded','PostSet',@(src,event)comp.NLEVPDataChangedFcn);
             addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
             addlistener(comp.CIMData.ResultData,'Db','PostSet',@(src,event)comp.DataMatrixSizeChangedFcn);
             addlistener(comp.CIMData,'DataDirtiness','PostSet',@(src,event)comp.DataDirtinessChangedFcn);
@@ -84,18 +84,18 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
 
     methods % CIM -> GUI
         
-        function NLEVPChangedFcn(comp,~)
+        function NLEVPDataChangedFcn(comp,~)
             CIM = comp.CIMData;
-            if CIM.SampleData.NLEVP.loaded
-                if all(ismissing(CIM.SampleData.NLEVP.name))
+            if CIM.SampleData.NLEVPData.loaded
+                if all(ismissing(CIM.SampleData.NLEVPData.name))
                     comp.ProblemName.Value = "";
                 else
-                    comp.ProblemName.Value = CIM.SampleData.NLEVP.name;
+                    comp.ProblemName.Value = CIM.SampleData.NLEVPData.name;
                 end
-                comp.ProblemSize.Value = CIM.SampleData.NLEVP.n;
+                comp.ProblemSize.Value = CIM.SampleData.NLEVPData.n;
             else
                 comp.ProblemName.Value = "Not Loaded";
-                comp.ProblemSize.Value = CIM.SampleData.NLEVP.n;
+                comp.ProblemSize.Value = CIM.SampleData.NLEVPData.n;
             end
         end
 

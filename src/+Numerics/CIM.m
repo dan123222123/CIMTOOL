@@ -22,7 +22,7 @@ classdef CIM < matlab.mixin.Copyable
 
     methods(Access = protected)
         function cp = copyElement(obj)
-            cp = Numerics.CIM(copy(obj.SampleData.NLEVP),copy(obj.SampleData.Contour),[],[]);
+            cp = Numerics.CIM(copy(obj.SampleData.NLEVPData),copy(obj.SampleData.Contour),[],[]);
             cp.auto = obj.auto; cp.auto_compute_samples = obj.auto_compute_samples;
             cp.auto_compute_realization = obj.auto_compute_realization;
             cp.auto_estimate_m = obj.auto_estimate_m;
@@ -52,7 +52,6 @@ classdef CIM < matlab.mixin.Copyable
             obj.MainAx = MainAx;
             obj.SvAx = SvAx;
             obj.update_plot([],[]);
-
             obj.updateListeners([],[]);
 
         end
@@ -62,8 +61,8 @@ classdef CIM < matlab.mixin.Copyable
             obj.update_shifts([],[]);
         end
 
-        function updateNLEVPListeners(obj,~,~)
-            addlistener(obj.SampleData.NLEVP,'loaded','PostSet',@obj.NLEVPChanged);
+        function updateNLEVPDataListeners(obj,~,~)
+            addlistener(obj.SampleData.NLEVPData,'loaded','PostSet',@obj.NLEVPDataChanged);
         end
 
         function updateRealizationDataListeners(obj,~,~)
@@ -77,8 +76,8 @@ classdef CIM < matlab.mixin.Copyable
         function updateSampleDataListeners(obj,~,~)
             addlistener(obj.SampleData,'loaded','PostSet',@obj.checkdirty);
             addlistener(obj.SampleData,'Contour','PostSet',@obj.updateContourListeners);
-            addlistener(obj.SampleData,'NLEVP','PostSet',@obj.updateNLEVPListeners);
-            obj.updateNLEVPListeners([],[]); obj.updateContourListeners([],[]);
+            addlistener(obj.SampleData,'NLEVPData','PostSet',@obj.updateNLEVPDataListeners);
+            obj.updateNLEVPDataListeners([],[]); obj.updateContourListeners([],[]);
         end
 
         function updateListeners(obj,~,~)
@@ -101,8 +100,8 @@ classdef CIM < matlab.mixin.Copyable
             end
         end
 
-        function NLEVPChanged(obj,~,~)
-            if obj.SampleData.NLEVP.loaded
+        function NLEVPDataChanged(obj,~,~)
+            if obj.SampleData.NLEVPData.loaded
                 obj.ResultData.ew = [];
                 obj.ResultData.ev = [];
                 obj.ResultData.Db = [];
@@ -142,7 +141,7 @@ classdef CIM < matlab.mixin.Copyable
                 ax = gca
             end
 
-            ew = obj.ResultData.ew; refew = obj.SampleData.NLEVP.refew;
+            ew = obj.ResultData.ew; refew = obj.SampleData.NLEVPData.refew;
 
             if ~isempty(refew)
                 scatter(ax,real(refew),imag(refew),50,"diamond","MarkerEdgeColor","#E66100","LineWidth",1.5,"DisplayName","$\lambda$"); hold on;

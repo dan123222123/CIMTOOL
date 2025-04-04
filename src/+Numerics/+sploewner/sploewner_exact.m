@@ -8,8 +8,8 @@ arguments (Input) % NOTE/TODO -- it is possible to write validation functions so
     C
     K                % number of moments to use in data matrix construction
     m                % number of poles to search for in \( \Omega \)
-    L = eye(size(A,1),size(C,1))
-    R = eye(size(A,1),size(B,2))
+    L = eye(size(C,1),size(C,2))
+    R = eye(size(B,2),size(B,1))
     options = struct("AbsTol",NaN,"Verbose",true);
 end
 import Numerics.sploewner.* Numerics.realize;
