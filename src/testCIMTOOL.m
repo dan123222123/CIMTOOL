@@ -34,4 +34,4 @@ CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
 
 CIM.compute();
 
-c = CIMTOOL(CIM);
+% c = CIMTOOL(CIM);
