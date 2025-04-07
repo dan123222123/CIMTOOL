@@ -50,7 +50,7 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
         function addListeners(comp)
             addlistener(comp.CIMData.RealizationData,'ComputationalMode','PostSet',@(src,event)comp.updateMethodParameters);
             addlistener(comp.CIMData,'auto_estimate_m','PostSet',@(src,event)comp.updateMethodParameters);
-            addlistener(comp.CIMData.RealizationData,'m','PostSet',@(src,event)comp.updateMethodParameters);
+            addlistener(comp.CIMData.RealizationData,'RealizationSize','PostSet',@(src,event)comp.updateMethodParameters);
         end
 
         function updateFontSize(comp,update)
@@ -78,10 +78,11 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
             if comp.CIMData.auto_update_K && min(comp.CIMData.SampleData.ell,comp.CIMData.SampleData.r) ~= 0
                 switch(comp.CIMData.RealizationData.ComputationalMode)
                     case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
-                        comp.CIMData.RealizationData.K = ceil(odms/min(comp.CIMData.SampleData.ell,comp.CIMData.SampleData.r));
+                        K = ceil(odms/min(comp.CIMData.SampleData.ell,comp.CIMData.SampleData.r));
                     case Numerics.ComputationalMode.MPLoewner
-                        comp.CIMData.RealizationData.K = odms;
+                        K = odms;
                 end
+                comp.CIMData.RealizationData.RealizationSize = Numerics.RealizationSize(comp.CIMData.RealizationData.RealizationSize.m,K,K);
             end
 
         end
@@ -91,7 +92,7 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
     methods % CIM -> GUI
 
         function updateMethodParameters(comp,~)
-            comp.EigSearchEditField.Value = comp.CIMData.RealizationData.m;
+            comp.EigSearchEditField.Value = comp.CIMData.RealizationData.RealizationSize.m;
             comp.EstimateMCheckbox.Value = comp.CIMData.auto_estimate_m;
             switch(comp.CIMData.RealizationData.ComputationalMode)
                 case Numerics.ComputationalMode.Hankel
@@ -108,7 +109,7 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
     methods % GUI -> CIM
 
         function MethodParametersChanged(comp,~)
-            comp.CIMData.RealizationData.m = comp.EigSearchEditField.Value;
+            comp.CIMData.RealizationData.RealizationSize.m = comp.EigSearchEditField.Value;
             comp.CIMData.auto_estimate_m = comp.EstimateMCheckbox.Value;
             % computational mode is changed in separate callback
             % (buttongroup)

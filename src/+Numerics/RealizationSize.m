@@ -7,7 +7,7 @@ classdef RealizationSize
     end
 
     methods
-        function obj = MethodSpecificData(m,T1,T2)
+        function obj = RealizationSize(m,T1,T2)
             arguments
                 m = 0
                 T1 = m

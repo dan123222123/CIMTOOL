@@ -68,7 +68,7 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
     methods % GUI -> CIM
 
         function MethodParametersChanged(comp,~)
-            comp.CIMData.RealizationData.K = comp.MaxMomentsEditField.Value;
+            comp.CIMData.RealizationData.RealizationSize = Numerics.RealizationSize(comp.CIMData.RealizationData.RealizationSize.m,comp.MaxMomentsEditField.Value,comp.MaxMomentsEditField.Value);
         end
 
         function ProbingParametersChanged(comp,~)
@@ -83,7 +83,7 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
         function addListeners(comp)
             addlistener(comp.CIMData.SampleData,'ell','PostSet',@(src,event)comp.updateLeftProbingSize);
             addlistener(comp.CIMData.SampleData,'r','PostSet',@(src,event)comp.updateRightProbingSize);
-            addlistener(comp.CIMData.RealizationData,'K','PostSet',@(src,event)comp.updateMaxMoments);
+            addlistener(comp.CIMData.RealizationData,'RealizationSize','PostSet',@(src,event)comp.updateMaxMoments);
             addlistener(comp.CIMData.RealizationData,'ComputationalMode','PostSet',@(src,event)comp.updateKText);
         end
         

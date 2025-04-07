@@ -18,11 +18,9 @@ CIM = Numerics.CIM(nlevp,contour);
 % CIM.RealizationData.K = 200;
 
 % omnicam1
-CIM.SampleData.ell = 3;
-CIM.SampleData.r = 3;
-CIM.RealizationData.m = 3;
-CIM.RealizationData.K = 3;
 CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+CIM.SampleData.ell = 3; CIM.SampleData.r = 3;
+CIM.RealizationData.RealizationSize = Numerics.RealizationSize(3,3);
 
 % % gun
 % CIM.SampleData.Contour.N = 64;
@@ -32,6 +30,6 @@ CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
 % CIM.SampleData.ell = 32;
 % CIM.SampleData.r = 32;
 
-CIM.compute();
+% CIM.compute();
 
-% c = CIMTOOL(CIM);
+c = CIMTOOL(CIM);

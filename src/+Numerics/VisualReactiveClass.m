@@ -1,8 +1,11 @@
 classdef VisualReactiveClass < handle
 
+    properties (SetObservable)
+        ax = [];
+    end
+
     properties
         phandles = gobjects(0); % array of graphics handles associated to this contour
-        ax = [];
     end
 
     methods (Abstract)

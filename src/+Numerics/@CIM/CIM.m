@@ -53,7 +53,7 @@ classdef CIM < matlab.mixin.Copyable
             end
             obj.SampleData = Numerics.SampleData(nep,contour,0,0,MainAx);
             % default to Hankel realization
-            obj.RealizationData = Numerics.RealizationData(NaN,Inf,Numerics.ComputationalMode.Hankel,MainAx);
+            obj.RealizationData = Numerics.RealizationData(Numerics.ComputationalMode.Hankel,[],[],NaN,MainAx);
             obj.ResultData = Numerics.ResultData(MainAx,SvAx);
             obj.MainAx = MainAx;
             obj.SvAx = SvAx;
@@ -74,8 +74,7 @@ classdef CIM < matlab.mixin.Copyable
         function updateRealizationDataListeners(obj,~,~)
             addlistener(obj.RealizationData,'loaded','PostSet',@obj.checkdirty);
             addlistener(obj.RealizationData,'ComputationalMode','PostSet',@obj.update_shifts);
-            addlistener(obj.RealizationData,'ShiftScale','PostSet',@obj.update_shifts);
-            addlistener(obj.RealizationData,'K','PostSet',@obj.update_shifts);
+            addlistener(obj.RealizationData,'RealizationSize','PostSet',@obj.update_shifts);
             obj.update_shifts([],[]);
         end
 
@@ -98,11 +97,11 @@ classdef CIM < matlab.mixin.Copyable
             end
             switch obj.RealizationData.ComputationalMode
                 case Numerics.ComputationalMode.Hankel
-                    obj.RealizationData.InterpolationData = Numerics.InterpolationData(NaN,Inf);
+                    obj.RealizationData.defaultInterpolationData();
                 case Numerics.ComputationalMode.SPLoewner
-                    obj.RealizationData.InterpolationData = Numerics.InterpolationData(NaN,obj.SampleData.Contour.FindRandomShift(obj.RealizationData.ShiftScale));
+                    obj.RealizationData.InterpolationData = Numerics.InterpolationData([],obj.SampleData.Contour.FindRandomShift());
                 case Numerics.ComputationalMode.MPLoewner
-                    obj.interlevedshifts();
+                    obj.contour_interlevedshifts();
             end
         end
 
