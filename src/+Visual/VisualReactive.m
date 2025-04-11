@@ -1,18 +1,23 @@
-classdef VisualReactiveClass < handle
+classdef VisualReactive < handle
 
     properties (SetObservable)
-        ax = [];
+        ax = []
     end
 
     properties
-        phandles = gobjects(0); % array of graphics handles associated to this contour
+        phandles = gobjects(0)
     end
 
     methods (Abstract)
-        plot(obj);
+        phandles = plot(obj,ax);
     end
 
     methods
+
+        function set.ax(obj,value)
+            obj.ax = value;
+            obj.update_plot([],[]);
+        end
 
         function cla(obj)
             for i=1:length(obj.phandles)
@@ -25,7 +30,11 @@ classdef VisualReactiveClass < handle
         end
 
         function update_plot(obj,~,~)
-            obj.plot(obj.ax,true);
+            obj.cla(); obj.phandles = obj.plot(obj.ax);
+        end
+
+        function delete(obj)
+            obj.cla();
         end
 
     end

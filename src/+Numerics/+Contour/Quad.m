@@ -3,21 +3,17 @@ classdef Quad < matlab.mixin.Copyable
     %   Prototype/minimal contour specification, requiring only a
     %   quadrature and associated weights.
 
-    properties
-        phandles = gobjects(0); % array of graphics handles associated to this contour
-    end
-
     properties (SetObservable)
-        z (1,:) double = NaN        % quadrature nodes
-        w (1,:) double = NaN        % quadrature weights
-        ax             = []    % axis to manage plots on
+        z (1,:) double        % quadrature nodes
+        w (1,:) double        % quadrature weights
     end
 
     methods(Access = protected)
-      function cp = copyElement(obj)
-         cp = Numerics.Contour.Quad(obj.z,obj.w,[]);
-      end
-   end
+        function cp = copyElement(obj)
+            cp = eval(class(obj));
+            cp.z = obj.z; cp.w = obj.w;
+        end
+    end
 
     methods
 
@@ -38,55 +34,13 @@ classdef Quad < matlab.mixin.Copyable
             s = c + r*d;
         end
 
-        function obj = Quad(z,w,ax)
+        function obj = Quad(z,w)
             arguments
-                z
-                w
-                ax = []
+                z = []
+                w = []
             end
             obj.z = z;
             obj.w = w;
-            obj.ax = ax;
-            obj.phandles = gobjects(0);
-            if ~isempty(ax)
-                obj.plot(ax); obj.ax = ax; obj.update_plot();
-            end
-            addlistener(obj,'z','PostSet',@obj.update_plot);
-            addlistener(obj,'ax','PostSet',@obj.update_plot);
-        end
-
-        function plot(obj,ax)
-            arguments
-                obj
-                ax = obj.ax
-            end
-            if isempty(ax)
-                ax = gca;
-            end
-            if ~isempty(obj.phandles)
-                obj.cla();
-            end
-            hold(ax,"on");
-            obj.phandles(end+1) = scatter(ax,real(obj.z),imag(obj.z),200,"red","x",'Tag',"quadrature","DisplayName","Quadrature Nodes");
-            hold(ax,"off");
-        end
-
-        function cla(obj)
-            for i=1:length(obj.phandles)
-                  delete(obj.phandles(i));
-            end
-            obj.phandles = gobjects(0);
-        end
-
-        function update_plot(obj,~,~)
-            obj.cla();
-            if ~isempty(obj.ax)
-                obj.plot(obj.ax);
-            end
-        end
-
-        function delete(obj)
-            obj.cla();
         end
 
     end

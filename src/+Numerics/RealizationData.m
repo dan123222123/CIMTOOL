@@ -1,4 +1,4 @@
-classdef RealizationData < Numerics.VisualReactiveClass & matlab.mixin.Copyable
+classdef RealizationData < matlab.mixin.Copyable
 
     properties (SetObservable)
         ComputationalMode
@@ -15,21 +15,24 @@ classdef RealizationData < Numerics.VisualReactiveClass & matlab.mixin.Copyable
 
     methods(Access = protected)
         function cp = copyElement(obj)
-            cp = Numerics.RealizationData(obj.ComputationalMode,obj.m,obj.K,obj.ranktol);
+            cp = eval(class(obj));
+            cp.ComputationalMode = obj.ComputationalMode;
             cp.InterpolationData = obj.InterpolationData;
+            cp.RealizationSize = obj.RealizationSize;
+            cp.ranktol = obj.ranktol;
+            cp.auto_update_realization_size = obj.auto_update_realization_size;
             cp.loaded = obj.loaded;
         end
     end
 
     methods
 
-        function obj = RealizationData(ComputationalMode,InterpolationData,RealizationSize,ranktol,ax)
+        function obj = RealizationData(ComputationalMode,InterpolationData,RealizationSize,ranktol)
             arguments
                 ComputationalMode = Numerics.ComputationalMode.Hankel
                 InterpolationData = []
                 RealizationSize = []
                 ranktol = NaN
-                ax = []
             end
             obj.ComputationalMode = ComputationalMode;
             if isempty(InterpolationData)
@@ -40,7 +43,6 @@ classdef RealizationData < Numerics.VisualReactiveClass & matlab.mixin.Copyable
                 obj.RealizationSize = Numerics.RealizationSize(m,m,m);
             end
             obj.ranktol = ranktol;
-            obj.ax = ax;
             obj.updateListeners();
             obj.RealizationDataChanged();
         end
@@ -89,44 +91,11 @@ classdef RealizationData < Numerics.VisualReactiveClass & matlab.mixin.Copyable
             end
         end
 
-        function plot(obj,ax,update_phandles)
-            arguments
-                obj
-                ax = gca
-                update_phandles = false
-            end
-            if isempty(ax); return; end
-            % try to first get the next theta/sigma before clearing plots
-            [theta,sigma] = obj.getThetaSigma(obj.RealizationSize.T1,obj.RealizationSize.T2);
-            if update_phandles; obj.cla(); end
-            hold(ax,"on");
-            cphandles = gobjects(0);
-            switch obj.ComputationalMode
-                case Numerics.ComputationalMode.Hankel
-                    % Nothing to plot
-                case Numerics.ComputationalMode.SPLoewner
-                    if ~isempty(sigma)
-                        cphandles(end+1) = scatter(ax,real(sigma),imag(sigma),50,"blue","square","Tag","sigma","DisplayName","SPLoewner Shift",'Linewidth',1.5);
-                    end
-                case Numerics.ComputationalMode.MPLoewner
-                    if ~isempty(sigma)
-                        cphandles(end+1) = scatter(ax,real(sigma),imag(sigma),50,"blue","square","Tag","sigma","DisplayName","Right Interpolation Points",'Linewidth',1.5);
-                    end
-                    if ~isempty(theta)
-                        cphandles(end+1) = scatter(ax,real(theta),imag(theta),50,"red","square","Tag","theta","DisplayName","Left Interpolation Points",'Linewidth',1.5);
-                    end
-            end
-            hold(ax,"off");
-            if update_phandles; obj.phandles = cphandles; end
-        end
-
         function updateListeners(obj)
             addlistener(obj,'RealizationSize','PostSet',@obj.RealizationDataChanged);
-            addlistener(obj,'ax','PostSet',@obj.update_plot);
         end
         
         function RealizationDataChanged(obj,~,~)
-            obj.plot(obj.ax,true);
             obj.loaded = false;
         end
 
@@ -135,10 +104,6 @@ classdef RealizationData < Numerics.VisualReactiveClass & matlab.mixin.Copyable
                 obj.RealizationSize = Numerics.RealizationSize(obj.RealizationSize.m,length(obj.InterpolationData.theta),length(obj.InterpolationData.sigma));
             end
             obj.RealizationDataChanged([],[]);
-        end
-
-        function update_plot(obj,~,~)
-            obj.plot(obj.ax,true);
         end
 
     end
