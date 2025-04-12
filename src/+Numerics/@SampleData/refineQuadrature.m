@@ -1,6 +1,6 @@
 function refineQuadrature(obj)
 
-    if ~(obj.NLEVPData.loaded && obj.loaded)
+    if ~(obj.OperatorData.loaded && obj.loaded)
         error(sprintf("Contour/NLEVP sample data not loaded.\n Please 'compute' before refining the quadrature."))
     end
 
@@ -12,7 +12,7 @@ function refineQuadrature(obj)
     obj.Contour.refineQuadrature(2);
     zadded = obj.Contour.z(1:2:end);
 
-    [Qladded,Qradded,Qlradded] = obj.samplequadrature(obj.NLEVPData.T,obj.Lf,obj.Rf,zadded,obj.show_progress,obj.NLEVPData.sample_mode);
+    [Qladded,Qradded,Qlradded] = obj.samplequadrature(obj.OperatorData.T,obj.Lf,obj.Rf,zadded,obj.show_progress,obj.OperatorData.sample_mode);
 
     Qlnew   = zeros(size(obj.Ql,1),size(obj.Ql,2),2*N);
     Qrnew   = zeros(size(obj.Qr,1),size(obj.Qr,2),2*N);

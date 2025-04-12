@@ -15,13 +15,12 @@ classdef SampleData < matlab.mixin.Copyable
 
     properties (SetObservable)
         loaded = false              % internal/broadcasted state of SampleData
-        show_progress = true        % progress bar toggle -- only works for serial/Process-based pools
-        ax = []                     % internal tracking of axes associated with SampleData
+        show_progress = false       % progress bar toggle -- only works for serial/Process-based pools
     end
 
     properties (SetObservable,Access = public)
-        NLEVPData   Numerics.NLEVPData
-        Contour     Numerics.Contour.Quad
+        OperatorData
+        Contour
     end
 
     properties (Dependent)
@@ -35,42 +34,37 @@ classdef SampleData < matlab.mixin.Copyable
 
     methods (Access = protected)
         function cp = copyElement(obj)
-            cp = SampleData.SampleData(copy(obj.NLEVPData),copy(obj.Contour),obj.ell,obj.r,[]);
+            cp = eval(class(obj));
+            cp.OperatorData = copy(obj.OperatorData);
+            cp.Contour = copy(obj.Contour);
+            cp.ell = obj.ell; cp.r = obj.r;
+            addlistener(cp.OperatorData,'loaded','PostSet',@cp.OperatorDataChanged);
+            addlistener(cp.Contour,'z','PostSet',@cp.ContourChanged);
+            addlistener(cp,'Contour','PostSet',@cp.updateContourListeners);
+            %
             cp.Lf = obj.Lf; cp.Rf = obj.Rf;
             cp.show_progress = obj.show_progress;
-            cp.loaded = obj.loaded;
             %
-            cp.Ql = []; cp.Qr = []; cp.Qlr = [];
+            cp.Ql = obj.Ql; cp.Qr = obj.Qr; cp.Qlr = obj.Qlr;
+            cp.loaded = obj.loaded;
         end
     end
     
     methods
 
-        function obj = SampleData(NLEVPData,Contour,ell,r,ax)
+        function obj = SampleData(OperatorData,Contour,ell,r)
             arguments
-                NLEVPData
-                Contour
+                OperatorData = Numerics.OperatorData()
+                Contour = Numerics.Contour.Circle()
                 ell = 0
                 r = 0
-                ax = []
             end
-            obj.NLEVPData = NLEVPData;
+            obj.OperatorData = OperatorData;
             obj.Contour = Contour;
-            obj.ell = ell;
-            obj.r = r;
-            obj.ax = ax;
-            addlistener(obj.NLEVPData,'loaded','PostSet',@obj.NLEVPDataChanged);
+            obj.ell = ell; obj.r = r;
+            addlistener(obj.OperatorData,'loaded','PostSet',@obj.OperatorDataChanged);
             addlistener(obj.Contour,'z','PostSet',@obj.ContourChanged);
             addlistener(obj,'Contour','PostSet',@obj.updateContourListeners);
-            addlistener(obj,'ax','PostSet',@obj.update_plot);
-        end
-
-        function update_plot(obj,~,~)
-            obj.Contour.ax = obj.ax; obj.NLEVPData.ax = obj.ax;
-            if ~isempty(obj.ax)
-                obj.Contour.plot();
-                obj.NLEVPData.plot();
-            end
         end
 
         function updateContourListeners(obj,~,~)
@@ -78,10 +72,10 @@ classdef SampleData < matlab.mixin.Copyable
             obj.loaded = false;
         end
 
-        function NLEVPDataChanged(obj,~,~)
-            if obj.NLEVPData.loaded
+        function OperatorDataChanged(obj,~,~)
+            if obj.OperatorData.loaded
                 nold = size(obj.Lf,1);
-                n = obj.NLEVPData.n;
+                n = obj.OperatorData.n;
                 if n ~= nold
                     obj.Lf = Numerics.SampleData.sampleMatrix(n,obj.ell);
                     obj.Rf = Numerics.SampleData.sampleMatrix(n,obj.r);
@@ -109,7 +103,7 @@ classdef SampleData < matlab.mixin.Copyable
             Lsize = size(obj.Lf,2);
             if value ~= Lsize % don't mess with Lf if it was set first and ell is being updated to match it
                 if value > obj.ell
-                    Lnew = obj.sampleMatrix(obj.NLEVPData.n,value-obj.ell);
+                    Lnew = obj.sampleMatrix(obj.OperatorData.n,value-obj.ell);
                     obj.Lf = [obj.Lf,Lnew];
                 else
                     obj.Lf = obj.Lf(:,1:value);
@@ -123,7 +117,7 @@ classdef SampleData < matlab.mixin.Copyable
             Rsize = size(obj.Rf,2);
             if value ~= Rsize % don't mess with Rf if it was set first and r is being updated to match it
                 if value > obj.r
-                    Rnew = obj.sampleMatrix(obj.NLEVPData.n,value-obj.r);
+                    Rnew = obj.sampleMatrix(obj.OperatorData.n,value-obj.r);
                     obj.Rf = [obj.Rf,Rnew];
                 else
                     obj.Rf = obj.Rf(:,1:value);
@@ -145,13 +139,13 @@ classdef SampleData < matlab.mixin.Copyable
 
         function compute(obj)
             if isempty(obj.Contour)
-                error("Contour data required to sample %s. Please set a contour and try again.",obj.NLEVPData.name);
+                error("Contour data required to sample %s. Please set a contour and try again.",obj.OperatorData.name);
             end
-            if ~obj.NLEVPData.loaded
+            if ~obj.OperatorData.loaded
                 error("Please load a problem before computing.");
             end
             if ~obj.loaded
-                [obj.Ql,obj.Qr,obj.Qlr] = obj.samplequadrature(obj.NLEVPData.T,obj.Lf,obj.Rf,obj.Contour.z,obj.show_progress,obj.NLEVPData.sample_mode);
+                [obj.Ql,obj.Qr,obj.Qlr] = obj.samplequadrature(obj.OperatorData.T,obj.Lf,obj.Rf,obj.Contour.z,obj.show_progress,obj.OperatorData.sample_mode);
                 obj.loaded = true;
             end
         end

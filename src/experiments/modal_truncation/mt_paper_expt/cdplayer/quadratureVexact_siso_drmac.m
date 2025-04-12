@@ -1,5 +1,6 @@
 scdir = strcat(fileparts(mfilename("fullpath")),"/");
 matloc = strcat(scdir,"CDplayer.mat"); load(matloc);
+import Visual.*;
 %% construct fn in tf and pole-residue form
 n = size(A,1); [V,Lambda] = eig(full(A)); ewref = diag(Lambda);
 [~,idx] = sort(abs(ewref)); ewref = ewref(idx); V = V(:,idx); % must order the ew/ev appropriately for the modal truncation to make sense
@@ -10,14 +11,14 @@ G = @(z) ihml(z,n,ewref,BB,CC);
 w = logspace(-1,3,500);
 % Nbode(w,H,G);
 %% setup CIMTOOL
-nlevp = Numerics.NLEVPData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
+nlevp = OperatorData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
 gamma = -400; alpha = 6e2; beta = 6e4;
-contour = Numerics.Contour.Ellipse(gamma,alpha,beta,100);
-CIM = Numerics.CIM(nlevp,contour);
-CIM.SampleData.show_progress = false; CIM.auto_update_shifts = false;
-CIM.SampleData.NLEVP.refew = ewref;
+contour = Contour.Ellipse(gamma,alpha,beta,100);
+c = CIM(nlevp,contour);
+c.SampleData.show_progress = false; c.auto_update_shifts = false;
+c.SampleData.OperatorData.refew = ewref;
 %
-CIMMPL = copy(CIM);
+CIMMPL = copy(c);
 CIMMPL.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
 CIMMPL.RealizationData.m = length(ewref(CIMMPL.SampleData.Contour.inside(ewref)));
 %
@@ -49,13 +50,13 @@ L = CIMMPL.SampleData.L; R = CIMMPL.SampleData.R;
 [Db,Ds] = Numerics.mploewner.build_loewner(BBL,CCL,theta,sigma);
 eew = Numerics.realize(rank(Db),Db,Ds,BL,CL,NaN);
 %
-scatter(real(eew),imag(eew))
-hold on
-scatter(real(ewref),imag(ewref))
-hold off;
+% scatter(real(eew),imag(eew))
+% hold on
+% scatter(real(ewref),imag(ewref))
+% hold off;
 %%
 figure(1); clf;
-s = logspace(0,4,500); Dbrl = []; DbDsrl = [];
+s = logspace(0,4,100); Dbrl = []; DbDsrl = [];
 for i = 1:length(s)
     CIMMPL.RealizationData.InterpolationData = drmac_shifts(NN,s(i));
     theta = CIMMPL.RealizationData.InterpolationData.theta;
@@ -70,11 +71,11 @@ for i = 1:length(s)
     Dbr = rank(Db,1e-8); DbDsr = rank([Db;Ds]);
     eew = Numerics.realize(Dbr,Db,Ds,BL,CL,eps);
     Dbrl(end+1) = Dbr; DbDsrl(end+1) = DbDsr;
-    % heatmap(log10(abs(Db)));
-    % title(sprintf("Db rank = %d \t [Db;Ds] rank = %d",Dbr,DbDsr));
+    heatmap(log10(abs(Db)));
+    title(sprintf("Db rank = %d \t [Db;Ds] rank = %d",Dbr,DbDsr));
     %
-    scatter(real(eew),imag(eew)); hold on; scatter(real(ewref),imag(ewref))
-    hold off;
+    % scatter(real(eew),imag(eew)); hold on; scatter(real(ewref),imag(ewref))
+    % hold off;
     drawnow;
 end
 figure(2); clf;

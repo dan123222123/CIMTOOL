@@ -66,12 +66,10 @@ classdef ResultData < Numerics.ResultData & Visual.VisualReactive
             phandles = gobjects(0);
             if isempty(ax); return; end % assumed that ax is a cell array of axes henceforth
             if ~iscell(ax); ax = num2cell(ax); end
-            drawnow limitrate nocallbacks;
-            if isgraphics(ax{1}); phandles = [phandles;obj.plot_eigenvalues(ax{1})]; end
+            if isgraphics(ax{1}); phandles = [phandles obj.plot_eigenvalues(ax{1})]; end
             if length(ax) > 1 && isgraphics(ax{2}) % only update the singular value plot if we are given a second axis
-                phandles = [phandles;obj.plot_singularvalues(ax{2})];
+                phandles = [phandles obj.plot_singularvalues(ax{2})];
             end
-            drawnow;
         end
 
     end

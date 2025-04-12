@@ -37,16 +37,13 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             obj.MainAppUIFigure = MainAppUIFigure;
             obj.CIMData = CIMData;
 
-            obj.CIMData.MainAx = obj.MainPlotAxes;
-            obj.CIMData.SvAx = obj.HSVAxes;
+            obj.CIMData.ax = {obj.MainPlotAxes,obj.HSVAxes};
 
-            % addlistener(obj.CIMData.SampleData.NLEVPData,'refew','PostSet',@(src,event)obj.ResultDataChangedFcn);
+            addlistener(obj.CIMData.SampleData.OperatorData,'refew','PostSet',@(src,event)obj.ResultDataChangedFcn);
             % addlistener(obj.CIMData.ResultData,'rev','PostSet',@(src,event)obj.ResultDataChangedFcn);
             % addlistener(obj.CIMData.SampleData.Contour,'z','PostSet',@(src,event)obj.ResultDataChangedFcn);
 
-            addlistener(obj.CIMData.ResultData,'loaded','PostSet',@(src,event)obj.ResultDataChangedFcn);
-
-            addlistener(obj.CIMData.SampleData,'Contour','PostSet',@(src,event)obj.updateContourListeners);
+            addlistener(obj.CIMData.RealizationData,'loaded','PostSet',@(src,event)obj.ResultDataChangedFcn);
 
             addlistener(obj.MainApp,'FontSize','PostSet',@(src,event)obj.updateFontSize);
 
@@ -62,15 +59,11 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             % comp.ShiftsTab.updateFontSize(update);
         end
 
-        function updateContourListeners(comp,~)
-            % addlistener(comp.CIMData.SampleData.Contour,'z','PostSet',@(src,event)comp.ResultDataChangedFcn);
-        end
-
-        % listen for rd.loaded, NLEVPData.refew, etc. to re-do this table display
+        % listen for rd.loaded, OperatorData.refew, etc. to re-do this table display
         function ResultDataChangedFcn(comp,~)
 
             rd = comp.CIMData.ResultData;
-            nd = comp.CIMData.SampleData.NLEVPData;
+            nd = comp.CIMData.SampleData.OperatorData;
 
             ew = rd.ew; ev = rd.rev;
             T = nd.T; refew = reshape(nd.refew,[length(nd.refew) 1]);
@@ -101,7 +94,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
 
             % if computed eigenvalues are available, show them and the
             % relative residual (assuming ev are also available)
-            if comp.CIMData.ResultData.loaded && ~all(ismissing(ew))
+            if comp.CIMData.RealizationData.loaded && ~all(ismissing(ew))
                 if ~all(ismissing(refew)) % greedy matching between comp and ref if ref is available
                     cew = ew; cev = ev;
                     new = zeros(size(cew)); nev = zeros(size(cev));
@@ -149,8 +142,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
         % executes when the value of a public property is changed
         % basically, just make sure the axes are still the active ones
         function update(comp)
-            comp.CIMData.MainAx = comp.MainPlotAxes;
-            comp.CIMData.SvAx = comp.HSVAxes;
+            comp.CIMData.ax = {comp.MainPlotAxes,comp.HSVAxes};
         end
 
         % create the underlying component

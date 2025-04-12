@@ -1,4 +1,4 @@
-function [Lambda,V,W,Db,Ds,BB,CC,X,Sigma,Y] = mploewner_quadrature(z,w,Ql,Qr,L,R,theta,sigma,m,options)
+function [Lambda,V,W,Db,Ds,B,BB,C,CC,X,Sigma,Y] = mploewner_quadrature(z,w,Ql,Qr,L,R,theta,sigma,m,options)
 % Multi-Point Loewner realization with one-sided quadrature samples.
 % Given left/right quadrature data `Ql`/`Qr`, compute probed left/right transfer function samples at left/right interpolation points (theta/sigma) via contour integration approximated by a quadrature rule with nodes and weights \( ( z_k, w_k ) \).
 arguments % NOTE/TODO -- it is possible to write validation functions so that the we can get some more robust code.

@@ -8,18 +8,19 @@ H = @(z) C*((z*eye(size(A)) - A) \ B); G = @(z) ihml(z,n,ewref,B,C);
 w = logspace(-3,3); % Nbode(w,H,G);
 scatter(real(ewref),imag(ewref));
 %% setup CIMTOOL
-nlevp = Numerics.NLEVPData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
-contour = Numerics.Contour.Ellipse(0,n+1,0.5,5e2);
-CIM = Numerics.CIM(nlevp,contour);
-CIM.SampleData.show_progress = false; CIM.SampleData.NLEVP.refew = ewref;
-CIM.auto_update_shifts = false;
-CIM.SampleData.ell = n; CIM.SampleData.r = n;
+import Visual.*
+nlevp = OperatorData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
+contour = Contour.Ellipse(0,n+1,0.5,5e2);
+c = CIM(nlevp,contour);
+c.SampleData.show_progress = false; c.SampleData.OperatorData.refew = ewref;
+c.auto_update_shifts = false;
+c.SampleData.ell = n; c.SampleData.r = n;
 %
-CIMHNK = copy(CIM);
+CIMHNK = copy(c);
 CIMHNK.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
 CIMHNK.RealizationData.K = 1;
 %
-CIMMPL = copy(CIM);
+CIMMPL = copy(c);
 CIMMPL.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
 CIMMPL.RealizationData.K = n;
 

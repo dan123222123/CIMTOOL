@@ -19,7 +19,7 @@ classdef CIMTOOL < matlab.apps.AppBase
     end
 
     properties (Access = public)
-        CIMData                         Numerics.CIM
+        CIMData                         Visual.CIM
     end
 
     properties (SetObservable)
@@ -36,8 +36,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         % Create UIFigure and components
         function createComponents(app)
 
-            % app.UIFigure = uifigure('Visible', 'off','WindowKeyPressFcn',@app.recordKey,'WindowKeyReleaseFcn',@app.releaseKey);
-            app.UIFigure = uifigure('Visible', 'off','WindowKeyPressFcn',@app.recordKey);
+            app.UIFigure = uifigure('WindowKeyPressFcn',@app.recordKey);
             app.UIFigure.AutoResizeChildren = 'on';
             % app.UIFigure.Position = [100 100 640 480];
             app.UIFigure.Name = 'CIMTOOL';
@@ -79,7 +78,7 @@ classdef CIMTOOL < matlab.apps.AppBase
                 set(app.UIFigure,'WindowButtonDownFcn',@app.MainPlotAxesWindowButtonDownFcn);
                 set(app.UIFigure,'WindowKeyReleaseFcn',@app.shiftReleaseKey)
                 set(app.PlotPanel.MainPlotAxes.Title,'String','MOD');
-                app.PlotPanel.MainPlotAxes.Interactions = dataTipInteraction('SnapToDataVertex','on');
+                % app.PlotPanel.MainPlotAxes.Interactions = dataTipInteraction('SnapToDataVertex','on');
                 app.PlotPanel.MainPlotAxes.PickableParts = "visible";
                 app.CIMData.SampleData.Contour.toggleVisibility("on");
             end
@@ -116,7 +115,8 @@ classdef CIMTOOL < matlab.apps.AppBase
             if ~isempty(onc)
                 delete(onc)
             end
-            scatter(app.PlotPanel.MainPlotAxes,real(cp),imag(cp),200,"red",'filled','Tag',"ghost_contour_center");
+            hold(app.PlotPanel.MainPlotAxes,"on");
+            scatter(app.PlotPanel.MainPlotAxes,real(cp),imag(cp),200,"red",'filled','Tag',"ghost_contour_center",'DisplayName','Ghost Center');
         end
 
         function drag_contour(app,handle,event)
@@ -130,16 +130,17 @@ classdef CIMTOOL < matlab.apps.AppBase
             % compute ghost quadrature according to previous contour
             c = app.CIMData.SampleData.Contour;
             switch(class(c))
-                case 'Numerics.Contour.Circle'
+                case 'Visual.Contour.Circle'
                     rho = sqrt((real(c.gamma) - real(cp))^2 + (imag(c.gamma) - imag(cp))^2);
                     zc = c.trapezoid(c.gamma,rho,256);
                     zc = [c.gamma + rho, zc, c.gamma + rho];
-                case 'Numerics.Contour.Ellipse'
+                case 'Visual.Contour.Ellipse'
                     alpha = abs(real(c.gamma)-real(cp)); beta = abs(imag(c.gamma)-imag(cp));
                     zc = c.trapezoid(c.gamma,alpha,beta,256);
                     zc = [c.gamma + alpha, zc, c.gamma + alpha];
             end
-            plot(app.PlotPanel.MainPlotAxes,real(zc),imag(zc),"red",'LineWidth',5,'Tag','ghost_contour');
+            hold(app.PlotPanel.MainPlotAxes,"on")
+            plot(app.PlotPanel.MainPlotAxes,real(zc),imag(zc),"red",'LineWidth',5,'Tag','ghost_contour','DisplayName','Ghost Contour');
         end
 
         function set_new_center(app,handle,event)
@@ -157,9 +158,9 @@ classdef CIMTOOL < matlab.apps.AppBase
             % set new contour
             c = app.CIMData.SampleData.Contour;
             switch(class(c))
-                case 'Numerics.Contour.Circle'
+                case 'Visual.Contour.Circle'
                     c.rho = sqrt((real(c.gamma) - real(cp))^2 + (imag(c.gamma) - imag(cp))^2);
-                case 'Numerics.Contour.Ellipse'
+                case 'Visual.Contour.Ellipse'
                     c.alpha = abs(real(c.gamma)-real(cp)); c.beta = abs(imag(c.gamma)-imag(cp));
             end
             shiftReleaseKey(app,handle,event);
@@ -171,7 +172,7 @@ classdef CIMTOOL < matlab.apps.AppBase
             set(app.UIFigure,'WindowButtonDownFcn','');
             set(app.UIFigure,'WindowButtonMotionFcn','');
             set(app.UIFigure,'WindowButtonUpFcn','');
-            app.PlotPanel.MainPlotAxes.Interactions = [panInteraction('Dimensions','xy') zoomInteraction('Dimensions','xy')];
+            set(app.PlotPanel.MainPlotAxes,'Interactions',[panInteraction('Dimensions','xy') zoomInteraction('Dimensions','xy')]);
             set(app.UIFigure,'WindowKeyPressFcn',@app.recordKey);
         end
 
@@ -215,7 +216,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         % Construct app
         function app = CIMTOOL(CIMData)
             arguments
-                CIMData = Numerics.CIM(Numerics.NLEVPData(),Numerics.Contour.Circle())
+                CIMData = Visual.CIM()
             end
 
             s = settings; app.FontSize = double(s.matlab.fonts.codefont.Size.FactoryValue);

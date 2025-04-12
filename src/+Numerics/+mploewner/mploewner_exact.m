@@ -1,4 +1,4 @@
-function [Lambda,V,W,Db,Ds,BB,CC,X,Sigma,Y] = mploewner_exact(H,theta,sigma,L,R,m,options)
+function [Lambda,V,W,Db,Ds,B,BB,C,CC,X,Sigma,Y] = mploewner_exact(H,theta,sigma,L,R,m,options)
 % Multi-Point Loewner realization with exact transfer function samples.
 arguments % NOTE/TODO -- it is possible to write validation functions so that the we can get some more robust code.
     H                           % transfer function

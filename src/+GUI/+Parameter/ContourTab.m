@@ -30,10 +30,10 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
 
         function updateContourComponent(comp)
             switch(class(comp.CIMData.SampleData.Contour))
-                case 'Numerics.Contour.Circle'
+                case 'Visual.Contour.Circle'
                     comp.CircleButton.Value = true;
                     comp.ContourComponent = GUI.Parameter.Contour.CircleComponent(comp.GridLayout,comp.CIMData);
-                case 'Numerics.Contour.Ellipse'
+                case 'Visual.Contour.Ellipse'
                     comp.ContourComponent = GUI.Parameter.Contour.EllipseComponent(comp.GridLayout,comp.CIMData);
                     comp.EllipseButton.Value = true;
             end
@@ -47,17 +47,17 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
             oc = comp.CIMData.SampleData.Contour;
             center = oc.gamma; N = oc.N;
             switch(class(oc))
-                case 'Numerics.Contour.Circle'
+                case 'Visual.Contour.Circle'
                     radius = comp.CIMData.SampleData.Contour.rho;
-                case 'Numerics.Contour.Ellipse'
+                case 'Visual.Contour.Ellipse'
                     radius = max(comp.CIMData.SampleData.Contour.alpha,comp.CIMData.SampleData.Contour.beta);
             end
             delete(comp.CIMData.SampleData.Contour); % MATLAB is slow to delete unreferenced objects...
             switch(selectedButton.Text)
                 case "Circle"
-                    comp.CIMData.SampleData.Contour = Numerics.Contour.Circle(center,radius,N,comp.CIMData.MainAx);
+                    comp.CIMData.SampleData.Contour = Visual.Contour.Circle(center,radius,N);
                 case "Ellipse"
-                    comp.CIMData.SampleData.Contour = Numerics.Contour.Ellipse(center,radius,radius,N,comp.CIMData.MainAx);
+                    comp.CIMData.SampleData.Contour = Visual.Contour.Ellipse(center,radius,radius,N);
             end
             comp.updateContourComponent();
         end

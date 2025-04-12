@@ -58,33 +58,15 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
         end
 
         function ComputationalModeChangedFcn(comp,~)
-
-            % recover the original data matrix size in case we need to
-            % update K according to the new choice
-            switch(comp.CIMData.RealizationData.ComputationalMode)
-                case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
-                    odms = min(comp.CIMData.SampleData.ell,comp.CIMData.SampleData.r)*comp.CIMData.RealizationData.K;
-                case Numerics.ComputationalMode.MPLoewner
-                    odms = comp.CIMData.RealizationData.K;
-            end
-            switch(comp.ComputationalModeButtonGroup.SelectedObject.Text)
+            switch comp.ComputationalModeButtonGroup.SelectedObject.Text
                 case "Hankel"
-                    comp.CIMData.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
+                    cm = Numerics.ComputationalMode.Hankel;
                 case "SPLoewner"
-                    comp.CIMData.RealizationData.ComputationalMode = Numerics.ComputationalMode.SPLoewner;
+                    cm = Numerics.ComputationalMode.SPLoewner;
                 case "MPLoewner"
-                    comp.CIMData.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+                    cm = Numerics.ComputationalMode.MPLoewner;
             end
-            if comp.CIMData.auto_update_K && min(comp.CIMData.SampleData.ell,comp.CIMData.SampleData.r) ~= 0
-                switch(comp.CIMData.RealizationData.ComputationalMode)
-                    case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
-                        K = ceil(odms/min(comp.CIMData.SampleData.ell,comp.CIMData.SampleData.r));
-                    case Numerics.ComputationalMode.MPLoewner
-                        K = odms;
-                end
-                comp.CIMData.RealizationData.RealizationSize = Numerics.RealizationSize(comp.CIMData.RealizationData.RealizationSize.m,K,K);
-            end
-
+            comp.CIMData.setComputationalMode(cm);
         end
 
     end

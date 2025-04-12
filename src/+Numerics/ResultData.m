@@ -3,7 +3,9 @@ classdef ResultData < matlab.mixin.Copyable
     properties (SetObservable)
         Db
         Ds
+        B
         BB
+        C
         CC
     end
 
@@ -29,7 +31,9 @@ classdef ResultData < matlab.mixin.Copyable
           cp = eval(class(obj));
           cp.Db     = obj.Db;
           cp.Ds     = obj.Ds;
+          cp.B      = obj.B;
           cp.BB     = obj.BB;
+          cp.C      = obj.C;
           cp.CC     = obj.CC;
           cp.X      = obj.X;
           cp.Sigma  = obj.Sigma;
@@ -42,11 +46,13 @@ classdef ResultData < matlab.mixin.Copyable
 
     methods
 
-        function obj = ResultData(Db,Ds,BB,CC,X,Sigma,Y,ew,rev,lev)
+        function obj = ResultData(Db,Ds,B,BB,C,CC,X,Sigma,Y,ew,rev,lev)
             arguments
                 Db      = []
                 Ds      = []
+                B       = []
                 BB      = []
+                C       = []
                 CC      = []
                 X       = []
                 Sigma   = []
@@ -57,7 +63,9 @@ classdef ResultData < matlab.mixin.Copyable
             end
             obj.Db      = Db;
             obj.Ds      = Ds;
+            obj.B       = B;
             obj.BB      = BB;
+            obj.C       = C;
             obj.CC      = CC;
             obj.X       = X;
             obj.Sigma   = Sigma;

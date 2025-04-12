@@ -33,10 +33,10 @@ classdef Menu < matlab.ui.componentcontainer.ComponentContainer
             probstr = answer{1};
             strarg = answer{2};
             if isempty(strarg)
-                strarg = missing;
+                strarg = [];
             end
             try
-                comp.CIMData.SampleData.NLEVP.loadNLEVPpack(probstr,strarg);
+                comp.CIMData.SampleData.OperatorData.loadNLEVPPACK(probstr,strarg);
             catch e
                 rethrow(e)
             end

@@ -10,6 +10,7 @@ classdef RealizationData < matlab.mixin.Copyable
     end
 
     properties (Dependent)
+        m
         K
     end
 
@@ -51,9 +52,20 @@ classdef RealizationData < matlab.mixin.Copyable
             value = max(obj.RealizationSize.T1,obj.RealizationSize.T2);
         end
 
+        function set.K(obj,value)
+            obj.RealizationSize = Numerics.RealizationSize(obj.RealizationSize.m,value);
+        end
+
+        function value = get.m(obj)
+            value = obj.RealizationSize.m;
+        end
+
+        function set.m(obj,value)
+            obj.RealizationSize = Numerics.RealizationSize(value,obj.RealizationSize.T1,obj.RealizationSize.T2);
+        end
+
         function set.ComputationalMode(obj,value)
             obj.ComputationalMode = value;
-            obj.defaultInterpolationData();
         end
 
         function set.InterpolationData(obj,value)
@@ -87,7 +99,7 @@ classdef RealizationData < matlab.mixin.Copyable
             theta = obj.InterpolationData.theta;
             sigma = obj.InterpolationData.sigma;
             if obj.ComputationalMode == Numerics.ComputationalMode.MPLoewner
-                theta = theta(1:T1); sigma = sigma(1:T2);
+                theta = theta(1:min(T1,length(theta))); sigma = sigma(1:min(T2,length(sigma)));
             end
         end
 
@@ -100,9 +112,6 @@ classdef RealizationData < matlab.mixin.Copyable
         end
 
         function InterpolationDataChanged(obj,~,~)
-            if ~isempty(obj.RealizationSize) && obj.auto_update_realization_size
-                obj.RealizationSize = Numerics.RealizationSize(obj.RealizationSize.m,length(obj.InterpolationData.theta),length(obj.InterpolationData.sigma));
-            end
             obj.RealizationDataChanged([],[]);
         end
 

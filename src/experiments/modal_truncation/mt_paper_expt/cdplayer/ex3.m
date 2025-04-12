@@ -1,5 +1,6 @@
 scdir = strcat(fileparts(mfilename("fullpath")),"/");
 matloc = strcat(scdir,"CDplayer.mat"); load(matloc);
+import Visual.*;
 %% construct fn in tf and pole-residue form
 n = size(A,1); [V,Lambda] = eig(full(A)); ewref = diag(Lambda);
 [~,idx] = sort(abs(ewref)); ewref = ewref(idx); V = V(:,idx); % must order the ew/ev appropriately for the modal truncation to make sense
@@ -8,18 +9,20 @@ BB = V\B; CC = C*V;
 H = @(z) C*((z*speye(n) - A) \ B); G = @(z) ihml(z,n,ewref,BB,CC);
 w = logspace(-1,3,500); Nbode(w,H,G);
 %% setup CIMTOOL
-nlevp = Numerics.NLEVPData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
+nlevp = OperatorData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
 gamma = -140; alpha = 220; beta = 2.7e4;
-contour = Numerics.Contour.Ellipse(gamma,alpha,beta,3e3);
-CIM = Numerics.CIM(nlevp,contour);
-CIM.SampleData.NLEVP.refew = ewref;
-CIM.SampleData.show_progress = false; CIM.auto_update_shifts = false;
+contour = Contour.Ellipse(gamma,alpha,beta,3e3);
+c = CIM(nlevp,contour);
+c.SampleData.OperatorData.refew = ewref;
+c.SampleData.show_progress = false;
+c.auto_update_shifts = false;
+c.auto_update_K = false;
 %
-CIMMPL = copy(CIM);
+CIMMPL = copy(c);
 CIMMPL.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
-ss = 3;
+ss = 2.25;
 
-NN = 70; CIMMPL.SampleData.ell = 15; CIMMPL.SampleData.r = 15;
+NN = 140; CIMMPL.SampleData.ell = 15; CIMMPL.SampleData.r = 15;
 
 lep = [7 2]; offset = (gamma+alpha)*ss;
 

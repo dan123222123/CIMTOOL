@@ -53,7 +53,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
 
         function setDefaults(comp)
             CIM = comp.CIMData;
-            comp.NLEVPDataChangedFcn(missing);
+            comp.OperatorDataChangedFcn(missing);
             comp.DataDirtinessChangedFcn(missing);
             comp.NumQuadNodes.Value = CIM.SampleData.Contour.N;
             % comp.AutoSampleCheckBox.Value = CIM.auto_compute_samples;
@@ -61,7 +61,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         end
 
         function addListeners(comp)
-            addlistener(comp.CIMData.SampleData.NLEVPData,'loaded','PostSet',@(src,event)comp.NLEVPDataChangedFcn);
+            addlistener(comp.CIMData.SampleData.OperatorData,'loaded','PostSet',@(src,event)comp.OperatorDataChangedFcn);
             addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
             addlistener(comp.CIMData.ResultData,'Db','PostSet',@(src,event)comp.DataMatrixSizeChangedFcn);
             addlistener(comp.CIMData,'DataDirtiness','PostSet',@(src,event)comp.DataDirtinessChangedFcn);
@@ -84,18 +84,18 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
 
     methods % CIM -> GUI
         
-        function NLEVPDataChangedFcn(comp,~)
+        function OperatorDataChangedFcn(comp,~)
             CIM = comp.CIMData;
-            if CIM.SampleData.NLEVPData.loaded
-                if all(ismissing(CIM.SampleData.NLEVPData.name))
+            if CIM.SampleData.OperatorData.loaded
+                if all(ismissing(CIM.SampleData.OperatorData.name))
                     comp.ProblemName.Value = "";
                 else
-                    comp.ProblemName.Value = CIM.SampleData.NLEVPData.name;
+                    comp.ProblemName.Value = CIM.SampleData.OperatorData.name;
                 end
-                comp.ProblemSize.Value = CIM.SampleData.NLEVPData.n;
+                comp.ProblemSize.Value = CIM.SampleData.OperatorData.n;
             else
                 comp.ProblemName.Value = "Not Loaded";
-                comp.ProblemSize.Value = CIM.SampleData.NLEVPData.n;
+                comp.ProblemSize.Value = CIM.SampleData.OperatorData.n;
             end
         end
 

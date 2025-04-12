@@ -1,6 +1,6 @@
 classdef VisualReactive < handle
 
-    properties (SetObservable)
+    properties (Access = public, SetObservable)
         ax = []
     end
 
@@ -30,7 +30,7 @@ classdef VisualReactive < handle
         end
 
         function update_plot(obj,~,~)
-            obj.cla(); obj.phandles = obj.plot(obj.ax);
+            obj.cla(); obj.phandles = [obj.phandles obj.plot(obj.ax)];
         end
 
         function delete(obj)

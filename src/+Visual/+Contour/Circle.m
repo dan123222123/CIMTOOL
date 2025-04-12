@@ -27,7 +27,6 @@ classdef Circle < Numerics.Contour.Circle & Visual.Contour.Quad
             end
             phandles = gobjects(0);
             if isempty(ax) || ~isgraphics(ax); return; end
-            drawnow limitrate nocallbacks;
             zp = Numerics.Contour.Circle.trapezoid(obj.gamma,obj.rho,512);
             zp = [obj.gamma + obj.rho, zp, obj.gamma + obj.rho];
             of = obj.rho*0.05;
@@ -36,7 +35,6 @@ classdef Circle < Numerics.Contour.Circle & Visual.Contour.Quad
             phandles(end+1) = plot(ax,real(zp),imag(zp),"blue",'LineWidth',5,'Tag',"contour","HandleVisibility","off","DisplayName","Contour");
             hold(ax,"off");
             phandles = [phandles plot@Visual.Contour.Quad(obj,ax)];
-            drawnow;
         end
 
         function toggleVisibility(obj,mode)

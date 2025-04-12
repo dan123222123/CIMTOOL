@@ -20,6 +20,9 @@ classdef RealizationData < Numerics.RealizationData & Visual.VisualReactive
             obj = obj@Numerics.RealizationData(ComputationalMode,InterpolationData,RealizationSize,ranktol);
             obj.ax = ax;
             obj.RealizationDataChanged();
+            addlistener(obj,'ComputationalMode','PostSet',@obj.update_plot);
+            addlistener(obj,'InterpolationData','PostSet',@obj.update_plot);
+            addlistener(obj,'RealizationSize','PostSet',@obj.update_plot);
         end
 
         function phandles = plot(obj,ax)
@@ -51,8 +54,8 @@ classdef RealizationData < Numerics.RealizationData & Visual.VisualReactive
         end
 
         function RealizationDataChanged(obj,~,~)
-            obj.update_plot([],[]);
             RealizationDataChanged@Numerics.RealizationData(obj,[],[]);
+            obj.update_plot([],[]);
         end
 
     end

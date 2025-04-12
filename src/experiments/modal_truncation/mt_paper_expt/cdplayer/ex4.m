@@ -1,5 +1,6 @@
 scdir = strcat(fileparts(mfilename("fullpath")),"/");
 matloc = strcat(scdir,"CDplayer.mat"); load(matloc);
+import Visual.*;
 %% construct fn in tf and pole-residue form
 % first, extract the reference eigenvalues and order them by absolute value
 n = size(A,1); m = size(B,2); p = size(C,1);
@@ -25,32 +26,32 @@ Nbode(w,H,Hc); legend('H','Hc','Location','northoutside','Orientation','horizont
 nexttile(2); scatter(real(cewref),imag(cewref));
 nexttile(4); scatter(real(cewref),imag(cewref)); xlim([-10,6]); ylim([-100,100]);
 %% setup unstable contour problem
-nlevp = Numerics.NLEVPData(Hc); nlevp.sample_mode = Numerics.SampleMode.Direct;
+nlevp = OperatorData(Hc); nlevp.sample_mode = Numerics.SampleMode.Direct;
 % gamma = 0.5; alpha = 0.25; beta = 65;
 gamma = 0.5; alpha = 0.25; beta = 20;
-contour = Numerics.Contour.Ellipse(gamma,alpha,beta,1024);
-CIM = Numerics.CIM(nlevp,contour);
-CIM.SampleData.NLEVP.refew = cewref;
-CIM.SampleData.show_progress = false; CIM.auto_update_shifts = false;
+contour = Contour.Ellipse(gamma,alpha,beta,1024);
+c = CIM(nlevp,contour);
+c.SampleData.OperatorData.refew = cewref;
+c.SampleData.show_progress = false; c.auto_update_shifts = false;
 %%
 lep = [4 0];
-nec = length(cewref(CIM.SampleData.Contour.inside(cewref)));
+nec = length(cewref(c.SampleData.Contour.inside(cewref)));
 NN = 20;
 %
-CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
-CIM.RealizationData.m = nec;
-CIM.SampleData.ell = 2; CIM.SampleData.r = 2;
-CIM.RealizationData.InterpolationData = vertshiftline(NN,lep,5);
-CIM.RealizationData.K = min(length(CIM.RealizationData.InterpolationData.theta),length(CIM.RealizationData.InterpolationData.sigma));
-CIM.compute();
+c.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+c.RealizationData.m = nec;
+c.SampleData.ell = 2; c.SampleData.r = 2;
+c.RealizationData.InterpolationData = vertshiftline(NN,lep,5);
+c.RealizationData.K = min(length(c.RealizationData.InterpolationData.theta),length(c.RealizationData.InterpolationData.sigma));
+c.compute();
 %
 %% check in CIMTOOL
 % c = CIMTOOL(CIM); daspect(CIM.MainAx,'auto');
 % xlim(CIM.MainAx,[-10,6]); ylim(CIM.MainAx,[-100,100]);
 %%
-Hur = cimmt(CIM,nec); Hsr = @(z) Hc(z) - Hur(z);
+Hur = cimmt(c,nec); Hsr = @(z) Hc(z) - Hur(z);
 figure(2); tiledlayout(2,2);
-nexttile(1,[2 1]); CIM.plot(); xlim([-1,6]); ylim([-70,70]);
+nexttile(1,[2 1]); c.plot(); xlim([-1,6]); ylim([-70,70]);
 nexttile(2); Nbode(w,H,Hsr); legend('H','Hsr','Location','northoutside','Orientation','horizontal');
 nexttile(4); nboderr(w,H,Hsr); title("Pointwise Relative $\mathcal{L}_2$ Error, H vs Hsr", 'Interpreter','latex');
 %%

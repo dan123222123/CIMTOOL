@@ -28,7 +28,6 @@ classdef Ellipse < Numerics.Contour.Ellipse & Visual.Contour.Quad
             end
             phandles = gobjects(0);
             if isempty(ax) || ~isgraphics(ax); return; end
-            drawnow limitrate nocallbacks;
             zp = Numerics.Contour.Ellipse.trapezoid(obj.gamma,obj.alpha,obj.beta,512);
             zp = [obj.gamma + obj.alpha, zp, obj.gamma + obj.alpha];
             of = max(obj.alpha,obj.beta)*0.05;
@@ -37,7 +36,6 @@ classdef Ellipse < Numerics.Contour.Ellipse & Visual.Contour.Quad
             phandles(end+1) = plot(ax,real(zp),imag(zp),"blue",'LineWidth',5,'Tag',"contour","HandleVisibility","off");
             hold(ax,"off");
             phandles = [phandles plot@Visual.Contour.Quad(obj,ax)];
-            drawnow;
         end
 
         function toggleVisibility(obj,mode)

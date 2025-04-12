@@ -1,5 +1,4 @@
 classdef CIM < matlab.mixin.Copyable
-    % Docstring of CIM class.
 
     properties (Access = public)
         SampleData          Numerics.SampleData
@@ -9,8 +8,6 @@ classdef CIM < matlab.mixin.Copyable
 
     properties (SetObservable)
         DataDirtiness = 2
-        MainAx = []
-        SvAx = []
         auto = false;
         auto_compute_samples = false;
         auto_compute_realization = false;
@@ -22,8 +19,9 @@ classdef CIM < matlab.mixin.Copyable
 
     methods(Access = protected)
         function cp = copyElement(obj)
-            cp = Numerics.CIM(copy(obj.SampleData.NLEVPData),copy(obj.SampleData.Contour),[],[]);
-            cp.auto = obj.auto; cp.auto_compute_samples = obj.auto_compute_samples;
+            cp = eval(class(obj));
+            cp.auto = obj.auto;
+            cp.auto_compute_samples = obj.auto_compute_samples;
             cp.auto_compute_realization = obj.auto_compute_realization;
             cp.auto_estimate_m = obj.auto_estimate_m;
             cp.auto_update_shifts = obj.auto_update_shifts;
@@ -33,6 +31,9 @@ classdef CIM < matlab.mixin.Copyable
             cp.updateSampleDataListeners([],[]);
             cp.RealizationData = copy(obj.RealizationData);
             cp.updateRealizationDataListeners([],[]);
+            cp.ResultData = copy(obj.ResultData);
+            %
+            cp.DataDirtiness = obj.DataDirtiness;
         end
     end
 
@@ -44,31 +45,44 @@ classdef CIM < matlab.mixin.Copyable
 
     methods
 
-        function obj = CIM(nep,contour,MainAx,SvAx)
+        function obj = CIM(OperatorData,Contour,RealizationData)
             arguments
-                nep
-                contour
-                MainAx = []
-                SvAx = []
+                OperatorData = Numerics.OperatorData()
+                Contour = Numerics.Contour.Circle()
+                RealizationData = Numerics.RealizationData()
             end
-            obj.SampleData = Numerics.SampleData(nep,contour,0,0,MainAx);
-            % default to Hankel realization
-            obj.RealizationData = Numerics.RealizationData(Numerics.ComputationalMode.Hankel,[],[],NaN,MainAx);
-            obj.ResultData = Numerics.ResultData(MainAx,SvAx);
-            obj.MainAx = MainAx;
-            obj.SvAx = SvAx;
-            obj.update_plot([],[]);
+            obj.SampleData = Numerics.SampleData(OperatorData,Contour,0,0);
+            obj.RealizationData = RealizationData;
+            obj.ResultData = Numerics.ResultData();
             obj.updateListeners([],[]);
+        end
 
+        function setComputationalMode(obj,cm)
+            if obj.RealizationData.ComputationalMode == cm
+                return;
+            end
+            switch obj.RealizationData.ComputationalMode
+                case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
+                    odms = min(obj.SampleData.ell,obj.SampleData.r)*obj.RealizationData.K;
+                case Numerics.ComputationalMode.MPLoewner
+                    odms = obj.RealizationData.K;
+            end
+            obj.RealizationData.ComputationalMode = cm;
+            if obj.auto_update_K && min(obj.SampleData.ell,obj.SampleData.r) ~= 0
+                switch cm
+                    case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
+                        obj.default_shifts();
+                        K = ceil(odms/min(obj.SampleData.ell,obj.SampleData.r));
+                    case Numerics.ComputationalMode.MPLoewner
+                        K = odms;
+                end
+                obj.RealizationData.RealizationSize = Numerics.RealizationSize(obj.RealizationData.RealizationSize.m,K,K);
+            end
         end
 
         function updateContourListeners(obj,~,~)
             addlistener(obj.SampleData.Contour,'z','PostSet',@obj.update_shifts);
             obj.update_shifts([],[]);
-        end
-
-        function updateNLEVPDataListeners(obj,~,~)
-            addlistener(obj.SampleData.NLEVPData,'loaded','PostSet',@obj.NLEVPDataChanged);
         end
 
         function updateRealizationDataListeners(obj,~,~)
@@ -81,75 +95,31 @@ classdef CIM < matlab.mixin.Copyable
         function updateSampleDataListeners(obj,~,~)
             addlistener(obj.SampleData,'loaded','PostSet',@obj.checkdirty);
             addlistener(obj.SampleData,'Contour','PostSet',@obj.updateContourListeners);
-            addlistener(obj.SampleData,'NLEVPData','PostSet',@obj.updateNLEVPDataListeners);
-            obj.updateNLEVPDataListeners([],[]); obj.updateContourListeners([],[]);
+            obj.updateContourListeners([],[]);
         end
 
         function updateListeners(obj,~,~)
-            addlistener(obj,'MainAx','PostSet',@obj.update_plot);
             obj.updateSampleDataListeners([],[]);
             obj.updateRealizationDataListeners([],[]);
         end
 
-        function update_shifts(obj,src,~)
-            if (isempty(src) || src.Name == "z" || src.Name == "K") && ~obj.auto_update_shifts
-                return;
-            end
+        function default_shifts(obj)
             switch obj.RealizationData.ComputationalMode
-                case Numerics.ComputationalMode.Hankel
-                    obj.RealizationData.defaultInterpolationData();
                 case Numerics.ComputationalMode.SPLoewner
-                    obj.RealizationData.InterpolationData = Numerics.InterpolationData([],obj.SampleData.Contour.FindRandomShift());
+                    obj.RealizationData.InterpolationData = Numerics.InterpolationData(NaN,obj.SampleData.Contour.FindRandomShift());
                 case Numerics.ComputationalMode.MPLoewner
                     obj.contour_interlevedshifts();
             end
         end
 
-        function NLEVPDataChanged(obj,~,~)
-            if obj.SampleData.NLEVPData.loaded
-                obj.ResultData.ew = [];
-                obj.ResultData.ev = [];
-                obj.ResultData.Db = [];
-                obj.ResultData.Ds = [];
+        function update_shifts(obj,src,~)
+            if ~obj.auto_update_shifts
+                return;
             end
-        end
-
-        function update_plot(obj,~,~)
-            if ~isempty(obj.MainAx)
-                ax = obj.MainAx; hold(ax,"on");
-                obj.SampleData.ax = ax; hold(ax,"on");
-                obj.RealizationData.ax = ax; hold(ax,"on");
-                obj.ResultData.MainAx = ax; hold(ax,"off");
+            switch obj.RealizationData.ComputationalMode
+                case Numerics.ComputationalMode.MPLoewner
+                    obj.contour_interlevedshifts();
             end
-
-            if ~isempty(obj.SvAx)
-                ax = obj.SvAx; hold(ax,"on");
-                obj.ResultData.SvAx = ax; hold(ax,"off");
-            end
-        end
-
-        function plot(obj,ax)
-            arguments
-                obj
-                ax = gca
-            end
-
-            ew = obj.ResultData.ew; refew = obj.SampleData.NLEVPData.refew;
-
-            if ~isempty(refew)
-                scatter(ax,real(refew),imag(refew),50,"diamond","MarkerEdgeColor","#E66100","LineWidth",1.5,"DisplayName","$\lambda$"); hold on;
-            end
-            if ~isempty(ew)
-                scatter(ax,real(ew),imag(ew),15,"MarkerFaceColor","#1AFF1A",'DisplayName',"$\hat{\lambda}$"); hold on;
-            end
-            obj.SampleData.Contour.plot(ax); hold on;
-            obj.RealizationData.plot(ax); hold on;
-            grid;
-            title(sprintf("Complex Plane (%d reference eigenvalues inside contour)",obj.RealizationData.m));
-            xlabel("$\bf{R}$",'Interpreter','latex'); ylabel("$i\bf{R}$",'Interpreter','latex');
-            legend('Interpreter','latex','Location','northoutside','Orientation','horizontal')
-            hold off
-
         end
 
         function checkdirty(obj,~,~)
@@ -175,9 +145,42 @@ classdef CIM < matlab.mixin.Copyable
             obj.computeRealization();
         end
 
-        function [Db,Ds] = getData(obj)
+        function [Db,Ds] = getFullDataMatrices(obj)
+            obj.compute();
             Db = obj.ResultData.Db;
             Ds = obj.ResultData.Ds;
+        end
+
+        function [V, D, W] = eigs(obj)
+            obj.compute();
+            [~,ewidx] = sort(abs(obj.ResultData.ew));
+            if nargout <= 1
+                V = obj.ResultData.ew(ewidx);
+            elseif nargout >= 2
+                V = obj.ResultData.rev(:,ewidx);
+                D = diag(obj.ResultData.ew(ewidx));
+                W = obj.ResultData.lev(ewidx,:)';
+            end
+        end
+
+        function H = tf(obj,m,abstol)
+            arguments
+                obj
+                m = obj.RealizationData.RealizationSize.m
+                abstol = NaN
+            end
+            cp = copy(obj);
+            cp.compute();
+            [Lambda,V,W] = Numerics.tf_dbsvd(m, ...
+                cp.ResultData.X, ...
+                cp.ResultData.Sigma, ...
+                cp.ResultData.Y, ...
+                cp.ResultData.Ds, ...
+                cp.ResultData.BB, ...
+                cp.ResultData.CC, ...
+                abstol ...
+                );
+            H = @(z) V*((Lambda-z*eye(size(Lambda)))\W);
         end
 
     end
