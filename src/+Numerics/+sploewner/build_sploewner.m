@@ -1,4 +1,5 @@
 function [Db,Ds,B,C] = build_sploewner(sigma,Ml,Mr,Mlr,K)
+% Helper function to build the data matrices for SPLoewner realization.
 
     [ell,r,~] = size(Mlr); n = size(Mr,1);
 
@@ -25,4 +26,3 @@ function [Db,Ds,B,C] = build_sploewner(sigma,Ml,Mr,Mlr,K)
     end
 
 end
-

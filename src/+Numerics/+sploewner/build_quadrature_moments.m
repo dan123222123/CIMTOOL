@@ -1,4 +1,5 @@
 function [Ml,Mr,Mlr] = build_quadrature_moments(sigma,z,w,Ql,Qr,Qlr,K)
+% Helper function to build generalized moments up to order K from left/right/two-sided quadrature samples at nodes \( z \) using quadrature weights \( w \).
 
     [ell,r,N] = size(Qlr); n = size(Qr,1);
 
@@ -9,7 +10,7 @@ function [Ml,Mr,Mlr] = build_quadrature_moments(sigma,z,w,Ql,Qr,Qlr,K)
     end
 
     Mlr = zeros(ell,r,2*K); Mr = zeros(n,r,K); Ml = zeros(ell,n,K);
-    
+
     for k=1:K
         for nn=1:N
             Mlr(:,:,2*k-1) = Mlr(:,:,2*k-1) + w(nn) * f(2*k-2,z(nn)) * Qlr(:,:,nn);

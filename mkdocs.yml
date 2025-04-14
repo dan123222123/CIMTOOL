@@ -11,7 +11,7 @@ watch:
   - src/+GUI
   - src/+Test
   - src/+Numerics
-  - src/+Numerics/+Contour
+  - src/+Visual
 
 markdown_extensions:
   - pymdownx.arithmatex:
@@ -24,7 +24,11 @@ markdown_extensions:
       pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
-  - pymdownx.superfences
+  - pymdownx.superfences:
+        custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.blocks.details
   - pymdownx.blocks.admonition
 
@@ -39,8 +43,6 @@ plugins:
             parse_arguments: true
             show_source: false
             show_if_no_docstring: true
-            docstring_options:
-              warn_unknown_params: true
             docstring_style: google
             docstring_section_style: list
             separate_signature: true
@@ -48,11 +50,14 @@ plugins:
             show_object_full_path: true
             show_symbol_type_heading: true
             show_symbol_type_toc: true
+            show_bases: false
+            members_order: "source"
 
 extra_javascript:
   - javascripts/katex.js
   - https://unpkg.com/katex@0/dist/katex.min.js
   - https://unpkg.com/katex@0/dist/contrib/auto-render.min.js
+  - https://unpkg.com/mermaid@10.9.0/dist/mermaid.min.js
 
 extra_css:
   - https://unpkg.com/katex@0/dist/katex.min.css

@@ -1,18 +1,20 @@
 function [Ml,Mr,Mlr] = build_exact_moments(sigma,A,B,C,K,L,R)
-    arguments
-        sigma
-        A
-        B 
-        C 
-        K 
-        L = eye(size(C,1),size(C,2))
-        R = eye(size(B,2),size(B,1))
-    end
+% Helper function to build generalized moments up to order K from left/right/two-sided quadrature samples at nodes \( z \) using quadrature weights \( w \).
+arguments
+    sigma
+    A
+    B
+    C
+    K
+    L = eye(size(C,1),size(C,2))
+    R = eye(size(B,2),size(B,1))
+end
 
+    % This is unstable -- better to formulate f based on solving with left/right probing matrices (possibly with a "mode" selection via options, say)
     if sigma == Inf
         f = @(k,Lambda) (Lambda^k);
     else
-        f = @(k,Lambda) (((-1)^k) * inv((sigma*eye(size(Lambda)) - Lambda))^(k+1));
+        f = @(k,Lambda) (((-1)^k) * pinv((sigma*eye(size(Lambda)) - Lambda))^(k+1));
     end
 
     Ml = zeros(size(L,2),size(B,2),K);
@@ -22,7 +24,7 @@ function [Ml,Mr,Mlr] = build_exact_moments(sigma,A,B,C,K,L,R)
     [V,D] = eig(full(A)); B = V\full(B); C = full(C)*V;
 
     for k=1:K
-        CL = f(k-1,D); % this should be chosen based on the size of B or C!
+        CL = f(k-1,D);
         Ml(:,:,k) = L'*C*CL*B;
         Mr(:,:,k) = C*CL*B*R;
         Mlr(:,:,k) = Ml(:,:,k)*R;

@@ -1,16 +1,17 @@
 function [Lambda,V,W,Db,Ds,B,C,X,Sigma,Y] = sploewner_exact(sigma,A,B,C,K,m,L,R,options)
-% Hankel/Single Point Loewner realization with two-sided quadrature samples.
-% Given two-sided/left/right quadrature data `Qlr'/`Ql`/`Qr`, construction moments via contour integration approximated by a quadrature rule with nodes and weights \( ( z_k, w_k ) \).
-arguments (Input) % NOTE/TODO -- it is possible to write validation functions so that the we can get some more robust code.
-    sigma            % shift value \( = \infty \Leftrightarrow \) Hankel, \( < \infty \Leftrightarrow \) SPLoewner
-    A
-    B
-    C
-    K                % number of moments to use in data matrix construction
-    m                % number of poles to search for in \( \Omega \)
-    L = eye(size(C,1),size(C,2))
-    R = eye(size(B,2),size(B,1))
-    options = struct("AbsTol",NaN,"Verbose",true);
+% Hankel/Single Point Loewner realization given state, reachability, and observability matrices of an LTI system.
+% Using these system matrices, (probed) generalzied moments are constructed up to order \( 2K \).
+% We use these "exact" moments to construct the Hankel data matrices and the realize the system from the resulting matrix pencil.
+arguments (Input)
+    sigma                           % shift value \( = \infty \Leftrightarrow \) Hankel, \( ! \infty \Leftrightarrow \) SPLoewner
+    A                               % state matrix
+    B                               % reachability matrix
+    C                               % observability matrix
+    K                               % half of the number of moments to use in data matrix construction
+    m                               % number of poles to search for in \( \Omega \)
+    L = eye(size(C,1),size(C,2))    % left matrix of probing directions
+    R = eye(size(B,2),size(B,1))    % right matrix of probing directions
+    options = struct("AbsTol",NaN)  % options for realization
 end
 import Numerics.sploewner.* Numerics.realize;
 
