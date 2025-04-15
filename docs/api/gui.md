@@ -1,4 +1,4 @@
-# GUI API
+# GUI
 
 ::: +GUI
     validate_arguments: true

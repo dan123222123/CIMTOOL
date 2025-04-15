@@ -13,6 +13,18 @@ arguments (Input)
     R = eye(size(B,2),size(B,1))    % right matrix of probing directions
     options = struct("AbsTol",NaN)  % options for realization
 end
+arguments (Output)
+    Lambda
+    V
+    W
+    Db
+    Ds
+    B
+    C
+    X
+    Sigma
+    Y
+end
 import Numerics.sploewner.* Numerics.realize;
 
 % check that m, # of left/right shifts are greater than 0

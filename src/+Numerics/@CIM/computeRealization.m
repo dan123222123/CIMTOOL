@@ -1,6 +1,5 @@
 function computeRealization(obj)
-    import Numerics.sploewner.sploewner_quadrature;
-    import Numerics.mploewner.mploewner_quadrature;
+    import Numerics.sploewner.sploewner_quadrature import Numerics.mploewner.mploewner_quadrature;
     opts = namedargs2cell(obj.options);
     m = obj.RealizationData.RealizationSize.m;
     K = obj.RealizationData.K;
