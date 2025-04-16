@@ -19,7 +19,7 @@ classdef Ellipse < Numerics.Contour.Quad
                 beta = 1
                 N = 8
             end
-            import Numerics.Contour.Ellipse
+            import Numerics.Contour.Ellipse.trapezoid
             [z,w] = trapezoid(gamma,alpha,beta,N);
             obj@Numerics.Contour.Quad(z,w);
             obj.gamma = gamma;
@@ -84,7 +84,7 @@ classdef Ellipse < Numerics.Contour.Quad
             obj.N = rf*obj.N; obj.update();
         end
         function update(obj,~,~)
-            import Numerics.Contour.Ellipse;
+            import Numerics.Contour.Ellipse.trapezoid;
             [obj.z,obj.w] = trapezoid(obj.gamma,obj.alpha,obj.beta,obj.N);
         end
     end

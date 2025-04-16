@@ -6,8 +6,8 @@ arguments
     B
     C
     K
-    L = eye(size(C,1),size(C,2))
-    R = eye(size(B,2),size(B,1))
+    L = eye(size(C,1),size(C,1))
+    R = eye(size(B,2),size(B,2))
 end
 
     % This is unstable -- better to formulate f based on solving with left/right probing matrices (possibly with a "mode" selection via options, say)
