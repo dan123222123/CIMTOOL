@@ -64,6 +64,7 @@ Ql = s.Ql; Qr = s.Qr; Qlr = s.Qlr; % extract the probed quadrature evaluations
 [Ml,Mr,Mlr] = Numerics.sploewner.build_quadrature_moments(sigma,z,w,Ql,Qr,Qlr,K);
 [Db,Ds] = Numerics.sploewner.build_sploewner(sigma,Ml,Mr,Mlr,K);
 ce = eig(Ds,Db); hold on; cep = scatter(real(ce),imag(ce),"red","filled"); hold off;
+norm(sort(ce,"descend")-diag(A))
 % not a great recovery of eigenvalues...
 
 %% Refining Quadrature Data
@@ -76,4 +77,5 @@ Ql = s.Ql; Qr = s.Qr; Qlr = s.Qlr; % extract the probed quadrature evaluations
 [Ml,Mr,Mlr] = Numerics.sploewner.build_quadrature_moments(sigma,z,w,Ql,Qr,Qlr,K);
 [Db,Ds] = Numerics.sploewner.build_sploewner(sigma,Ml,Mr,Mlr,K);
 ce = eig(Ds,Db); hold on; cep = scatter(real(ce),imag(ce),"blue","filled"); hold off;
+norm(sort(ce,"descend")-diag(A))
 % looking better!
