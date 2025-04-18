@@ -8,6 +8,7 @@ M = Numerics.sploewner.build_exact_moments(sigma,A,B,C,2*K);
 ew = realize_inorder(Db,Ds); ERA_err = norm(ew-diag(A))
 %% realize system on a grid of shifts
 N = 321;
+% N = 641;
 % N = 1281;
 x = linspace(-10,5,N); y = linspace(-7.5,7.5,N);
 [X,Y] = meshgrid(x,y); G = X + 1i*Y;
@@ -21,15 +22,18 @@ parfor i=1:N
     end
 end
 %% Heatmap of Ratio between ERA and SPLoewner
-ls_eravspl = log10(ERA_err./SPLoewner_err);
-cl = max([ceil(max(ls_eravspl,[],"all")), abs(floor(min(ls_eravspl(~isinf(ls_eravspl)),[],"all")))]);
-h = heatmap(x,y,ls_eravspl); clim([-cl cl]); colormap(redblue(5000));
+ls_eravspl = log10(SPLoewner_err/ERA_err);
+% cl = max([ceil(max(ls_eravspl(~isinf(ls_eravspl)),[],"all")), abs(floor(min(ls_eravspl(~isinf(ls_eravspl)),[],"all")))]);
+cl =5;
+% h = heatmap(x,y,ls_eravspl);
+h = contourf(x,y,ls_eravspl);
+clim([-cl cl]); colormap(redblue(5000));
 % make better labels
-CustomXLabels = string(x); CustomYLabels = string(y);
-CustomXLabels(mod(x,1) ~= 0) = " "; CustomYLabels(mod(y,0.5) ~= 0) = " ";
-h.XDisplayLabels = CustomXLabels; h.YDisplayLabels = CustomYLabels;
-set(get(gca,'xlabel'),'rotation',90)
-grid off;
+% CustomXLabels = string(x); CustomYLabels = string(y);
+% CustomXLabels(mod(x,1) ~= 0) = " "; CustomYLabels(mod(y,0.5) ~= 0) = " ";
+% h.XDisplayLabels = CustomXLabels; h.YDisplayLabels = CustomYLabels;
+% set(get(gca,'xlabel'),'rotation',90)
+% grid off;
 
 function ew = realize_inorder(Db,Ds)
     ew = eig(Ds,Db); [~,ewidx] = sort(abs(ew),"descend"); ew = ew(ewidx);

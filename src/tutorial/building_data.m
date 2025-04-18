@@ -52,6 +52,7 @@ o.refew = diag(A); o.sample_mode = "Direct";
 % data structure, and assign a plotting axis associated to the operator
 % reference poles and contour.
 s = SampleData(o,c); s.ax = gca;
+s.Contour.plot_quadrature = true;
 
 % when sampling quadrature, we can sketch to reduce the size of our data
 s.ell = 1; s.r = 1; % sketch evaluations of our operator to the SISO case
@@ -71,6 +72,7 @@ norm(sort(ce,"descend")-diag(A))
 delete(cep);
 s.refineQuadrature(); % doubles the number of quadrature nodes, reusing old quadrature data
 
+%% Realizing Eigenvalues of Refined Quadrature Data
 sigma = Inf; % interpolation point
 z = c.z; w = c.w; % quadrature nodes and weights
 Ql = s.Ql; Qr = s.Qr; Qlr = s.Qlr; % extract the probed quadrature evaluations
