@@ -1,38 +1,38 @@
 import Visual.*
-% nlevp = Numerics.NLEVPData([],'plasma_drift');
-% contour = Numerics.Contour.Ellipse(0.3i,3,0.4,32);
-nlevp = OperatorData([],'omnicam1');
-contour = Contour.Circle(0.4,0.2,8);
+% n = Numerics.NLEVPData([],'plasma_drift');
+% c = Numerics.Contour.Ellipse(0.3i,3,0.4,32);
+n = OperatorData([],'omnicam1');
+c = Contour.Circle(0.4,0.2,8);
 
-% nlevp = Numerics.NLEVPData([],'gun');
-% contour = Numerics.Contour.Circle(141000,30000);
+% n = Numerics.NLEVPData([],'gun');
+% c = Numerics.Contour.Circle(141000,30000);
 
-c = CIM(nlevp,contour);
-c.SampleData.ell = 3; c.SampleData.r = 3;
-c.RealizationData.RealizationSize = Numerics.RealizationSize(3,3);
-c.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+cim = CIM(n,c);
+cim.SampleData.ell = 3; cim.SampleData.r = 3;
+cim.RealizationData.RealizationSize = Numerics.RealizationSize(3,3);
+cim.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
 
-CTOOL = CIMTOOL(c);
+CTOOL = CIMTOOL(cim);
 
 % % % plasma_drift
-% CIM.SampleData.ell = 100; CIM.SampleData.r = 100;
-% CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
-% % CIM.RealizationData.m = floor(length(nlevp.refew(CIM.SampleData.Contour.inside(nlevp.refew)))/2);
-% CIM.RealizationData.m = 143;
-% % CIM.RealizationData.K = 2*CIM.RealizationData.m;
-% CIM.RealizationData.K = 200;
+% cim.SampleData.ell = 100; cim.SampleData.r = 100;
+% cim.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+% % cim.RealizationData.m = floor(length(n.refew(cim.SampleData.Contour.inside(n.refew)))/2);
+% cim.RealizationData.m = 143;
+% % cim.RealizationData.K = 2*cim.RealizationData.m;
+% cim.RealizationData.K = 200;
 
 % omnicam1
-% CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
-% CIM.RealizationData.RealizationSize = Numerics.RealizationSize(3,3);
+% cim.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+% cim.RealizationData.RealizationSize = Numerics.RealizationSize(3,3);
 
 % % gun
-% CIM.SampleData.Contour.N = 64;
-% CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
-% CIM.RealizationData.K = 32;
-% CIM.RealizationData.m = 17;
-% CIM.SampleData.ell = 32;
-% CIM.SampleData.r = 32;
+% cim.SampleData.Contour.N = 64;
+% cim.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+% cim.RealizationData.K = 32;
+% cim.RealizationData.m = 17;
+% cim.SampleData.ell = 32;
+% cim.SampleData.r = 32;
 
-% CIM.compute();
+% cim.compute();
 

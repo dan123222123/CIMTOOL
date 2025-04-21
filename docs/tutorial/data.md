@@ -152,10 +152,6 @@ We will _sketch_ our evaluations of \(H\) at the quadrature nodes down to \( 1 \
 s.ell = 1; s.r = 1; s.compute();
 ```
 
-!!! note
-
-    Since each sketched
-
 ### ERA/SPLoewner
 
 For ERA, put \( f_k(z) = z^k \) and compute
@@ -169,4 +165,5 @@ For SPLoewner with \( \sigma \not \in \Omega \), put \( f_k^\sigma(z) = \frac{(-
 \[
 M_k^\sigma = \frac{H^{(k)}(\sigma)}{k!} = \frac{1}{2 \pi i} \oint_{\partial \Omega} \frac{(-1)^k}{(\sigma - z)^{k+1}} H(z) \, dz \approx \sum_{n=1}^N w_n \frac{(-1)^k}{(\sigma - z)^{k+1}} H(z_n).
 \]
-Just as in the case of MPLoewner, we can apply left and right _sketching_ matrices to our quadrature approximation to reduce the size of our approximated
+
+Just as in the case of MPLoewner, we can apply left and right _sketching_ matrices to our quadrature approximation to reduce the size of our approximated quadrature samples.

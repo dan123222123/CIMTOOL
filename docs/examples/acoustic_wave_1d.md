@@ -22,34 +22,11 @@ where
 We put $N = 500, \chi = 1.0001$, and let $\Omega = \mathcal{B}(0.8i,10)$ be the circular contour centered at $\gamma = 0.8i$ with radius $\rho = 10$.
 
 ``` matlabsession
->> N = 500; chi = 1.0001;
->> nlevp = Numerics.NLEVPData(missing,'acoustic_wave_1d',sprintf("%f,%f",N,chi));
->> contour = Numerics.Contour.Circle(0.8i,10);
->> CIM = Numerics.CIM(nlevp,contour)
+>> N = 506; Xi = 1.0001;
+>> n = Visual.OperatorData([],'acoustic_wave_1d',sprintf("%f,%f",N,Xi));
+>> c = Visual.Contour.Circle(0.8i,10);
+>> cim = Visual.CIM(n,c);
 ```
-
-/// details | Output
-
-``` matlabsession
-CIM =
-
-  CIM with properties:
-
-                  SampleData: [1×1 Numerics.SampleData]
-             RealizationData: [1×1 Numerics.RealizationData]
-                  ResultData: [1×1 Numerics.ResultData]
-               DataDirtiness: 2
-                      MainAx: <missing>
-                        SvAx: <missing>
-                        auto: 0
-        auto_compute_samples: 0
-    auto_compute_realization: 0
-             auto_estimate_m: 0
-          auto_update_shifts: 1
-               auto_update_K: 1
-```
-
-///
 
 Reference eigenvalues can be computed explicitly as
 
@@ -57,17 +34,13 @@ Reference eigenvalues can be computed explicitly as
 
 when \( \tan^{-1}(i \chi) \) is defined.
 
-/// details | Computing Reference Eigenvalues
-
 ``` matlab
 nref = 50; refew = zeros(2*nref,1);
 for k=-nref:nref
     refew(k+nref+1) = atan(1i*chi)/(2*pi) + k/2;
 end
-CIM.SampleData.NLEVP.refew = refew;
+CIM.SampleData.Operatordata.refew = refew;
 ```
-
-///
 
 $\mathbf{T}$ is meromorphic with $m = 40$ simple poles in $\Omega$.
 Hankel and MPLoewner-based CIMs build up relevant data matrices and utilize a rank-$m$ truncated SVD, where, with exact data, $m$ is exactly the number of poles of $\mathbf{T}$ within $\Omega$ (counting multiplicities).
@@ -81,9 +54,8 @@ We set $m = 40, \ell = r = 15$, and choose $K$ so that $\mathbb{D},\mathbb{D_s} 
 
 ```matlabsession
 >> CIM.SampleData.Contour.N = 128;
->> p = 15; CIM.SampleData.ell = p; CIM.SampleData.r = p; % left/right sampling dimensions with L and R taken to be real i.i.d, by default
->> CIM.SampleData.compute(); % samples the quadrature given N and ell=r
->> CIM.RealizationData.m = 40; % independent of quadrature data
+>> p = 15; CIM.SampleData.ell = p; CIM.SampleData.r = p; % number of left/right sampling directions
+>> CIM.RealizationData.m = 42; % independent of quadrature data
 ```
 
 ### Hankel
@@ -91,36 +63,38 @@ We set $m = 40, \ell = r = 15$, and choose $K$ so that $\mathbb{D},\mathbb{D_s} 
 To use Hankel realization, we set need to specify it and the number of moments, $K$, used to build $\mathbb{D}$:
 
 ``` matlabsession
->> CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
->> CIM.RealizationData.K = 4; % 60 / p = 4
->> CIM.compute();
+>> cim.setComputationalMode(Numerics.ComputationalMode.Hankel);
+>> cim.RealizationData.K = 4; % 60 / p = 4
+>> cim.compute();
 ```
 
 Finally, we can find the maximum relative residual (MRR) of the computed eigenpairs:
 
 ``` matlabsession
->> max(Numerics.relres(nlevp.T,CIM.ResultData.ew,CIM.ResultData.ev))
+>> max(Numerics.relres(n.T,cim.ResultData.ew,cim.ResultData.rev,Numerics.SampleMode.Inverse))
 ans =
 
-   3.8029e-05
+   7.6804e-05
 ```
 
+<!---
 /// admonition | Note
 Since we previously computed `#!matlab CIM.SampleData`, `#!matlab CIM.compute()` only performs the system realization/spectral identification.
 ///
+--->
 
 ### MPLoewner
 
 We switch computational modes to MPLoewner where $K$ now represents the number of shifts used in construction of $\mathbb{D}$:
 
 ```matlabsession
->> CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner; % implicitly sets default shifts relative to the contour
->> CIM.RealizationData.K = 4*p; % 4 * 15 = 60
->> CIM.compute();
->> max(Numerics.relres(nlevp.T,CIM.ResultData.ew,CIM.ResultData.ev))
+>> cim.setComputationalMode(Numerics.ComputationalMode.MPLoewner); % implicitly sets default shifts relative to the contour
+>> cim.RealizationData.K = 4*p; % 4 * 15 = 60
+>> cim.compute();
+>>  max(Numerics.relres(n.T,cim.ResultData.ew,cim.ResultData.rev,Numerics.SampleMode.Inverse))
 ans =
 
-   4.2943e-05
+   2.4238e-06
 ```
 
 <!---
