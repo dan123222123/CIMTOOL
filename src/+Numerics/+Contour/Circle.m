@@ -17,7 +17,7 @@ classdef Circle < Numerics.Contour.Quad
                 rho = 1
                 N = 8
             end
-            import Numerics.Contour.Circle;
+            import Numerics.Contour.Circle.trapezoid;
             [z,w] = trapezoid(gamma,rho,N);
             obj@Numerics.Contour.Quad(z,w);
             obj.gamma = gamma; obj.rho = rho; obj.N = N;
@@ -39,7 +39,7 @@ classdef Circle < Numerics.Contour.Quad
                 mode = 'scale'
                 variant = 'cconj' % or 'trap'
             end
-            import Numerics.Contour.Circle;
+            import Numerics.Contour.Circle.trapezoid Numerics.Contour.Circle.circquad;
             z = obj.z;
             c = sum(z)/length(z);
             r = max(abs(c - z));
@@ -85,7 +85,7 @@ classdef Circle < Numerics.Contour.Quad
         end
         function update(obj,~,~)
         % Updates contour nodes and weights using the trapezoid rule.
-            import Numerics.Contour.Circle;
+            import Numerics.Contour.Circle.trapezoid;
             [obj.z,obj.w] = trapezoid(obj.gamma,obj.rho,obj.N);
         end
     end

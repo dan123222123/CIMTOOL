@@ -49,7 +49,7 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
 
         function addListeners(comp)
             addlistener(comp.CIMData.RealizationData,'ComputationalMode','PostSet',@(src,event)comp.updateMethodParameters);
-            addlistener(comp.CIMData,'auto_estimate_m','PostSet',@(src,event)comp.updateMethodParameters);
+            % addlistener(comp.CIMData,'auto_estimate_m','PostSet',@(src,event)comp.updateMethodParameters);
             addlistener(comp.CIMData.RealizationData,'RealizationSize','PostSet',@(src,event)comp.updateMethodParameters);
         end
 
@@ -75,7 +75,7 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
 
         function updateMethodParameters(comp,~)
             comp.EigSearchEditField.Value = comp.CIMData.RealizationData.RealizationSize.m;
-            comp.EstimateMCheckbox.Value = comp.CIMData.auto_estimate_m;
+            % comp.EstimateMCheckbox.Value = comp.CIMData.auto_estimate_m;
             switch(comp.CIMData.RealizationData.ComputationalMode)
                 case Numerics.ComputationalMode.Hankel
                     comp.HankelButton.Value = true;
@@ -92,7 +92,7 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
 
         function MethodParametersChanged(comp,~)
             comp.CIMData.RealizationData.RealizationSize.m = comp.EigSearchEditField.Value;
-            comp.CIMData.auto_estimate_m = comp.EstimateMCheckbox.Value;
+            % comp.CIMData.auto_estimate_m = comp.EstimateMCheckbox.Value;
             % computational mode is changed in separate callback
             % (buttongroup)
         end

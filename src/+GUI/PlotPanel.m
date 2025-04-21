@@ -79,7 +79,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
                 [~,refewidx] = sort(abs(refew)); refew = refew(refewidx);
                 nin = length(refew); cstr = sprintf('Ref. EW (# Inside Contour %d)',nin);
             else
-                refew = repelem(NaN,length(ew));
+                refew = repelem(NaN,length(ew))';
                 cstr = ('Ref. EW');
             end
             comp.ResultsTable.ColumnName = {cstr,'Comp. EW','Rel. Res.'};
@@ -95,7 +95,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             % if computed eigenvalues are available, show them and the
             % relative residual (assuming ev are also available)
             if comp.CIMData.RealizationData.loaded && ~all(ismissing(ew))
-                if ~all(ismissing(refew)) % greedy matching between comp and ref if ref is available
+                if ~all(isnan(refew)) % greedy matching between comp and ref if ref is available
                     cew = ew; cev = ev;
                     new = zeros(size(cew)); nev = zeros(size(cev));
                     % greedily match as many ew/ev as we can to reference

@@ -66,6 +66,8 @@ classdef CIM < matlab.mixin.Copyable
         function default_shifts(obj)
         % Sets default shifts using the current ComputationalMode and Contour data.
             switch obj.RealizationData.ComputationalMode
+                case Numerics.ComputationalMode.Hankel
+                    obj.RealizationData.InterpolationData = Numerics.InterpolationData(NaN,Inf);
                 case Numerics.ComputationalMode.SPLoewner
                     obj.RealizationData.InterpolationData = Numerics.InterpolationData(NaN,obj.SampleData.Contour.FindRandomShift());
                 case Numerics.ComputationalMode.MPLoewner
@@ -121,7 +123,7 @@ classdef CIM < matlab.mixin.Copyable
         computeRealization(obj);
         refineQuadrature(obj);
     end
-    methods (Access = private)
+    methods (Access = protected)
         function updateContourListeners(obj,~,~)
             addlistener(obj.SampleData.Contour,'z','PostSet',@obj.update_shifts);
             obj.update_shifts([],[]);
