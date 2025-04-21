@@ -86,20 +86,87 @@ For the version of MPLoewner implemented in package, it is assumed that the tran
 \( S_1 \) is SISO, so we only need to choose left and right interpolation point sets \( \left( \Theta, \Sigma \right) = \{ (\theta_i,\sigma_i) \,:\, i = 1,2,...,K \} \) such that \( \left( \Theta \cup \Sigma \right) \cap \sigma(A) = \emptyset \) and \( \Theta \cap \Sigma = \emptyset \):
 
 ```matlab
-theta = 1i*(2:(n+1)); sigma = -1i*(2:(n+1));
-```
-
-Then, we can build data matrices \( \mathbb{B} \mathbb{B} \) and \( \mathbb{C} \mathbb{C} \) containing SISO transfer function samples at the left and right interpolation points, and use them to build the base and shifted Loewner data matrices.
-Eigenvalue recovery
-
-```matlab
-[~,BB,~,CC] = Numerics.mploewner.build_exact_data(H1,theta,sigma);
-[Db,Ds] = Numerics.mploewner.build_loewner(BB,CC,theta,sigma);
-norm(eig(Ds,Db)-diag(A)) % 0.0105
+ellt = @(n) (-1)^n*n; rt = @(n) (-1)^(n+1)*n;
+theta = 1i*arrayfun(ellt,2:(n+1)); sigma = 1i*arrayfun(rt,2:(n+1));
 ```
 
 ??? note "Choosing left/right interpolation points"
 
-    For better results with MPLoewner, left/right interpolation points should, ideally, be _interleaved_ -- \( \textcolor{red}{\text{explain}} \)
+    For better results with MPLoewner, left/right interpolation points should, ideally, be _close_ to the desired eigenvalues and _interleaved_;
+    for the latter, this means that \( \vert \theta_i - \sigma_j \vert \) should be relatively small when \( i, j \) are close.
+    This choice of interpolation points biases the ``mass'' of the data matrices towards its diagonal elements and improves corresponding singular value decay.
+
+Then, we can build data matrices \( \mathbb{B} \mathbb{B} \) and \( \mathbb{C} \mathbb{C} \) containing SISO transfer function samples at the left and right interpolation points, and use them to build the base and shifted Loewner data matrices.
+
+```matlab
+[~,BB,~,CC] = Numerics.mploewner.build_exact_data(H1,theta,sigma,1,1);
+[Db,Ds] = Numerics.mploewner.build_loewner(BB,CC,theta,sigma);
+norm(eig(Ds,Db)-diag(A)) % 5.3235e-07
+```
+
+!!! note
+
+    When calling `build_exact_data` above, the last two arguments fix the left/right sampling direction to 1 (unscaled).
 
 #### MIMO (with Tangential Interpolation)
+
+When the transfer function corresponds to a MIMO system, one viable strategy is to sample at _tangential_ directions;
+that is, pick left/right probing directions \( \vec{\ell}/\vec{r} \) corresponding to left and right interpolation points and form Loewner data matrices with scalar samples \( \vec{\ell} H(z) \vec{r} \) instead of matrices \( H(z) \).
+Random tangential directions are a typical choice for \( \vec{\ell}/\vec{r} \), since the resulting tangentially probed data matrices are unlikely to become rank-deficient in this case.
+
+```matlab
+[~,BB,~,CC] = Numerics.mploewner.build_exact_data(H2,theta,sigma);
+[Db,Ds] = Numerics.mploewner.build_loewner(BB,CC,theta,sigma);
+norm(eig(Ds,Db)-diag(A)) % 2.1547e-07 -- varries based on tangential directions
+```
+
+## Inexact Data
+
+In practice, although transfer function samples may be available for _some_ points in \( \mathbb{C} \), the given data may not include transfer function samples at left and right interpolation points, let alone generalized moment data.
+One approach to dealing with this lack of _necessary_ transfer function samples is to use contour integration and the Cauchy Integral Formula (CIF) to evaluate the underlying transfer function at a specific interpolation point.
+If \(H\) is a meromorphic matrix-valued function with all of its poles contained within some bounded domain \( \Omega \subset \mathbb{C} \), then we can use contour integration on particular choices of analytic \(f\) to recover useful data about the dynamics of our system.
+Generally, we perform this contour integration using a numerical quadrature rule on \( \partial \Omega \).
+For \( \Omega \) conformal to a disk, the trapezoid rule provides exponential convergence guarantees for such data approximations.
+
+First, we create an ellipsoidal contour about the poles of \( H_2 \) with \(8\) quadrature nodes
+
+```matlab
+import Visual.*; % allows us to skip subsequent "Visual."s
+
+c = Contour.Ellipse(-(n+1)/2,n/2,n/4,8);
+
+o = OperatorData(H2); o.refew = diag(A); o.sample_mode = "Direct";
+
+s = SampleData(o,c); s.Contour.plot_quadrature = true;
+
+s.ax = gca;
+```
+
+??? "Contour/Quadrature Visual"
+
+    ![](../figures/quad_mpl.png)
+
+We will _sketch_ our evaluations of \(H\) at the quadrature nodes down to \( 1 \times 1 \) moments via a random choice of left/right sketching vectors \( \vec{\ell} / \vec{r} \) and compute the left/right/two-sided moments.
+
+```matlab
+s.ell = 1; s.r = 1; s.compute();
+```
+
+!!! note
+
+    Since each sketched
+
+### ERA/SPLoewner
+
+For ERA, put \( f_k(z) = z^k \) and compute
+
+\[
+M_k = C A^k B = \frac{1}{2 \pi i} \oint_{\partial \Omega} z^k H(z) \, dz \approx \sum_{n=1}^N w_n z_n^k H(z_n).
+\]
+
+For SPLoewner with \( \sigma \not \in \Omega \), put \( f_k^\sigma(z) = \frac{(-1)^k}{(\sigma - z)^{k+1}} \) and compute
+
+\[
+M_k^\sigma = \frac{H^{(k)}(\sigma)}{k!} = \frac{1}{2 \pi i} \oint_{\partial \Omega} \frac{(-1)^k}{(\sigma - z)^{k+1}} H(z) \, dz \approx \sum_{n=1}^N w_n \frac{(-1)^k}{(\sigma - z)^{k+1}} H(z_n).
+\]
+Just as in the case of MPLoewner, we can apply left and right _sketching_ matrices to our quadrature approximation to reduce the size of our approximated
