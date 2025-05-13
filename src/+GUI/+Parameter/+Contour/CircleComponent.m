@@ -20,7 +20,7 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
 
             obj@GUI.Parameter.Contour.ContourComponent(Parent)
             obj.CIMData = CIMData;
-            assert(isa(obj.CIMData.SampleData.Contour,'Numerics.Contour.Circle'));
+            assert(isa(obj.CIMData.SampleData.Contour,'Numerics.Contour.Circle') || isa(obj.CIMData.SampleData.Contour,'Numerics.Contour.SemiCircle'));
 
             obj.setDefaults(0,0);
 

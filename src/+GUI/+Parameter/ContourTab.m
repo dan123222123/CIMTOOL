@@ -30,7 +30,7 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
 
         function updateContourComponent(comp)
             switch(class(comp.CIMData.SampleData.Contour))
-                case 'Visual.Contour.Circle'
+                case {'Visual.Contour.Circle','Visual.Contour.SemiCircle'}
                     comp.CircleButton.Value = true;
                     comp.ContourComponent = GUI.Parameter.Contour.CircleComponent(comp.GridLayout,comp.CIMData);
                 case 'Visual.Contour.Ellipse'

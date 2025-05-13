@@ -2,7 +2,8 @@
 
 N = 506; Xi = 1.0001;
 n = Visual.OperatorData([],'acoustic_wave_1d',sprintf("%f,%f",N,Xi));
-c = Visual.Contour.Circle(0.8i,10);
+% c = Visual.Contour.Circle(0.8i,10);
+c = Visual.Contour.SemiCircle(0.8i,10);
 cim = Visual.CIM(n,c);
 
 nref = 50; refew = zeros(2*nref,1);
