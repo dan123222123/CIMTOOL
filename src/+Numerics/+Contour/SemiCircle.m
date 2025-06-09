@@ -24,13 +24,14 @@ classdef SemiCircle < Numerics.Contour.Quad
             [z,w] = Numerics.Contour.SemiCircle.quad(gamma,rho,theta,N,qr);
             obj@Numerics.Contour.Quad(z,w);
             obj.gamma = gamma; obj.rho = rho; obj.theta = theta;
-            obj.N = N;
+            obj.N = N; obj.qr = qr;
             addlistener(obj,'gamma','PostSet',@obj.update);
             addlistener(obj,'rho','PostSet',@obj.update);
             addlistener(obj,'theta','PostSet',@obj.update);
             addlistener(obj,'N','PostSet',@obj.update);
+            addlistener(obj,'qr','PostSet',@obj.update);
         end
-        
+
         function tf = inside(obj,pt)
             cp = pt-obj.gamma; cang = angle(cp);
             tf = ((cang>obj.theta & cang<(obj.theta+pi)) & abs(cp)<obj.rho);
@@ -63,6 +64,7 @@ classdef SemiCircle < Numerics.Contour.Quad
                 w       % weights
             end
             if qr == "clencurt"
+                N = N - 1;
                 qr = @Numerics.Contour.clencurt;
             elseif qr == "gauss"
                 qr = @Numerics.Contour.gauss;
@@ -71,18 +73,39 @@ classdef SemiCircle < Numerics.Contour.Quad
             end
             % for the arc
             [zGamma,wGamma] = qr(N(1));
-            wGamma = wGamma';
+            wGamma = wGamma.';
             qGamma = rho*exp(1i*((pi/2)*(zGamma+1) + theta));
-            wGamma = ((pi*1i)/2)*qGamma.*wGamma;
+            wGamma = 1i*(pi/2)*qGamma.*wGamma;
             zGamma = gamma + qGamma;
             % for the line segment
             [zgamma,wgamma] = qr(N(2));
-            wgamma = wgamma';
+            wgamma = wgamma.';
             cgamma = rho*exp(theta*1i);
             wgamma = cgamma*wgamma;
             zgamma = gamma + cgamma*zgamma;
+
+            % % for the arc
+            % [zGamma,wGamma] = qr(N(1)); wGamma = wGamma.';
+            % % wGamma(1) = wGamma(1)/2;
+            % % wGamma(end) = wGamma(end)/2;
+            % Gamma_rho = @(t) gamma + rho*exp(1i*t);
+            % Gamma_rho_p = @(t) 1i*rho*exp(1i*t);
+            % tGamma = (pi/2)*zGamma + (2*theta + pi)/2;
+            % wGamma = ((pi/2)*wGamma).*Gamma_rho_p(tGamma);
+            % zGamma = Gamma_rho(tGamma);
+            % % for the line segment
+            % [zgamma,wgamma] = qr(N(2)); wgamma = wgamma.';
+            % % wgamma(1) = wgamma(1)/2;
+            % % wgamma(end) = wgamma(end)/2;
+            % gamma_rho = @(t) gamma + rho*exp(1i*theta)*(2*t-1);
+            % gamma_rho_p = @(t) 2*rho*exp(1i*theta);
+            % tgamma = (1/2)*zgamma + 1/2;
+            % wgamma = ((1/2)*wgamma).*gamma_rho_p(tgamma);
+            % zgamma = gamma_rho(tgamma);
+
             % putting it all together
             z = [zGamma; zgamma]; w = [wGamma; wgamma];
+            w = w/(2i*pi); % needed for contour integral to be scaled correctly in CIMTOOL!
         end
     end
 end

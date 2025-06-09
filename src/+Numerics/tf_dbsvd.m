@@ -10,6 +10,8 @@ function [Lambda,V,W] = tf_dbsvd(m,X,Sigma,Y,Ds,B,C,abstol)
     end
     X=X(:,1:m); Sigma=Sigma(1:m,1:m); Y=Y(:,1:m);
     [S,Lambda] = eig(sqrt(Sigma)\(X'*Ds*Y)/sqrt(Sigma));
+    % sort the eigenvalues according to absolute value...
+    [~,ewidx] = sort(abs(diag(Lambda)));
+    Lambda = diag(Lambda); Lambda = diag(Lambda(ewidx)); S = S(:,ewidx);
     V = ((C*Y)/sqrt(Sigma))*S; W = (sqrt(Sigma)*S)\(X'*B);
 end
-
