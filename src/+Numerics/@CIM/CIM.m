@@ -115,8 +115,12 @@ classdef CIM < matlab.mixin.Copyable
                 cp.ResultData.CC, ...
                 abstol ...
                 );
-            % maybe applies only to ERA realization???
-            H = @(z) V*((-Lambda+z*eye(size(Lambda)))\W);
+            switch obj.RealizationData.ComputationalMode
+                case {Numerics.ComputationalMode.Hankel, Numerics.ComputationalMode.SPLoewner}
+                    H = @(z) V*((-Lambda+z*eye(size(Lambda)))\W);
+                case Numerics.ComputationalMode.MPLoewner
+                    H = @(z) V*((Lambda-z*eye(size(Lambda)))\W);
+            end
         end
     end
     methods (Access = public)
