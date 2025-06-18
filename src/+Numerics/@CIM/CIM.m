@@ -97,15 +97,14 @@ classdef CIM < matlab.mixin.Copyable
                 W = obj.ResultData.lev(ewidx,:)';
             end
         end
-        function H = tf(obj,m,abstol)
+        function [H,Lambda,W,V] = tf(obj,m,abstol)
         % Computes the transfer function of state dimension m from the sampling/realization data.
             arguments
                 obj
                 m = obj.RealizationData.RealizationSize.m
                 abstol = NaN
             end
-            cp = copy(obj);
-            cp.compute();
+            cp = copy(obj); cp.compute();
             [Lambda,V,W] = Numerics.tf_dbsvd(m, ...
                 cp.ResultData.X, ...
                 cp.ResultData.Sigma, ...
