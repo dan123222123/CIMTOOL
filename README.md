@@ -11,8 +11,7 @@ problems.
 ## Installation
 
 1. `git clone git@github.com:dan123222123/CIMTOOL.git`
-2. In MATLAB do `addpatch(genpath("/path/to/CIMTOOL"))`
-3. Check out scripts in `src/tutorial` or `src/demos`.
+2. In MATLAB run `addpath(genpath('/path/to/CIMTOOL'))`
 
 ## Quick Start
 
@@ -27,5 +26,11 @@ cim.SampleData.ell = 3; cim.SampleData.r = 3;
 cim.RealizationData.RealizationSize = Numerics.RealizationSize(3,3);
 cim.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
 %
-CTOOL = CIMTOOL(cim); % Try to refine the quadrature
+CTOOL = CIMTOOL(cim)
 ```
+
+Check out additional scripts and demos under `src/tutorial` or `src/demos`.
+
+## NSF Award Information
+
+This project is supported by the National Science Foundation Grant DMS-241141, Nonlinear eigenvalue problems: A new paradigm through the lens of systems theory and rational interpolation, Co-PIs: M. Embree and S. Gugercin, Aug 1, 2024 – July 31, 2027
