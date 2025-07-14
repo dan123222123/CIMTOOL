@@ -38,10 +38,14 @@ classdef RealizationData < matlab.mixin.Copyable
             obj.ComputationalMode = ComputationalMode;
             if isempty(InterpolationData)
                 obj.defaultInterpolationData();
+            else
+                obj.InterpolationData = InterpolationData;
             end
             m = max(length(obj.InterpolationData.theta),length(obj.InterpolationData.sigma));
             if isempty(RealizationSize)
                 obj.RealizationSize = Numerics.RealizationSize(m,m,m);
+            else
+                obj.RealizationSize = RealizationSize;
             end
             obj.ranktol = ranktol;
             obj.updateListeners();

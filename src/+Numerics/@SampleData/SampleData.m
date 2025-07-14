@@ -56,8 +56,8 @@ classdef SampleData < matlab.mixin.Copyable
             arguments
                 OperatorData = Numerics.OperatorData()
                 Contour = Numerics.Contour.Circle()
-                ell = 0
-                r = 0
+                ell = OperatorData.n
+                r = OperatorData.n
             end
             obj.OperatorData = OperatorData;
             obj.Contour = Contour;

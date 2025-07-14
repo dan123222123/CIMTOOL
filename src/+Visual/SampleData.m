@@ -13,8 +13,8 @@ classdef SampleData < Numerics.SampleData & Visual.VisualReactive
             arguments
                 OperatorData = Visual.OperatorData()
                 Contour = Visual.Contour.Circle()
-                ell = 0
-                r = 0
+                ell = OperatorData.n
+                r = OperatorData.n
                 ax = []
             end
             obj = obj@Numerics.SampleData(OperatorData,Contour,ell,r);

@@ -6,8 +6,8 @@ classdef CIM < matlab.mixin.Copyable
     end
     properties (SetObservable)
         DataDirtiness = 2           % >1 => resample, >0 => perform realization, =0 => no action needed
-        auto_update_shifts = true;  % update shifts in response to contour changes, realization parameters, etc.
-        auto_update_K = true;       % updake K in response to changes in ComputationalMode -- approximately maintains equivalent data matrix size between Hankel/MPLoewner, etc.
+        auto_update_shifts = false; % update shifts in response to contour changes, realization parameters, etc.
+        auto_update_K = false;       % updake K in response to changes in ComputationalMode -- approximately maintains equivalent data matrix size between Hankel/MPLoewner, etc.
         options = struct("PadStrategy","cyclical","AbsTol",NaN,"Verbose",true);
     end
     methods(Access = protected)
@@ -32,7 +32,7 @@ classdef CIM < matlab.mixin.Copyable
                 Contour = Numerics.Contour.Circle()
                 RealizationData = Numerics.RealizationData()
             end
-            obj.SampleData = Numerics.SampleData(OperatorData,Contour,0,0);
+            obj.SampleData = Numerics.SampleData(OperatorData,Contour);
             obj.RealizationData = RealizationData;
             obj.ResultData = Numerics.ResultData();
             obj.updateListeners([],[]);
@@ -110,16 +110,12 @@ classdef CIM < matlab.mixin.Copyable
                 cp.ResultData.Sigma, ...
                 cp.ResultData.Y, ...
                 cp.ResultData.Ds, ...
-                cp.ResultData.BB, ...
-                cp.ResultData.CC, ...
+                cp.ResultData.B, ...
+                cp.ResultData.C, ...
                 abstol ...
                 );
-            switch obj.RealizationData.ComputationalMode
-                case {Numerics.ComputationalMode.Hankel, Numerics.ComputationalMode.SPLoewner}
-                    H = @(z) V*((-Lambda+z*eye(size(Lambda)))\W);
-                case Numerics.ComputationalMode.MPLoewner
-                    H = @(z) V*((Lambda-z*eye(size(Lambda)))\W);
-            end
+
+            H = @(z) V*((z*eye(size(Lambda))-Lambda)\W);
         end
     end
     methods (Access = public)
