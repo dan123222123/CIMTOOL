@@ -6,7 +6,9 @@ problems.
 
 ## NSF Award Information
 
-<img src="./figures/NSF_Official_logo_CMYK.png" width="100" height="100" align="left" /> This project is supported by the National Science Foundation Grant DMS-241141, Nonlinear eigenvalue problems: A new paradigm through the lens of systems theory and rational interpolation, Co-PIs: M. Embree and S. Gugercin, Aug 1, 2024 – July 31, 2027
+<img src="docs/figures/NSF_Official_logo_CMYK.png" width="100" height="100" align="left" /> This project is supported by the National Science Foundation Grant DMS-241141, Nonlinear eigenvalue problems: A new paradigm through the lens of systems theory and rational interpolation, Co-PIs: M. Embree and S. Gugercin, Aug 1, 2024 – July 31, 2027
+
+&nbsp;
 
 ## Requirements
 
