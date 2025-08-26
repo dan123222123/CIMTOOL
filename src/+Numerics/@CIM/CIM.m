@@ -92,9 +92,9 @@ classdef CIM < matlab.mixin.Copyable
             if nargout <= 1
                 V = obj.ResultData.ew(ewidx);
             elseif nargout >= 2
-                V = obj.ResultData.rev(:,ewidx);
+                V = obj.ResultData.rev(:,ewidx); V = V ./ sqrt(diag(V'*V))';
                 D = diag(obj.ResultData.ew(ewidx));
-                W = obj.ResultData.lev(ewidx,:)';
+                W = obj.ResultData.lev(ewidx,:)'; W = W ./ sqrt(diag(W'*W))';
             end
         end
         function [H,Lambda,W,V] = tf(obj,m,abstol)
@@ -151,6 +151,8 @@ classdef CIM < matlab.mixin.Copyable
                 return;
             end
             switch obj.RealizationData.ComputationalMode
+                case Numerics.ComputationalMode.Hankel
+                    obj.RealizationData.defaultInterpolationData;
                 case Numerics.ComputationalMode.MPLoewner
                     obj.contour_interlevedshifts();
             end

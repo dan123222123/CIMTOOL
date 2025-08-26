@@ -1,22 +1,23 @@
-classdef SemiCircle < Numerics.Contour.SemiCircle & Visual.Contour.Quad
+classdef CircularSegment < Numerics.Contour.CircularSegment & Visual.Contour.Quad
 
    methods(Access = protected)
       function cp = copyElement(obj)
-          cp = Visual.Contour.SemiCircle(obj.gamma,obj.rho,obj.theta,obj.N,obj.ax);
+          cp = Visual.Contour.CircularSegment(obj.gamma,obj.rho,obj.theta,obj.N,obj.qr,obj.ax);
           cp.plot_quadrature = obj.plot_quadrature;
       end
    end
-    
+
     methods
-        function obj = SemiCircle(gamma,rho,theta,N,ax)
+        function obj = CircularSegment(gamma,rho,theta,N,qr,ax)
             arguments
                 gamma = 0
                 rho = 1
-                theta = 0
+                theta = [-pi/2,pi/2]
                 N = [8;8]
+                qr = "clencurt"
                 ax = []
             end
-            obj = obj@Numerics.Contour.SemiCircle(gamma,rho,theta,N);
+            obj = obj@Numerics.Contour.CircularSegment(gamma,rho,theta,N,qr);
             obj.plot_quadrature = false; obj.ax = ax;
         end
 
@@ -27,7 +28,7 @@ classdef SemiCircle < Numerics.Contour.SemiCircle & Visual.Contour.Quad
             end
             phandles = gobjects(0);
             if isempty(ax) || ~isgraphics(ax); return; end
-            zp = Numerics.Contour.SemiCircle.quad(obj.gamma,obj.rho,obj.theta,[512;512]);
+            zp = Numerics.Contour.CircularSegment.quad(obj.gamma,obj.rho,obj.theta,[512;512]);
             of = obj.rho*0.05;
             hold(ax,"on");
             phandles(end+1) = rectangle(ax,'Position',[real(obj.gamma)-of/2 imag(obj.gamma)-of/2 of of], 'Curvature',[1 1], 'Facecolor','k', 'Edgecolor','k','Tag','contour_center',"HandleVisibility","off","Visible","off");
@@ -49,4 +50,3 @@ classdef SemiCircle < Numerics.Contour.SemiCircle & Visual.Contour.Quad
     end
 
 end
-

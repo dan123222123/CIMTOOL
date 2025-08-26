@@ -1,9 +1,9 @@
-classdef SemiCircle < Numerics.Contour.Quad
+classdef CircularSegment < Numerics.Contour.Quad
 % Circular contour specified by a center `gamma`, radius `rho`, and number of quadrature nodes `N`.
     properties (SetObservable)
         gamma   (1,1) double % center
         rho     (1,1) double % radius
-        theta   (1,1) double % angle wrt real line
+        theta   (1,2) double % central subtending angle [start;end]
         N       (1,2) double % number of nodes on [arc;line segment]
         qr = "clencurt" % default quadrature rule on [-1,1]
     end
@@ -13,18 +13,24 @@ classdef SemiCircle < Numerics.Contour.Quad
         end
     end
     methods
-        function obj = SemiCircle(gamma,rho,theta,N,qr)
+        function obj = CircularSegment(gamma,rho,theta,N,qr)
             arguments
                 gamma = 0
                 rho = 1
-                theta = 0
+                theta = [-pi/2,pi/2]
                 N = [8;8]
                 qr = "clencurt"
             end
-            [z,w] = Numerics.Contour.SemiCircle.quad(gamma,rho,theta,N,qr);
+            [z,w] = Numerics.Contour.CircularSegment.quad(gamma,rho,theta,N,qr);
             obj@Numerics.Contour.Quad(z,w);
-            obj.gamma = gamma; obj.rho = rho; obj.theta = theta;
-            obj.N = N; obj.qr = qr;
+            obj.gamma = gamma; obj.rho = rho;
+            if isscalar(N)
+                obj.N = [N,N];
+            end
+            if isscalar(theta)
+                obj.theta = [-theta,theta];
+            end
+            obj.qr = qr;
             addlistener(obj,'gamma','PostSet',@obj.update);
             addlistener(obj,'rho','PostSet',@obj.update);
             addlistener(obj,'theta','PostSet',@obj.update);
@@ -34,7 +40,10 @@ classdef SemiCircle < Numerics.Contour.Quad
 
         function tf = inside(obj,pt)
             cp = pt-obj.gamma; cang = angle(cp);
-            tf = ((cang>obj.theta & cang<(obj.theta+pi)) & abs(cp)<obj.rho);
+            rang = ((cang>obj.theta(1) & cang<(obj.theta(2)))); % right angle
+            d = obj.rho*cos(obj.theta(2)-obj.theta(1));
+            rrho = (abs(cp) > d) && (abs(cp) < obj.rho);
+            tf =  rang & rrho;
         end
         % TODO
         function refineQuadrature(obj,rf)
@@ -47,7 +56,7 @@ classdef SemiCircle < Numerics.Contour.Quad
         end
         function update(obj,~,~)
         % Updates contour nodes and weights using the trapezoid rule.
-            [obj.z,obj.w] = Numerics.Contour.SemiCircle.quad(obj.gamma,obj.rho,obj.theta,obj.N,obj.qr);
+            [obj.z,obj.w] = Numerics.Contour.CircularSegment.quad(obj.gamma,obj.rho,obj.theta,obj.N,obj.qr);
         end
     end
     methods (Static)
@@ -55,7 +64,7 @@ classdef SemiCircle < Numerics.Contour.Quad
             arguments (Input)
                 gamma   % center
                 rho     % radius
-                theta   % angle wrt real line
+                theta   % central subtending angle
                 N       % number of nodes on [arc;line segment]
                 qr = "clencurt" % default quadrature rule on [-1,1]
             end
@@ -63,49 +72,39 @@ classdef SemiCircle < Numerics.Contour.Quad
                 z       % nodes
                 w       % weights
             end
+            import Numerics.Contour.*;
+
+            % use the same number of nodes on each boundary segment if scalar N
+            if isscalar(N)
+                N = [N;N];
+            end
+            % assume equal subtending angles if scalar theta
+            if isscalar(theta)
+                theta = [-theta,theta];
+            end
+
+            % fix the quadrature rule on [-1,1] to use
+            % note that clencurt gives N+1 nodes, so we decrement N by 1
             if qr == "clencurt"
                 N = N - 1;
-                qr = @Numerics.Contour.clencurt;
+                qr = @clencurt;
             elseif qr == "gauss"
-                qr = @Numerics.Contour.gauss;
+                qr = @gauss;
             else
                 error('Unsupported quadrature rule specified.');
             end
-            % for the arc
-            [zGamma,wGamma] = qr(N(1));
-            wGamma = wGamma.';
-            qGamma = rho*exp(1i*((pi/2)*(zGamma+1) + theta));
-            wGamma = 1i*(pi/2)*qGamma.*wGamma;
-            zGamma = gamma + qGamma;
-            % for the line segment
-            [zgamma,wgamma] = qr(N(2));
-            wgamma = wgamma.';
-            cgamma = rho*exp(theta*1i);
-            wgamma = cgamma*wgamma;
-            zgamma = gamma + cgamma*zgamma;
 
-            % % for the arc
-            % [zGamma,wGamma] = qr(N(1)); wGamma = wGamma.';
-            % % wGamma(1) = wGamma(1)/2;
-            % % wGamma(end) = wGamma(end)/2;
-            % Gamma_rho = @(t) gamma + rho*exp(1i*t);
-            % Gamma_rho_p = @(t) 1i*rho*exp(1i*t);
-            % tGamma = (pi/2)*zGamma + (2*theta + pi)/2;
-            % wGamma = ((pi/2)*wGamma).*Gamma_rho_p(tGamma);
-            % zGamma = Gamma_rho(tGamma);
-            % % for the line segment
-            % [zgamma,wgamma] = qr(N(2)); wgamma = wgamma.';
-            % % wgamma(1) = wgamma(1)/2;
-            % % wgamma(end) = wgamma(end)/2;
-            % gamma_rho = @(t) gamma + rho*exp(1i*theta)*(2*t-1);
-            % gamma_rho_p = @(t) 2*rho*exp(1i*theta);
-            % tgamma = (1/2)*zgamma + 1/2;
-            % wgamma = ((1/2)*wgamma).*gamma_rho_p(tgamma);
-            % zgamma = gamma_rho(tgamma);
+            [t1,w1] = qr(N(1)); w1 = w1.'; [t2,w2] = qr(N(2)); w2 = w2.';
 
-            % putting it all together
-            z = [zGamma; zgamma]; w = [wGamma; wgamma];
+            z_arc = @(t) gamma + rho*exp(1i*(theta(1) + ((1+t)/2) * (theta(2) - theta(1))));
+            w_arc = @(t) 1i*rho*((theta(2)-theta(1))/2) * exp(1i*(theta(1) + ((1+t)/2) * (theta(2) - theta(1))));
+
+            z_chord = @(t) gamma + (rho/2)*(exp(1i*theta(1)) + exp(1i*theta(2)) + t*(exp(1i*theta(1))-exp(1i*theta(2))));
+            w_chord = (rho/2)*(exp(1i*theta(1))-exp(1i*theta(2))); % just a constant
+
+            z = [z_arc(t1);z_chord(t2)]; w = [(w1.*w_arc(t1));w2*w_chord];
             w = w/(2i*pi); % needed for contour integral to be scaled correctly in CIMTOOL!
+            z = z.'; w = w.';
         end
     end
 end

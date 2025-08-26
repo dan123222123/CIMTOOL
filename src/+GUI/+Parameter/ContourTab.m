@@ -1,8 +1,9 @@
 classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
-    
+
     properties
         GridLayout                          matlab.ui.container.GridLayout
         ContourTypeButtonGroup              matlab.ui.container.ButtonGroup
+        CircularSegmentButton                       matlab.ui.control.ToggleButton
         EllipseButton                       matlab.ui.control.ToggleButton
         CircleButton                        matlab.ui.control.ToggleButton
         ContourComponent                    GUI.Parameter.Contour.ContourComponent
@@ -13,7 +14,7 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
         CIMData Numerics.CIM
         PlotTab
     end
-    
+
     methods
 
         function obj = ContourTab(Parent,MainApp,CIMData)
@@ -30,12 +31,15 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
 
         function updateContourComponent(comp)
             switch(class(comp.CIMData.SampleData.Contour))
-                case {'Visual.Contour.Circle','Visual.Contour.SemiCircle'}
+                case 'Visual.Contour.Circle'
                     comp.CircleButton.Value = true;
                     comp.ContourComponent = GUI.Parameter.Contour.CircleComponent(comp.GridLayout,comp.CIMData);
                 case 'Visual.Contour.Ellipse'
                     comp.ContourComponent = GUI.Parameter.Contour.EllipseComponent(comp.GridLayout,comp.CIMData);
                     comp.EllipseButton.Value = true;
+                case 'Visual.Contour.CircularSegment'
+                    comp.ContourComponent = GUI.Parameter.Contour.CircularSegmentComponent(comp.GridLayout,comp.CIMData);
+                    comp.CircularSegmentButton.Value = true;
             end
             comp.ContourComponent.Layout.Row = [1 5];
             comp.ContourComponent.Layout.Column = [3 5];
@@ -51,13 +55,17 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
                     radius = comp.CIMData.SampleData.Contour.rho;
                 case 'Visual.Contour.Ellipse'
                     radius = max(comp.CIMData.SampleData.Contour.alpha,comp.CIMData.SampleData.Contour.beta);
+                case 'Visual.Contour.CircularSegment'
+                    radius = comp.CIMData.SampleData.Contour.rho;
             end
-            delete(comp.CIMData.SampleData.Contour); % MATLAB is slow to delete unreferenced objects...
+            delete(comp.CIMData.SampleData.Contour);
             switch(selectedButton.Text)
                 case "Circle"
-                    comp.CIMData.SampleData.Contour = Visual.Contour.Circle(center,radius,N);
+                    comp.CIMData.SampleData.Contour = Visual.Contour.Circle(center,radius,N(1));
                 case "Ellipse"
-                    comp.CIMData.SampleData.Contour = Visual.Contour.Ellipse(center,radius,radius,N);
+                    comp.CIMData.SampleData.Contour = Visual.Contour.Ellipse(center,radius,radius,N(1));
+                case "CircularSegment"
+                    comp.CIMData.SampleData.Contour = Visual.Contour.CircularSegment(center,radius,pi/2,N,"clencurt");
             end
             comp.updateContourComponent();
         end
@@ -87,11 +95,15 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
             %
             comp.CircleButton = uitogglebutton(comp.ContourTypeButtonGroup);
             comp.CircleButton.Text = 'Circle';
-            comp.CircleButton.Position = [10 50 100 30];
+            comp.CircleButton.Position = [10 50 100 10];
             %
             comp.EllipseButton = uitogglebutton(comp.ContourTypeButtonGroup);
             comp.EllipseButton.Text = 'Ellipse';
-            comp.EllipseButton.Position = [10 10 100 30];
+            comp.EllipseButton.Position = [10 30 100 10];
+            %
+            comp.CircularSegmentButton = uitogglebutton(comp.ContourTypeButtonGroup);
+            comp.CircularSegmentButton.Text = 'CircularSegment';
+            comp.CircularSegmentButton.Position = [10 10 100 10];
         end
 
     end
