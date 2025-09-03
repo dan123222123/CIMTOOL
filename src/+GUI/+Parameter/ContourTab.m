@@ -91,19 +91,19 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
             comp.ContourTypeButtonGroup.TitlePosition = 'centertop';
             comp.ContourTypeButtonGroup.Title = 'Type';
             comp.ContourTypeButtonGroup.Layout.Row = [1 5];
-            comp.ContourTypeButtonGroup.Layout.Column = [1 2];
+            comp.ContourTypeButtonGroup.Layout.Column = 1;
             %
             comp.CircleButton = uitogglebutton(comp.ContourTypeButtonGroup);
             comp.CircleButton.Text = 'Circle';
-            comp.CircleButton.Position = [10 50 100 10];
+            comp.CircleButton.Position = [10 90 150 30];
             %
             comp.EllipseButton = uitogglebutton(comp.ContourTypeButtonGroup);
             comp.EllipseButton.Text = 'Ellipse';
-            comp.EllipseButton.Position = [10 30 100 10];
+            comp.EllipseButton.Position = [10 50 150 30];
             %
             comp.CircularSegmentButton = uitogglebutton(comp.ContourTypeButtonGroup);
             comp.CircularSegmentButton.Text = 'CircularSegment';
-            comp.CircularSegmentButton.Position = [10 10 100 10];
+            comp.CircularSegmentButton.Position = [10 10 150 30];
         end
 
     end

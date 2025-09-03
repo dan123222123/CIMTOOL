@@ -52,7 +52,40 @@ classdef CircularSegment < Numerics.Contour.Quad
                 obj
                 rf = 2
             end
-            obj.N = rf*obj.N; obj.update();
+            error("not yet implemented for circular segments");
+            % obj.N = rf*obj.N; obj.update();
+        end
+        function [theta,sigma] = interlevedshifts(obj,nsw,d,mode)
+            arguments
+                obj
+                nsw
+                d = 1.25
+                mode = 'scale'
+            end
+            import Numerics.Contour.CircularSegment;
+            % nodes on a circle around the current quad nodes
+            switch mode
+                case 'scale'
+                    rs = obj.rho*d;
+                case 'shift'
+                    rs = obj.rho+d;
+            end
+            theta = double.empty();
+            sigma = double.empty();
+            z = Numerics.Contour.CircularSegment.quad(obj.gamma,rs,obj.theta,nsw,obj.qr);
+            z_chord = z(length(z)/2+1:length(z)); z_chord = z_chord + sin(obj.theta(1))*(rs-obj.rho);
+            z = [z(1:length(z)/2) z_chord];
+            for i=1:length(z)
+                if ~ismissing(z(i))
+                    if mod(i,2) == 0
+                        theta(end+1) = z(i);
+                    else
+                        sigma(end+1) = z(i);
+                    end
+                end
+            end
+            theta = theta.';
+            sigma = sigma.';
         end
         function update(obj,~,~)
         % Updates contour nodes and weights using the trapezoid rule.

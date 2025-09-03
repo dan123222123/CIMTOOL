@@ -8,9 +8,10 @@ function refineQuadrature(obj)
     % un-refined contour
     obj.loaded = false;
 
-    N = obj.Contour.N;
+    % N = obj.Contour.N;
     obj.Contour.refineQuadrature(2);
     zadded = obj.Contour.z(1:2:end);
+    N = length(zadded);
 
     [Qladded,Qradded,Qlradded] = obj.samplequadrature(obj.OperatorData.T,obj.Lf,obj.Rf,zadded,obj.show_progress,obj.OperatorData.sample_mode);
 
