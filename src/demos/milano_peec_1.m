@@ -1,7 +1,3 @@
-% generic imports
-import Visual.*;
-
-%% PEEC model from Milano et al.
 L = 100*[-7 1 2; 3 -9 0; 1 2 -6];
 M = 100*[1 0 -3; -0.5 -0.5 -1; -0.5 -1.5 0];
 N = [-1 5 2; 4 0 3; -2 4 1]/72;
