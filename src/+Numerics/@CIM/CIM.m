@@ -122,6 +122,7 @@ classdef CIM < matlab.mixin.Copyable
         interlevedshifts(obj);
         computeRealization(obj);
         refineQuadrature(obj);
+        [nmd,gd] = greedyMatchingDistance(obj);
     end
     methods (Access = protected)
         function updateContourListeners(obj,~,~)
