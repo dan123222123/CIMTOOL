@@ -10,6 +10,10 @@ function refineQuadrature(obj)
 
     % N = obj.Contour.N;
     obj.Contour.refineQuadrature(2);
+    if isa(obj.Contour,'Visual.Contour.CircularSegment')
+        return; % nothing to be done if the quadrature does not nest...
+    end
+
     zadded = obj.Contour.z(1:2:end);
     N = length(zadded);
 

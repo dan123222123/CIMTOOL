@@ -6,8 +6,8 @@ classdef CIM < matlab.mixin.Copyable
     end
     properties (SetObservable)
         DataDirtiness = 2           % >1 => resample, >0 => perform realization, =0 => no action needed
-        auto_update_shifts = false; % update shifts in response to contour changes, realization parameters, etc.
-        auto_update_K = false;       % updake K in response to changes in ComputationalMode -- approximately maintains equivalent data matrix size between Hankel/MPLoewner, etc.
+        auto_update_shifts = true; % update shifts in response to contour changes, realization parameters, etc.
+        auto_update_K = true;       % updake K in response to changes in ComputationalMode -- approximately maintains equivalent data matrix size between Hankel/MPLoewner, etc.
         options = struct("PadStrategy","cyclical","AbsTol",NaN,"Verbose",true);
     end
     methods(Access = protected)
@@ -52,10 +52,10 @@ classdef CIM < matlab.mixin.Copyable
                     odms = obj.RealizationData.K;
             end
             obj.RealizationData.ComputationalMode = cm;
+            obj.default_shifts();
             if obj.auto_update_K && min(obj.SampleData.ell,obj.SampleData.r) ~= 0
                 switch cm
                     case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
-                        obj.default_shifts();
                         K = ceil(odms/min(obj.SampleData.ell,obj.SampleData.r));
                     case Numerics.ComputationalMode.MPLoewner
                         K = odms;

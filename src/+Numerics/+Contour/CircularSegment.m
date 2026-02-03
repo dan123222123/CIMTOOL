@@ -42,7 +42,7 @@ classdef CircularSegment < Numerics.Contour.Quad
             cp = pt-obj.gamma; cang = angle(cp);
             rang = ((cang>obj.theta(1) & cang<(obj.theta(2)))); % right angle
             d = obj.rho*cos(obj.theta(2)-obj.theta(1));
-            rrho = (abs(cp) > d) && (abs(cp) < obj.rho);
+            rrho = bitand((abs(cp) > d),(abs(cp) < obj.rho));
             tf =  rang & rrho;
         end
         % TODO
@@ -52,8 +52,9 @@ classdef CircularSegment < Numerics.Contour.Quad
                 obj
                 rf = 2
             end
-            error("not yet implemented for circular segments");
-            % obj.N = rf*obj.N; obj.update();
+            %error("refining of quadrature not yet implemented for circular segments");
+            warning("refining circular segments does not reuse previous quadrature information");
+            obj.N = rf*obj.N; obj.update();
         end
         function [theta,sigma] = interlevedshifts(obj,nsw,d,mode)
             arguments
