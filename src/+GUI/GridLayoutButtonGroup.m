@@ -77,6 +77,14 @@ classdef GridLayoutButtonGroup < matlab.ui.componentcontainer.ComponentContainer
             end
         end
 
+        function updateFontSize(obj, fontSize)
+            % Update font size for title label and all buttons
+            obj.TitleLabel.FontSize = fontSize;
+            for i = 1:length(obj.Buttons)
+                obj.Buttons(i).FontSize = fontSize;
+            end
+        end
+
     end
 
     methods (Access = private)

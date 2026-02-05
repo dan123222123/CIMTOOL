@@ -14,6 +14,7 @@ classdef GridLayoutToggleButton < handle
         Text
         Layout
         Parent
+        FontSize
     end
 
     properties (Access = private)
@@ -72,6 +73,15 @@ classdef GridLayoutToggleButton < handle
 
         function set.Parent(obj, val)
             obj.Button.Parent = val;
+        end
+
+        % FontSize property forwarding
+        function val = get.FontSize(obj)
+            val = obj.Button.FontSize;
+        end
+
+        function set.FontSize(obj, val)
+            obj.Button.FontSize = val;
         end
 
     end

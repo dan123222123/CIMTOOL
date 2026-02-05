@@ -86,14 +86,15 @@ classdef CIMTOOL < matlab.apps.AppBase
                 % app.PlotPanel.MainPlotAxes.Interactions = dataTipInteraction('SnapToDataVertex','on');
                 app.PlotPanel.MainPlotAxes.PickableParts = "visible";
                 app.CIMData.SampleData.Contour.toggleVisibility("on");
-            end
-            if contains(event.Modifier,'control')
-                set(app.UIFigure,'WindowKeyPressFcn','');
+            elseif contains(event.Modifier,'control')
                 if event.Key == "equal"
                     app.updateFontSize(1);
                 elseif event.Key == "hyphen"
                     app.updateFontSize(-1);
                 end
+                set(app.UIFigure,'WindowKeyPressFcn',@app.recordKey);
+            else
+                set(app.UIFigure,'WindowKeyPressFcn',@app.recordKey);
             end
         end
 

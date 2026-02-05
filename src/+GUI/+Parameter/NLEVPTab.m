@@ -35,6 +35,10 @@ classdef NLEVPTab < matlab.ui.componentcontainer.ComponentContainer
             end
         end
 
+        function updateFontSize(comp,update)
+            comp.NLEVPHelpTextArea.FontSize = update;
+        end
+
     end
 
     methods (Access = protected)

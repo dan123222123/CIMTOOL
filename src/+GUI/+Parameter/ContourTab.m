@@ -71,6 +71,8 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
         end
 
         function updateFontSize(comp,update)
+            fontsize(comp.GridLayout.Children,update,"points");
+            comp.ContourTypeButtonGroup.updateFontSize(update);
             comp.ContourComponent.updateFontSize(update);
         end
 

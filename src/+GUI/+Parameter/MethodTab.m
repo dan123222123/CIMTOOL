@@ -54,6 +54,8 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
         end
 
         function updateFontSize(comp,update)
+            fontsize(comp.GridLayout.Children,update,"points");
+            comp.ComputationalModeButtonGroup.updateFontSize(update);
             comp.MethodComponent.updateFontSize(update);
         end
 
