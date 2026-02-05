@@ -2,10 +2,10 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
 
     properties
         GridLayout                          matlab.ui.container.GridLayout
-        ContourTypeButtonGroup              matlab.ui.container.ButtonGroup
-        CircularSegmentButton                       matlab.ui.control.ToggleButton
-        EllipseButton                       matlab.ui.control.ToggleButton
-        CircleButton                        matlab.ui.control.ToggleButton
+        ContourTypeButtonGroup              GUI.GridLayoutButtonGroup
+        CircularSegmentButton               GUI.GridLayoutToggleButton
+        EllipseButton                       GUI.GridLayoutToggleButton
+        CircleButton                        GUI.GridLayoutToggleButton
         ContourComponent                    GUI.Parameter.Contour.ContourComponent
     end
 
@@ -86,24 +86,18 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
             comp.GridLayout = uigridlayout(comp.Parent,[5,5]);
             comp.GridLayout.Padding = [10 10 10 10];
             %
-            comp.ContourTypeButtonGroup = uibuttongroup(comp.GridLayout);
+            comp.ContourTypeButtonGroup = GUI.GridLayoutButtonGroup(comp.GridLayout);
             comp.ContourTypeButtonGroup.SelectionChangedFcn = matlab.apps.createCallbackFcn(comp, @ContourTypeButtonGroupSelectionChanged, true);
             comp.ContourTypeButtonGroup.TitlePosition = 'centertop';
             comp.ContourTypeButtonGroup.Title = 'Type';
             comp.ContourTypeButtonGroup.Layout.Row = [1 5];
             comp.ContourTypeButtonGroup.Layout.Column = 1;
             %
-            comp.CircleButton = uitogglebutton(comp.ContourTypeButtonGroup);
-            comp.CircleButton.Text = 'Circle';
-            comp.CircleButton.Position = [10 90 150 30];
+            comp.CircleButton = comp.ContourTypeButtonGroup.addButton('Circle');
             %
-            comp.EllipseButton = uitogglebutton(comp.ContourTypeButtonGroup);
-            comp.EllipseButton.Text = 'Ellipse';
-            comp.EllipseButton.Position = [10 50 150 30];
+            comp.EllipseButton = comp.ContourTypeButtonGroup.addButton('Ellipse');
             %
-            comp.CircularSegmentButton = uitogglebutton(comp.ContourTypeButtonGroup);
-            comp.CircularSegmentButton.Text = 'CircularSegment';
-            comp.CircularSegmentButton.Position = [10 10 150 30];
+            comp.CircularSegmentButton = comp.ContourTypeButtonGroup.addButton('CircularSegment');
         end
 
     end
