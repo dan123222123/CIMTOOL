@@ -9,7 +9,7 @@ classdef CircularSegment < Numerics.Contour.Quad
     end
     methods(Access = protected)
         function cp = copyElement(obj)
-            cp = Numerics.Contour.SemiCircle(obj.gamma,obj.rho,obj.theta,obj.N,obj.qr);
+            cp = Numerics.Contour.CircularSegment(obj.gamma,obj.rho,obj.theta,obj.N,obj.qr);
         end
     end
     methods
