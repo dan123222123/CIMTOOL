@@ -107,6 +107,19 @@ classdef ResultData < matlab.mixin.Copyable
             end
         end
 
+        function H = getTransferFunction(obj, deriv)
+            % Returns transfer function handle from computed eigenvalues/eigenvectors.
+            % The returned function handle evaluates the transfer function at any point z.
+            arguments
+                obj
+                deriv = 0
+            end
+            if isempty(obj.ew) || isempty(obj.rev) || isempty(obj.lev)
+                error('ResultData:NoResults', 'No computed results available. Call CIM.compute() first.');
+            end
+            H = @(z) Numerics.poresz(z, obj.ew, obj.lev, obj.rev, deriv);
+        end
+
     end
 
 end

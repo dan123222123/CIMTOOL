@@ -35,14 +35,14 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
                     comp.CircleButton.Value = true;
                     comp.ContourComponent = GUI.Parameter.Contour.CircleComponent(comp.GridLayout,comp.CIMData);
                 case 'Visual.Contour.Ellipse'
-                    comp.ContourComponent = GUI.Parameter.Contour.EllipseComponent(comp.GridLayout,comp.CIMData);
                     comp.EllipseButton.Value = true;
+                    comp.ContourComponent = GUI.Parameter.Contour.EllipseComponent(comp.GridLayout,comp.CIMData);
                 case 'Visual.Contour.CircularSegment'
-                    comp.ContourComponent = GUI.Parameter.Contour.CircularSegmentComponent(comp.GridLayout,comp.CIMData);
                     comp.CircularSegmentButton.Value = true;
+                    comp.ContourComponent = GUI.Parameter.Contour.CircularSegmentComponent(comp.GridLayout,comp.CIMData);
             end
             comp.ContourComponent.Layout.Row = [1 5];
-            comp.ContourComponent.Layout.Column = [3 5];
+            comp.ContourComponent.Layout.Column = [2 5];
             comp.updateFontSize(comp.MainApp.FontSize);
         end
 

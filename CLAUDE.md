@@ -167,6 +167,79 @@ gmd = cim.greedyMatchingDistance();  % matching distance to reference
 - `*Tab.m`: Tab panels in parameter interface
 - `*Data.m`: Data container classes
 
+## Modal Truncation
+
+CIMTOOL supports **modal truncation**, a technique for isolating spectral regions of a transfer function using contour integral methods. This enables data-driven decomposition of a system into regional components without requiring prior knowledge of eigenvalue locations.
+
+### Workflow
+
+Modal truncation approximates the contribution of eigenvalues within a user-chosen contour:
+
+1. **Given**: Transfer function `H(z)` (function handle that can be evaluated at any point)
+2. **Choose**: Contour to select spectral region of interest (Circle, Ellipse, CircularSegment, etc.)
+3. **Compute**: CIM approximates `H_region(z)` representing spectrum inside the contour
+4. **Extract**: Residual `H_residual(z) = H(z) - H_region(z)` isolates the complementary region
+
+### Example: Isolating Unstable Subsystem
+
+```matlab
+% Given: Transfer function (could be from measurements, models, etc.)
+H = @(z) ...; % Full transfer function
+
+% Choose circular segment to isolate right half-plane (unstable region)
+contour = Numerics.Contour.CircularSegment(...
+    0.2,           % center
+    0.7,           % radius
+    [-pi/2, pi/2], % angular range (RHP)
+    [32; 32]       % quadrature points [arc; chord]
+);
+
+% Configure realization parameters
+rd = Numerics.RealizationData();
+rd.RealizationSize = Numerics.RealizationSize(2, 5, 5);
+rd.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+
+% Create and compute modal truncation
+mt = Numerics.ModalTruncation(H, contour, rd);
+mt.compute();
+
+% Extract subsystems
+H_unstable = mt.getRegionTransferFunction();   % Approx. of RHP spectrum
+H_stable = mt.getResidualTransferFunction();   % H - H_unstable
+ew_computed = mt.getRegionEigenvalues();       % Computed eigenvalues in region
+```
+
+### Key Features
+
+- **Data-driven**: No prior knowledge of eigenvalue locations required
+- **Flexible contours**: Any contour type supported (Circle, Ellipse, CircularSegment, Quad)
+- **User control**: User explicitly chooses region based on problem knowledge
+- **Clean decomposition**: Guarantees `H(z) = H_region(z) + H_residual(z)`
+- **Export-friendly**: Returns function handles for further analysis or model order reduction
+
+### Running the Demo
+
+```matlab
+cd src/demos
+modal_truncation_demo  % Complete workflow with visualization
+```
+
+### Testing
+
+```matlab
+cd tests
+test_poresz              % Test pole-residue evaluation utilities
+test_modal_truncation    % Test modal truncation workflow
+```
+
+### Related Utilities
+
+- **`Numerics.poresz(z, ew, B, C, deriv)`**: Evaluate transfer function in pole-residue form
+  - `deriv=0`: Function value (default)
+  - `deriv=1`: First derivative
+  - `deriv=2`: Second derivative, etc.
+- **`ResultData.getTransferFunction(deriv)`**: Extract transfer function handle from CIM results
+
 ## Important Notes
 
 - When modifying `Numerics.*` classes, consider whether `Visual.*` wrappers need updates
