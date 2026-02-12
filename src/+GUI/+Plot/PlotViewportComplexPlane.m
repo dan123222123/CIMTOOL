@@ -10,6 +10,7 @@ classdef PlotViewportComplexPlane < GUI.Plot.PlotViewportComponent
         RmaxLabel
         IminLabel
         RminLabel
+        AxisEqualCheckbox
     end
 
     properties (Access = public)
@@ -60,6 +61,31 @@ classdef PlotViewportComplexPlane < GUI.Plot.PlotViewportComponent
             OldYLim = comp.MainPlotAxes.YLim;
             NewXLim = [comp.Rmin.Value; comp.Rmax.Value];
             NewYLim = [comp.Imin.Value; comp.Imax.Value];
+
+            % If axis equal is enabled, maintain square aspect ratio
+            if comp.AxisEqualCheckbox.Value
+                % Determine which control was changed
+                Rrange = diff(NewXLim);
+                Irange = diff(NewYLim);
+
+                % Use the larger range to determine the square size
+                maxRange = max(Rrange, Irange);
+
+                % Calculate centers
+                Rcenter = mean(NewXLim);
+                Icenter = mean(NewYLim);
+
+                % Adjust both axes to maintain square aspect ratio
+                NewXLim = Rcenter + [-maxRange/2; maxRange/2];
+                NewYLim = Icenter + [-maxRange/2; maxRange/2];
+
+                % Update all controls
+                comp.Rmin.Value = NewXLim(1);
+                comp.Rmax.Value = NewXLim(2);
+                comp.Imin.Value = NewYLim(1);
+                comp.Imax.Value = NewYLim(2);
+            end
+
             try
                 comp.MainPlotAxes.XLim = NewXLim;
                 comp.MainPlotAxes.YLim = NewYLim;
@@ -72,61 +98,80 @@ classdef PlotViewportComplexPlane < GUI.Plot.PlotViewportComponent
             end
         end
 
+        function AxisEqualCheckboxChangedFcn(comp, ~)
+            if comp.AxisEqualCheckbox.Value
+                % Enable axis equal
+                axis(comp.MainPlotAxes, 'equal');
+            else
+                % Disable axis equal
+                axis(comp.MainPlotAxes, 'normal');
+            end
+            MainPlotWindowXLimChangedFcn(comp,[],[]);
+            MainPlotWindowYLimChangedFcn(comp,[],[]);
+        end
+
         function update(comp)
             %TODO
         end
 
         function setup(comp)
 
-            comp.GridLayout = uigridlayout(comp,[5,5]);
+            comp.GridLayout = uigridlayout(comp,[3,4]);
 
+            comp.AxisEqualCheckbox = uicheckbox(comp.GridLayout);
+            comp.AxisEqualCheckbox.Text = 'Square';
+            comp.AxisEqualCheckbox.Value = false;
+            comp.AxisEqualCheckbox.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @AxisEqualCheckboxChangedFcn, true);
+            comp.AxisEqualCheckbox.Layout.Row = 1;
+            comp.AxisEqualCheckbox.Layout.Column = 1;
+            %
             comp.ImaxLabel = uilabel(comp.GridLayout);
-            comp.ImaxLabel.HorizontalAlignment = 'center';
-            comp.ImaxLabel.Text = 'IMAX';
+            comp.ImaxLabel.HorizontalAlignment = 'right';
+            comp.ImaxLabel.Text = 'IMAX:';
             comp.ImaxLabel.Layout.Row = 1;
-            comp.ImaxLabel.Layout.Column = 3;
+            comp.ImaxLabel.Layout.Column = 2;
             %
             comp.Imax = uieditfield(comp.GridLayout, 'numeric');
             comp.Imax.HorizontalAlignment = 'center';
             comp.Imax.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MainPlotAxesWindowChangedFcn, true);
-            comp.Imax.Layout.Row = 2;
+            comp.Imax.Layout.Row = 1;
             comp.Imax.Layout.Column = 3;
             % %
             comp.RminLabel = uilabel(comp.GridLayout);
-            comp.RminLabel.HorizontalAlignment = 'center';
-            comp.RminLabel.Text = 'RMIN';
-            comp.RminLabel.Layout.Row = 3;
+            comp.RminLabel.HorizontalAlignment = 'right';
+            comp.RminLabel.Text = 'RMIN:';
+            comp.RminLabel.Layout.Row = 2;
             comp.RminLabel.Layout.Column = 1;
             %
             comp.Rmin = uieditfield(comp.GridLayout, 'numeric');
             comp.Rmin.HorizontalAlignment = 'center';
             comp.Rmin.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MainPlotAxesWindowChangedFcn, true);
-            comp.Rmin.Layout.Row = 3;
+            comp.Rmin.Layout.Row = 2;
             comp.Rmin.Layout.Column = 2;
             % %
             comp.RmaxLabel = uilabel(comp.GridLayout);
-            comp.RmaxLabel.HorizontalAlignment = 'center';
-            comp.RmaxLabel.Text = 'RMAX';
-            comp.RmaxLabel.Layout.Row = 3;
-            comp.RmaxLabel.Layout.Column = 5;
+            comp.RmaxLabel.HorizontalAlignment = 'left';
+            comp.RmaxLabel.Text = 'RMAX:';
+            comp.RmaxLabel.Layout.Row = 2;
+            comp.RmaxLabel.Layout.Column = 3;
             %
             comp.Rmax = uieditfield(comp.GridLayout, 'numeric');
             comp.Rmax.HorizontalAlignment = 'center';
             comp.Rmax.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MainPlotAxesWindowChangedFcn, true);
-            comp.Rmax.Layout.Row = 3;
+            comp.Rmax.Layout.Row = 2;
             comp.Rmax.Layout.Column = 4;
             % %
             comp.Imin = uieditfield(comp.GridLayout, 'numeric');
             comp.Imin.HorizontalAlignment = 'center';
             comp.Imin.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @MainPlotAxesWindowChangedFcn, true);
-            comp.Imin.Layout.Row = 4;
+            comp.Imin.Layout.Row = 3;
             comp.Imin.Layout.Column = 3;
             %
             comp.IminLabel = uilabel(comp.GridLayout);
-            comp.IminLabel.HorizontalAlignment = 'center';
-            comp.IminLabel.Text = 'IMIN';
-            comp.IminLabel.Layout.Row = 5;
-            comp.IminLabel.Layout.Column = 3;
+            comp.IminLabel.HorizontalAlignment = 'right';
+            comp.IminLabel.Text = 'IMIN:';
+            comp.IminLabel.Layout.Row = 3;
+            comp.IminLabel.Layout.Column = 2;
         end
 
     end
