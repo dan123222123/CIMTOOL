@@ -224,12 +224,15 @@ classdef CIMTOOL < matlab.apps.AppBase
         % Construct app
         function app = CIMTOOL(CIMData)
             arguments
-                CIMData = Visual.CIM()
+                CIMData {mustBeA(CIMData, 'Numerics.CIM')} = Visual.CIM()
             end
 
             s = settings; app.FontSize = double(s.matlab.fonts.codefont.Size.FactoryValue);
 
-            % all numerics and self-consistency are handled in app.CIM
+            % Auto-upgrade Numerics.CIM to Visual.CIM if needed
+            if ~isa(CIMData, 'Visual.CIM')
+                CIMData = Visual.CIM.fromNumerics(CIMData);
+            end
             app.CIMData = CIMData;
 
             % Create UIFigure and components

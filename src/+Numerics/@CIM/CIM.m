@@ -12,7 +12,7 @@ classdef CIM < matlab.mixin.Copyable
     end
     methods(Access = protected)
         function cp = copyElement(obj)
-            cp = eval(class(obj));
+            cp = feval(class(obj));
             cp.auto_update_shifts = obj.auto_update_shifts;
             cp.auto_update_K = obj.auto_update_K;
             %

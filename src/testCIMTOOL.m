@@ -1,4 +1,4 @@
-import Visual.*
+import Numerics.*
 % n = OperatorData([],'plasma_drift');
 % c = Contour.Ellipse(0.3i,3,0.4,32);
 n = OperatorData([],'omnicam1');
@@ -9,8 +9,8 @@ c = Contour.Circle(0.4,0.2,8);
 
 cim = CIM(n,c);
 cim.SampleData.ell = 3; cim.SampleData.r = 3;
-cim.RealizationData.RealizationSize = Numerics.RealizationSize(3,3);
-cim.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+cim.RealizationData.RealizationSize = RealizationSize(3,3);
+cim.RealizationData.ComputationalMode = ComputationalMode.MPLoewner;
 
 CTOOL = CIMTOOL(cim);
 

@@ -11,6 +11,21 @@ classdef ModalTruncation < Numerics.ModalTruncation & Visual.VisualReactive
         end
     end
 
+    methods (Static)
+        function v = fromNumerics(n, ax)
+            % FROMNUMERICS Construct a Visual.ModalTruncation from a Numerics.ModalTruncation.
+            arguments
+                n Numerics.ModalTruncation
+                ax = []
+            end
+            v_region = Visual.CIM.fromNumerics(n.RegionCIM, ax);
+            v = Visual.ModalTruncation(n.FullTransferFunction, ...
+                v_region.SampleData.Contour, v_region.RealizationData, ax);
+            v.RegionCIM = v_region;
+            Visual.copyMatchingProperties(n, v, "RegionCIM");
+        end
+    end
+
     methods
         function obj = ModalTruncation(H, Contour, RealizationData, ax)
             % Constructor for Visual.ModalTruncation
@@ -37,6 +52,15 @@ classdef ModalTruncation < Numerics.ModalTruncation & Visual.VisualReactive
 
             obj.ax = ax;
             obj.update_plot([],[]);
+        end
+
+        function n = toNumerics(obj)
+            % TONUMERICS Strip visual state and return a Numerics.ModalTruncation.
+            n_region = obj.RegionCIM.toNumerics();
+            n = Numerics.ModalTruncation(obj.FullTransferFunction, ...
+                n_region.SampleData.Contour, n_region.RealizationData);
+            n.RegionCIM = n_region;
+            Visual.copyMatchingProperties(obj, n, "RegionCIM");
         end
 
         function update_plot(obj,~,~)

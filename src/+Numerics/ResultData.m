@@ -28,7 +28,7 @@ classdef ResultData < matlab.mixin.Copyable
 
     methods(Access = protected)
       function cp = copyElement(obj)
-          cp = eval(class(obj));
+          cp = feval(class(obj));
           cp.Db     = obj.Db;
           cp.Ds     = obj.Ds;
           cp.B      = obj.B;

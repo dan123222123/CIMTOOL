@@ -7,6 +7,20 @@ classdef RealizationData < Numerics.RealizationData & Visual.VisualReactive
       end
    end
 
+    methods (Static)
+        function v = fromNumerics(n, ax)
+            % FROMNUMERICS Construct a Visual.RealizationData from a Numerics.RealizationData.
+            arguments
+                n Numerics.RealizationData
+                ax = []
+            end
+            v = Visual.RealizationData();
+            v.ax = ax;
+            Visual.copyMatchingProperties(n, v, "loaded");
+            v.loaded = n.loaded;   % set last — fires listeners that depend on it
+        end
+    end
+
     methods
 
         function obj = RealizationData(ComputationalMode,InterpolationData,RealizationSize,ranktol,ax)
@@ -23,6 +37,13 @@ classdef RealizationData < Numerics.RealizationData & Visual.VisualReactive
             addlistener(obj,'ComputationalMode','PostSet',@obj.update_plot);
             addlistener(obj,'InterpolationData','PostSet',@obj.update_plot);
             addlistener(obj,'RealizationSize','PostSet',@obj.update_plot);
+        end
+
+        function n = toNumerics(obj)
+            % TONUMERICS Strip visual state and return a Numerics.RealizationData.
+            n = Numerics.RealizationData();
+            Visual.copyMatchingProperties(obj, n, "loaded");
+            n.loaded = obj.loaded;
         end
 
         function phandles = plot(obj,ax)

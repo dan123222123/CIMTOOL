@@ -8,7 +8,7 @@ classdef Quad < matlab.mixin.Copyable
 
     methods(Access = protected)
         function cp = copyElement(obj)
-            cp = eval(class(obj));
+            cp = feval(class(obj));
             cp.z = obj.z; cp.w = obj.w;
         end
     end

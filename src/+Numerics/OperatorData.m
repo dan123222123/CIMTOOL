@@ -26,7 +26,7 @@ classdef OperatorData < matlab.mixin.Copyable
 
     methods(Access = protected)
       function cp = copyElement(obj)
-         cp = eval(class(obj));
+         cp = feval(class(obj));
          cp.T = obj.T;
          cp.name = obj.name;
          cp.arglist = obj.arglist;

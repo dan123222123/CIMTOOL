@@ -16,7 +16,7 @@ classdef RealizationData < matlab.mixin.Copyable
 
     methods(Access = protected)
         function cp = copyElement(obj)
-            cp = eval(class(obj));
+            cp = feval(class(obj));
             cp.ComputationalMode = obj.ComputationalMode;
             cp.InterpolationData = obj.InterpolationData;
             cp.RealizationSize = obj.RealizationSize;
