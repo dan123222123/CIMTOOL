@@ -10,9 +10,9 @@ theme:
 watch:
   - src
   - src/+GUI
-  - src/+Test
   - src/+Numerics
   - src/+Visual
+  - tests
 
 markdown_extensions:
   - pymdownx.arithmatex:
