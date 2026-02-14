@@ -38,8 +38,8 @@ function [B,BB,C,CC] = build_exact_data(H,theta,sigma,L,R,PadStrategy,Verbose)
     end
 
     for i=1:max(elltheta,rsigma)
-        if i <= elltheta; B(i,:) = Li(i)'*H(theta(i)); RR(:,i) = Ri(i); end
-        if i <= rsigma; C(:,i) = H(sigma(i))*Ri(i); LL(:,i) = Li(i); end
+        if i <= elltheta; B(i,:) = - Li(i)'*H(theta(i)); RR(:,i) = Ri(i); end
+        if i <= rsigma; C(:,i) = - H(sigma(i))*Ri(i); LL(:,i) = Li(i); end
     end
     BB = B*RR; CC = LL'*C;
 

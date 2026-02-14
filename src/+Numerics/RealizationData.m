@@ -5,7 +5,7 @@ classdef RealizationData < matlab.mixin.Copyable
         InterpolationData
         RealizationSize
         ranktol
-        auto_update_realization_size = true
+        %auto_update_realization_size = true
         loaded = false
     end
 
@@ -16,12 +16,12 @@ classdef RealizationData < matlab.mixin.Copyable
 
     methods(Access = protected)
         function cp = copyElement(obj)
-            cp = eval(class(obj));
+            cp = feval(class(obj));
             cp.ComputationalMode = obj.ComputationalMode;
             cp.InterpolationData = obj.InterpolationData;
             cp.RealizationSize = obj.RealizationSize;
             cp.ranktol = obj.ranktol;
-            cp.auto_update_realization_size = obj.auto_update_realization_size;
+            %cp.auto_update_realization_size = obj.auto_update_realization_size;
             cp.loaded = obj.loaded;
         end
     end
@@ -38,10 +38,14 @@ classdef RealizationData < matlab.mixin.Copyable
             obj.ComputationalMode = ComputationalMode;
             if isempty(InterpolationData)
                 obj.defaultInterpolationData();
+            else
+                obj.InterpolationData = InterpolationData;
             end
             m = max(length(obj.InterpolationData.theta),length(obj.InterpolationData.sigma));
             if isempty(RealizationSize)
                 obj.RealizationSize = Numerics.RealizationSize(m,m,m);
+            else
+                obj.RealizationSize = RealizationSize;
             end
             obj.ranktol = ranktol;
             obj.updateListeners();
@@ -106,7 +110,7 @@ classdef RealizationData < matlab.mixin.Copyable
         function updateListeners(obj)
             addlistener(obj,'RealizationSize','PostSet',@obj.RealizationDataChanged);
         end
-        
+
         function RealizationDataChanged(obj,~,~)
             obj.loaded = false;
         end

@@ -60,9 +60,9 @@ classdef Ellipse < Numerics.Contour.Quad
             end
             switch variant
                 case 'cconj'
-                    z = ellipquad(obj.gamma,as,bs,2*(nsw+1));
+                    z = Numerics.Contour.Ellipse.ellipquad(obj.gamma,as,bs,2*(nsw+1));
                 case 'trap'
-                    z = trapezoid(obj.gamma,as,bs,2*nsw);
+                    z = Numerics.Contour.Ellipse.trapezoid(obj.gamma,as,bs,2*nsw);
             end
             for i=1:length(z)
                 if ~ismissing(z(i))
@@ -106,8 +106,6 @@ classdef Ellipse < Numerics.Contour.Quad
             z = f(q(N));
             w = wfun(q(N));
         end
-    end
-    methods (Static, Access=private)
         function z = ellipquad(gamma,alpha,beta,N)
             assert(mod(N,2) == 0);
             q = ((2*pi)/N)*(1:(N/2)-1);

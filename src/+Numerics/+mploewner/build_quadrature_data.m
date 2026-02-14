@@ -50,14 +50,15 @@ function [B,BB,C,CC] = build_quadrature_data(z,w,Ql,Qr,L,R,theta,sigma,PadStrate
     % faster to multiply by probing directions at the end rather than for each i
     for i=1:max(elltheta,rsigma)
         if i <= elltheta
-            B(i,:) = sum((w ./ (theta(i) - z)) .* reshape(Qli(i),n1,N),2);
+            % B(i,:) = sum((w ./ (theta(i) - z)) .* reshape(Qli(i),n1,N),2);
+            B(i,:) = sum((w ./ (z - theta(i))) .* reshape(Qli(i),n1,N),2);
             RR(:,i) = Ri(i);
         end
         if i <= rsigma
-            C(:,i) = sum((w ./ (sigma(i) - z)) .* reshape(Qri(i),n2,N),2);
+            % C(:,i) = sum((w ./ (sigma(i) - z)) .* reshape(Qri(i),n2,N),2);
+            C(:,i) = sum((w ./ (z - sigma(i))) .* reshape(Qri(i),n2,N),2);
             LL(:,i) = Li(i);
         end
     end
     BB = B*RR; CC = LL'*C;
-
 end

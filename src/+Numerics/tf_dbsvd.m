@@ -12,4 +12,3 @@ function [Lambda,V,W] = tf_dbsvd(m,X,Sigma,Y,Ds,B,C,abstol)
     [S,Lambda] = eig(sqrt(Sigma)\(X'*Ds*Y)/sqrt(Sigma));
     V = ((C*Y)/sqrt(Sigma))*S; W = (sqrt(Sigma)*S)\(X'*B);
 end
-

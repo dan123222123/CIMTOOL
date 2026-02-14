@@ -10,7 +10,7 @@ classdef CIMTOOL < matlab.apps.AppBase
         LeftPanel                       GUI.LeftPanel
         LeftPanelGridLayout             matlab.ui.container.GridLayout
         %
-        RightPanel                      matlab.ui.container.Panel
+        % RightPanel                      matlab.ui.container.Panel
         RightPanelGridLayout            matlab.ui.container.GridLayout
         % %
         PlotPanel                       GUI.PlotPanel
@@ -38,7 +38,7 @@ classdef CIMTOOL < matlab.apps.AppBase
 
             app.UIFigure = uifigure('WindowKeyPressFcn',@app.recordKey);
             app.UIFigure.AutoResizeChildren = 'on';
-            % app.UIFigure.Position = [100 100 640 480];
+            %
             app.UIFigure.Name = 'CIMTOOL';
             app.UIFigure.CloseRequestFcn = createCallbackFcn(app, @UIFigureCloseRequest, true);
             % %
@@ -64,7 +64,12 @@ classdef CIMTOOL < matlab.apps.AppBase
             % %
             app.LeftPanel = GUI.LeftPanel(app.LeftPanelGridLayout,app,app.CIMData,app.PlotPanel.MainPlotAxes);
 
-            app.UIFigure.Visible = 'on';
+            app.UIFigure.Visible = 'on'; drawnow; % must drawnow before resizing to not break axes auto-resizing?!?
+
+            cssize = get(0, 'ScreenSize'); % [left, bottom, width, height]
+            fsize = min([cssize(3) cssize(4)])*2/3;
+            app.UIFigure.Position = [(cssize(3)/2)-(fsize/2) (cssize(4)/2)-(fsize/2) fsize fsize+10];
+
         end
 
     end
@@ -81,14 +86,15 @@ classdef CIMTOOL < matlab.apps.AppBase
                 % app.PlotPanel.MainPlotAxes.Interactions = dataTipInteraction('SnapToDataVertex','on');
                 app.PlotPanel.MainPlotAxes.PickableParts = "visible";
                 app.CIMData.SampleData.Contour.toggleVisibility("on");
-            end
-            if contains(event.Modifier,'control')
-                set(app.UIFigure,'WindowKeyPressFcn','');
+            elseif contains(event.Modifier,'control')
                 if event.Key == "equal"
                     app.updateFontSize(1);
                 elseif event.Key == "hyphen"
                     app.updateFontSize(-1);
                 end
+                set(app.UIFigure,'WindowKeyPressFcn',@app.recordKey);
+            else
+                set(app.UIFigure,'WindowKeyPressFcn',@app.recordKey);
             end
         end
 
@@ -138,6 +144,8 @@ classdef CIMTOOL < matlab.apps.AppBase
                     alpha = abs(real(c.gamma)-real(cp)); beta = abs(imag(c.gamma)-imag(cp));
                     zc = c.trapezoid(c.gamma,alpha,beta,256);
                     zc = [c.gamma + alpha, zc, c.gamma + alpha];
+                case 'Visual.Contour.CircularSegment'
+                    errordlg("contour dragging not yet implemented for circular segments");
             end
             hold(app.PlotPanel.MainPlotAxes,"on")
             plot(app.PlotPanel.MainPlotAxes,real(zc),imag(zc),"red",'LineWidth',5,'Tag','ghost_contour','DisplayName','Ghost Contour');
@@ -216,12 +224,15 @@ classdef CIMTOOL < matlab.apps.AppBase
         % Construct app
         function app = CIMTOOL(CIMData)
             arguments
-                CIMData = Visual.CIM()
+                CIMData {mustBeA(CIMData, 'Numerics.CIM')} = Visual.CIM()
             end
 
             s = settings; app.FontSize = double(s.matlab.fonts.codefont.Size.FactoryValue);
 
-            % all numerics and self-consistency are handled in app.CIM
+            % Auto-upgrade Numerics.CIM to Visual.CIM if needed
+            if ~isa(CIMData, 'Visual.CIM')
+                CIMData = Visual.CIM.fromNumerics(CIMData);
+            end
             app.CIMData = CIMData;
 
             % Create UIFigure and components

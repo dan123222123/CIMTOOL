@@ -7,12 +7,27 @@ classdef ResultData < Numerics.ResultData & Visual.VisualReactive
       end
    end
 
+    methods (Static)
+        function v = fromNumerics(n, ax)
+            % FROMNUMERICS Construct a Visual.ResultData from a Numerics.ResultData.
+            arguments
+                n Numerics.ResultData
+                ax = []
+            end
+            v = Visual.ResultData();
+            v.ax = ax;
+            Visual.copyMatchingProperties(n, v);
+        end
+    end
+
     methods
-        function obj = ResultData(Db,Ds,BB,CC,X,Sigma,Y,ew,rev,lev,ax)
+        function obj = ResultData(Db,Ds,B,BB,C,CC,X,Sigma,Y,ew,rev,lev,ax)
             arguments
                 Db      = []
                 Ds      = []
+                B       = []
                 BB      = []
+                C       = []
                 CC      = []
                 X       = []
                 Sigma   = []
@@ -22,10 +37,16 @@ classdef ResultData < Numerics.ResultData & Visual.VisualReactive
                 lev     = []
                 ax      = []
             end
-            obj = obj@Numerics.ResultData(Db,Ds,BB,CC,X,Sigma,Y,ew,rev,lev);
+            obj = obj@Numerics.ResultData(Db,Ds,B,BB,C,CC,X,Sigma,Y,ew,rev,lev);
             obj.ax = ax;
             addlistener(obj,'ew','PostSet',@obj.update_plot);
             addlistener(obj,'Sigma','PostSet',@obj.update_plot);
+        end
+
+        function n = toNumerics(obj)
+            % TONUMERICS Strip visual state and return a Numerics.ResultData.
+            n = Numerics.ResultData();
+            Visual.copyMatchingProperties(obj, n);
         end
 
         function phandles = plot_eigenvalues(obj,ax)

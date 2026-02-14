@@ -28,7 +28,7 @@ classdef ResultData < matlab.mixin.Copyable
 
     methods(Access = protected)
       function cp = copyElement(obj)
-          cp = eval(class(obj));
+          cp = feval(class(obj));
           cp.Db     = obj.Db;
           cp.Ds     = obj.Ds;
           cp.B      = obj.B;
@@ -105,6 +105,19 @@ classdef ResultData < matlab.mixin.Copyable
                 [S,Lambda] = eig(X'*obj.Ds*Y,Sigma);
                 Lambda = diag(Lambda); V = obj.CC*Y*(Sigma\S); W = S\(X'*obj.BB);
             end
+        end
+
+        function H = getTransferFunction(obj, deriv)
+            % Returns transfer function handle from computed eigenvalues/eigenvectors.
+            % The returned function handle evaluates the transfer function at any point z.
+            arguments
+                obj
+                deriv = 0
+            end
+            if isempty(obj.ew) || isempty(obj.rev) || isempty(obj.lev)
+                error('ResultData:NoResults', 'No computed results available. Call CIM.compute() first.');
+            end
+            H = @(z) Numerics.poresz(z, obj.ew, obj.lev, obj.rev, deriv);
         end
 
     end

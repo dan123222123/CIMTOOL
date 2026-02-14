@@ -55,7 +55,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             CIM = comp.CIMData;
             comp.OperatorDataChangedFcn(missing);
             comp.DataDirtinessChangedFcn(missing);
-            comp.NumQuadNodes.Value = CIM.SampleData.Contour.N;
+            comp.NumQuadNodes.Value = num2str(CIM.SampleData.Contour.N);
             % comp.AutoSampleCheckBox.Value = CIM.auto_compute_samples;
             % comp.AutoRealizationCheckBox.Value = CIM.auto_compute_realization;
         end
@@ -100,7 +100,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         end
 
         function QuadratureChangedFcn(comp,~)
-            comp.NumQuadNodes.Value = comp.CIMData.SampleData.Contour.N;
+            comp.NumQuadNodes.Value = num2str(comp.CIMData.SampleData.Contour.N);
         end
 
         function DataMatrixSizeChangedFcn(comp,~)
@@ -142,7 +142,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         end
 
         function NumQuadNodesChanged(comp,~)
-            comp.CIMData.SampleData.Contour.N = comp.NumQuadNodes.Value;
+            comp.CIMData.SampleData.Contour.N = str2num(comp.NumQuadNodes.Value);
         end
 
         function AutoButtonsChanged(comp,~)
@@ -200,7 +200,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.NumQuadNodesLabel.Layout.Row = 3;
             comp.NumQuadNodesLabel.Layout.Column = 1;
             %
-            comp.NumQuadNodes = uieditfield(comp.GridLayout,"numeric");
+            comp.NumQuadNodes = uieditfield(comp.GridLayout,"text");
             comp.NumQuadNodes.HorizontalAlignment = 'center';
             comp.NumQuadNodes.FontName = 'Hack';
             comp.NumQuadNodes.Placeholder = 'N/A';

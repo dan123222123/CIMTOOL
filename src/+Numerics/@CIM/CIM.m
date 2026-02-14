@@ -6,13 +6,13 @@ classdef CIM < matlab.mixin.Copyable
     end
     properties (SetObservable)
         DataDirtiness = 2           % >1 => resample, >0 => perform realization, =0 => no action needed
-        auto_update_shifts = true;  % update shifts in response to contour changes, realization parameters, etc.
+        auto_update_shifts = true; % update shifts in response to contour changes, realization parameters, etc.
         auto_update_K = true;       % updake K in response to changes in ComputationalMode -- approximately maintains equivalent data matrix size between Hankel/MPLoewner, etc.
         options = struct("PadStrategy","cyclical","AbsTol",NaN,"Verbose",true);
     end
     methods(Access = protected)
         function cp = copyElement(obj)
-            cp = eval(class(obj));
+            cp = feval(class(obj));
             cp.auto_update_shifts = obj.auto_update_shifts;
             cp.auto_update_K = obj.auto_update_K;
             %
@@ -32,7 +32,7 @@ classdef CIM < matlab.mixin.Copyable
                 Contour = Numerics.Contour.Circle()
                 RealizationData = Numerics.RealizationData()
             end
-            obj.SampleData = Numerics.SampleData(OperatorData,Contour,0,0);
+            obj.SampleData = Numerics.SampleData(OperatorData,Contour);
             obj.RealizationData = RealizationData;
             obj.ResultData = Numerics.ResultData();
             obj.updateListeners([],[]);
@@ -52,10 +52,10 @@ classdef CIM < matlab.mixin.Copyable
                     odms = obj.RealizationData.K;
             end
             obj.RealizationData.ComputationalMode = cm;
+            obj.default_shifts();
             if obj.auto_update_K && min(obj.SampleData.ell,obj.SampleData.r) ~= 0
                 switch cm
                     case {Numerics.ComputationalMode.Hankel,Numerics.ComputationalMode.SPLoewner}
-                        obj.default_shifts();
                         K = ceil(odms/min(obj.SampleData.ell,obj.SampleData.r));
                     case Numerics.ComputationalMode.MPLoewner
                         K = odms;
@@ -92,36 +92,37 @@ classdef CIM < matlab.mixin.Copyable
             if nargout <= 1
                 V = obj.ResultData.ew(ewidx);
             elseif nargout >= 2
-                V = obj.ResultData.rev(:,ewidx);
+                V = obj.ResultData.rev(:,ewidx); V = V ./ sqrt(diag(V'*V))';
                 D = diag(obj.ResultData.ew(ewidx));
-                W = obj.ResultData.lev(ewidx,:)';
+                W = obj.ResultData.lev(ewidx,:)'; W = W ./ sqrt(diag(W'*W))';
             end
         end
-        function H = tf(obj,m,abstol)
+        function [H,Lambda,W,V] = tf(obj,m,abstol)
         % Computes the transfer function of state dimension m from the sampling/realization data.
             arguments
                 obj
                 m = obj.RealizationData.RealizationSize.m
                 abstol = NaN
             end
-            cp = copy(obj);
-            cp.compute();
+            cp = copy(obj); cp.compute();
             [Lambda,V,W] = Numerics.tf_dbsvd(m, ...
                 cp.ResultData.X, ...
                 cp.ResultData.Sigma, ...
                 cp.ResultData.Y, ...
                 cp.ResultData.Ds, ...
-                cp.ResultData.BB, ...
-                cp.ResultData.CC, ...
+                cp.ResultData.B, ...
+                cp.ResultData.C, ...
                 abstol ...
                 );
-            H = @(z) V*((Lambda-z*eye(size(Lambda)))\W);
+
+            H = @(z) V*((z*eye(size(Lambda))-Lambda)\W);
         end
     end
     methods (Access = public)
         interlevedshifts(obj);
         computeRealization(obj);
         refineQuadrature(obj);
+        [nmd,gd] = greedyMatchingDistance(obj);
     end
     methods (Access = protected)
         function updateContourListeners(obj,~,~)
@@ -151,6 +152,8 @@ classdef CIM < matlab.mixin.Copyable
                 return;
             end
             switch obj.RealizationData.ComputationalMode
+                case Numerics.ComputationalMode.Hankel
+                    obj.RealizationData.defaultInterpolationData;
                 case Numerics.ComputationalMode.MPLoewner
                     obj.contour_interlevedshifts();
             end

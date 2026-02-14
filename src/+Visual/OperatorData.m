@@ -6,7 +6,21 @@ classdef OperatorData <  Numerics.OperatorData & Visual.VisualReactive
           cp.ax = obj.ax;
       end
    end
-    
+
+    methods (Static)
+        function v = fromNumerics(n, ax)
+            % FROMNUMERICS Construct a Visual.OperatorData from a Numerics.OperatorData.
+            arguments
+                n Numerics.OperatorData
+                ax = []
+            end
+            v = Visual.OperatorData();
+            v.ax = ax;
+            Visual.copyMatchingProperties(n, v, "loaded");
+            v.loaded = n.loaded;   % set last — fires listeners that depend on it
+        end
+    end
+
     methods
 
         function obj = OperatorData(T,name,arglist,ax)
@@ -19,6 +33,13 @@ classdef OperatorData <  Numerics.OperatorData & Visual.VisualReactive
             obj = obj@Numerics.OperatorData(T,name,arglist);
             obj.ax = ax;
             addlistener(obj,'refew','PostSet',@obj.update_plot);
+        end
+
+        function n = toNumerics(obj)
+            % TONUMERICS Strip visual state and return a Numerics.OperatorData.
+            n = Numerics.OperatorData();
+            Visual.copyMatchingProperties(obj, n, "loaded");
+            n.loaded = obj.loaded;
         end
 
         function phandles = plot(obj,ax)
@@ -34,7 +55,7 @@ classdef OperatorData <  Numerics.OperatorData & Visual.VisualReactive
             end
             hold(ax,"off");
         end
-        
+
     end
 
 end

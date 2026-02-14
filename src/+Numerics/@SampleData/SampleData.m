@@ -34,7 +34,7 @@ classdef SampleData < matlab.mixin.Copyable
 
     methods (Access = protected)
         function cp = copyElement(obj)
-            cp = eval(class(obj));
+            cp = feval(class(obj));
             cp.OperatorData = copy(obj.OperatorData);
             cp.Contour = copy(obj.Contour);
             cp.ell = obj.ell; cp.r = obj.r;
@@ -56,8 +56,8 @@ classdef SampleData < matlab.mixin.Copyable
             arguments
                 OperatorData = Numerics.OperatorData()
                 Contour = Numerics.Contour.Circle()
-                ell = 0
-                r = 0
+                ell = OperatorData.n
+                r = OperatorData.n
             end
             obj.OperatorData = OperatorData;
             obj.Contour = Contour;

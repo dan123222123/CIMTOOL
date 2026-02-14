@@ -42,6 +42,7 @@ classdef ParameterPanel < matlab.ui.componentcontainer.ComponentContainer
         function updateFontSize(comp,~)
             update = comp.MainApp.FontSize;
             fontsize(comp.ParameterTabGridLayout.Children,update,"points");
+            comp.NLEVPTab.updateFontSize(update);
             comp.ContourTab.updateFontSize(update);
             comp.MethodTab.updateFontSize(update);
             comp.ShiftsTab.updateFontSize(update);

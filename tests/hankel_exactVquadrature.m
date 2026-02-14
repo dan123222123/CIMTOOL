@@ -1,13 +1,13 @@
-%% setup CIM
+%% setup
 n = 6; m = n; p = n; ewref = -1:-1:-n;
 A = diag(ewref); B = randn(n,m); C = randn(p,n);
 H = @(z) C*((z*eye(size(A)) - A) \ B);
 %
-nlevp = Numerics.NLEVPData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
+nlevp = Numerics.OperatorData(H); nlevp.sample_mode = Numerics.SampleMode.Direct;
 contour = Numerics.Contour.Ellipse(-(n+1)/2,((n+1)/2),0.5,8);
 CIM = Numerics.CIM(nlevp,contour);
 %
-CIM.SampleData.show_progress = false; CIM.SampleData.NLEVP.refew = ewref;
+CIM.SampleData.show_progress = false; CIM.SampleData.OperatorData.refew = ewref;
 CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
 CIM.SampleData.ell = n; CIM.SampleData.r = n;
 CIM.RealizationData.K = 1; CIM.RealizationData.m = n;

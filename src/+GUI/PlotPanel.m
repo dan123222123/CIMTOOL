@@ -54,9 +54,9 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
         function updateFontSize(comp,~)
             update = comp.MainApp.FontSize;
             fontsize(comp.PlotTabGridLayout.Children,update,"points");
-            % comp.ContourTab.updateFontSize(update);
-            % comp.MethodTab.updateFontSize(update);
-            % comp.ShiftsTab.updateFontSize(update);
+            comp.ResultsTable.FontSize = update;
+            comp.MainPlotAxes.FontSize = update;
+            comp.HSVAxes.FontSize = update;
         end
 
         % listen for rd.loaded, OperatorData.refew, etc. to re-do this table display

@@ -1,10 +1,11 @@
 classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
-    
+
     properties
         GridLayout                          matlab.ui.container.GridLayout
-        ContourTypeButtonGroup              matlab.ui.container.ButtonGroup
-        EllipseButton                       matlab.ui.control.ToggleButton
-        CircleButton                        matlab.ui.control.ToggleButton
+        ContourTypeButtonGroup              GUI.GridLayoutButtonGroup
+        CircularSegmentButton               GUI.GridLayoutToggleButton
+        EllipseButton                       GUI.GridLayoutToggleButton
+        CircleButton                        GUI.GridLayoutToggleButton
         ContourComponent                    GUI.Parameter.Contour.ContourComponent
     end
 
@@ -13,7 +14,7 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
         CIMData Numerics.CIM
         PlotTab
     end
-    
+
     methods
 
         function obj = ContourTab(Parent,MainApp,CIMData)
@@ -34,11 +35,14 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
                     comp.CircleButton.Value = true;
                     comp.ContourComponent = GUI.Parameter.Contour.CircleComponent(comp.GridLayout,comp.CIMData);
                 case 'Visual.Contour.Ellipse'
-                    comp.ContourComponent = GUI.Parameter.Contour.EllipseComponent(comp.GridLayout,comp.CIMData);
                     comp.EllipseButton.Value = true;
+                    comp.ContourComponent = GUI.Parameter.Contour.EllipseComponent(comp.GridLayout,comp.CIMData);
+                case 'Visual.Contour.CircularSegment'
+                    comp.CircularSegmentButton.Value = true;
+                    comp.ContourComponent = GUI.Parameter.Contour.CircularSegmentComponent(comp.GridLayout,comp.CIMData);
             end
             comp.ContourComponent.Layout.Row = [1 5];
-            comp.ContourComponent.Layout.Column = [3 5];
+            comp.ContourComponent.Layout.Column = [2 5];
             comp.updateFontSize(comp.MainApp.FontSize);
         end
 
@@ -51,18 +55,24 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
                     radius = comp.CIMData.SampleData.Contour.rho;
                 case 'Visual.Contour.Ellipse'
                     radius = max(comp.CIMData.SampleData.Contour.alpha,comp.CIMData.SampleData.Contour.beta);
+                case 'Visual.Contour.CircularSegment'
+                    radius = comp.CIMData.SampleData.Contour.rho;
             end
-            delete(comp.CIMData.SampleData.Contour); % MATLAB is slow to delete unreferenced objects...
+            delete(comp.CIMData.SampleData.Contour);
             switch(selectedButton.Text)
                 case "Circle"
-                    comp.CIMData.SampleData.Contour = Visual.Contour.Circle(center,radius,N);
+                    comp.CIMData.SampleData.Contour = Visual.Contour.Circle(center,radius,N(1));
                 case "Ellipse"
-                    comp.CIMData.SampleData.Contour = Visual.Contour.Ellipse(center,radius,radius,N);
+                    comp.CIMData.SampleData.Contour = Visual.Contour.Ellipse(center,radius,radius,N(1));
+                case "CircularSegment"
+                    comp.CIMData.SampleData.Contour = Visual.Contour.CircularSegment(center,radius,pi/2,N,"clencurt");
             end
             comp.updateContourComponent();
         end
 
         function updateFontSize(comp,update)
+            fontsize(comp.GridLayout.Children,update,"points");
+            comp.ContourTypeButtonGroup.updateFontSize(update);
             comp.ContourComponent.updateFontSize(update);
         end
 
@@ -78,20 +88,18 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
             comp.GridLayout = uigridlayout(comp.Parent,[5,5]);
             comp.GridLayout.Padding = [10 10 10 10];
             %
-            comp.ContourTypeButtonGroup = uibuttongroup(comp.GridLayout);
+            comp.ContourTypeButtonGroup = GUI.GridLayoutButtonGroup(comp.GridLayout);
             comp.ContourTypeButtonGroup.SelectionChangedFcn = matlab.apps.createCallbackFcn(comp, @ContourTypeButtonGroupSelectionChanged, true);
             comp.ContourTypeButtonGroup.TitlePosition = 'centertop';
             comp.ContourTypeButtonGroup.Title = 'Type';
             comp.ContourTypeButtonGroup.Layout.Row = [1 5];
-            comp.ContourTypeButtonGroup.Layout.Column = [1 2];
+            comp.ContourTypeButtonGroup.Layout.Column = 1;
             %
-            comp.CircleButton = uitogglebutton(comp.ContourTypeButtonGroup);
-            comp.CircleButton.Text = 'Circle';
-            comp.CircleButton.Position = [10 50 100 30];
+            comp.CircleButton = comp.ContourTypeButtonGroup.addButton('Circle');
             %
-            comp.EllipseButton = uitogglebutton(comp.ContourTypeButtonGroup);
-            comp.EllipseButton.Text = 'Ellipse';
-            comp.EllipseButton.Position = [10 10 100 30];
+            comp.EllipseButton = comp.ContourTypeButtonGroup.addButton('Ellipse');
+            %
+            comp.CircularSegmentButton = comp.ContourTypeButtonGroup.addButton('CircularSegment');
         end
 
     end

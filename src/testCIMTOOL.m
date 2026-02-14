@@ -1,16 +1,16 @@
-import Visual.*
-% n = Numerics.NLEVPData([],'plasma_drift');
-% c = Numerics.Contour.Ellipse(0.3i,3,0.4,32);
+import Numerics.*
+% n = OperatorData([],'plasma_drift');
+% c = Contour.Ellipse(0.3i,3,0.4,32);
 n = OperatorData([],'omnicam1');
 c = Contour.Circle(0.4,0.2,8);
 
-% n = Numerics.NLEVPData([],'gun');
-% c = Numerics.Contour.Circle(141000,30000);
+% n = OperatorData([],'gun');
+% c = Contour.Circle(141000,30000);
 
 cim = CIM(n,c);
 cim.SampleData.ell = 3; cim.SampleData.r = 3;
-cim.RealizationData.RealizationSize = Numerics.RealizationSize(3,3);
-cim.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
+cim.RealizationData.RealizationSize = RealizationSize(3,3);
+cim.RealizationData.ComputationalMode = ComputationalMode.MPLoewner;
 
 CTOOL = CIMTOOL(cim);
 
@@ -35,4 +35,3 @@ CTOOL = CIMTOOL(cim);
 % cim.SampleData.r = 32;
 
 % cim.compute();
-
