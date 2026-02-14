@@ -25,6 +25,6 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - run: pip install mkdocs-material 
-      - run: pip install mkdocstrings-matlab==0.9.5
+      - run: pip install mkdocstrings-matlab==2.0.1
       - run: pip install mkdocs-awesome-nav
       - run: mkdocs gh-deploy --force
