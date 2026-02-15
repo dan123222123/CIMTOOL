@@ -1,0 +1,101 @@
+---
+jupyter: mkernel
+---
+
+```{matlab}
+% Project root is the execute-dir; add src to path.
+pwd
+```
+
+```{matlab}
+% Project root is the execute-dir; add src to path.
+getenv("QUARTO_PROJECT_DIR")
+```
+
+```{matlab}
+% Project root is the execute-dir; add src to path.
+addpath(genpath('~/version_control/git/math/CIMTOOL/src/'))
+```
+
+# Acoustic Wave 1D (acoustic_wave_1d)[^1]
+
+## Description
+
+Quadratic eigenvalue problem (QEP) that arises from the wave equation on $ [0, 1] $:
+
+$$ \frac{d^2 p}{d x^2} + 4 \pi^2 \lambda^2 p = 0, \quad p(0) = 0, \quad \chi p'(1) + 2 \pi i \lambda p(1) = 0. $$
+
+$p$ is the acoustic pressure, $\lambda$ is the frequency, and $\chi$ is the impedance.
+
+We aim to find eigenpairs $(\lambda,\vec{x})$ such that
+
+$$ \mathbf{T}(\lambda) \vec{x} = \vec{0} $$
+
+where
+
+$$ \mathbf{T}(\lambda) = \lambda^2 \mathbf{M} + \lambda \mathbf{D} + \mathbf{K}, \quad \mathbf{M},\mathbf{K} \in \mathbb{R}^{n \times n}, \mathbf{D} \in \mathbb{C}^{n \times n}. $$
+
+## Getting Started
+
+We put $N = 506, \chi = 1.0001$, and let $\Omega = \mathcal{B}(0.8i,10)$ be the circular contour
+centered at $\gamma = 0.8i$ with radius $\rho = 10$ and $128$ quadrature nodes.
+
+```{matlab}
+N = 506; Xi = 1.0001;
+n = Numerics.OperatorData([], 'acoustic_wave_1d', sprintf("%f,%f", N, Xi));
+c = Numerics.Contour.Circle(0.8i, 10, 128);
+cim = Numerics.CIM(n, c); cim.options.Verbose = false;
+```
+
+Reference eigenvalues can be computed explicitly as
+
+$$ \lambda_k = \frac{\tan^{-1}(i \chi)}{2 \pi} + \frac{k}{2}, \quad k \in \mathbb{Z} $$
+
+when $ \tan^{-1}(i \chi) $ is defined.
+
+```{matlab}
+nref = 50; refew = zeros(2*nref+1, 1);
+for k = -nref:nref
+    refew(k+nref+1) = atan(1i*Xi)/(2*pi) + k/2;
+end
+n.refew = refew;
+```
+
+$\mathbf{T}$ is meromorphic with $m = 40$ simple poles in $\Omega$.
+Hankel and MPLoewner-based CIMs build up relevant data matrices and utilize a rank-$m$ truncated SVD, where, with exact data, $m$ is exactly the number of poles of $\mathbf{T}$ within $\Omega$ (counting multiplicities).
+Inexact data is derived through contour integration of $f_k(z) \left( \left[ \mathbf{T}(z) \right]^{-1} \right)$, approximated via quadrature rule.
+$f_k(z)$ depends on the choice of Hankel/SPLoewner/MPLoewner formulations and, in the case of the latter two, on the choice of shift $\sigma$.
+In practice, left ($\mathbf{L} \in \mathbb{C}^{n \times \ell}$) and right ($\mathbf{R} \in \mathbb{C}^{n \times r}$) probing matrices are used to reduce the computational burden of full inversion of $\mathbf{T}$ at each quadrature node, so that the integrand becomes $f_k(z) \left( \mathbf{L}^* \left[ \mathbf{T}(z) \right]^{-1} \mathbf{R} \right)$.
+
+## Example
+
+We set $m = 40, \ell = r = 15$, and choose $K$ so that $\mathbb{D},\mathbb{D_s} \in \mathbb{C}^{60 \times 60}$.
+
+```{matlab}
+p = 15; cim.SampleData.ell = p; cim.SampleData.r = p;
+cim.RealizationData.m = 42
+```
+
+### Hankel
+
+To use Hankel realization, set the computational mode and the number of moments $K$ used to build $\mathbb{D}$:
+
+```{matlab}
+cim.setComputationalMode(Numerics.ComputationalMode.Hankel);
+cim.RealizationData.K = 4;  % p * K = 15 * 4 = 60
+cim.compute();
+fprintf('MRR: %.4e\n', max(Numerics.relres(n.T, cim.ResultData.ew, cim.ResultData.rev, Numerics.SampleMode.Inverse)))
+```
+
+### MPLoewner
+
+We switch to MPLoewner, where $K$ now represents the number of shifts used to construct $\mathbb{D}$:
+
+```{matlab}
+cim.setComputationalMode(Numerics.ComputationalMode.MPLoewner);
+cim.RealizationData.K = 4*p;  % 60 shifts
+cim.compute();
+fprintf('MRR: %.4e\n', max(Numerics.relres(n.T, cim.ResultData.ew, cim.ResultData.rev, Numerics.SampleMode.Inverse)))
+```
+
+[^1]: F. Chaitin-Chatelin and M. B. van Gijzen, "Analysis of parameterized quadratic eigenvalue problems in computational acoustics with homotopic deviation theory," Numerical Linear Algebra with Applications, vol. 13, no. 6, pp. 487–512, 2006, doi: 10.1002/nla.484.

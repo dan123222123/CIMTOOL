@@ -41,12 +41,12 @@ H_region = mt.getRegionTransferFunction();
 % H_residual = mt.getResidualTransferFunction();
 ew_computed = mt.getRegionEigenvalues();
 
-% % visual
-% scatter(real(contour.z),imag(contour.z)); hold on;
-% scatter(real(ew_stable),imag(ew_stable))
-% scatter(real(ew_unstable),imag(ew_unstable))
-% scatter(real(ew_computed),imag(ew_computed))
-% hold off
+% visual
+scatter(real(contour.z),imag(contour.z)); hold on;
+scatter(real(ew_stable),imag(ew_stable))
+scatter(real(ew_unstable),imag(ew_unstable))
+scatter(real(ew_computed),imag(ew_computed))
+hold off
 
 fprintf('  True unstable eigenvalues: %d\n', length(ew_unstable));
 fprintf('  Computed eigenvalues: %d\n', length(ew_computed));

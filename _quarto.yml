@@ -1,0 +1,12 @@
+project:
+  execute-dir: project
+
+jupyter: mkernel
+
+format:
+  # Render to GitHub-flavored markdown so mkdocs can build the final site.
+  # The yaml_metadata_block variant preserves YAML frontmatter in the output.
+  commonmark:
+    variant: +yaml_metadata_block
+    wrap: none
+    toc: false

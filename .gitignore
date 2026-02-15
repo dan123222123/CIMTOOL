@@ -7,3 +7,8 @@ experiments/allpass/ex*Data
 *.mat
 *.avi
 *.gif
+
+/.quarto/
+**/*.quarto_ipynb
+**/.ipynb*
+**/.venv
