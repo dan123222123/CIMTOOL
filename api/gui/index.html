@@ -1,0 +1,4944 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../visual/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>GUI - CIMTOOL</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#gui" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="CIMTOOL" class="md-header__button md-logo" aria-label="CIMTOOL" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CIMTOOL
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              GUI
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="CIMTOOL" class="md-nav__button md-logo" aria-label="CIMTOOL" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    CIMTOOL
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Contour Integral Method (CIM) Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorial
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorial
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Data Matrices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/acoustic_wave_1d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Acoustic Wave 1D (acoustic_wave_1d)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Numerics
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Numerics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1_1" id="__nav_4_1_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Realization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Realization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../numerics/realization/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Miscellaneous
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../numerics/realization/sploewner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ERA/Single-Point Loewner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../numerics/realization/mploewner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Point Loewner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1_2" id="__nav_4_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Structures
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Structures
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../numerics/structures/enumerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enumerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../numerics/structures/contours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contours
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../numerics/structures/main/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Main Classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visual/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visual Reactive Class "Decoration"
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GUI
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GUI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#++GUI" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-namespace"></code>&nbsp;GUI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#GUI.GridLayoutToggleButton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;GridLayoutToggleButton
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" GridLayoutToggleButton">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutToggleButton.Value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutToggleButton.Value
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutToggleButton.Text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutToggleButton.Text
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutToggleButton.Layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutToggleButton.Layout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutToggleButton.Parent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutToggleButton.Parent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutToggleButton.FontSize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutToggleButton.FontSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutToggleButton.GridLayoutToggleButton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;GridLayoutToggleButton
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#GUI.PlotPanel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;PlotPanel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" PlotPanel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.PlotTabGridLayout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.PlotTabGridLayout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.PlotTabGroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.PlotTabGroup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.MainPlotTab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.MainPlotTab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.MainPlotTabGridLayout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.MainPlotTabGridLayout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel." class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.HSVPlotTab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.HSVPlotTab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.HSVPlotTabGridLayout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.HSVPlotTabGridLayout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.ResultTab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.ResultTab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.ResultTabGridLayout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.ResultTabGridLayout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.ResultsTable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.ResultsTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.MainPlotAxes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.MainPlotAxes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.HSVAxes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.HSVAxes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.MainAppUIFigure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.MainAppUIFigure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.MainApp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.MainApp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.CIMData" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.CIMData
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.PlotPanel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;PlotPanel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.updateFontSize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;updateFontSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.ResultDataChangedFcn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;ResultDataChangedFcn
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#GUI.LeftPanel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;LeftPanel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" LeftPanel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.GridLayout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.GridLayout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.ProblemNameLabel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.ProblemNameLabel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.ProblemName" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.ProblemName
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel." class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.ProblemSizeLabel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.ProblemSizeLabel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.ProblemSize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.ProblemSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.NumQuadNodesLabel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.NumQuadNodesLabel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.NumQuadNodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.NumQuadNodes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.DataMatrixSizeLabel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.DataMatrixSizeLabel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.DataMatrixSize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.DataMatrixSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.ComputeButton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.ComputeButton
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.AutoSampleCheckBox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.AutoSampleCheckBox
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.AutoRealizationCheckBox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.AutoRealizationCheckBox
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.RefineQuadratureButton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.RefineQuadratureButton
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.PlotViewportControl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.PlotViewportControl
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.MainApp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.MainApp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.CIMData" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.CIMData
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.MainPlotAxes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.MainPlotAxes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.LeftPanel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;LeftPanel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.createDynamicComponents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;createDynamicComponents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.setDefaults" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;setDefaults
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.addListeners" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;addListeners
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.updateContourListeners" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;updateContourListeners
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.updateFontSize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;updateFontSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.OperatorDataChangedFcn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;OperatorDataChangedFcn
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.QuadratureChangedFcn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;QuadratureChangedFcn
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.DataMatrixSizeChangedFcn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;DataMatrixSizeChangedFcn
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.DataDirtinessChangedFcn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;DataDirtinessChangedFcn
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.ComputeButtonPushed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;ComputeButtonPushed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.RefineQuadratureButtonPushed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;RefineQuadratureButtonPushed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.NumQuadNodesChanged" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;NumQuadNodesChanged
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.AutoButtonsChanged" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;AutoButtonsChanged
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;GridLayoutButtonGroup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" GridLayoutButtonGroup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup.Title" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutButtonGroup.Title
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup.TitlePosition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutButtonGroup.TitlePosition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup.SelectionChangedFcn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutButtonGroup.SelectionChangedFcn
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup.SelectedObject" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutButtonGroup.SelectedObject
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup.GridLayoutButtonGroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;GridLayoutButtonGroup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup.addButton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;addButton
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup.updateFontSize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;updateFontSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#GUI.Menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Menu
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" Menu">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu.FileMenu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.Menu.FileMenu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu.ImportNLEVP" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.Menu.ImportNLEVP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu." class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.Menu.
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu.ImportNLEVPPack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.Menu.ImportNLEVPPack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu.MainApp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.Menu.MainApp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu.CIMData" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.Menu.CIMData
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu.Menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;Menu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu.ImportNLEVPPackFcn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;ImportNLEVPPackFcn
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;ParameterPanel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" ParameterPanel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.ParameterTabGridLayout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.ParameterTabGridLayout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.ParameterTabGroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.ParameterTabGroup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.NLEVPTab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.NLEVPTab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.ContourTab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.ContourTab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.MethodTab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.MethodTab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.ShiftsTab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.ShiftsTab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel." class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.MainApp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.MainApp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.CIMData" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.CIMData
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.ParameterPanel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;ParameterPanel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.createDynamicComponents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;createDynamicComponents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.updateFontSize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;updateFontSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#GUI.testGridLayoutButtonGroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-script"></code>&nbsp;testGridLayoutButtonGroup
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#++GUI" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-namespace"></code>&nbsp;GUI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#GUI.GridLayoutToggleButton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;GridLayoutToggleButton
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" GridLayoutToggleButton">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutToggleButton.Value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutToggleButton.Value
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutToggleButton.Text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutToggleButton.Text
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutToggleButton.Layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutToggleButton.Layout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutToggleButton.Parent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutToggleButton.Parent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutToggleButton.FontSize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutToggleButton.FontSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutToggleButton.GridLayoutToggleButton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;GridLayoutToggleButton
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#GUI.PlotPanel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;PlotPanel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" PlotPanel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.PlotTabGridLayout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.PlotTabGridLayout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.PlotTabGroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.PlotTabGroup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.MainPlotTab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.MainPlotTab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.MainPlotTabGridLayout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.MainPlotTabGridLayout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel." class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.HSVPlotTab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.HSVPlotTab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.HSVPlotTabGridLayout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.HSVPlotTabGridLayout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.ResultTab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.ResultTab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.ResultTabGridLayout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.ResultTabGridLayout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.ResultsTable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.ResultsTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.MainPlotAxes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.MainPlotAxes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.HSVAxes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.HSVAxes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.MainAppUIFigure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.MainAppUIFigure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.MainApp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.MainApp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.CIMData" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.PlotPanel.CIMData
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.PlotPanel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;PlotPanel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.updateFontSize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;updateFontSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.PlotPanel.ResultDataChangedFcn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;ResultDataChangedFcn
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#GUI.LeftPanel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;LeftPanel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" LeftPanel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.GridLayout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.GridLayout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.ProblemNameLabel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.ProblemNameLabel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.ProblemName" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.ProblemName
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel." class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.ProblemSizeLabel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.ProblemSizeLabel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.ProblemSize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.ProblemSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.NumQuadNodesLabel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.NumQuadNodesLabel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.NumQuadNodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.NumQuadNodes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.DataMatrixSizeLabel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.DataMatrixSizeLabel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.DataMatrixSize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.DataMatrixSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.ComputeButton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.ComputeButton
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.AutoSampleCheckBox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.AutoSampleCheckBox
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.AutoRealizationCheckBox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.AutoRealizationCheckBox
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.RefineQuadratureButton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.RefineQuadratureButton
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.PlotViewportControl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.PlotViewportControl
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.MainApp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.MainApp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.CIMData" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.CIMData
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.MainPlotAxes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.LeftPanel.MainPlotAxes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.LeftPanel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;LeftPanel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.createDynamicComponents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;createDynamicComponents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.setDefaults" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;setDefaults
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.addListeners" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;addListeners
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.updateContourListeners" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;updateContourListeners
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.updateFontSize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;updateFontSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.OperatorDataChangedFcn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;OperatorDataChangedFcn
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.QuadratureChangedFcn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;QuadratureChangedFcn
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.DataMatrixSizeChangedFcn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;DataMatrixSizeChangedFcn
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.DataDirtinessChangedFcn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;DataDirtinessChangedFcn
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.ComputeButtonPushed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;ComputeButtonPushed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.RefineQuadratureButtonPushed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;RefineQuadratureButtonPushed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.NumQuadNodesChanged" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;NumQuadNodesChanged
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.LeftPanel.AutoButtonsChanged" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;AutoButtonsChanged
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;GridLayoutButtonGroup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" GridLayoutButtonGroup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup.Title" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutButtonGroup.Title
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup.TitlePosition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutButtonGroup.TitlePosition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup.SelectionChangedFcn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutButtonGroup.SelectionChangedFcn
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup.SelectedObject" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.GridLayoutButtonGroup.SelectedObject
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup.GridLayoutButtonGroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;GridLayoutButtonGroup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup.addButton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;addButton
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.GridLayoutButtonGroup.updateFontSize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;updateFontSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#GUI.Menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Menu
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" Menu">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu.FileMenu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.Menu.FileMenu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu.ImportNLEVP" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.Menu.ImportNLEVP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu." class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.Menu.
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu.ImportNLEVPPack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.Menu.ImportNLEVPPack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu.MainApp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.Menu.MainApp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu.CIMData" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.Menu.CIMData
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu.Menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;Menu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.Menu.ImportNLEVPPackFcn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;ImportNLEVPPackFcn
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;ParameterPanel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" ParameterPanel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.ParameterTabGridLayout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.ParameterTabGridLayout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.ParameterTabGroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.ParameterTabGroup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.NLEVPTab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.NLEVPTab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.ContourTab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.ContourTab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.MethodTab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.MethodTab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.ShiftsTab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.ShiftsTab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel." class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.MainApp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.MainApp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.CIMData" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-property"></code>&nbsp;GUI.ParameterPanel.CIMData
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.ParameterPanel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;ParameterPanel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.createDynamicComponents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;createDynamicComponents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#GUI.ParameterPanel.updateFontSize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;updateFontSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#GUI.testGridLayoutButtonGroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-script"></code>&nbsp;testGridLayoutButtonGroup
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="gui">GUI</h1>
+
+
+<div class="doc doc-object doc-namespace">
+
+
+
+<a id="++GUI"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="GUI.GridLayoutToggleButton" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">GUI.GridLayoutToggleButton</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>GridLayoutToggleButton - A toggle button wrapper for GridLayout
+This provides toggle button functionality using a standard uibutton
+since uitogglebutton requires a ButtonGroup parent.</p>
+<p>This is a lightweight wrapper that manages a uibutton and provides
+toggle state behavior without creating an extra container layer.</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.GridLayoutToggleButton.Value" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.GridLayoutToggleButton.Value</span>
+
+
+  <span class="doc doc-attributes">
+      <small class="doc doc-attribute doc-attribute-SetObservable"><code>SetObservable</code></small>
+  </span>
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Value</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n"><a class="autorefs autorefs-external" href="https://www.mathworks.com/help/matlab/ref/false.html">false</a></span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.GridLayoutToggleButton.Text" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.GridLayoutToggleButton.Text</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Text</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.GridLayoutToggleButton.Layout" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.GridLayoutToggleButton.Layout</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Layout</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.GridLayoutToggleButton.Parent" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.GridLayoutToggleButton.Parent</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Parent</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.GridLayoutToggleButton.FontSize" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.GridLayoutToggleButton.FontSize</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">FontSize</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.GridLayoutToggleButton.GridLayoutToggleButton" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.GridLayoutToggleButton.GridLayoutToggleButton</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">(</span><span class="n">parent</span><span class="p">=[])</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Constructor
+Args:
+  parent: GridLayout or other valid parent for uibutton</p>
+
+
+    </div>
+
+</div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="GUI.PlotPanel" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">GUI.PlotPanel</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Component Properties</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.PlotPanel.PlotTabGridLayout" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.PlotPanel.PlotTabGridLayout</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">PlotTabGridLayout</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.PlotPanel.PlotTabGroup" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.PlotPanel.PlotTabGroup</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">PlotTabGroup</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.PlotPanel.MainPlotTab" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.PlotPanel.MainPlotTab</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MainPlotTab</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.PlotPanel.MainPlotTabGridLayout" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.PlotPanel.MainPlotTabGridLayout</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MainPlotTabGridLayout</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.PlotPanel." class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.PlotPanel.</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.PlotPanel.HSVPlotTab" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.PlotPanel.HSVPlotTab</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">HSVPlotTab</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.PlotPanel.HSVPlotTabGridLayout" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.PlotPanel.HSVPlotTabGridLayout</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">HSVPlotTabGridLayout</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.PlotPanel.ResultTab" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.PlotPanel.ResultTab</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ResultTab</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.PlotPanel.ResultTabGridLayout" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.PlotPanel.ResultTabGridLayout</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ResultTabGridLayout</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.PlotPanel.ResultsTable" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.PlotPanel.ResultsTable</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ResultsTable</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.PlotPanel.MainPlotAxes" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.PlotPanel.MainPlotAxes</span>
+
+
+  <span class="doc doc-attributes">
+      <small class="doc doc-attribute doc-attribute-SetObservable"><code>SetObservable</code></small>
+  </span>
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MainPlotAxes</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.PlotPanel.HSVAxes" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.PlotPanel.HSVAxes</span>
+
+
+  <span class="doc doc-attributes">
+      <small class="doc doc-attribute doc-attribute-SetObservable"><code>SetObservable</code></small>
+  </span>
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">HSVAxes</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.PlotPanel.MainAppUIFigure" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.PlotPanel.MainAppUIFigure</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MainAppUIFigure</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.PlotPanel.MainApp" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.PlotPanel.MainApp</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MainApp</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>app that contains this component, set in constructor</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.PlotPanel.CIMData" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.PlotPanel.CIMData</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">CIMData</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.PlotPanel.PlotPanel" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.PlotPanel.PlotPanel</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">(</span><span class="n">Parent</span><span class="p">,</span><span class="w"> </span><span class="n">MainApp</span><span class="p">,</span><span class="w"> </span><span class="n">MainAppUIFigure</span><span class="p">,</span><span class="w"> </span><span class="n">CIMData</span><span class="p">)</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.PlotPanel.updateFontSize" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.PlotPanel.updateFontSize</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.PlotPanel.ResultDataChangedFcn" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.PlotPanel.ResultDataChangedFcn</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="GUI.LeftPanel" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">GUI.LeftPanel</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.GridLayout" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.GridLayout</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">GridLayout</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.ProblemNameLabel" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.ProblemNameLabel</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ProblemNameLabel</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.ProblemName" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.ProblemName</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ProblemName</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel." class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.ProblemSizeLabel" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.ProblemSizeLabel</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ProblemSizeLabel</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.ProblemSize" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.ProblemSize</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ProblemSize</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.NumQuadNodesLabel" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.NumQuadNodesLabel</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">NumQuadNodesLabel</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.NumQuadNodes" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.NumQuadNodes</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">NumQuadNodes</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.DataMatrixSizeLabel" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.DataMatrixSizeLabel</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">DataMatrixSizeLabel</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.DataMatrixSize" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.DataMatrixSize</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">DataMatrixSize</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.ComputeButton" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.ComputeButton</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ComputeButton</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.AutoSampleCheckBox" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.AutoSampleCheckBox</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">AutoSampleCheckBox</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.AutoRealizationCheckBox" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.AutoRealizationCheckBox</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">AutoRealizationCheckBox</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.RefineQuadratureButton" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.RefineQuadratureButton</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">RefineQuadratureButton</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.PlotViewportControl" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.PlotViewportControl</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">PlotViewportControl</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.MainApp" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.MainApp</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MainApp</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.CIMData" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.CIMData</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">CIMData</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.LeftPanel.MainPlotAxes" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.LeftPanel.MainPlotAxes</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MainPlotAxes</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.LeftPanel.LeftPanel" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.LeftPanel.LeftPanel</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">(</span><span class="n">Parent</span><span class="p">,</span><span class="w"> </span><span class="n">MainApp</span><span class="p">,</span><span class="w"> </span><span class="n">CIMData</span><span class="p">,</span><span class="w"> </span><span class="n">MainPlotAxes</span><span class="p">)</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.LeftPanel.createDynamicComponents" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.LeftPanel.createDynamicComponents</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.LeftPanel.setDefaults" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.LeftPanel.setDefaults</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.LeftPanel.addListeners" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.LeftPanel.addListeners</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.LeftPanel.updateContourListeners" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.LeftPanel.updateContourListeners</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.LeftPanel.updateFontSize" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.LeftPanel.updateFontSize</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.LeftPanel.OperatorDataChangedFcn" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.LeftPanel.OperatorDataChangedFcn</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.LeftPanel.QuadratureChangedFcn" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.LeftPanel.QuadratureChangedFcn</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.LeftPanel.DataMatrixSizeChangedFcn" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.LeftPanel.DataMatrixSizeChangedFcn</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.LeftPanel.DataDirtinessChangedFcn" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.LeftPanel.DataDirtinessChangedFcn</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.LeftPanel.ComputeButtonPushed" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.LeftPanel.ComputeButtonPushed</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.LeftPanel.RefineQuadratureButtonPushed" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.LeftPanel.RefineQuadratureButtonPushed</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.LeftPanel.NumQuadNodesChanged" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.LeftPanel.NumQuadNodesChanged</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.LeftPanel.AutoButtonsChanged" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.LeftPanel.AutoButtonsChanged</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="GUI.GridLayoutButtonGroup" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">GUI.GridLayoutButtonGroup</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>GridLayoutButtonGroup - A resizable button group using GridLayout
+This replaces the standard uibuttongroup which uses fixed positioning
+with a GridLayout-based implementation that resizes with the GUI.</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.GridLayoutButtonGroup.Title" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.GridLayoutButtonGroup.Title</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.GridLayoutButtonGroup.TitlePosition" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.GridLayoutButtonGroup.TitlePosition</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">TitlePosition</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;centertop&#39;</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.GridLayoutButtonGroup.SelectionChangedFcn" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.GridLayoutButtonGroup.SelectionChangedFcn</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SelectionChangedFcn</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[]</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.GridLayoutButtonGroup.SelectedObject" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.GridLayoutButtonGroup.SelectedObject</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SelectedObject</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.GridLayoutButtonGroup.GridLayoutButtonGroup" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.GridLayoutButtonGroup.GridLayoutButtonGroup</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">(</span><span class="nb">varargin</span><span class="p">)</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Constructor - mimics uibuttongroup interface
+Call superclass constructor to handle parent assignment</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.GridLayoutButtonGroup.addButton" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.GridLayoutButtonGroup.addButton</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">(</span><span class="nb">text</span><span class="p">,</span><span class="w"> </span><span class="n">row</span><span class="p">)</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Add a toggle button to the group</p>
+
+<p><span class="doc-section-title">Input arguments:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>text</code></b>
+          –
+          <div class="doc-md-description">
+            <p>Button text label</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>row</code></b>
+          –
+          <div class="doc-md-description">
+            <p>Row position in grid (optional, auto-increments if not provided)</p>
+          </div>
+        </li>
+    </ul>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.GridLayoutButtonGroup.updateFontSize" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.GridLayoutButtonGroup.updateFontSize</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">(</span><span class="n">fontSize</span><span class="p">)</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Update font size for title label and all buttons</p>
+
+
+    </div>
+
+</div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="GUI.Menu" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">GUI.Menu</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.Menu.FileMenu" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.Menu.FileMenu</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">FileMenu</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.Menu.ImportNLEVP" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.Menu.ImportNLEVP</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ImportNLEVP</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.Menu." class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.Menu.</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.Menu.ImportNLEVPPack" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.Menu.ImportNLEVPPack</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ImportNLEVPPack</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.Menu.MainApp" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.Menu.MainApp</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MainApp</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.Menu.CIMData" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.Menu.CIMData</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">CIMData</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.Menu.Menu" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.Menu.Menu</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">(</span><span class="n">Parent</span><span class="p">,</span><span class="w"> </span><span class="n">MainApp</span><span class="p">,</span><span class="w"> </span><span class="n">CIMData</span><span class="p">)</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.Menu.ImportNLEVPPackFcn" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.Menu.ImportNLEVPPackFcn</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="GUI.ParameterPanel" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">GUI.ParameterPanel</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.ParameterPanel.ParameterTabGridLayout" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.ParameterPanel.ParameterTabGridLayout</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ParameterTabGridLayout</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.ParameterPanel.ParameterTabGroup" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.ParameterPanel.ParameterTabGroup</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ParameterTabGroup</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.ParameterPanel.NLEVPTab" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.ParameterPanel.NLEVPTab</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">NLEVPTab</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.ParameterPanel.ContourTab" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.ParameterPanel.ContourTab</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ContourTab</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.ParameterPanel.MethodTab" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.ParameterPanel.MethodTab</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MethodTab</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.ParameterPanel.ShiftsTab" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.ParameterPanel.ShiftsTab</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ShiftsTab</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.ParameterPanel." class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.ParameterPanel.</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.ParameterPanel.MainApp" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.ParameterPanel.MainApp</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MainApp</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-property">
+
+
+
+<h3 id="GUI.ParameterPanel.CIMData" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-property"></code>            <span class="doc doc-object-name doc-property-name">GUI.ParameterPanel.CIMData</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">CIMData</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.ParameterPanel.ParameterPanel" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.ParameterPanel.ParameterPanel</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">(</span><span class="n">Parent</span><span class="p">,</span><span class="w"> </span><span class="n">MainApp</span><span class="p">,</span><span class="w"> </span><span class="n">CIMData</span><span class="p">)</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.ParameterPanel.createDynamicComponents" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.ParameterPanel.createDynamicComponents</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="GUI.ParameterPanel.updateFontSize" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">GUI.ParameterPanel.updateFontSize</span>
+
+
+</h3>
+<div class="language-matlab doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-script">
+
+
+
+<h2 id="GUI.testGridLayoutButtonGroup" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-script"></code>            <span class="doc doc-object-name doc-function-name">GUI.testGridLayoutButtonGroup</span>
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.sections"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../javascripts/katex.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@10.9.0/dist/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>

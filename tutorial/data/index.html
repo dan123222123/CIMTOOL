@@ -1,0 +1,1321 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../..">
+      
+      
+        <link rel="next" href="../../examples/acoustic_wave_1d/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Building Data Matrices - CIMTOOL</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#building-data-matrices" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="CIMTOOL" class="md-header__button md-logo" aria-label="CIMTOOL" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CIMTOOL
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Building Data Matrices
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="CIMTOOL" class="md-nav__button md-logo" aria-label="CIMTOOL" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    CIMTOOL
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Contour Integral Method (CIM) Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorial
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorial
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Data Matrices
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Data Matrices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#exact-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exact Data
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exact Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#erasingle-point-loewner-sploewner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ERA/Single Point Loewner (SPLoewner)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-point-loewner-mploewner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi Point Loewner (MPLoewner)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi Point Loewner (MPLoewner)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#siso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SISO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mimo-with-tangential-interpolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MIMO (with Tangential Interpolation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inexact-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inexact Data
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Inexact Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#erasploewner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ERA/SPLoewner
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/acoustic_wave_1d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Acoustic Wave 1D (acoustic_wave_1d)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Numerics
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Numerics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1_1" id="__nav_4_1_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Realization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Realization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/realization/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Miscellaneous
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/realization/sploewner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ERA/Single-Point Loewner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/realization/mploewner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Point Loewner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1_2" id="__nav_4_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Structures
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Structures
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/structures/enumerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enumerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/structures/contours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contours
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/structures/main/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Main Classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/visual/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visual Reactive Class "Decoration"
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/gui/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GUI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#exact-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exact Data
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exact Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#erasingle-point-loewner-sploewner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ERA/Single Point Loewner (SPLoewner)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-point-loewner-mploewner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi Point Loewner (MPLoewner)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi Point Loewner (MPLoewner)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#siso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SISO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mimo-with-tangential-interpolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MIMO (with Tangential Interpolation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inexact-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inexact Data
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Inexact Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#erasploewner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ERA/SPLoewner
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="building-data-matrices">Building Data Matrices</h1>
+<p>In this section, we will explore how to build Hankel and Loewner data matrices using the methods in [sploewner][Numerics.sploewner] and [mploewner][Numerics.mploewner] submodules of <code>Numerics</code>.
+For both submodules, there are two types of data that can be used:</p>
+<ol>
+<li><strong><em>Exact</em> Data</strong>:
+For ERA/SPLoewner, this is a state-space description of an LTI system, <span class="arithmatex">\( S = \left( A, B, C \right) \)</span>.
+For MPLoewner, this is a transfer function <span class="arithmatex">\( H \,:\, \mathbb{C} \rightarrow \mathbb{C}^{m \times p} \)</span>.</li>
+<li><strong><em>Inexact</em> Data</strong>:
+For all methods, we use a numerical quadrature rule to approximate the <em>exact</em> data, and use this approximation as input.</li>
+</ol>
+<p>For the rest of this section, we will utilize the following example LTI systems <span class="arithmatex">\( S_i = \left( A_i, B_i, C_i \right), i = 1, 2 \)</span> and their corresponding transfer function:</p>
+<div class="arithmatex">\[ \dot{\mathbf{x}}(t) = A_i \mathbf{x}(t) + B_i \mathbf{u}(t); \mathbf{y}(t) = C_i \mathbf{x} \quad \Leftrightarrow \quad H_i(z) = C_i (zI - A_i)^{-1} B_i \]</div>
+<p>where</p>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">n</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">6</span><span class="p">;</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">diag</span><span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">B1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span><span class="w"> </span><span class="n">C1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">B2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">ones</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span><span class="w"> </span><span class="n">C2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">ones</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c">%</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">H1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">z</span><span class="p">)</span><span class="w"> </span><span class="n">C1</span><span class="o">*</span><span class="p">((</span><span class="n">z</span><span class="o">*</span><span class="nb">eye</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">A</span><span class="p">))</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">A</span><span class="p">)</span><span class="w"> </span><span class="o">\</span><span class="w"> </span><span class="n">B1</span><span class="p">);</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">H2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">z</span><span class="p">)</span><span class="w"> </span><span class="n">C2</span><span class="o">*</span><span class="p">((</span><span class="n">z</span><span class="o">*</span><span class="nb">eye</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">A</span><span class="p">))</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">A</span><span class="p">)</span><span class="w"> </span><span class="o">\</span><span class="w"> </span><span class="n">B2</span><span class="p">);</span>
+</span></code></pre></div>
+<h2 id="exact-data">Exact Data</h2>
+<h3 id="erasingle-point-loewner-sploewner">ERA/Single Point Loewner (SPLoewner)</h3>
+<p>When one expands <span class="arithmatex">\( H \)</span> in a Neumann series about <span class="arithmatex">\( \sigma = \infty \)</span> (valid for <span class="arithmatex">\( \vert z \vert &gt;&gt; 0 \)</span>), the coefficient matrices of this expansion are called <em>Markov parameters</em> of the associated LTI system.
+If the state-space representation of the system is known, the Markov parameters are given as <span class="arithmatex">\( M_k = C A^{k-1} B \)</span> for <span class="arithmatex">\( k = 1, 2, \ldots \)</span>
+For the purposes of minimal system realization/pole identification via the Eigenvalue Realization Algorithm (ERA), it is sufficient to construct the first <span class="arithmatex">\( 2K \)</span> Markov parameters, arrange them in an augmented data matrix, and then exact a system <span class="arithmatex">\( \hat{S} = \left( \hat{A}, \hat{B}, \hat{C} \right) \)</span> with equivalent dynamics as <span class="arithmatex">\( S \)</span>.</p>
+<details class="note">
+<summary>Choosing <span class="arithmatex">\(K\)</span></summary>
+<p>The necessary choice of <span class="arithmatex">\(K\)</span> will depend on the input/output dimensions of the system, as well as the desired state dimension of the realized system; generically, larger choices of <span class="arithmatex">\(K\)</span> will increase the rank of the data matrices, but the impacts of rounding errors or noise due to increasing powers of <span class="arithmatex">\(A\)</span> can make larger data matrices diverge from the Hankel operator limit as <span class="arithmatex">\( K \rightarrow \infty \)</span>.
+Choosing <span class="arithmatex">\(K\)</span> such that <span class="arithmatex">\( \text{rank}(\mathbb{D}) \geq \)</span> the McMillan degree of the underlying system will allow for minimal system realization via ERA.</p>
+</details>
+<p>If we consider the SISO system <span class="arithmatex">\( S_1 \)</span> from above, we might choose <span class="arithmatex">\( K = 5 \)</span>, and construct the first <span class="arithmatex">\( 2K \)</span> Markov parameters:</p>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">sigma</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">Inf</span><span class="p">;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">M</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">sploewner</span><span class="p">.</span><span class="n">build_exact_moments</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">B1</span><span class="p">,</span><span class="n">C1</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">K</span><span class="p">);</span>
+</span></code></pre></div>
+<p>We can then use these moments to construct the <span class="arithmatex">\( 5 \times 5 \)</span> base and shifted data matrices, and try to recover the eigenvalues of <span class="arithmatex">\(A\)</span>:</p>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">[</span><span class="n">Db</span><span class="p">,</span><span class="n">Ds</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">sploewner</span><span class="p">.</span><span class="n">build_sploewner</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span><span class="n">M</span><span class="p">,</span><span class="n">M</span><span class="p">,</span><span class="n">M</span><span class="p">,</span><span class="n">K</span><span class="p">);</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">norm</span><span class="p">(</span><span class="nb">eig</span><span class="p">(</span><span class="n">Ds</span><span class="p">,</span><span class="n">Db</span><span class="p">)</span><span class="o">-</span><span class="nb">diag</span><span class="p">(</span><span class="n">A</span><span class="p">))</span><span class="w"> </span><span class="c">% 5.8359e-10</span>
+</span></code></pre></div>
+<p>If we choose <span class="arithmatex">\( \sigma \in \left( \mathbb{C} \setminus \{ \infty \} \right) \)</span>, then our expansion of <span class="arithmatex">\(H\)</span> about <span class="arithmatex">\( \sigma \)</span> will contain coefficient matrices that depend on <span class="arithmatex">\( \sigma \)</span> -- these are known as <em>generalized moment matrices</em> of <span class="arithmatex">\( S \)</span> at <span class="arithmatex">\( \sigma \)</span>.
+The same approach as in the case of ERA can be used to recover the eigenvalues of <span class="arithmatex">\(A\)</span>:</p>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">sigma</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="o">+</span>1<span class="nb">i</span><span class="p">;</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">M</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">sploewner</span><span class="p">.</span><span class="n">build_exact_moments</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">B1</span><span class="p">,</span><span class="n">C1</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">K</span><span class="p">);</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">[</span><span class="n">Db</span><span class="p">,</span><span class="n">Ds</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">sploewner</span><span class="p">.</span><span class="n">build_sploewner</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span><span class="n">M</span><span class="p">,</span><span class="n">M</span><span class="p">,</span><span class="n">M</span><span class="p">,</span><span class="n">K</span><span class="p">);</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="nb">norm</span><span class="p">(</span><span class="nb">eig</span><span class="p">(</span><span class="n">Ds</span><span class="p">,</span><span class="n">Db</span><span class="p">)</span><span class="o">-</span><span class="nb">diag</span><span class="p">(</span><span class="n">A</span><span class="p">))</span><span class="w"> </span><span class="c">% 1.0300e-04</span>
+</span></code></pre></div>
+<details class="note">
+<summary>Choice of <span class="arithmatex">\( \sigma \neq \infty \)</span></summary>
+<p>The choice of shift <span class="arithmatex">\( \sigma \)</span> is crucial for the quality of poles realized in SPLoewner.
+An example for the effect of choosing different shifts on the poles of <span class="arithmatex">\( S_1 \)</span> is shown in <code>demos/exact_sploewner_sigma_choice.m</code>.
+The resulting heatmap of the ratio between 2-norm error of ERA and SPLoewner for <span class="arithmatex">\( \sigma \in \{ z \in \mathbb{C} \,:\, -10 \leq \mathfrak{R}(z) \leq 5, -7.5 \leq \mathfrak{I}(z) \leq 7.5 \} \)</span> is as follows:</p>
+<p><img alt="" src="../figures/eravspl_shiftmap.png" /></p>
+<p>A value greater than 0 indicates that the poles of SPLoewner are increasingly more accurate ERA, while a value less than 0 indicates the opposite.
+The region of the complex plane in which a finite shift more accurately recovers the poles of <span class="arithmatex">\( S_1 \)</span> is highly dependent on the underlying system matrices and size/shape of the formed data matrices.</p>
+</details>
+<h3 id="multi-point-loewner-mploewner">Multi Point Loewner (MPLoewner)</h3>
+<p>When it is possible to sample the transfer function of a system directly, the MPLoewner method can be used to compute the poles of the system.
+Data matrices are formed by taking divided differences of the transfer function sampled at left and right sets of interpolation points.
+For the version of MPLoewner implemented in package, it is assumed that the transfer function is either:</p>
+<ol>
+<li>SISO; or,</li>
+<li>MIMO with left and right sets of tangential interpolation directions used in constructing entries of the Loewner data matrices.</li>
+</ol>
+<h4 id="siso">SISO</h4>
+<p><span class="arithmatex">\( S_1 \)</span> is SISO, so we only need to choose left and right interpolation point sets <span class="arithmatex">\( \left( \Theta, \Sigma \right) = \{ (\theta_i,\sigma_i) \,:\, i = 1,2,...,K \} \)</span> such that <span class="arithmatex">\( \left( \Theta \cup \Sigma \right) \cap \sigma(A) = \emptyset \)</span> and <span class="arithmatex">\( \Theta \cap \Sigma = \emptyset \)</span>:</p>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">ellt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">^</span><span class="n">n</span><span class="o">*</span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">rt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">^</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">n</span><span class="p">;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">theta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span>1<span class="nb">i</span><span class="o">*</span><span class="nb">arrayfun</span><span class="p">(</span><span class="n">ellt</span><span class="p">,</span><span class="mi">2</span><span class="p">:(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">));</span><span class="w"> </span><span class="n">sigma</span><span class="w"> </span><span class="p">=</span><span class="w"> </span>1<span class="nb">i</span><span class="o">*</span><span class="nb">arrayfun</span><span class="p">(</span><span class="n">rt</span><span class="p">,</span><span class="mi">2</span><span class="p">:(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">));</span>
+</span></code></pre></div>
+<details class="note">
+<summary>Choosing left/right interpolation points</summary>
+<p>For better results with MPLoewner, left/right interpolation points should, ideally, be <em>close</em> to the desired eigenvalues and <em>interleaved</em>;
+for the latter, this means that <span class="arithmatex">\( \vert \theta_i - \sigma_j \vert \)</span> should be relatively small when <span class="arithmatex">\( i, j \)</span> are close.
+This choice of interpolation points biases the ``mass'' of the data matrices towards its diagonal elements and improves corresponding singular value decay.</p>
+</details>
+<p>Then, we can build data matrices <span class="arithmatex">\( \mathbb{B} \mathbb{B} \)</span> and <span class="arithmatex">\( \mathbb{C} \mathbb{C} \)</span> containing SISO transfer function samples at the left and right interpolation points, and use them to build the base and shifted Loewner data matrices.</p>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">[</span><span class="o">~</span><span class="p">,</span><span class="n">BB</span><span class="p">,</span><span class="o">~</span><span class="p">,</span><span class="n">CC</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">mploewner</span><span class="p">.</span><span class="n">build_exact_data</span><span class="p">(</span><span class="n">H1</span><span class="p">,</span><span class="n">theta</span><span class="p">,</span><span class="n">sigma</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="p">[</span><span class="n">Db</span><span class="p">,</span><span class="n">Ds</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">mploewner</span><span class="p">.</span><span class="n">build_loewner</span><span class="p">(</span><span class="n">BB</span><span class="p">,</span><span class="n">CC</span><span class="p">,</span><span class="n">theta</span><span class="p">,</span><span class="n">sigma</span><span class="p">);</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="nb">norm</span><span class="p">(</span><span class="nb">eig</span><span class="p">(</span><span class="n">Ds</span><span class="p">,</span><span class="n">Db</span><span class="p">)</span><span class="o">-</span><span class="nb">diag</span><span class="p">(</span><span class="n">A</span><span class="p">))</span><span class="w"> </span><span class="c">% 5.3235e-07</span>
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When calling <code>build_exact_data</code> above, the last two arguments fix the left/right sampling direction to 1 (unscaled).</p>
+</div>
+<h4 id="mimo-with-tangential-interpolation">MIMO (with Tangential Interpolation)</h4>
+<p>When the transfer function corresponds to a MIMO system, one viable strategy is to sample at <em>tangential</em> directions;
+that is, pick left/right probing directions <span class="arithmatex">\( \vec{\ell}/\vec{r} \)</span> corresponding to left and right interpolation points and form Loewner data matrices with scalar samples <span class="arithmatex">\( \vec{\ell} H(z) \vec{r} \)</span> instead of matrices <span class="arithmatex">\( H(z) \)</span>.
+Random tangential directions are a typical choice for <span class="arithmatex">\( \vec{\ell}/\vec{r} \)</span>, since the resulting tangentially probed data matrices are unlikely to become rank-deficient in this case.</p>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">[</span><span class="o">~</span><span class="p">,</span><span class="n">BB</span><span class="p">,</span><span class="o">~</span><span class="p">,</span><span class="n">CC</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">mploewner</span><span class="p">.</span><span class="n">build_exact_data</span><span class="p">(</span><span class="n">H2</span><span class="p">,</span><span class="n">theta</span><span class="p">,</span><span class="n">sigma</span><span class="p">);</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="p">[</span><span class="n">Db</span><span class="p">,</span><span class="n">Ds</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">mploewner</span><span class="p">.</span><span class="n">build_loewner</span><span class="p">(</span><span class="n">BB</span><span class="p">,</span><span class="n">CC</span><span class="p">,</span><span class="n">theta</span><span class="p">,</span><span class="n">sigma</span><span class="p">);</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="nb">norm</span><span class="p">(</span><span class="nb">eig</span><span class="p">(</span><span class="n">Ds</span><span class="p">,</span><span class="n">Db</span><span class="p">)</span><span class="o">-</span><span class="nb">diag</span><span class="p">(</span><span class="n">A</span><span class="p">))</span><span class="w"> </span><span class="c">% 2.1547e-07 -- varries based on tangential directions</span>
+</span></code></pre></div>
+<h2 id="inexact-data">Inexact Data</h2>
+<p>In practice, although transfer function samples may be available for <em>some</em> points in <span class="arithmatex">\( \mathbb{C} \)</span>, the given data may not include transfer function samples at left and right interpolation points, let alone generalized moment data.
+One approach to dealing with this lack of <em>necessary</em> transfer function samples is to use contour integration and the Cauchy Integral Formula (CIF) to evaluate the underlying transfer function at a specific interpolation point.
+If <span class="arithmatex">\(H\)</span> is a meromorphic matrix-valued function with all of its poles contained within some bounded domain <span class="arithmatex">\( \Omega \subset \mathbb{C} \)</span>, then we can use contour integration on particular choices of analytic <span class="arithmatex">\(f\)</span> to recover useful data about the dynamics of our system.
+Generally, we perform this contour integration using a numerical quadrature rule on <span class="arithmatex">\( \partial \Omega \)</span>.
+For <span class="arithmatex">\( \Omega \)</span> conformal to a disk, the trapezoid rule provides exponential convergence guarantees for such data approximations.</p>
+<p>First, we create an ellipsoidal contour about the poles of <span class="arithmatex">\( H_2 \)</span> with <span class="arithmatex">\(8\)</span> quadrature nodes</p>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">import</span><span class="w"> </span><span class="n">Visual</span><span class="o">.*</span><span class="p">;</span><span class="w"> </span><span class="c">% allows us to skip subsequent &quot;Visual.&quot;s</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">c</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Contour</span><span class="p">.</span><span class="n">Ellipse</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">n</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">n</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">);</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">o</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">OperatorData</span><span class="p">(</span><span class="n">H2</span><span class="p">);</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">refew</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">diag</span><span class="p">(</span><span class="n">A</span><span class="p">);</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">sample_mode</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Direct&quot;</span><span class="p">;</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">s</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">SampleData</span><span class="p">(</span><span class="n">o</span><span class="p">,</span><span class="n">c</span><span class="p">);</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">Contour</span><span class="p">.</span><span class="n">plot_quadrature</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="n">s</span><span class="p">.</span><span class="n">ax</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">gca</span><span class="p">;</span>
+</span></code></pre></div>
+<details>
+<summary>Contour/Quadrature Visual</summary>
+<p><img alt="" src="../figures/quad_mpl.png" /></p>
+</details>
+<p>We will <em>sketch</em> our evaluations of <span class="arithmatex">\(H\)</span> at the quadrature nodes down to <span class="arithmatex">\( 1 \times 1 \)</span> moments via a random choice of left/right sketching vectors <span class="arithmatex">\( \vec{\ell} / \vec{r} \)</span> and compute the left/right/two-sided moments.</p>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">s</span><span class="p">.</span><span class="n">ell</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">r</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">compute</span><span class="p">();</span>
+</span></code></pre></div>
+<h3 id="erasploewner">ERA/SPLoewner</h3>
+<p>For ERA, put <span class="arithmatex">\( f_k(z) = z^k \)</span> and compute</p>
+<div class="arithmatex">\[
+M_k = C A^k B = \frac{1}{2 \pi i} \oint_{\partial \Omega} z^k H(z) \, dz \approx \sum_{n=1}^N w_n z_n^k H(z_n).
+\]</div>
+<p>For SPLoewner with <span class="arithmatex">\( \sigma \not \in \Omega \)</span>, put <span class="arithmatex">\( f_k^\sigma(z) = \frac{(-1)^k}{(\sigma - z)^{k+1}} \)</span> and compute</p>
+<div class="arithmatex">\[
+M_k^\sigma = \frac{H^{(k)}(\sigma)}{k!} = \frac{1}{2 \pi i} \oint_{\partial \Omega} \frac{(-1)^k}{(\sigma - z)^{k+1}} H(z) \, dz \approx \sum_{n=1}^N w_n \frac{(-1)^k}{(\sigma - z)^{k+1}} H(z_n).
+\]</div>
+<p>Just as in the case of MPLoewner, we can apply left and right <em>sketching</em> matrices to our quadrature approximation to reduce the size of our approximated quadrature samples.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.sections"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../javascripts/katex.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@10.9.0/dist/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>

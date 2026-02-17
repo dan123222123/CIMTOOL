@@ -1,0 +1,1227 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../tutorial/data/">
+      
+      
+        <link rel="next" href="../../api/numerics/realization/misc/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Acoustic Wave 1D (acoustic_wave_1d) - CIMTOOL</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#acoustic-wave-1d-acoustic_wave_1d" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="CIMTOOL" class="md-header__button md-logo" aria-label="CIMTOOL" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CIMTOOL
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Acoustic Wave 1D (acoustic_wave_1d)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="CIMTOOL" class="md-nav__button md-logo" aria-label="CIMTOOL" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    CIMTOOL
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Contour Integral Method (CIM) Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorial
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorial
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Data Matrices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Acoustic Wave 1D (acoustic_wave_1d)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Acoustic Wave 1D (acoustic_wave_1d)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Getting Started
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hankel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hankel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mploewner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MPLoewner
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Numerics
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Numerics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1_1" id="__nav_4_1_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Realization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Realization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/realization/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Miscellaneous
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/realization/sploewner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ERA/Single-Point Loewner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/realization/mploewner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Point Loewner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1_2" id="__nav_4_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Structures
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Structures
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/structures/enumerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enumerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/structures/contours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contours
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/structures/main/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Main Classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/visual/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visual Reactive Class "Decoration"
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/gui/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GUI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Getting Started
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hankel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hankel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mploewner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MPLoewner
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="acoustic-wave-1d-acoustic_wave_1d">Acoustic Wave 1D (acoustic_wave_1d)<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></h1>
+<h2 id="description">Description</h2>
+<p>Quadratic eigenvalue problem (QEP) that arises from the wave equation on <span class="arithmatex">\( [0, 1] \)</span>:</p>
+<div class="arithmatex">\[ \frac{d^2 p}{d x^2} + 4 \pi^2 \lambda^2 p = 0, \quad p(0) = 0, \quad \chi p'(1) + 2 \pi i \lambda p(1) = 0. \]</div>
+<p><span class="arithmatex">\(p\)</span> is the acoustic pressure, <span class="arithmatex">\( \lambda \)</span> is the frequency, and <span class="arithmatex">\( \chi \)</span> is the impedance.</p>
+<p>We aim to find eigenpairs <span class="arithmatex">\( (\lambda,\vec{x}) \)</span> such that</p>
+<div class="arithmatex">\[ \mathbf{T}(\lambda) \vec{x} = \vec{0} \]</div>
+<p>where</p>
+<div class="arithmatex">\[ \mathbf{T}(\lambda) = \lambda^2 \mathbf{M} + \lambda \mathbf{D} + \mathbf{K}, \quad \mathbf{M},\mathbf{K} \in \mathbb{R}^{n \times n}, \mathbf{D} \in \mathbb{C}^{n \times n}. \]</div>
+<h2 id="getting-started">Getting Started</h2>
+<p>We put <span class="arithmatex">\(N = 500, \chi = 1.0001\)</span>, and let <span class="arithmatex">\(\Omega = \mathcal{B}(0.8i,10)\)</span> be the circular contour centered at <span class="arithmatex">\(\gamma = 0.8i\)</span> with radius <span class="arithmatex">\(\rho = 10\)</span>.</p>
+<div class="language-matlabsession highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt; </span><span class="n">N</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">506</span><span class="p">;</span><span class="w"> </span><span class="n">Xi</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">1.0001</span><span class="p">;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="gp">&gt;&gt; </span><span class="n">n</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Visual</span><span class="p">.</span><span class="n">OperatorData</span><span class="p">([],</span><span class="s">&#39;acoustic_wave_1d&#39;</span><span class="p">,</span><span class="nb">sprintf</span><span class="p">(</span><span class="s">&quot;%f,%f&quot;</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">Xi</span><span class="p">));</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="gp">&gt;&gt; </span><span class="n">c</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Visual</span><span class="p">.</span><span class="n">Contour</span><span class="p">.</span><span class="n">Circle</span><span class="p">(</span><span class="mi">0</span><span class="p">.</span>8<span class="nb">i</span><span class="p">,</span><span class="mi">10</span><span class="p">);</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="gp">&gt;&gt; </span><span class="n">cim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Visual</span><span class="p">.</span><span class="n">CIM</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">c</span><span class="p">);</span>
+</span></code></pre></div>
+<p>Reference eigenvalues can be computed explicitly as</p>
+<div class="arithmatex">\[ \lambda_k = \frac{\tan^{-1}(i \chi)}{2 \pi} + \frac{k}{2}, \quad k \in \mathbb{Z} \]</div>
+<p>when <span class="arithmatex">\( \tan^{-1}(i \chi) \)</span> is defined.</p>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">nref</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span><span class="w"> </span><span class="n">refew</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">zeros</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">nref</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">for</span><span class="w"> </span><span class="n">k</span><span class="p">=</span><span class="o">-</span><span class="n">nref</span><span class="p">:</span><span class="n">nref</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">refew</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="n">nref</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">atan</span><span class="p">(</span>1<span class="nb">i</span><span class="o">*</span><span class="n">chi</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">pi</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">k</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">end</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">CIM</span><span class="p">.</span><span class="n">SampleData</span><span class="p">.</span><span class="n">Operatordata</span><span class="p">.</span><span class="n">refew</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">refew</span><span class="p">;</span>
+</span></code></pre></div>
+<p><span class="arithmatex">\(\mathbf{T}\)</span> is meromorphic with <span class="arithmatex">\(m = 40\)</span> simple poles in <span class="arithmatex">\(\Omega\)</span>.
+Hankel and MPLoewner-based CIMs build up relevant data matrices and utilize a rank-<span class="arithmatex">\(m\)</span> truncated SVD, where, with exact data, <span class="arithmatex">\(m\)</span> is exactly the number of poles of <span class="arithmatex">\(\mathbf{T}\)</span> within <span class="arithmatex">\(\Omega\)</span> (counting multiplicities).
+Inexact data is derived through contour integration of <span class="arithmatex">\(f_k(z) \left( \left[ \mathbf{T}(z) \right]^{-1} \right)\)</span>, approximated via quadrature rule.
+<span class="arithmatex">\(f_k(z)\)</span> depends on the choice of Hankel/SPLoewner/MPLoewner formulations and, in the case of the latter two, on the choice of shift <span class="arithmatex">\(\sigma\)</span>.
+In practice, left (<span class="arithmatex">\(\mathbf{L} \in \mathbb{C}^{n \times \ell}\)</span>) and right (<span class="arithmatex">\(\mathbf{R} \in \mathbb{C}^{n \times r}\)</span>) probing matrices are used to reduce the computational burden of full inversion of <span class="arithmatex">\(\mathbf{T}\)</span> at each quadrature node, so that the integrand becomes <span class="arithmatex">\(f_k(z) \left( \mathbf{L}^* \left[ \mathbf{T}(z) \right]^{-1} \mathbf{R} \right)\)</span>.</p>
+<h2 id="example">Example</h2>
+<p>We set <span class="arithmatex">\(m = 40, \ell = r = 15\)</span>, and choose <span class="arithmatex">\(K\)</span> so that <span class="arithmatex">\(\mathbb{D},\mathbb{D_s} \in \mathbb{C}^{60 \times 60}\)</span>.</p>
+<div class="language-matlabsession highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="gp">&gt;&gt; </span><span class="n">CIM</span><span class="p">.</span><span class="n">SampleData</span><span class="p">.</span><span class="n">Contour</span><span class="p">.</span><span class="n">N</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">128</span><span class="p">;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="gp">&gt;&gt; </span><span class="n">p</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w"> </span><span class="n">CIM</span><span class="p">.</span><span class="n">SampleData</span><span class="p">.</span><span class="n">ell</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">p</span><span class="p">;</span><span class="w"> </span><span class="n">CIM</span><span class="p">.</span><span class="n">SampleData</span><span class="p">.</span><span class="n">r</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">p</span><span class="p">;</span><span class="w"> </span><span class="c">% number of left/right sampling directions</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="gp">&gt;&gt; </span><span class="n">CIM</span><span class="p">.</span><span class="n">RealizationData</span><span class="p">.</span><span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span><span class="w"> </span><span class="c">% independent of quadrature data</span>
+</span></code></pre></div>
+<h3 id="hankel">Hankel</h3>
+<p>To use Hankel realization, we set need to specify it and the number of moments, <span class="arithmatex">\(K\)</span>, used to build <span class="arithmatex">\(\mathbb{D}\)</span>:</p>
+<div class="language-matlabsession highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="gp">&gt;&gt; </span><span class="n">cim</span><span class="p">.</span><span class="n">setComputationalMode</span><span class="p">(</span><span class="n">Numerics</span><span class="p">.</span><span class="n">ComputationalMode</span><span class="p">.</span><span class="n">Hankel</span><span class="p">);</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="gp">&gt;&gt; </span><span class="n">cim</span><span class="p">.</span><span class="n">RealizationData</span><span class="p">.</span><span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w"> </span><span class="c">% 60 / p = 4</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="gp">&gt;&gt; </span><span class="n">cim</span><span class="p">.</span><span class="n">compute</span><span class="p">();</span>
+</span></code></pre></div>
+<p>Finally, we can find the maximum relative residual (MRR) of the computed eigenpairs:</p>
+<div class="language-matlabsession highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="gp">&gt;&gt; </span><span class="nb">max</span><span class="p">(</span><span class="n">Numerics</span><span class="p">.</span><span class="n">relres</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">T</span><span class="p">,</span><span class="n">cim</span><span class="p">.</span><span class="n">ResultData</span><span class="p">.</span><span class="n">ew</span><span class="p">,</span><span class="n">cim</span><span class="p">.</span><span class="n">ResultData</span><span class="p">.</span><span class="n">rev</span><span class="p">,</span><span class="n">Numerics</span><span class="p">.</span><span class="n">SampleMode</span><span class="p">.</span><span class="n">Inverse</span><span class="p">))</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="go">ans =</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="go">   7.6804e-05</span>
+</span></code></pre></div>
+<!---
+/// admonition | Note
+Since we previously computed `#!matlab CIM.SampleData`, `#!matlab CIM.compute()` only performs the system realization/spectral identification.
+///
+--->
+
+<h3 id="mploewner">MPLoewner</h3>
+<p>We switch computational modes to MPLoewner where <span class="arithmatex">\(K\)</span> now represents the number of shifts used in construction of <span class="arithmatex">\(\mathbb{D}\)</span>:</p>
+<div class="language-matlabsession highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="gp">&gt;&gt; </span><span class="n">cim</span><span class="p">.</span><span class="n">setComputationalMode</span><span class="p">(</span><span class="n">Numerics</span><span class="p">.</span><span class="n">ComputationalMode</span><span class="p">.</span><span class="n">MPLoewner</span><span class="p">);</span><span class="w"> </span><span class="c">% implicitly sets default shifts relative to the contour</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="gp">&gt;&gt; </span><span class="n">cim</span><span class="p">.</span><span class="n">RealizationData</span><span class="p">.</span><span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">4</span><span class="o">*</span><span class="n">p</span><span class="p">;</span><span class="w"> </span><span class="c">% 4 * 15 = 60</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="gp">&gt;&gt; </span><span class="n">cim</span><span class="p">.</span><span class="n">compute</span><span class="p">();</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="gp">&gt;&gt; </span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">Numerics</span><span class="p">.</span><span class="n">relres</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">T</span><span class="p">,</span><span class="n">cim</span><span class="p">.</span><span class="n">ResultData</span><span class="p">.</span><span class="n">ew</span><span class="p">,</span><span class="n">cim</span><span class="p">.</span><span class="n">ResultData</span><span class="p">.</span><span class="n">rev</span><span class="p">,</span><span class="n">Numerics</span><span class="p">.</span><span class="n">SampleMode</span><span class="p">.</span><span class="n">Inverse</span><span class="p">))</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="go">ans =</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="go">   2.4238e-06</span>
+</span></code></pre></div>
+<!---
+
+- For $N=128$, Hankel and MPLoewner yield a roughly equivalent maximum relative residual (MRR) -- $4.4*10^{-5}$ and $3.9*10^{-5}$, respectively.
+- MRR does not decrease to below $\sim 10^{-10}$ for Hankel until $N = 32768$. For MPLoewner, the MRR is below $\sim 10^{-12}$ for the same $N$.
+
+/// admonition | Note
+If we desire a larger $N$, it is possible to _refine_ the quadrature using `#!matlab CIM.refineQuadrature()`.
+This method doubles the original number of quadrature nodes while re-using the previously computed sample data on a subset of the new quadrature nodes.
+///
+
+- These results appear to mirror those produced by polyeig, but at a hefty cost in numerical quadrature.
+
+### $m = 42$
+
+/// admonition | Note
+Note that, if we increase $m$ to $42$, both Hankel and MPLoewner realizations no longer align with the prescribed rank truncation as in the case of exact data. In particular, two more eigenvalues than the number of reference eigenvalues within $\Omega$ are recovered.
+This is only possible because the data matrices are being computed _inexactly_; that is, with sufficiently large $N$, the numerical rank of $\mathbb{D}$ will be smaller than $42$, and the algorithms will fail to construct a sufficient-rank $\mathbb{D}$.
+///
+
+- Interestingly, many fewer quadrature nodes (less than $512$) are necessary to achieve MRR near machine precision for both Hankel and MPLoewner. A similar gap in the MRR between Hankel and MPLoewner is present in this case (about two orders of magnitude).
+- Even with only $N = 128$ quadrature nodes, MPLoewner appears to more accurately match computed eigenvalues to the underlying reference (in the eyeball norm).
+- SPLoewner with $\sigma = -13i$ produces results comparable to MPLoewner.
+- For $N = 128$, in both Hankel and MPLoewner cases the singular values after position 44/42 of the data matrix are "paired", and enlarging $m$ in steps of two appears to improve the MRR of the "target eigenvalues" (those within the contour).
+
+-->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>F. Chaitin-Chatelin and M. B. van Gijzen, “Analysis of parameterized quadratic eigenvalue problems in computational acoustics with homotopic deviation theory,” Numerical Linear Algebra with Applications, vol. 13, no. 6, pp. 487–512, 2006, doi: 10.1002/nla.484.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.sections"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../javascripts/katex.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@10.9.0/dist/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>
