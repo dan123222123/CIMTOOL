@@ -21,15 +21,17 @@ classdef CircularSegment < Numerics.Contour.Quad
                 N = [8;8]
                 qr = "clencurt"
             end
+            if isscalar(N)
+                N = [N;N];
+            end
+            if isscalar(theta)
+                theta = [-theta,theta];
+            end
             [z,w] = Numerics.Contour.CircularSegment.quad(gamma,rho,theta,N,qr);
             obj@Numerics.Contour.Quad(z,w);
             obj.gamma = gamma; obj.rho = rho;
-            if isscalar(N)
-                obj.N = [N,N];
-            end
-            if isscalar(theta)
-                obj.theta = [-theta,theta];
-            end
+            obj.N = N;
+            obj.theta = theta;
             obj.qr = qr;
             addlistener(obj,'gamma','PostSet',@obj.update);
             addlistener(obj,'rho','PostSet',@obj.update);
