@@ -137,7 +137,6 @@ classdef GridLayoutButtonGroup < matlab.ui.componentcontainer.ComponentContainer
             obj.TitleLabel = uilabel(obj.GridLayout);
             obj.TitleLabel.Text = obj.Title;
             obj.TitleLabel.HorizontalAlignment = 'center';
-            obj.TitleLabel.FontWeight = 'bold';
             obj.TitleLabel.Layout.Row = 1;
             obj.TitleLabel.Layout.Column = 1;
         end

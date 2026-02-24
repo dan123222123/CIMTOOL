@@ -98,14 +98,13 @@ classdef GridLayoutToggleButton < handle
             if obj.Value
                 % Selected state - darker/highlighted appearance
                 obj.Button.BackgroundColor = [0.3 0.6 1.0];  % Blue background
-                obj.Button.FontWeight = 'bold';
                 obj.Button.FontColor = [1 1 1];  % White text
             else
                 % Unselected state - normal appearance
                 obj.Button.BackgroundColor = [0.96 0.96 0.96];  % Light gray
-                obj.Button.FontWeight = 'normal';
                 obj.Button.FontColor = [0 0 0];  % Black text
             end
+            obj.Button.FontWeight = 'bold';  % Always bold
         end
 
     end

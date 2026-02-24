@@ -61,17 +61,17 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         end
 
         function addListeners(comp)
-            addlistener(comp.CIMData.SampleData.OperatorData,'loaded','PostSet',@(src,event)comp.OperatorDataChangedFcn);
-            addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
-            addlistener(comp.CIMData.ResultData,'Db','PostSet',@(src,event)comp.DataMatrixSizeChangedFcn);
-            addlistener(comp.CIMData,'DataDirtiness','PostSet',@(src,event)comp.DataDirtinessChangedFcn);
-            addlistener(comp.MainApp,'FontSize','PostSet',@(src,event)comp.updateFontSize);
+            addlistener(comp.CIMData.SampleData.OperatorData,'loaded','PostSet',@(~,~)comp.OperatorDataChangedFcn([]));
+            addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(~,~)comp.QuadratureChangedFcn([]));
+            addlistener(comp.CIMData.ResultData,'Db','PostSet',@(~,~)comp.DataMatrixSizeChangedFcn([]));
+            addlistener(comp.CIMData,'DataDirtiness','PostSet',@(~,~)comp.DataDirtinessChangedFcn([]));
+            addlistener(comp.MainApp,'FontSize','PostSet',@(~,~)comp.updateFontSize([]));
             % listeners for reference changes
-            addlistener(comp.CIMData.SampleData,'Contour','PostSet',@(src,event)comp.updateContourListeners);
+            addlistener(comp.CIMData.SampleData,'Contour','PostSet',@(~,~)comp.updateContourListeners([]));
         end
 
         function updateContourListeners(comp,~)
-            addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
+            addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(~,~)comp.QuadratureChangedFcn([]));
             comp.QuadratureChangedFcn(missing);
         end
 
@@ -110,11 +110,14 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         function DataDirtinessChangedFcn(comp,~)
             CIM = comp.CIMData;
             if CIM.DataDirtiness == 2
-                comp.ComputeButton.BackgroundColor = "g";
+                comp.ComputeButton.BackgroundColor = [0.4 0.75 0.45];
+                comp.ComputeButton.FontColor = [1 1 1];
             elseif CIM.DataDirtiness == 1
-                comp.ComputeButton.BackgroundColor = "y";
+                comp.ComputeButton.BackgroundColor = [0.9 0.75 0.3];
+                comp.ComputeButton.FontColor = [0 0 0];
             else
                 comp.ComputeButton.BackgroundColor = [0.96 0.96 0.96];
+                comp.ComputeButton.FontColor = [0 0 0];
             end
         end
             
@@ -126,7 +129,8 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             try
                 comp.CIMData.compute();
             catch e
-                comp.ComputeButton.BackgroundColor = "r";
+                comp.ComputeButton.BackgroundColor = [0.85 0.35 0.35];
+                comp.ComputeButton.FontColor = [1 1 1];
                 uialert(comp.MainApp.UIFigure,e.message,"Compute Error","Interpreter","html");
                 % rethrow(e);
             end
@@ -136,7 +140,8 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             try
                 comp.CIMData.refineQuadrature();
             catch e
-                comp.ComputeButton.BackgroundColor = "r";
+                comp.ComputeButton.BackgroundColor = [0.85 0.35 0.35];
+                comp.ComputeButton.FontColor = [1 1 1];
                 uialert(comp.MainApp.UIFigure,e.message,"Refine Quadrature Error","Interpreter","html");
             end
         end
@@ -225,6 +230,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.ComputeButton = uibutton(comp.GridLayout);
             comp.ComputeButton.ButtonPushedFcn = matlab.apps.createCallbackFcn(comp, @ComputeButtonPushed, true);
             comp.ComputeButton.Text = 'Compute';
+            comp.ComputeButton.FontWeight = 'bold';
             comp.ComputeButton.Layout.Row = 4;
             comp.ComputeButton.Layout.Column = [1 3];
             % %
@@ -246,6 +252,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.RefineQuadratureButton = uibutton(comp.GridLayout);
             comp.RefineQuadratureButton.ButtonPushedFcn = matlab.apps.createCallbackFcn(comp, @RefineQuadratureButtonPushed, true);
             comp.RefineQuadratureButton.Text = 'Refine Quadrature';
+            comp.RefineQuadratureButton.FontWeight = 'bold';
             comp.RefineQuadratureButton.Layout.Row = 6;
             comp.RefineQuadratureButton.Layout.Column = [1 3];
         
