@@ -17,6 +17,10 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
     properties (Access = public)
         CIMData Numerics.CIM
     end
+
+    properties (Access = private)
+        listeners = []  % Store listener handles for cleanup
+    end
     
     methods
 
@@ -48,9 +52,15 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
         end
 
         function addListeners(comp)
-            addlistener(comp.CIMData.RealizationData,'ComputationalMode','PostSet',@(src,event)comp.updateMethodParameters);
-            % addlistener(comp.CIMData,'auto_estimate_m','PostSet',@(src,event)comp.updateMethodParameters);
-            addlistener(comp.CIMData.RealizationData,'RealizationSize','PostSet',@(src,event)comp.updateMethodParameters);
+            % Store listener handles for cleanup
+            comp.listeners = [
+                addlistener(comp.CIMData.RealizationData,'ComputationalMode','PostSet',@(src,event)comp.updateMethodParameters)
+                addlistener(comp.CIMData.RealizationData,'RealizationSize','PostSet',@(src,event)comp.updateMethodParameters)
+            ];
+        end
+
+        function delete(comp)
+            Visual.deleteListeners(comp.listeners);
         end
 
         function updateFontSize(comp,update)

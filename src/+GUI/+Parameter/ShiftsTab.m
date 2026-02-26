@@ -8,6 +8,10 @@ classdef ShiftsTab < matlab.ui.componentcontainer.ComponentContainer
     properties (Access = public)
         CIMData
     end
+
+    properties (Access = private)
+        listeners = []  % Store listener handles for cleanup
+    end
     
     methods
 
@@ -59,8 +63,15 @@ classdef ShiftsTab < matlab.ui.componentcontainer.ComponentContainer
         end
 
         function addListeners(comp)
-            addlistener(comp.CIMData.RealizationData,'InterpolationData','PostSet',@(src,event)comp.InterpolationDataChangedFcn);
-            addlistener(comp.CIMData.RealizationData,'ComputationalMode','PostSet',@(src,event)comp.ShiftsTableEditableFcn);
+            % Store listener handles for cleanup
+            comp.listeners = [
+                addlistener(comp.CIMData.RealizationData,'InterpolationData','PostSet',@(src,event)comp.InterpolationDataChangedFcn)
+                addlistener(comp.CIMData.RealizationData,'ComputationalMode','PostSet',@(src,event)comp.ShiftsTableEditableFcn)
+            ];
+        end
+
+        function delete(comp)
+            Visual.deleteListeners(comp.listeners);
         end
 
     end

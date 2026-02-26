@@ -6,6 +6,9 @@ classdef Menu < matlab.ui.componentcontainer.ComponentContainer
         ImportNLEVP
         % %
         ImportNLEVPPack
+        %
+        EditMenu
+        PreferencesItem
     end
 
     properties (Access = public)
@@ -42,6 +45,11 @@ classdef Menu < matlab.ui.componentcontainer.ComponentContainer
             end
         end
 
+        function PreferencesFcn(comp,event)
+            % Open preferences dialog
+            dlg = GUI.PreferencesDialog(comp.MainApp.UIFigure, comp.MainApp, comp.CIMData);
+        end
+
     end
     
     methods (Access = protected)
@@ -55,14 +63,23 @@ classdef Menu < matlab.ui.componentcontainer.ComponentContainer
 
             comp.FileMenu = uimenu(comp.Parent);
             comp.FileMenu.Text = 'File';
-        
+
             comp.ImportNLEVP = uimenu(comp.FileMenu);
             comp.ImportNLEVP.Text = 'Import NLEVP';
 
             comp.ImportNLEVPPack = uimenu(comp.ImportNLEVP);
             comp.ImportNLEVPPack.MenuSelectedFcn = @(src,event)comp.ImportNLEVPPackFcn;
             comp.ImportNLEVPPack.Text = 'From NLEVP Pack';
-            
+
+            % Edit menu
+            comp.EditMenu = uimenu(comp.Parent);
+            comp.EditMenu.Text = 'Edit';
+
+            comp.PreferencesItem = uimenu(comp.EditMenu);
+            comp.PreferencesItem.MenuSelectedFcn = @(src,event)comp.PreferencesFcn;
+            comp.PreferencesItem.Text = 'Preferences...';
+            comp.PreferencesItem.Accelerator = ',';  % Ctrl+, shortcut
+
         end
 
     end

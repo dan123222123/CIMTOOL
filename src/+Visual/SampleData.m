@@ -37,8 +37,27 @@ classdef SampleData < Numerics.SampleData & Visual.VisualReactive
             end
             obj = obj@Numerics.SampleData(OperatorData,Contour,ell,r);
             obj.ax = ax; obj.update_plot([],[]);
-            addlistener(obj,'OperatorData','PostSet',@obj.update_plot);
-            addlistener(obj,'Contour','PostSet',@obj.update_plot);
+            % Store listener handles so they can be deleted later
+            obj.listeners = [
+                addlistener(obj,'OperatorData','PostSet',@obj.update_plot)
+                addlistener(obj,'Contour','PostSet',@obj.update_plot)
+            ];
+        end
+
+        function attachListeners(obj)
+            % Recreate listeners recursively (called when reattaching to new graphics)
+            obj.deleteListeners();  % Clear any existing listeners first
+            obj.listeners = [
+                addlistener(obj,'OperatorData','PostSet',@obj.update_plot)
+                addlistener(obj,'Contour','PostSet',@obj.update_plot)
+            ];
+            % Attach listeners on children too
+            if ~isempty(obj.Contour) && isvalid(obj.Contour)
+                obj.Contour.attachListeners();
+            end
+            if ~isempty(obj.OperatorData) && isvalid(obj.OperatorData)
+                obj.OperatorData.attachListeners();
+            end
         end
 
         function n = toNumerics(obj)
@@ -51,8 +70,25 @@ classdef SampleData < Numerics.SampleData & Visual.VisualReactive
         end
 
         function update_plot(obj,~,~)
-            obj.Contour.ax = obj.ax; obj.OperatorData.ax = obj.ax;
-            obj.phandles = [obj.Contour.phandles obj.OperatorData.phandles];
+            % Propagate StylePreferences and axes to children
+            % Skip if object or children are invalid
+            try
+                if ~isvalid(obj)
+                    return;
+                end
+                obj.cla();
+                if ~isempty(obj.Contour) && isvalid(obj.Contour)
+                    obj.Contour.StylePreferences = obj.StylePreferences;
+                    obj.Contour.ax = obj.ax;
+                end
+                if ~isempty(obj.OperatorData) && isvalid(obj.OperatorData)
+                    obj.OperatorData.StylePreferences = obj.StylePreferences;
+                    obj.OperatorData.ax = obj.ax;
+                end
+                obj.phandles = [obj.Contour.phandles obj.OperatorData.phandles];
+            catch
+                % Ignore errors during cleanup
+            end
         end
 
         function phandles = plot(obj,ax)
@@ -64,6 +100,44 @@ classdef SampleData < Numerics.SampleData & Visual.VisualReactive
             if isempty(ax); return; end
             phandles = [phandles obj.Contour.plot(ax)];
             phandles = [phandles obj.OperatorData.plot(ax)];
+        end
+
+        function detachFromGraphics(obj)
+            % Detach from graphics and remove all listeners recursively
+            try
+                % Detach children first
+                if ~isempty(obj.Contour) && isvalid(obj.Contour)
+                    obj.Contour.detachFromGraphics();
+                end
+                if ~isempty(obj.OperatorData) && isvalid(obj.OperatorData)
+                    obj.OperatorData.detachFromGraphics();
+                end
+
+                % Call parent detach
+                detachFromGraphics@Visual.VisualReactive(obj);
+            catch
+                % Ignore errors during cleanup
+            end
+        end
+
+        function delete(obj)
+            % Only delete if explicitly requested
+            try
+                if isvalid(obj)
+                    % Detach from graphics first
+                    obj.detachFromGraphics();
+
+                    % Delete children
+                    if ~isempty(obj.Contour) && isvalid(obj.Contour)
+                        delete(obj.Contour);
+                    end
+                    if ~isempty(obj.OperatorData) && isvalid(obj.OperatorData)
+                        delete(obj.OperatorData);
+                    end
+                end
+            catch
+                % Already deleted - ignore
+            end
         end
 
     end

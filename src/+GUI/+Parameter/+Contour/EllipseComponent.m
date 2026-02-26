@@ -15,6 +15,10 @@ classdef EllipseComponent < GUI.Parameter.Contour.ContourComponent
         CIMData                 Numerics.CIM
     end
 
+    properties (Access = private)
+        listeners = []  % Store listener handles for cleanup
+    end
+
     methods (Access = public)
 
         function obj = EllipseComponent(Parent,CIMData)
@@ -25,11 +29,12 @@ classdef EllipseComponent < GUI.Parameter.Contour.ContourComponent
 
             obj.setDefaults();
 
-            % obj.addListeners();
-
-            addlistener(obj.CIMData.SampleData.Contour,'gamma','PostSet',@(src,event)obj.setDefaults);
-            addlistener(obj.CIMData.SampleData.Contour,'alpha','PostSet',@(src,event)obj.setDefaults);
-            addlistener(obj.CIMData.SampleData.Contour,'beta','PostSet',@(src,event)obj.setDefaults);
+            % Store listener handles for cleanup
+            obj.listeners = [
+                addlistener(obj.CIMData.SampleData.Contour,'gamma','PostSet',@(src,event)obj.setDefaults)
+                addlistener(obj.CIMData.SampleData.Contour,'alpha','PostSet',@(src,event)obj.setDefaults)
+                addlistener(obj.CIMData.SampleData.Contour,'beta','PostSet',@(src,event)obj.setDefaults)
+            ];
 
         end
 
@@ -135,6 +140,10 @@ classdef EllipseComponent < GUI.Parameter.Contour.ContourComponent
             comp.betaEditFieldLabel.Layout.Column = 3;
             comp.betaEditFieldLabel.Text = 'beta';
 
+        end
+
+        function delete(comp)
+            Visual.deleteListeners(comp.listeners);
         end
     end
 

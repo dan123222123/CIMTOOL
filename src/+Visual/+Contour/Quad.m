@@ -9,6 +9,26 @@ classdef Quad < Numerics.Contour.Quad & Visual.VisualReactive
           cp = Visual.Contour.Quad(obj.z,obj.w,obj.ax);
           cp.plot_quadrature = obj.plot_quadrature;
       end
+
+      function phandles = plotContourCurve(obj, ax, zp, gamma, of)
+          % Plot styled contour curve with center marker.
+          % Shared by Circle, Ellipse, and CircularSegment subclasses.
+          sp = obj.StylePreferences;
+          phandles = gobjects(0);
+          hold(ax, "on");
+          phandles(end+1) = rectangle(ax, 'Position', ...
+              [real(gamma)-of/2, imag(gamma)-of/2, of, of], ...
+              'Curvature', [1 1], 'Facecolor', 'k', 'Edgecolor', 'k', ...
+              'Tag', 'contour_center', "HandleVisibility", "off", "Visible", "off");
+          phandles(end+1) = plot(ax, real(zp), imag(zp), ...
+              'Color', sp.ContourColor, ...
+              'LineWidth', sp.ContourLineWidth, ...
+              'LineStyle', sp.ContourLineStyle, ...
+              'Tag', "contour", ...
+              "HandleVisibility", "off", ...
+              "DisplayName", "Contour");
+          hold(ax, "off");
+      end
    end
 
     methods (Static)
@@ -46,8 +66,20 @@ classdef Quad < Numerics.Contour.Quad & Visual.VisualReactive
             end
             obj = obj@Numerics.Contour.Quad(z,w);
             obj.ax = ax;
-            addlistener(obj,'z','PostSet',@obj.update_plot);
-            addlistener(obj,'plot_quadrature','PostSet',@obj.update_plot);
+            % Store listener handles so they can be deleted later
+            obj.listeners = [
+                addlistener(obj,'z','PostSet',@obj.update_plot)
+                addlistener(obj,'plot_quadrature','PostSet',@obj.update_plot)
+            ];
+        end
+
+        function attachListeners(obj)
+            % Recreate listeners (called when reattaching to new graphics)
+            obj.deleteListeners();  % Clear any existing listeners first
+            obj.listeners = [
+                addlistener(obj,'z','PostSet',@obj.update_plot)
+                addlistener(obj,'plot_quadrature','PostSet',@obj.update_plot)
+            ];
         end
 
         function n = toNumerics(obj)
@@ -74,9 +106,14 @@ classdef Quad < Numerics.Contour.Quad & Visual.VisualReactive
                 ax = gca
             end
             phandles = gobjects(0);
-            if isempty(ax) || ~isgraphics(ax) || ~obj.plot_quadrature; return; end
+            if isempty(ax) || ~isgraphics(ax) || (~obj.plot_quadrature && ~obj.StylePreferences.ShowQuadratureNodes); return; end
             hold(ax,"on");
-            phandles(end+1) = scatter(ax,real(obj.z),imag(obj.z),200,"red","x",'Tag',"quadrature","DisplayName","Quadrature Nodes");
+            sp = obj.StylePreferences;
+            phandles(end+1) = scatter(ax, real(obj.z), imag(obj.z), ...
+                sp.QuadratureSize, sp.QuadratureMarker, ...
+                "MarkerEdgeColor", sp.QuadratureColor, ...
+                'Tag', "quadrature", ...
+                "DisplayName", "Quadrature Nodes");
             hold(ax,"off");
         end
 

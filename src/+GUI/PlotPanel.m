@@ -27,6 +27,10 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
         CIMData Numerics.CIM % underlying computational structure that this component will modify
     end
 
+    properties (Access = private)
+        listeners = []  % Store listener handles for cleanup
+    end
+
     methods (Access=public)
 
         function obj = PlotPanel(Parent,MainApp,MainAppUIFigure,CIMData)
@@ -39,13 +43,12 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
 
             obj.CIMData.ax = {obj.MainPlotAxes,obj.HSVAxes};
 
-            addlistener(obj.CIMData.SampleData.OperatorData,'refew','PostSet',@(src,event)obj.ResultDataChangedFcn);
-            % addlistener(obj.CIMData.ResultData,'rev','PostSet',@(src,event)obj.ResultDataChangedFcn);
-            % addlistener(obj.CIMData.SampleData.Contour,'z','PostSet',@(src,event)obj.ResultDataChangedFcn);
-
-            addlistener(obj.CIMData.RealizationData,'loaded','PostSet',@(src,event)obj.ResultDataChangedFcn);
-
-            addlistener(obj.MainApp,'FontSize','PostSet',@(src,event)obj.updateFontSize);
+            % Store listener handles for cleanup
+            obj.listeners = [
+                addlistener(obj.CIMData.SampleData.OperatorData,'refew','PostSet',@(src,event)obj.ResultDataChangedFcn)
+                addlistener(obj.CIMData.RealizationData,'loaded','PostSet',@(src,event)obj.ResultDataChangedFcn)
+                addlistener(obj.MainApp,'FontSize','PostSet',@(src,event)obj.updateFontSize)
+            ];
 
             obj.ResultDataChangedFcn(0);
 
@@ -193,6 +196,10 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.ResultsTable = uitable(comp.ResultTabGridLayout);
             comp.ResultsTable.RowName = {};
 
+        end
+
+        function delete(comp)
+            Visual.deleteListeners(comp.listeners);
         end
 
     end

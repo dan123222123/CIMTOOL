@@ -15,6 +15,10 @@ classdef CircularSegmentComponent < GUI.Parameter.Contour.ContourComponent
         CIMData                 Numerics.CIM
     end
 
+    properties (Access = private)
+        listeners = []  % Store listener handles for cleanup
+    end
+
     methods (Access = public)
 
         function obj = CircularSegmentComponent(Parent,CIMData)
@@ -25,11 +29,12 @@ classdef CircularSegmentComponent < GUI.Parameter.Contour.ContourComponent
 
             obj.setDefaults();
 
-            % obj.addListeners();
-
-            addlistener(obj.CIMData.SampleData.Contour,'gamma','PostSet',@(src,event)obj.setDefaults);
-            addlistener(obj.CIMData.SampleData.Contour,'rho','PostSet',@(src,event)obj.setDefaults);
-            addlistener(obj.CIMData.SampleData.Contour,'theta','PostSet',@(src,event)obj.setDefaults);
+            % Store listener handles for cleanup
+            obj.listeners = [
+                addlistener(obj.CIMData.SampleData.Contour,'gamma','PostSet',@(src,event)obj.setDefaults)
+                addlistener(obj.CIMData.SampleData.Contour,'rho','PostSet',@(src,event)obj.setDefaults)
+                addlistener(obj.CIMData.SampleData.Contour,'theta','PostSet',@(src,event)obj.setDefaults)
+            ];
 
         end
 
@@ -138,6 +143,10 @@ classdef CircularSegmentComponent < GUI.Parameter.Contour.ContourComponent
             comp.thetaEditFieldLabel.Layout.Column = 3;
             comp.thetaEditFieldLabel.Text = 'theta';
 
+        end
+
+        function delete(comp)
+            Visual.deleteListeners(comp.listeners);
         end
     end
 

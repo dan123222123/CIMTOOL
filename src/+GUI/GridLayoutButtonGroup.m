@@ -52,8 +52,9 @@ classdef GridLayoutButtonGroup < matlab.ui.componentcontainer.ComponentContainer
             obj.Buttons(end+1) = button;
 
             % Add listener for value changes to implement mutual exclusivity
-            obj.ButtonListeners{end+1} = addlistener(button, 'Value', 'PostSet', ...
-                @(src, event) obj.onButtonValueChanged(button));
+            obj.ButtonListeners = [obj.ButtonListeners, ...
+                addlistener(button, 'Value', 'PostSet', ...
+                @(src, event) obj.onButtonValueChanged(button))];
         end
 
         function obj = set.Title(obj, val)
@@ -145,6 +146,10 @@ classdef GridLayoutButtonGroup < matlab.ui.componentcontainer.ComponentContainer
         function update(obj)
             % Update title text if changed
             obj.TitleLabel.Text = obj.Title;
+        end
+
+        function delete(obj)
+            Visual.deleteListeners(obj.ButtonListeners);
         end
 
     end

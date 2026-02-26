@@ -32,7 +32,8 @@ classdef OperatorData <  Numerics.OperatorData & Visual.VisualReactive
             end
             obj = obj@Numerics.OperatorData(T,name,arglist);
             obj.ax = ax;
-            addlistener(obj,'refew','PostSet',@obj.update_plot);
+            % Store listener handle so it can be deleted later
+            obj.listeners = addlistener(obj,'refew','PostSet',@obj.update_plot);
         end
 
         function n = toNumerics(obj)
@@ -40,6 +41,12 @@ classdef OperatorData <  Numerics.OperatorData & Visual.VisualReactive
             n = Numerics.OperatorData();
             Visual.copyMatchingProperties(obj, n, "loaded");
             n.loaded = obj.loaded;
+        end
+
+        function attachListeners(obj)
+            % Recreate listeners (called when reattaching to new graphics)
+            obj.deleteListeners();  % Clear any existing listeners first
+            obj.listeners = addlistener(obj,'refew','PostSet',@obj.update_plot);
         end
 
         function phandles = plot(obj,ax)
@@ -51,7 +58,13 @@ classdef OperatorData <  Numerics.OperatorData & Visual.VisualReactive
             if isempty(ax) || ~isgraphics(ax); return; end
             hold(ax,"on");
             if ~isempty(obj.refew)
-                phandles(end+1) = scatter(ax,real(obj.refew),imag(obj.refew),100,"diamond","MarkerEdgeColor","#E66100","LineWidth",1.5,'Tag',"reference_eigenvalues","DisplayName","Reference Eigenvalues");
+                sp = obj.StylePreferences;
+                phandles(end+1) = scatter(ax, real(obj.refew), imag(obj.refew), ...
+                    sp.ReferenceEigenvalueSize, sp.ReferenceEigenvalueMarker, ...
+                    "MarkerEdgeColor", sp.ReferenceEigenvalueColor, ...
+                    "LineWidth", sp.ReferenceEigenvalueLineWidth, ...
+                    'Tag', "reference_eigenvalues", ...
+                    "DisplayName", "Reference Eigenvalues");
             end
             hold(ax,"off");
         end

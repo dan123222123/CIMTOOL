@@ -29,11 +29,7 @@ classdef CircularSegment < Numerics.Contour.CircularSegment & Visual.Contour.Qua
             phandles = gobjects(0);
             if isempty(ax) || ~isgraphics(ax); return; end
             zp = Numerics.Contour.CircularSegment.quad(obj.gamma,obj.rho,obj.theta,[512;512]);
-            of = obj.rho*0.05;
-            hold(ax,"on");
-            phandles(end+1) = rectangle(ax,'Position',[real(obj.gamma)-of/2 imag(obj.gamma)-of/2 of of], 'Curvature',[1 1], 'Facecolor','k', 'Edgecolor','k','Tag','contour_center',"HandleVisibility","off","Visible","off");
-            phandles(end+1) = plot(ax,real(zp),imag(zp),"blue",'LineWidth',5,'Tag',"contour","HandleVisibility","off","DisplayName","Contour");
-            hold(ax,"off");
+            phandles = obj.plotContourCurve(ax, zp, obj.gamma, obj.rho*0.05);
             phandles = [phandles plot@Visual.Contour.Quad(obj,ax)];
         end
 

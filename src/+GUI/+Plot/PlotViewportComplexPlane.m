@@ -17,6 +17,10 @@ classdef PlotViewportComplexPlane < GUI.Plot.PlotViewportComponent
         MainPlotAxes
     end
 
+    properties (Access = private)
+        listeners = []  % Store listener handles for cleanup
+    end
+
     methods (Access = public)
 
         function obj = PlotViewportComplexPlane(Parent,MainPlotAxes)
@@ -42,8 +46,11 @@ classdef PlotViewportComplexPlane < GUI.Plot.PlotViewportComponent
     methods (Access = protected)
 
         function addListeners(comp)
-            addlistener(comp.MainPlotAxes,'XLim','PostSet',@(src,event)comp.MainPlotWindowXLimChangedFcn);
-            addlistener(comp.MainPlotAxes,'YLim','PostSet',@(src,event)comp.MainPlotWindowYLimChangedFcn);
+            % Store listener handles for cleanup
+            comp.listeners = [
+                addlistener(comp.MainPlotAxes,'XLim','PostSet',@(src,event)comp.MainPlotWindowXLimChangedFcn)
+                addlistener(comp.MainPlotAxes,'YLim','PostSet',@(src,event)comp.MainPlotWindowYLimChangedFcn)
+            ];
         end
 
         function MainPlotWindowXLimChangedFcn(comp,~,~)
@@ -172,6 +179,10 @@ classdef PlotViewportComplexPlane < GUI.Plot.PlotViewportComponent
             comp.IminLabel.Text = 'IMIN:';
             comp.IminLabel.Layout.Row = 3;
             comp.IminLabel.Layout.Column = 2;
+        end
+
+        function delete(comp)
+            Visual.deleteListeners(comp.listeners);
         end
 
     end

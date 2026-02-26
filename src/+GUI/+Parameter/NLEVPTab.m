@@ -8,6 +8,10 @@ classdef NLEVPTab < matlab.ui.componentcontainer.ComponentContainer
     properties (Access = public)
         CIMData
     end
+
+    properties (Access = private)
+        listeners = []  % Store listener handles for cleanup
+    end
     
     methods
 
@@ -23,7 +27,12 @@ classdef NLEVPTab < matlab.ui.componentcontainer.ComponentContainer
         end
 
         function addListeners(comp)
-            addlistener(comp.CIMData.SampleData.OperatorData,'loaded','PostSet',@(src,event)comp.OperatorDataChangedFcn);
+            % Store listener handle for cleanup
+            comp.listeners = addlistener(comp.CIMData.SampleData.OperatorData,'loaded','PostSet',@(src,event)comp.OperatorDataChangedFcn);
+        end
+
+        function delete(comp)
+            Visual.deleteListeners(comp.listeners);
         end
 
         function OperatorDataChangedFcn(comp,~)

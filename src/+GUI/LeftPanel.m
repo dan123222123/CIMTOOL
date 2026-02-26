@@ -28,6 +28,12 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         MainPlotAxes
     end
 
+    properties (Access = private)
+        % Store listener handles for cleanup
+        listeners = []
+        contourListener = []  % Separate since it's recreated dynamically
+    end
+
     methods (Access = public)
         
         function obj = LeftPanel(Parent,MainApp,CIMData,MainPlotAxes)
@@ -61,17 +67,28 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         end
 
         function addListeners(comp)
-            addlistener(comp.CIMData.SampleData.OperatorData,'loaded','PostSet',@(src,event)comp.OperatorDataChangedFcn);
-            addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
-            addlistener(comp.CIMData.ResultData,'Db','PostSet',@(src,event)comp.DataMatrixSizeChangedFcn);
-            addlistener(comp.CIMData,'DataDirtiness','PostSet',@(src,event)comp.DataDirtinessChangedFcn);
-            addlistener(comp.MainApp,'FontSize','PostSet',@(src,event)comp.updateFontSize);
-            % listeners for reference changes
-            addlistener(comp.CIMData.SampleData,'Contour','PostSet',@(src,event)comp.updateContourListeners);
+            % Store listener handles so they can be deleted when component is destroyed
+            comp.listeners = [
+                addlistener(comp.CIMData.SampleData.OperatorData,'loaded','PostSet',@(src,event)comp.OperatorDataChangedFcn)
+                addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn)
+                addlistener(comp.CIMData.ResultData,'Db','PostSet',@(src,event)comp.DataMatrixSizeChangedFcn)
+                addlistener(comp.CIMData,'DataDirtiness','PostSet',@(src,event)comp.DataDirtinessChangedFcn)
+                addlistener(comp.MainApp,'FontSize','PostSet',@(src,event)comp.updateFontSize)
+                addlistener(comp.CIMData.SampleData,'Contour','PostSet',@(src,event)comp.updateContourListeners)
+            ];
+            % Create initial contour listener
+            comp.updateContourListeners([]);
         end
 
         function updateContourListeners(comp,~)
-            addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
+            % Delete old contour listener and create new one for the new contour object
+            try
+                if ~isempty(comp.contourListener) && isvalid(comp.contourListener)
+                    delete(comp.contourListener);
+                end
+            catch
+            end
+            comp.contourListener = addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(src,event)comp.QuadratureChangedFcn);
             comp.QuadratureChangedFcn(missing);
         end
 
@@ -249,6 +266,11 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.RefineQuadratureButton.Layout.Row = 6;
             comp.RefineQuadratureButton.Layout.Column = [1 3];
         
+        end
+
+        function delete(comp)
+            Visual.deleteListeners(comp.listeners);
+            Visual.deleteListeners(comp.contourListener);
         end
 
     end

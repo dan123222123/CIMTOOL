@@ -87,16 +87,43 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
         end
 
         function update_plot(obj,~,~)
-            ax = obj.ax;
-            if isempty(ax)
-                ax = {[]};
-            elseif ~iscell(ax)
-                ax = num2cell(ax);
+            % Skip if object or children are invalid
+            try
+                if ~isvalid(obj)
+                    return;
+                end
+                obj.cla();
+
+                ax = obj.ax;
+                if isempty(ax)
+                    ax = {[]};
+                elseif ~iscell(ax)
+                    ax = num2cell(ax);
+                end
+
+                % Propagate StylePreferences to all child components
+                if ~isempty(obj.SampleData) && isvalid(obj.SampleData)
+                    obj.SampleData.StylePreferences = obj.StylePreferences;
+                    obj.SampleData.ax = ax{1};
+                end
+                if ~isempty(obj.RealizationData) && isvalid(obj.RealizationData)
+                    obj.RealizationData.StylePreferences = obj.StylePreferences;
+                    obj.RealizationData.ax = ax{1};
+                end
+                if ~isempty(obj.ResultData) && isvalid(obj.ResultData)
+                    obj.ResultData.StylePreferences = obj.StylePreferences;
+                    obj.ResultData.ax = ax;
+                end
+
+                obj.phandles = [obj.SampleData.phandles obj.RealizationData.phandles obj.ResultData.phandles];
+
+                % Apply axes/legend styling at the CIM level
+                if ~isempty(ax) && ~isempty(ax{1}) && isgraphics(ax{1})
+                    obj.applyAxesStyle(ax{1});
+                end
+            catch
+                % Ignore errors during cleanup
             end
-            obj.SampleData.ax = ax{1};
-            obj.RealizationData.ax = ax{1};
-            obj.ResultData.ax = ax;
-            obj.phandles = [obj.SampleData.phandles obj.RealizationData.phandles obj.ResultData.phandles];
         end
 
         function phandles = plot(obj,ax)
@@ -109,11 +136,90 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
             if ~iscell(ax); ax = num2cell(ax); end
             phandles = [phandles obj.SampleData.plot(ax{1})];
             phandles = [phandles obj.RealizationData.plot(ax{1})];
-            %
-            xlabel(ax{1},"$\bf{R}$",'Interpreter','latex');
-            ylabel(ax{1},"$i\bf{R}$",'Interpreter','latex');
-            legend(ax{1},'Interpreter','latex','Location','northoutside','Orientation','horizontal');
+            obj.applyAxesStyle(ax{1});
             phandles = [phandles obj.ResultData.plot(ax)];
+        end
+
+        function applyAxesStyle(obj, ax)
+            % Apply axes and legend styling from StylePreferences
+            if isempty(ax) || ~isgraphics(ax); return; end
+            sp = obj.StylePreferences;
+            xlabel(ax, sp.AxesXLabelText, 'Interpreter', sp.AxesLabelInterpreter);
+            ylabel(ax, sp.AxesYLabelText, 'Interpreter', sp.AxesLabelInterpreter);
+            set(ax, 'Color', sp.AxesBackgroundColor);
+            grid(ax, sp.AxesGridVisible);
+            if strcmpi(sp.AxesGridVisible, 'on')
+                set(ax, 'GridLineStyle', sp.AxesGridLineStyle, 'GridColor', sp.AxesGridColor);
+            end
+            legend(ax, 'Interpreter', sp.LegendInterpreter, ...
+                       'Location', sp.LegendLocation, ...
+                       'Orientation', sp.LegendOrientation, ...
+                       'FontSize', sp.LegendFontSize);
+        end
+
+        function attachListeners(obj)
+            % Recreate listeners recursively (called when reattaching to new graphics)
+            obj.deleteListeners();  % Clear any existing listeners first
+            % Visual.CIM inherits from VisualReactive but has no additional listeners
+            % Attach listeners on children
+            try
+                if ~isempty(obj.SampleData) && isvalid(obj.SampleData)
+                    obj.SampleData.attachListeners();
+                end
+                if ~isempty(obj.RealizationData) && isvalid(obj.RealizationData)
+                    obj.RealizationData.attachListeners();
+                end
+                if ~isempty(obj.ResultData) && isvalid(obj.ResultData)
+                    obj.ResultData.attachListeners();
+                end
+            catch
+                % Ignore errors
+            end
+        end
+
+        function detachFromGraphics(obj)
+            % Detach from graphics and remove all listeners recursively
+            % This allows the object to be reused later with a new GUI
+            try
+                % Detach children first
+                if ~isempty(obj.SampleData) && isvalid(obj.SampleData)
+                    obj.SampleData.detachFromGraphics();
+                end
+                if ~isempty(obj.RealizationData) && isvalid(obj.RealizationData)
+                    obj.RealizationData.detachFromGraphics();
+                end
+                if ~isempty(obj.ResultData) && isvalid(obj.ResultData)
+                    obj.ResultData.detachFromGraphics();
+                end
+
+                % Call parent detach
+                detachFromGraphics@Visual.VisualReactive(obj);
+            catch
+                % Ignore errors during cleanup
+            end
+        end
+
+        function delete(obj)
+            % Only delete if explicitly requested (not called during GUI close)
+            try
+                if isvalid(obj)
+                    % Detach from graphics first
+                    obj.detachFromGraphics();
+
+                    % Delete children
+                    if ~isempty(obj.SampleData) && isvalid(obj.SampleData)
+                        delete(obj.SampleData);
+                    end
+                    if ~isempty(obj.RealizationData) && isvalid(obj.RealizationData)
+                        delete(obj.RealizationData);
+                    end
+                    if ~isempty(obj.ResultData) && isvalid(obj.ResultData)
+                        delete(obj.ResultData);
+                    end
+                end
+            catch
+                % Already deleted - ignore
+            end
         end
     end
 end

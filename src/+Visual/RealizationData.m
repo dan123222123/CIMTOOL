@@ -34,9 +34,22 @@ classdef RealizationData < Numerics.RealizationData & Visual.VisualReactive
             obj = obj@Numerics.RealizationData(ComputationalMode,InterpolationData,RealizationSize,ranktol);
             obj.ax = ax;
             obj.RealizationDataChanged();
-            addlistener(obj,'ComputationalMode','PostSet',@obj.update_plot);
-            addlistener(obj,'InterpolationData','PostSet',@obj.update_plot);
-            addlistener(obj,'RealizationSize','PostSet',@obj.update_plot);
+            % Store listener handles so they can be deleted later
+            obj.listeners = [
+                addlistener(obj,'ComputationalMode','PostSet',@obj.update_plot)
+                addlistener(obj,'InterpolationData','PostSet',@obj.update_plot)
+                addlistener(obj,'RealizationSize','PostSet',@obj.update_plot)
+            ];
+        end
+
+        function attachListeners(obj)
+            % Recreate listeners (called when reattaching to new graphics)
+            obj.deleteListeners();  % Clear any existing listeners first
+            obj.listeners = [
+                addlistener(obj,'ComputationalMode','PostSet',@obj.update_plot)
+                addlistener(obj,'InterpolationData','PostSet',@obj.update_plot)
+                addlistener(obj,'RealizationSize','PostSet',@obj.update_plot)
+            ];
         end
 
         function n = toNumerics(obj)
@@ -55,20 +68,36 @@ classdef RealizationData < Numerics.RealizationData & Visual.VisualReactive
             if isempty(ax) || ~isgraphics(ax); return; end
             % try to first get the next theta/sigma before clearing plots
             [theta,sigma] = obj.getThetaSigma(obj.RealizationSize.T1,obj.RealizationSize.T2);
+            sp = obj.StylePreferences;
             hold(ax,"on");
             switch obj.ComputationalMode
                 case Numerics.ComputationalMode.Hankel
                     % Nothing to plot
                 case Numerics.ComputationalMode.SPLoewner
                     if ~isempty(sigma)
-                        phandles(end+1) = scatter(ax,real(sigma),imag(sigma),50,"blue","square","Tag","sigma","DisplayName","SPLoewner Shift",'Linewidth',1.5);
+                        phandles(end+1) = scatter(ax, real(sigma), imag(sigma), ...
+                            sp.SPLoewnerShiftSize, sp.SPLoewnerShiftMarker, ...
+                            "MarkerEdgeColor", sp.SPLoewnerShiftColor, ...
+                            "LineWidth", sp.SPLoewnerShiftLineWidth, ...
+                            "Tag", "sigma", ...
+                            "DisplayName", "SPLoewner Shift");
                     end
                 case Numerics.ComputationalMode.MPLoewner
                     if ~isempty(sigma)
-                        phandles(end+1) = scatter(ax,real(sigma),imag(sigma),50,"blue","square","Tag","sigma","DisplayName","Right Interpolation Points",'Linewidth',1.5);
+                        phandles(end+1) = scatter(ax, real(sigma), imag(sigma), ...
+                            sp.MPLoewnerRightSize, sp.MPLoewnerRightMarker, ...
+                            "MarkerEdgeColor", sp.MPLoewnerRightColor, ...
+                            "LineWidth", sp.MPLoewnerRightLineWidth, ...
+                            "Tag", "sigma", ...
+                            "DisplayName", "Right Interpolation Points");
                     end
                     if ~isempty(theta)
-                        phandles(end+1) = scatter(ax,real(theta),imag(theta),50,"red","square","Tag","theta","DisplayName","Left Interpolation Points",'Linewidth',1.5);
+                        phandles(end+1) = scatter(ax, real(theta), imag(theta), ...
+                            sp.MPLoewnerLeftSize, sp.MPLoewnerLeftMarker, ...
+                            "MarkerEdgeColor", sp.MPLoewnerLeftColor, ...
+                            "LineWidth", sp.MPLoewnerLeftLineWidth, ...
+                            "Tag", "theta", ...
+                            "DisplayName", "Left Interpolation Points");
                     end
             end
             hold(ax,"off");

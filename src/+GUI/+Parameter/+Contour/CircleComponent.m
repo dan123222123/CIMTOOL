@@ -14,6 +14,10 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
         CIMData                 Numerics.CIM
     end
 
+    properties (Access = private)
+        listeners = []  % Store listener handles for cleanup
+    end
+
     methods (Access = public)
 
         function obj = CircleComponent(Parent,CIMData)
@@ -24,10 +28,11 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
 
             obj.setDefaults(0,0);
 
-            % obj.addListeners();
-
-            addlistener(obj.CIMData.SampleData.Contour,'gamma','PostSet',@(src,event)obj.setDefaults);
-            addlistener(obj.CIMData.SampleData.Contour,'z','PostSet',@(src,event)obj.setDefaults);
+            % Store listener handles for cleanup
+            obj.listeners = [
+                addlistener(obj.CIMData.SampleData.Contour,'gamma','PostSet',@(src,event)obj.setDefaults)
+                addlistener(obj.CIMData.SampleData.Contour,'z','PostSet',@(src,event)obj.setDefaults)
+            ];
 
         end
 
@@ -108,6 +113,10 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
             comp.radiusEditFieldLabel.Layout.Column = 2;
             comp.radiusEditFieldLabel.Text = 'radius';
 
+        end
+
+        function delete(comp)
+            Visual.deleteListeners(comp.listeners);
         end
     end
 

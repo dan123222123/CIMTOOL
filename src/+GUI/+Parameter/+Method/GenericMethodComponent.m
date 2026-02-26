@@ -18,6 +18,10 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
         CIMData Numerics.CIM
     end
 
+    properties (Access = private)
+        listeners = []  % Store listener handles for cleanup
+    end
+
     methods (Access = public)
 
         function obj = GenericMethodComponent(Parent,CIMData)
@@ -81,10 +85,13 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
     methods (Access = protected)
 
         function addListeners(comp)
-            addlistener(comp.CIMData.SampleData,'ell','PostSet',@(src,event)comp.updateLeftProbingSize);
-            addlistener(comp.CIMData.SampleData,'r','PostSet',@(src,event)comp.updateRightProbingSize);
-            addlistener(comp.CIMData.RealizationData,'RealizationSize','PostSet',@(src,event)comp.updateMaxMoments);
-            addlistener(comp.CIMData.RealizationData,'ComputationalMode','PostSet',@(src,event)comp.updateKText);
+            % Store listener handles for cleanup
+            comp.listeners = [
+                addlistener(comp.CIMData.SampleData,'ell','PostSet',@(src,event)comp.updateLeftProbingSize)
+                addlistener(comp.CIMData.SampleData,'r','PostSet',@(src,event)comp.updateRightProbingSize)
+                addlistener(comp.CIMData.RealizationData,'RealizationSize','PostSet',@(src,event)comp.updateMaxMoments)
+                addlistener(comp.CIMData.RealizationData,'ComputationalMode','PostSet',@(src,event)comp.updateKText)
+            ];
         end
         
         function setup(comp)
@@ -151,7 +158,11 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
 
         end
 
+        function delete(comp)
+            Visual.deleteListeners(comp.listeners);
+        end
+
     end
-    
+
 end
 

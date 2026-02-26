@@ -39,8 +39,20 @@ classdef ResultData < Numerics.ResultData & Visual.VisualReactive
             end
             obj = obj@Numerics.ResultData(Db,Ds,B,BB,C,CC,X,Sigma,Y,ew,rev,lev);
             obj.ax = ax;
-            addlistener(obj,'ew','PostSet',@obj.update_plot);
-            addlistener(obj,'Sigma','PostSet',@obj.update_plot);
+            % Store listener handles so they can be deleted later
+            obj.listeners = [
+                addlistener(obj,'ew','PostSet',@obj.update_plot)
+                addlistener(obj,'Sigma','PostSet',@obj.update_plot)
+            ];
+        end
+
+        function attachListeners(obj)
+            % Recreate listeners (called when reattaching to new graphics)
+            obj.deleteListeners();  % Clear any existing listeners first
+            obj.listeners = [
+                addlistener(obj,'ew','PostSet',@obj.update_plot)
+                addlistener(obj,'Sigma','PostSet',@obj.update_plot)
+            ];
         end
 
         function n = toNumerics(obj)
@@ -58,7 +70,13 @@ classdef ResultData < Numerics.ResultData & Visual.VisualReactive
             if isempty(ax) || ~isgraphics(ax); return; end
             hold(ax,"on");
             if ~isempty(obj.ew)
-                phandles(end+1) = scatter(ax,real(obj.ew),imag(obj.ew),30,"Tag","computed_eigenvalues","MarkerFaceColor","#1AFF1A","DisplayName","Computed Eigenvalues",'Linewidth',1.5);
+                sp = obj.StylePreferences;
+                phandles(end+1) = scatter(ax, real(obj.ew), imag(obj.ew), ...
+                    sp.ComputedEigenvalueSize, sp.ComputedEigenvalueMarker, ...
+                    "MarkerFaceColor", sp.ComputedEigenvalueColor, ...
+                    "LineWidth", sp.ComputedEigenvalueLineWidth, ...
+                    'Tag', "computed_eigenvalues", ...
+                    "DisplayName", "Computed Eigenvalues");
             end
             hold(ax,"off");
         end
@@ -72,8 +90,13 @@ classdef ResultData < Numerics.ResultData & Visual.VisualReactive
             if isempty(ax) || ~isgraphics(ax); return; end
             hold(ax,"on");
             if ~isempty(obj.Sigma)
+                sp = obj.StylePreferences;
                 Dbsw = diag(obj.Sigma) / obj.Sigma(1,1);
-                phandles(end+1) = semilogy(ax,1:length(Dbsw),Dbsw,"->","MarkerSize",10,'DisplayName','Base Data Matrix (Db)','Color',"r");
+                phandles(end+1) = semilogy(ax, 1:length(Dbsw), Dbsw, ...
+                    sp.SingularValueLineStyle, ...
+                    "MarkerSize", sp.SingularValueMarkerSize, ...
+                    'DisplayName', 'Base Data Matrix (Db)', ...
+                    'Color', sp.SingularValueColor);
                 ax.XLim = [0,length(Dbsw)+1];
             end
             hold(ax,"off");

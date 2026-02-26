@@ -122,7 +122,12 @@ classdef CIMTOOL < matlab.apps.AppBase
                 delete(onc)
             end
             hold(app.PlotPanel.MainPlotAxes,"on");
-            scatter(app.PlotPanel.MainPlotAxes,real(cp),imag(cp),200,"red",'filled','Tag',"ghost_contour_center",'DisplayName','Ghost Center');
+            sp = app.CIMData.StylePreferences;
+            scatter(app.PlotPanel.MainPlotAxes, real(cp), imag(cp), ...
+                sp.GhostCenterSize, sp.GhostCenterMarker, ...
+                'MarkerFaceColor', sp.GhostCenterColor, ...
+                'Tag', "ghost_contour_center", ...
+                'DisplayName', 'Ghost Center');
         end
 
         function drag_contour(app,handle,event)
@@ -148,7 +153,13 @@ classdef CIMTOOL < matlab.apps.AppBase
                     errordlg("contour dragging not yet implemented for circular segments");
             end
             hold(app.PlotPanel.MainPlotAxes,"on")
-            plot(app.PlotPanel.MainPlotAxes,real(zc),imag(zc),"red",'LineWidth',5,'Tag','ghost_contour','DisplayName','Ghost Contour');
+            sp = app.CIMData.StylePreferences;
+            plot(app.PlotPanel.MainPlotAxes, real(zc), imag(zc), ...
+                'Color', sp.GhostContourColor, ...
+                'LineWidth', sp.GhostContourLineWidth, ...
+                'LineStyle', sp.GhostContourLineStyle, ...
+                'Tag', 'ghost_contour', ...
+                'DisplayName', 'Ghost Contour');
         end
 
         function set_new_center(app,handle,event)
@@ -222,9 +233,10 @@ classdef CIMTOOL < matlab.apps.AppBase
         end
 
         % Construct app
-        function app = CIMTOOL(CIMData)
+        function app = CIMTOOL(CIMData, StylePreferences)
             arguments
                 CIMData {mustBeA(CIMData, 'Numerics.CIM')} = Visual.CIM()
+                StylePreferences = []
             end
 
             s = settings; app.FontSize = double(s.matlab.fonts.codefont.Size.FactoryValue);
@@ -233,10 +245,34 @@ classdef CIMTOOL < matlab.apps.AppBase
             if ~isa(CIMData, 'Visual.CIM')
                 CIMData = Visual.CIM.fromNumerics(CIMData);
             end
+
+            % Load or apply style preferences
+            if isempty(StylePreferences)
+                % Load from disk (or use defaults if none saved)
+                StylePreferences = Visual.StylePreferences.load();
+            elseif isstruct(StylePreferences)
+                % Convert struct to StylePreferences object
+                StylePreferences = Visual.StylePreferences.fromStruct(StylePreferences);
+            elseif ~isa(StylePreferences, 'Visual.StylePreferences')
+                error('CIMTOOL:InvalidStylePreferences', ...
+                      'StylePreferences must be Visual.StylePreferences object or struct');
+            end
+
+            % Apply preferences to CIMData
+            CIMData.StylePreferences = StylePreferences;
+
             app.CIMData = CIMData;
 
             % Create UIFigure and components
             app.createComponents();
+
+            % Reattach listeners after axes are connected
+            % This is needed when reusing a CIMData object from a previous GUI
+            try
+                app.CIMData.attachListeners();
+            catch
+                % Ignore errors - listeners may already exist
+            end
 
             % set event listeners
             % app.set_listeners();
@@ -244,12 +280,33 @@ classdef CIMTOOL < matlab.apps.AppBase
             if nargout == 0
                 clear app
             end
-            
+
         end
 
         % Delete app
         function delete(app)
-            delete(app.UIFigure)
+            % Detach CIMData from graphics but preserve the object for reuse
+            % This clears graphics, axes, and removes all listeners
+            try
+                if ~isempty(app.CIMData) && isvalid(app.CIMData)
+                    % Detach from graphics and delete all listeners
+                    app.CIMData.detachFromGraphics();
+
+                    % Note: We do NOT delete app.CIMData itself
+                    % It persists and can be reused with CIMTOOL later
+                end
+            catch
+                % Error during detach - ignore
+            end
+
+            % Delete the UI figure
+            try
+                if ~isempty(app.UIFigure) && isvalid(app.UIFigure)
+                    delete(app.UIFigure);
+                end
+            catch
+                % UIFigure already deleted - ignore
+            end
         end
 
     end

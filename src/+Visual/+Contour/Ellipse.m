@@ -30,11 +30,7 @@ classdef Ellipse < Numerics.Contour.Ellipse & Visual.Contour.Quad
             if isempty(ax) || ~isgraphics(ax); return; end
             zp = Numerics.Contour.Ellipse.trapezoid(obj.gamma,obj.alpha,obj.beta,512);
             zp = [obj.gamma + obj.alpha, zp, obj.gamma + obj.alpha];
-            of = max(obj.alpha,obj.beta)*0.05;
-            hold(ax,"on");
-            phandles(end+1) = rectangle(ax,'Position',[real(obj.gamma)-of/2 imag(obj.gamma)-of/2 of of], 'Curvature',[1 1], 'Facecolor','k', 'Edgecolor','k','Tag','contour_center',"HandleVisibility","off","Visible","off");
-            phandles(end+1) = plot(ax,real(zp),imag(zp),"blue",'LineWidth',5,'Tag',"contour","HandleVisibility","off");
-            hold(ax,"off");
+            phandles = obj.plotContourCurve(ax, zp, obj.gamma, max(obj.alpha,obj.beta)*0.05);
             phandles = [phandles plot@Visual.Contour.Quad(obj,ax)];
         end
 
