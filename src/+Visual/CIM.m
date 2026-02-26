@@ -121,6 +121,9 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
                 if ~isempty(ax) && ~isempty(ax{1}) && isgraphics(ax{1})
                     obj.applyAxesStyle(ax{1});
                 end
+                if length(ax) >= 2 && ~isempty(ax{2}) && isgraphics(ax{2})
+                    obj.applyAxesStyle(ax{2}, false, true);
+                end
             catch
                 % Ignore errors during cleanup
             end
@@ -137,18 +140,37 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
             phandles = [phandles obj.SampleData.plot(ax{1})];
             phandles = [phandles obj.RealizationData.plot(ax{1})];
             obj.applyAxesStyle(ax{1});
+            if length(ax) >= 2 && ~isempty(ax{2}) && isgraphics(ax{2})
+                obj.applyAxesStyle(ax{2}, false, true);
+            end
             phandles = [phandles obj.ResultData.plot(ax)];
         end
 
-        function applyAxesStyle(obj, ax)
+        function applyAxesStyle(obj, ax, applyLabels, forceGrid)
             % Apply axes and legend styling from StylePreferences
+            %   applyLabels - if false, skip axis labels (for non-complex-plane axes)
+            %   forceGrid   - if true, grid is always on (for log-scale axes)
+            arguments
+                obj
+                ax
+                applyLabels logical = true
+                forceGrid   logical = false
+            end
             if isempty(ax) || ~isgraphics(ax); return; end
             sp = obj.StylePreferences;
-            xlabel(ax, sp.AxesXLabelText, 'Interpreter', sp.AxesLabelInterpreter);
-            ylabel(ax, sp.AxesYLabelText, 'Interpreter', sp.AxesLabelInterpreter);
+            if applyLabels
+                xlabel(ax, sp.AxesXLabelText, 'Interpreter', sp.AxesLabelInterpreter);
+                ylabel(ax, sp.AxesYLabelText, 'Interpreter', sp.AxesLabelInterpreter);
+            end
             set(ax, 'Color', sp.AxesBackgroundColor);
-            grid(ax, sp.AxesGridVisible);
-            if strcmpi(sp.AxesGridVisible, 'on')
+            if forceGrid
+                set(ax, 'XGrid', 'on', 'YGrid', 'on', ...
+                        'XMinorGrid', 'on', 'YMinorGrid', 'on', ...
+                        'MinorGridAlpha', 0.5);
+            else
+                grid(ax, sp.AxesGridVisible);
+            end
+            if forceGrid || strcmpi(sp.AxesGridVisible, 'on')
                 set(ax, 'GridLineStyle', sp.AxesGridLineStyle, 'GridColor', sp.AxesGridColor);
             end
             legend(ax, 'Interpreter', sp.LegendInterpreter, ...

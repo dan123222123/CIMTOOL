@@ -1,17 +1,7 @@
-classdef MarkersTab < handle
+classdef MarkersTab < GUI.Preferences.PreferenceTab
     % MARKERSTAB Preference tab for eigenvalue and interpolation point markers
-    %
-    % Allows editing of:
-    %   - Reference eigenvalue markers (from OperatorData)
-    %   - Computed eigenvalue markers (from ResultData)
-    %   - SPLoewner shift markers
-    %   - MPLoewner left/right interpolation point markers
-    %   - Singular value line styles
 
     properties (Access = private)
-        Parent
-        Preferences
-
         % Reference eigenvalues
         RefEWColorEdit
         RefEWMarkerDropdown
@@ -46,6 +36,14 @@ classdef MarkersTab < handle
         SingValColorEdit
         SingValLineStyleEdit
         SingValMarkerSizeEdit
+
+        % Color swatches
+        RefEWColorSwatch
+        CompEWColorSwatch
+        SPShiftColorSwatch
+        MPRightColorSwatch
+        MPLeftColorSwatch
+        SingValColorSwatch
     end
 
     methods
@@ -57,74 +55,69 @@ classdef MarkersTab < handle
         end
 
         function updateFromPreferences(obj, prefs)
-            % Reference eigenvalues
             obj.RefEWColorEdit.Value = char(prefs.ReferenceEigenvalueColor);
             obj.RefEWMarkerDropdown.Value = char(prefs.ReferenceEigenvalueMarker);
             obj.RefEWSizeEdit.Value = prefs.ReferenceEigenvalueSize;
             obj.RefEWLineWidthEdit.Value = prefs.ReferenceEigenvalueLineWidth;
 
-            % Computed eigenvalues
             obj.CompEWColorEdit.Value = char(prefs.ComputedEigenvalueColor);
             obj.CompEWMarkerDropdown.Value = char(prefs.ComputedEigenvalueMarker);
             obj.CompEWSizeEdit.Value = prefs.ComputedEigenvalueSize;
             obj.CompEWLineWidthEdit.Value = prefs.ComputedEigenvalueLineWidth;
 
-            % SPLoewner
             obj.SPShiftColorEdit.Value = char(prefs.SPLoewnerShiftColor);
             obj.SPShiftMarkerDropdown.Value = char(prefs.SPLoewnerShiftMarker);
             obj.SPShiftSizeEdit.Value = prefs.SPLoewnerShiftSize;
             obj.SPShiftLineWidthEdit.Value = prefs.SPLoewnerShiftLineWidth;
 
-            % MPLoewner right
             obj.MPRightColorEdit.Value = char(prefs.MPLoewnerRightColor);
             obj.MPRightMarkerDropdown.Value = char(prefs.MPLoewnerRightMarker);
             obj.MPRightSizeEdit.Value = prefs.MPLoewnerRightSize;
             obj.MPRightLineWidthEdit.Value = prefs.MPLoewnerRightLineWidth;
 
-            % MPLoewner left
             obj.MPLeftColorEdit.Value = char(prefs.MPLoewnerLeftColor);
             obj.MPLeftMarkerDropdown.Value = char(prefs.MPLoewnerLeftMarker);
             obj.MPLeftSizeEdit.Value = prefs.MPLoewnerLeftSize;
             obj.MPLeftLineWidthEdit.Value = prefs.MPLoewnerLeftLineWidth;
 
-            % Singular values
             obj.SingValColorEdit.Value = char(prefs.SingularValueColor);
             obj.SingValLineStyleEdit.Value = char(prefs.SingularValueLineStyle);
             obj.SingValMarkerSizeEdit.Value = prefs.SingularValueMarkerSize;
+
+            obj.updateSwatchColor(obj.RefEWColorSwatch, obj.RefEWColorEdit.Value);
+            obj.updateSwatchColor(obj.CompEWColorSwatch, obj.CompEWColorEdit.Value);
+            obj.updateSwatchColor(obj.SPShiftColorSwatch, obj.SPShiftColorEdit.Value);
+            obj.updateSwatchColor(obj.MPRightColorSwatch, obj.MPRightColorEdit.Value);
+            obj.updateSwatchColor(obj.MPLeftColorSwatch, obj.MPLeftColorEdit.Value);
+            obj.updateSwatchColor(obj.SingValColorSwatch, obj.SingValColorEdit.Value);
         end
 
         function applyToPreferences(obj, prefs)
-            % Reference eigenvalues
             prefs.ReferenceEigenvalueColor = string(obj.RefEWColorEdit.Value);
             prefs.ReferenceEigenvalueMarker = string(obj.RefEWMarkerDropdown.Value);
             prefs.ReferenceEigenvalueSize = obj.RefEWSizeEdit.Value;
             prefs.ReferenceEigenvalueLineWidth = obj.RefEWLineWidthEdit.Value;
 
-            % Computed eigenvalues
             prefs.ComputedEigenvalueColor = string(obj.CompEWColorEdit.Value);
             prefs.ComputedEigenvalueMarker = string(obj.CompEWMarkerDropdown.Value);
             prefs.ComputedEigenvalueSize = obj.CompEWSizeEdit.Value;
             prefs.ComputedEigenvalueLineWidth = obj.CompEWLineWidthEdit.Value;
 
-            % SPLoewner
             prefs.SPLoewnerShiftColor = string(obj.SPShiftColorEdit.Value);
             prefs.SPLoewnerShiftMarker = string(obj.SPShiftMarkerDropdown.Value);
             prefs.SPLoewnerShiftSize = obj.SPShiftSizeEdit.Value;
             prefs.SPLoewnerShiftLineWidth = obj.SPShiftLineWidthEdit.Value;
 
-            % MPLoewner right
             prefs.MPLoewnerRightColor = string(obj.MPRightColorEdit.Value);
             prefs.MPLoewnerRightMarker = string(obj.MPRightMarkerDropdown.Value);
             prefs.MPLoewnerRightSize = obj.MPRightSizeEdit.Value;
             prefs.MPLoewnerRightLineWidth = obj.MPRightLineWidthEdit.Value;
 
-            % MPLoewner left
             prefs.MPLoewnerLeftColor = string(obj.MPLeftColorEdit.Value);
             prefs.MPLoewnerLeftMarker = string(obj.MPLeftMarkerDropdown.Value);
             prefs.MPLoewnerLeftSize = obj.MPLeftSizeEdit.Value;
             prefs.MPLoewnerLeftLineWidth = obj.MPLeftLineWidthEdit.Value;
 
-            % Singular values
             prefs.SingularValueColor = string(obj.SingValColorEdit.Value);
             prefs.SingularValueLineStyle = string(obj.SingValLineStyleEdit.Value);
             prefs.SingularValueMarkerSize = obj.SingValMarkerSizeEdit.Value;
@@ -133,159 +126,61 @@ classdef MarkersTab < handle
 
     methods (Access = private)
         function createControls(obj)
-            yPos = 360;
-            labelWidth = 180;
-            fieldWidth = 120;
-            rowHeight = 28;
-            xLabel = 20;
-            xField = xLabel + labelWidth + 10;
-            markerItems = {'+', 'o', '*', '.', 'x', 'square', 'diamond', '^', 'v', '>', '<', 'pentagram', 'hexagram'};
+            L1 = obj.makeLayout(15, 130, 120, 5);
+            L2 = obj.makeLayout(350, 130, 120, 5);
+            fullSepWidth = L2.xField + L2.fieldWidth - L1.xLabel;
 
-            % Use two columns for better space usage
-            col2XLabel = 340;
-            col2XField = col2XLabel + labelWidth + 10;
+            yPos = 500;
 
-            % Column 1: Reference and Computed Eigenvalues
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, 300, 22], ...
-                   'Text', 'Reference Eigenvalues', 'FontWeight', 'bold', 'FontSize', 11);
-            yPos = yPos - rowHeight;
+            % === Column 1 top: Reference Eigenvalues ===
+            obj.Layout = L1;
+            yCol1 = obj.addHeader(yPos, 'Reference Eigenvalues', 11);
+            [obj.RefEWColorEdit, obj.RefEWColorSwatch, yCol1] = obj.addColorField(yCol1, 'Color:');
+            [obj.RefEWMarkerDropdown, yCol1] = obj.addDropdownField(yCol1, 'Marker:', obj.MARKER_ITEMS);
+            [obj.RefEWSizeEdit, yCol1] = obj.addNumericField(yCol1, 'Size:', [1 1000]);
+            [obj.RefEWLineWidthEdit, yCol1] = obj.addNumericField(yCol1, 'Line Width:', [0.1 10]);
+            yCol1 = obj.addSeparator(yCol1);
 
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 20], 'Text', 'Color:');
-            obj.RefEWColorEdit = uieditfield(obj.Parent, 'text', ...
-                'Position', [xField, yPos, fieldWidth, 20]);
-            yPos = yPos - rowHeight;
+            % === Column 1 top: Computed Eigenvalues ===
+            yCol1 = obj.addHeader(yCol1, 'Computed Eigenvalues', 11);
+            [obj.CompEWColorEdit, obj.CompEWColorSwatch, yCol1] = obj.addColorField(yCol1, 'Color:');
+            [obj.CompEWMarkerDropdown, yCol1] = obj.addDropdownField(yCol1, 'Marker:', obj.MARKER_ITEMS);
+            [obj.CompEWSizeEdit, yCol1] = obj.addNumericField(yCol1, 'Size:', [1 1000]);
+            [obj.CompEWLineWidthEdit, yCol1] = obj.addNumericField(yCol1, 'Line Width:', [0.1 10]);
 
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 20], 'Text', 'Marker:');
-            obj.RefEWMarkerDropdown = uidropdown(obj.Parent, ...
-                'Position', [xField, yPos, fieldWidth, 20], 'Items', markerItems);
-            yPos = yPos - rowHeight;
+            % === Column 2 top: SPLoewner Shifts ===
+            obj.Layout = L2;
+            yCol2 = obj.addHeader(yPos, 'SPLoewner Shifts', 11);
+            [obj.SPShiftColorEdit, obj.SPShiftColorSwatch, yCol2] = obj.addColorField(yCol2, 'Color:');
+            [obj.SPShiftMarkerDropdown, yCol2] = obj.addDropdownField(yCol2, 'Marker:', obj.MARKER_ITEMS);
+            [obj.SPShiftSizeEdit, yCol2] = obj.addNumericField(yCol2, 'Size:', [1 1000]);
+            [obj.SPShiftLineWidthEdit, yCol2] = obj.addNumericField(yCol2, 'Line Width:', [0.1 10]);
+            yCol2 = obj.addSeparator(yCol2);
 
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 20], 'Text', 'Size:');
-            obj.RefEWSizeEdit = uieditfield(obj.Parent, 'numeric', ...
-                'Position', [xField, yPos, fieldWidth, 20], 'Limits', [1 1000]);
-            yPos = yPos - rowHeight;
+            % === Column 2 top: MPLoewner Right Points ===
+            yCol2 = obj.addHeader(yCol2, 'MPLoewner Right Points', 11);
+            [obj.MPRightColorEdit, obj.MPRightColorSwatch, yCol2] = obj.addColorField(yCol2, 'Color:');
+            [obj.MPRightMarkerDropdown, yCol2] = obj.addDropdownField(yCol2, 'Marker:', obj.MARKER_ITEMS);
+            [obj.MPRightSizeEdit, yCol2] = obj.addNumericField(yCol2, 'Size:', [1 1000]);
+            [obj.MPRightLineWidthEdit, yCol2] = obj.addNumericField(yCol2, 'Line Width:', [0.1 10]);
 
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 20], 'Text', 'Line Width:');
-            obj.RefEWLineWidthEdit = uieditfield(obj.Parent, 'numeric', ...
-                'Position', [xField, yPos, fieldWidth, 20], 'Limits', [0.1 10]);
-            yPos = yPos - rowHeight - 10;
+            % === Full-width separator ===
+            obj.Layout = L1;
+            yBottom = obj.addSeparator(min(yCol1, yCol2), fullSepWidth);
 
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, 300, 22], ...
-                   'Text', 'Computed Eigenvalues', 'FontWeight', 'bold', 'FontSize', 11);
-            yPos = yPos - rowHeight;
+            % === Bottom column 1: MPLoewner Left Points ===
+            yCol1 = obj.addHeader(yBottom, 'MPLoewner Left Points', 11);
+            [obj.MPLeftColorEdit, obj.MPLeftColorSwatch, yCol1] = obj.addColorField(yCol1, 'Color:');
+            [obj.MPLeftMarkerDropdown, yCol1] = obj.addDropdownField(yCol1, 'Marker:', obj.MARKER_ITEMS);
+            [obj.MPLeftSizeEdit, yCol1] = obj.addNumericField(yCol1, 'Size:', [1 1000]);
+            [obj.MPLeftLineWidthEdit, yCol1] = obj.addNumericField(yCol1, 'Line Width:', [0.1 10]); %#ok<NASGU>
 
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 20], 'Text', 'Color:');
-            obj.CompEWColorEdit = uieditfield(obj.Parent, 'text', ...
-                'Position', [xField, yPos, fieldWidth, 20]);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 20], 'Text', 'Marker:');
-            obj.CompEWMarkerDropdown = uidropdown(obj.Parent, ...
-                'Position', [xField, yPos, fieldWidth, 20], 'Items', markerItems);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 20], 'Text', 'Size:');
-            obj.CompEWSizeEdit = uieditfield(obj.Parent, 'numeric', ...
-                'Position', [xField, yPos, fieldWidth, 20], 'Limits', [1 1000]);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 20], 'Text', 'Line Width:');
-            obj.CompEWLineWidthEdit = uieditfield(obj.Parent, 'numeric', ...
-                'Position', [xField, yPos, fieldWidth, 20], 'Limits', [0.1 10]);
-
-            % Column 2: SPLoewner and MPLoewner
-            yPos = 360;
-            uilabel(obj.Parent, 'Position', [col2XLabel, yPos, 300, 22], ...
-                   'Text', 'SPLoewner Shifts', 'FontWeight', 'bold', 'FontSize', 11);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [col2XLabel, yPos, labelWidth, 20], 'Text', 'Color:');
-            obj.SPShiftColorEdit = uieditfield(obj.Parent, 'text', ...
-                'Position', [col2XField, yPos, fieldWidth, 20]);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [col2XLabel, yPos, labelWidth, 20], 'Text', 'Marker:');
-            obj.SPShiftMarkerDropdown = uidropdown(obj.Parent, ...
-                'Position', [col2XField, yPos, fieldWidth, 20], 'Items', markerItems);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [col2XLabel, yPos, labelWidth, 20], 'Text', 'Size:');
-            obj.SPShiftSizeEdit = uieditfield(obj.Parent, 'numeric', ...
-                'Position', [col2XField, yPos, fieldWidth, 20], 'Limits', [1 1000]);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [col2XLabel, yPos, labelWidth, 20], 'Text', 'Line Width:');
-            obj.SPShiftLineWidthEdit = uieditfield(obj.Parent, 'numeric', ...
-                'Position', [col2XField, yPos, fieldWidth, 20], 'Limits', [0.1 10]);
-            yPos = yPos - rowHeight - 10;
-
-            uilabel(obj.Parent, 'Position', [col2XLabel, yPos, 300, 22], ...
-                   'Text', 'MPLoewner Right Points', 'FontWeight', 'bold', 'FontSize', 11);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [col2XLabel, yPos, labelWidth, 20], 'Text', 'Color:');
-            obj.MPRightColorEdit = uieditfield(obj.Parent, 'text', ...
-                'Position', [col2XField, yPos, fieldWidth, 20]);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [col2XLabel, yPos, labelWidth, 20], 'Text', 'Marker:');
-            obj.MPRightMarkerDropdown = uidropdown(obj.Parent, ...
-                'Position', [col2XField, yPos, fieldWidth, 20], 'Items', markerItems);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [col2XLabel, yPos, labelWidth, 20], 'Text', 'Size:');
-            obj.MPRightSizeEdit = uieditfield(obj.Parent, 'numeric', ...
-                'Position', [col2XField, yPos, fieldWidth, 20], 'Limits', [1 1000]);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [col2XLabel, yPos, labelWidth, 20], 'Text', 'Line Width:');
-            obj.MPRightLineWidthEdit = uieditfield(obj.Parent, 'numeric', ...
-                'Position', [col2XField, yPos, fieldWidth, 20], 'Limits', [0.1 10]);
-
-            % Bottom section: MPLoewner Left and Singular Values
-            yPos = 140;
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, 300, 22], ...
-                   'Text', 'MPLoewner Left Points', 'FontWeight', 'bold', 'FontSize', 11);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 20], 'Text', 'Color:');
-            obj.MPLeftColorEdit = uieditfield(obj.Parent, 'text', ...
-                'Position', [xField, yPos, fieldWidth, 20]);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 20], 'Text', 'Marker:');
-            obj.MPLeftMarkerDropdown = uidropdown(obj.Parent, ...
-                'Position', [xField, yPos, fieldWidth, 20], 'Items', markerItems);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 20], 'Text', 'Size:');
-            obj.MPLeftSizeEdit = uieditfield(obj.Parent, 'numeric', ...
-                'Position', [xField, yPos, fieldWidth, 20], 'Limits', [1 1000]);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 20], 'Text', 'Line Width:');
-            obj.MPLeftLineWidthEdit = uieditfield(obj.Parent, 'numeric', ...
-                'Position', [xField, yPos, fieldWidth, 20], 'Limits', [0.1 10]);
-
-            yPos = 140;
-            uilabel(obj.Parent, 'Position', [col2XLabel, yPos, 300, 22], ...
-                   'Text', 'Singular Values', 'FontWeight', 'bold', 'FontSize', 11);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [col2XLabel, yPos, labelWidth, 20], 'Text', 'Color:');
-            obj.SingValColorEdit = uieditfield(obj.Parent, 'text', ...
-                'Position', [col2XField, yPos, fieldWidth, 20]);
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [col2XLabel, yPos, labelWidth, 20], 'Text', 'Line Style:');
-            obj.SingValLineStyleEdit = uieditfield(obj.Parent, 'text', ...
-                'Position', [col2XField, yPos, fieldWidth, 20], ...
-                'Tooltip', 'e.g., "->" for line with markers');
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [col2XLabel, yPos, labelWidth, 20], 'Text', 'Marker Size:');
-            obj.SingValMarkerSizeEdit = uieditfield(obj.Parent, 'numeric', ...
-                'Position', [col2XField, yPos, fieldWidth, 20], 'Limits', [1 100]);
+            % === Bottom column 2: Singular Values ===
+            obj.Layout = L2;
+            yCol2 = obj.addHeader(yBottom, 'Singular Values', 11);
+            [obj.SingValColorEdit, obj.SingValColorSwatch, yCol2] = obj.addColorField(yCol2, 'Color:');
+            [obj.SingValLineStyleEdit, yCol2] = obj.addTextField(yCol2, 'Line Style:', 'e.g., "->" for line with markers');
+            [obj.SingValMarkerSizeEdit, yCol2] = obj.addNumericField(yCol2, 'Marker Size:', [1 100]); %#ok<NASGU>
         end
     end
 end

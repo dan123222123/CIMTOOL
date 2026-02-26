@@ -1,15 +1,7 @@
-classdef AxesTab < handle
+classdef AxesTab < GUI.Preferences.PreferenceTab
     % AXESTAB Preference tab for axes and grid styling
-    %
-    % Allows editing of:
-    %   - Grid visibility, line style, and color
-    %   - Axes background color
-    %   - X and Y axis label text and interpreter
 
     properties (Access = private)
-        Parent
-        Preferences
-
         % Grid controls
         GridVisibleCheckbox
         GridLineStyleDropdown
@@ -22,6 +14,10 @@ classdef AxesTab < handle
         XLabelEdit
         YLabelEdit
         LabelInterpreterDropdown
+
+        % Color swatches
+        GridColorSwatch
+        BackgroundColorSwatch
     end
 
     methods
@@ -44,14 +40,9 @@ classdef AxesTab < handle
                 elseif isstring(prefs.AxesGridColor) || ischar(prefs.AxesGridColor)
                     obj.GridColorEdit.Value = char(prefs.AxesGridColor);
                 else
-                    % Fallback for unexpected type
-                    warning('AxesTab:UnexpectedGridColorType', ...
-                            'AxesGridColor has unexpected type: %s. Using default.', class(prefs.AxesGridColor));
                     obj.GridColorEdit.Value = '[0.15 0.15 0.15]';
                 end
-            catch ME
-                warning('AxesTab:GridColorError', ...
-                        'Error setting grid color: %s. Using default.', ME.message);
+            catch
                 obj.GridColorEdit.Value = '[0.15 0.15 0.15]';
             end
 
@@ -59,10 +50,12 @@ classdef AxesTab < handle
             obj.XLabelEdit.Value = char(prefs.AxesXLabelText);
             obj.YLabelEdit.Value = char(prefs.AxesYLabelText);
             obj.LabelInterpreterDropdown.Value = char(prefs.AxesLabelInterpreter);
+
+            obj.updateSwatchColor(obj.GridColorSwatch, obj.GridColorEdit.Value);
+            obj.updateSwatchColor(obj.BackgroundColorSwatch, obj.BackgroundColorEdit.Value);
         end
 
         function applyToPreferences(obj, prefs)
-            prefs.AxesGridVisible = string(obj.GridVisibleCheckbox.Value * 1);  % 1='on', 0='off'
             if obj.GridVisibleCheckbox.Value
                 prefs.AxesGridVisible = "on";
             else
@@ -74,9 +67,7 @@ classdef AxesTab < handle
             % Parse grid color (can be string or [R G B])
             gridColorStr = strtrim(obj.GridColorEdit.Value);
             if startsWith(gridColorStr, '[') && endsWith(gridColorStr, ']')
-                % Parse as RGB array
-                rgbStr = gridColorStr(2:end-1);
-                rgb = str2num(rgbStr); %#ok<ST2NM>
+                rgb = str2num(gridColorStr(2:end-1)); %#ok<ST2NM>
                 if length(rgb) == 3
                     prefs.AxesGridColor = rgb;
                 else
@@ -95,82 +86,37 @@ classdef AxesTab < handle
 
     methods (Access = private)
         function createControls(obj)
-            yPos = 350;
-            labelWidth = 180;
-            fieldWidth = 250;
-            rowHeight = 30;
-            xLabel = 20;
-            xField = xLabel + labelWidth + 10;
+            obj.Layout = obj.makeLayout(20, 160, 150);
+            yPos = 480;
 
-            % Section: Grid
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, 500, 25], ...
-                   'Text', 'Grid', 'FontWeight', 'bold', 'FontSize', 12);
-            yPos = yPos - rowHeight - 5;
+            yPos = obj.addHeader(yPos, 'Grid');
+            [obj.GridVisibleCheckbox, yPos] = obj.addCheckboxField(yPos, ...
+                'Show grid on plots', 'Enable or disable grid lines', 'Grid Visible:');
+            [obj.GridLineStyleDropdown, yPos] = obj.addDropdownField(yPos, ...
+                'Grid Line Style:', obj.LINE_STYLE_ITEMS, 'Line style for grid');
+            [obj.GridColorEdit, obj.GridColorSwatch, yPos] = obj.addColorField(yPos, ...
+                'Grid Color:', 'Color name, hex code, or [R G B] triplet (e.g., "[0.15 0.15 0.15]")');
 
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 22], 'Text', 'Grid Visible:');
-            obj.GridVisibleCheckbox = uicheckbox(obj.Parent, ...
-                'Position', [xField, yPos, fieldWidth, 22], ...
-                'Text', 'Show grid on plots', ...
-                'Tooltip', 'Enable or disable grid lines');
-            yPos = yPos - rowHeight;
+            yPos = obj.addSeparator(yPos);
 
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 22], 'Text', 'Grid Line Style:');
-            obj.GridLineStyleDropdown = uidropdown(obj.Parent, ...
-                'Position', [xField, yPos, fieldWidth, 22], ...
-                'Items', {'-', '--', ':', '-.', 'none'}, ...
-                'Tooltip', 'Line style for grid');
-            yPos = yPos - rowHeight;
+            yPos = obj.addHeader(yPos, 'Background');
+            [obj.BackgroundColorEdit, obj.BackgroundColorSwatch, yPos] = obj.addColorField(yPos, ...
+                'Background Color:', 'Axes background color (e.g., "white", "#FFFFFF")');
 
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 22], 'Text', 'Grid Color:');
-            obj.GridColorEdit = uieditfield(obj.Parent, 'text', ...
-                'Position', [xField, yPos, fieldWidth, 22], ...
-                'Tooltip', 'Color name, hex code, or [R G B] triplet (e.g., "[0.15 0.15 0.15]")');
-            yPos = yPos - rowHeight - 15;
+            yPos = obj.addSeparator(yPos);
 
-            % Section: Background
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, 500, 25], ...
-                   'Text', 'Background', 'FontWeight', 'bold', 'FontSize', 12);
-            yPos = yPos - rowHeight - 5;
+            yPos = obj.addHeader(yPos, 'Axis Labels');
+            [obj.XLabelEdit, yPos] = obj.addTextField(yPos, 'X-Axis Label:', ...
+                'Label text for X-axis (supports LaTeX if interpreter is latex)');
+            [obj.YLabelEdit, yPos] = obj.addTextField(yPos, 'Y-Axis Label:', ...
+                'Label text for Y-axis (supports LaTeX if interpreter is latex)');
+            [obj.LabelInterpreterDropdown, yPos] = obj.addDropdownField(yPos, ...
+                'Label Interpreter:', {'latex', 'tex', 'none'}, 'Text interpreter for axis labels'); %#ok<NASGU>
 
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 22], 'Text', 'Background Color:');
-            obj.BackgroundColorEdit = uieditfield(obj.Parent, 'text', ...
-                'Position', [xField, yPos, fieldWidth, 22], ...
-                'Tooltip', 'Axes background color (e.g., "white", "#FFFFFF")');
-            yPos = yPos - rowHeight - 15;
-
-            % Section: Axis Labels
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, 500, 25], ...
-                   'Text', 'Axis Labels', 'FontWeight', 'bold', 'FontSize', 12);
-            yPos = yPos - rowHeight - 5;
-
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 22], 'Text', 'X-Axis Label:');
-            obj.XLabelEdit = uieditfield(obj.Parent, 'text', ...
-                'Position', [xField, yPos, fieldWidth, 22], ...
-                'Tooltip', 'Label text for X-axis (supports LaTeX if interpreter is latex)');
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 22], 'Text', 'Y-Axis Label:');
-            obj.YLabelEdit = uieditfield(obj.Parent, 'text', ...
-                'Position', [xField, yPos, fieldWidth, 22], ...
-                'Tooltip', 'Label text for Y-axis (supports LaTeX if interpreter is latex)');
-            yPos = yPos - rowHeight;
-
-            uilabel(obj.Parent, 'Position', [xLabel, yPos, labelWidth, 22], 'Text', 'Label Interpreter:');
-            obj.LabelInterpreterDropdown = uidropdown(obj.Parent, ...
-                'Position', [xField, yPos, fieldWidth, 22], ...
-                'Items', {'latex', 'tex', 'none'}, ...
-                'Tooltip', 'Text interpreter for axis labels');
-            yPos = yPos - rowHeight - 15;
-
-            % Add informational text
-            uilabel(obj.Parent, 'Position', [xLabel, 20, 520, 60], ...
-                   'Text', ['Note: LaTeX formatting examples: $\bf{R}$ for bold R, ' ...
+            obj.addInfoText(['Note: LaTeX formatting examples: $\bf{R}$ for bold R, ' ...
                            '$\alpha$ for Greek letters. ' ...
                            'Grid color can be a color name (e.g., "gray"), ' ...
-                           'hex code (e.g., "#CCCCCC"), or RGB array (e.g., "[0.8 0.8 0.8]").'], ...
-                   'FontSize', 9, ...
-                   'WordWrap', 'on', ...
-                   'FontAngle', 'italic');
+                           'hex code (e.g., "#CCCCCC"), or RGB array (e.g., "[0.8 0.8 0.8]").']);
         end
     end
 end

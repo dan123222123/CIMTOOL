@@ -22,6 +22,7 @@ classdef PreferencesDialog < handle
         MarkersTab          % GUI.Preferences.MarkersTab
         AxesTab             % GUI.Preferences.AxesTab
         LegendTab           % GUI.Preferences.LegendTab
+        GhostContourTab     % GUI.Preferences.GhostContourTab
 
         % Buttons
         ResetButton
@@ -86,13 +87,13 @@ classdef PreferencesDialog < handle
             % Calculate position centered on parent
             if ~isempty(parentFig) && isvalid(parentFig)
                 parentPos = parentFig.Position;
-                width = 650;
-                height = 600;
+                width = 700;
+                height = 700;
                 x = parentPos(1) + (parentPos(3) - width) / 2;
                 y = parentPos(2) + (parentPos(4) - height) / 2;
                 pos = [x, y, width, height];
             else
-                pos = [100, 100, 650, 600];
+                pos = [100, 100, 700, 700];
             end
 
             obj.Figure = uifigure('Name', 'CIMTOOL Preferences', ...
@@ -133,6 +134,10 @@ classdef PreferencesDialog < handle
                 % Legend tab
                 tab4 = uitab(obj.TabGroup, 'Title', 'Legend');
                 obj.LegendTab = GUI.Preferences.LegendTab(tab4, obj.WorkingPreferences);
+
+                % Ghost Contour tab
+                tab5 = uitab(obj.TabGroup, 'Title', 'Ghost Contour');
+                obj.GhostContourTab = GUI.Preferences.GhostContourTab(tab5, obj.WorkingPreferences);
             catch ME
                 % If tabs don't exist yet, create placeholder
                 if contains(ME.message, 'GUI.Preferences')
@@ -280,6 +285,9 @@ classdef PreferencesDialog < handle
                 if ~isempty(obj.LegendTab)
                     obj.LegendTab.updateFromPreferences(obj.WorkingPreferences);
                 end
+                if ~isempty(obj.GhostContourTab)
+                    obj.GhostContourTab.updateFromPreferences(obj.WorkingPreferences);
+                end
             catch
                 % Tabs may not implement this method yet
             end
@@ -301,6 +309,9 @@ classdef PreferencesDialog < handle
                 end
                 if ~isempty(obj.LegendTab)
                     obj.LegendTab.applyToPreferences(obj.WorkingPreferences);
+                end
+                if ~isempty(obj.GhostContourTab)
+                    obj.GhostContourTab.applyToPreferences(obj.WorkingPreferences);
                 end
             catch
                 % Tabs may not implement this method yet
