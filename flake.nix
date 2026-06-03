@@ -46,7 +46,8 @@
                 mkdocs-material \
                 "mkdocstrings-matlab==2.0.0" \
                 mkdocs-awesome-nav \
-                jupyter
+                jupyter \
+                mkernel
               #"$VENV_DIR/bin/python" -m mkernel install --user \
               #  || echo "Warning: MATLAB kernel registration failed — ensure 'matlab' is on PATH."
             fi
@@ -59,7 +60,7 @@
             echo "  quarto render docs/                                  # all .qmd files"
             echo "  mkdocs serve                                         # preview site"
 
-            quarto render docs/examples/acoustic_wave_1d.qmd --execute-dir=./
+            echo " quarto render docs/examples/acoustic_wave_1d.qmd --execute-dir=./"
 
             distrobox enter matlab -- bash --norc
             export PATH=~/MATLAB/2025b/bin/:$PATH
