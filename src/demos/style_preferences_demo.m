@@ -1,3 +1,5 @@
+%% add "lines" color pallete from matlab
+
 %% style_preferences_demo.m
 % Demonstration of CIMTOOL style preferences system
 %
