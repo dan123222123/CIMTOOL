@@ -1,3 +1,6 @@
+% generic imports
+import Visual.*;
+
 L = 100*[-7 1 2; 3 -9 0; 1 2 -6];
 M = 100*[1 0 -3; -0.5 -0.5 -1; -0.5 -1.5 0];
 N = [-1 5 2; 4 0 3; -2 4 1]/72;
@@ -31,7 +34,7 @@ for i=1:length(bl)
     %
     cim.RealizationData.m = rank(cim.ResultData.Db,1e-8);
     [V,Lambda] = cim.eigs();
-    crr = max(Numerics.relres(T1,diag(Lambda),V,n.sample_mode))
+    crr = Numerics.maxrelresidual(T1,diag(Lambda),V,n.sample_mode)
     if(crr > 1e-8 && mrc < 4)
         cim.refineQuadrature();
         mrc = mrc + 1;
@@ -75,7 +78,7 @@ for i=1:length(gl)
     end
     cim.RealizationData.m = currank;
     [V,Lambda] = cim.eigs();
-    max(Numerics.relres(T1,diag(Lambda),V,n.sample_mode))
+    Numerics.maxrelresidual(T1,diag(Lambda),V,n.sample_mode)
     %
     drawnow; exportgraphics(gca, gifFile, Append=true);
 end
@@ -109,7 +112,7 @@ for i=1:length(taul)
     cim.RealizationData.m = currank; [V,Lambda] = cim.eigs();
     scatter(real(diag(Lambda)),imag(diag(Lambda)));
 
-    max(Numerics.relres(cT,diag(Lambda),V,n.sample_mode))
+    Numerics.maxrelresidual(cT,diag(Lambda),V,n.sample_mode)
     max(real(diag(Lambda)))
 
     title(sprintf("tau = %f",taul(i)));

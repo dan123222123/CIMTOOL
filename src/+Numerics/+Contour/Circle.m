@@ -1,9 +1,9 @@
 classdef Circle < Numerics.Contour.Quad
 % Circular contour specified by a center `gamma`, radius `rho`, and number of quadrature nodes `N`.
     properties (SetObservable)
-        gamma   (1,1) double % center
-        rho     (1,1) double % radius
-        N       (1,1) double % number of quadrature nodes
+        gamma   (1,1) double = 0 % center
+        rho     (1,1) double {mustBePositive} = 1 % radius
+        N       (1,1) double {mustBePositive, mustBeInteger} = 8 % number of quadrature nodes
     end
     methods(Access = protected)
         function cp = copyElement(obj)
@@ -13,9 +13,9 @@ classdef Circle < Numerics.Contour.Quad
     methods
         function obj = Circle(gamma,rho,N)
             arguments
-                gamma = 0
-                rho = 1
-                N = 8
+                gamma (1,1) double = 0
+                rho (1,1) double {mustBePositive} = 1
+                N (1,1) double {mustBePositive, mustBeInteger} = 8
             end
             import Numerics.Contour.Circle.trapezoid;
             [z,w] = trapezoid(gamma,rho,N);

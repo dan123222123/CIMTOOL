@@ -1,4 +1,5 @@
 %% setup CIM
+rng(42);
 n = 6; m = n; p = n; ewref = -1:-1:-n;
 A = diag(ewref); B = randn(n,m); C = randn(p,n);
 H = @(z) C*((z*eye(size(A)) - A) \ B);
@@ -31,11 +32,12 @@ for j = 1:length(ndir)
         CIM.SampleData.Contour.N = N(i);
         try CIM.compute(); catch e; warning("failed for ndir=%d, N=%d",ndir(j),N(i)); continue; end
         cew = CIM.ResultData.ew;
-        nmdl(end+1) = Numerics.greedy_matching_distance(eew,cew);
+        nmdl(end+1) = Numerics.matching_distance(eew,cew);
         cNl(end+1) = N(i);
     end
+    assert(min(nmdl) < 1e-6, "quadrature MPLoewner did not converge to exact for ndir=%d (best dist %.2e)", ndir(j), min(nmdl));
     semilogy(cNl,nmdl,"DisplayName",sprintf("TID=%d",ndir(j))); hold on;
-    ylabel("Greedy Matching Distance to Exact"); xlabel("N");
+    ylabel("Optimal Matching Distance to Exact"); xlabel("N");
 end
 title("Exact vs Quadrature MPLoewner Convergence");
 legend("Location","northoutside","Orientation","horizontal");

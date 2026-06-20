@@ -30,6 +30,9 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
         end
 
         function updateContourComponent(comp)
+            if ~isempty(comp.ContourComponent) && isvalid(comp.ContourComponent)
+                delete(comp.ContourComponent);
+            end
             switch(class(comp.CIMData.SampleData.Contour))
                 case 'Visual.Contour.Circle'
                     comp.CircleButton.Value = true;
@@ -49,6 +52,11 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
         function ContourTypeButtonGroupSelectionChanged(comp,~)
             selectedButton = comp.ContourTypeButtonGroup.SelectedObject;
             oc = comp.CIMData.SampleData.Contour;
+            % selecting the type the contour already has (startup sync,
+            % re-click of the active button) must not rebuild the contour
+            if strcmp(class(oc), "Visual.Contour." + selectedButton.Text)
+                return;
+            end
             center = oc.gamma; N = oc.N;
             switch(class(oc))
                 case 'Visual.Contour.Circle'
@@ -58,7 +66,6 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
                 case 'Visual.Contour.CircularSegment'
                     radius = comp.CIMData.SampleData.Contour.rho;
             end
-            delete(comp.CIMData.SampleData.Contour);
             switch(selectedButton.Text)
                 case "Circle"
                     comp.CIMData.SampleData.Contour = Visual.Contour.Circle(center,radius,N(1));
@@ -67,6 +74,7 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
                 case "CircularSegment"
                     comp.CIMData.SampleData.Contour = Visual.Contour.CircularSegment(center,radius,pi/2,N,"clencurt");
             end
+            delete(oc);
             comp.updateContourComponent();
         end
 

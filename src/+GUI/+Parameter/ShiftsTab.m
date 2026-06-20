@@ -53,9 +53,10 @@ classdef ShiftsTab < matlab.ui.componentcontainer.ComponentContainer
             theta = id.theta;
             sigma = id.sigma;
             mil = max(length(id.theta),length(id.sigma));
-            thetapadsize = mil - length(theta);
-            sigmapadsize = mil - length(sigma);
-            comp.ShiftsTable.Data = table(padarray(theta,thetapadsize,NaN,'post'),padarray(sigma,sigmapadsize,NaN,'post'),'VariableNames',["theta","sigma"]);
+            % pad both columns to length mil with trailing NaN so they line up
+            theta = Numerics.padnan(theta, mil);
+            sigma = Numerics.padnan(sigma, mil);
+            comp.ShiftsTable.Data = table(theta,sigma,'VariableNames',["theta","sigma"]);
         end
 
         function addListeners(comp)

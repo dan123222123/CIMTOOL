@@ -22,7 +22,7 @@ cim.compute();
 currank = rank(cim.ResultData.Db,1e-9);
 cim.RealizationData.m = currank;
 [V,Lambda] = cim.eigs();
-max(Numerics.relres(H0,diag(Lambda),V,n.sample_mode))
+Numerics.maxrelresidual(H0,diag(Lambda),V,n.sample_mode)
 
 %% third experiment -- vary the time-dependant parameter with a fixed contour to try to find a rightmost eigenvalue
 figure(2); clf; hold on; taul = linspace(0,1,50);
@@ -54,7 +54,7 @@ for i=1:length(taul)
     cim.RealizationData.m = currank; [V,Lambda] = cim.eigs();
     scatter(real(diag(Lambda)),imag(diag(Lambda)));
 
-    max(Numerics.relres(cT,diag(Lambda),V,n.sample_mode))
+    Numerics.maxrelresidual(cT,diag(Lambda),V,n.sample_mode)
     % max(real(diag(Lambda)))
 
     title(sprintf("tau = %f",taul(i)));

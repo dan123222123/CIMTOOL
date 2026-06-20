@@ -24,16 +24,24 @@ M = Numerics.sploewner.build_exact_moments(sigma,A,B1,C1,2*K);
 % check eigenvalues of (regular) pencil (Ds,Db) vs eigenvalues of A
 norm(eig(Ds,Db)-diag(A))
 %% MPLoewner
-theta = 1i*(2:(n+1)); sigma = -1i*(2:(n+1));
+% Multi-point Loewner needs interpolation points that SURROUND the spectrum:
+% interleaving 2n points on a circle enclosing eig(A) keeps the Loewner pencil
+% well-conditioned. Clustering them on a split imaginary axis far from the
+% poles (a tempting naive choice) makes the minimal pencil nearly singular and
+% wrecks the recovered eigenvalues.
+c0 = mean(diag(A)); rad = (max(diag(A)) - min(diag(A)))/2 + 1;
+pts = c0 + rad*exp(1i*(2*pi*(0:(2*n-1))/(2*n) + pi/(2*n)));
+theta = pts(1:2:end); sigma = pts(2:2:end);
 
-% with defaults parameters, both methods produce the same data for the case
-% of SISO systems
-[~,BB,~,CC] = Numerics.mploewner.build_exact_data(H1,theta,sigma);
-% [~,BB,~,CC] = Numerics.mploewner.build_exact_data_siso(H1,theta,sigma);
+% for a SISO system the tangential directions are scalars, so the dedicated
+% SISO builder reproduces the same data deterministically (build_exact_data
+% draws random directions, which only inject conditioning noise here)
+[~,BB,~,CC] = Numerics.mploewner.build_exact_data_siso(H1,theta,sigma);
+% [~,BB,~,CC] = Numerics.mploewner.build_exact_data(H1,theta,sigma);
 
 [Db,Ds] = Numerics.mploewner.build_loewner(BB,CC,theta,sigma);
-% without realification, Loewner matrices are generally complex
-% (and recovered eigenvalues are not in order)
+% complex data => generally complex Loewner matrices (eigenvalues unordered),
+% but with well-placed points the recovered spectrum matches eig(A)
 norm(sort(eig(Ds,Db),"descend")-diag(A))
 
 %% Quadrature Data, MIMO Case

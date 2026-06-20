@@ -124,10 +124,10 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
                 rr = repelem(NaN,m)';
             end
             
-            % pad out all arrays to match the length of the longest list
-            refew = padarray(refew,m-length(refew),NaN,'post');
-            ew = padarray(ew,m-length(ew),NaN,'post');
-            rr = padarray(rr,m-length(rr),NaN,'post');
+            % pad out all arrays to length m with trailing NaN so the columns line up
+            refew = Numerics.padnan(refew, m);
+            ew    = Numerics.padnan(ew, m);
+            rr    = Numerics.padnan(rr, m);
 
             % make the final table
             comp.ResultsTable.Data = [refew(1:m),ew(1:m),rr(1:m)];

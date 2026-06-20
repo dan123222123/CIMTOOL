@@ -54,10 +54,10 @@ classdef SampleData < matlab.mixin.Copyable
 
         function obj = SampleData(OperatorData,Contour,ell,r)
             arguments
-                OperatorData = Numerics.OperatorData()
-                Contour = Numerics.Contour.Circle()
-                ell = OperatorData.n
-                r = OperatorData.n
+                OperatorData (1,1) {mustBeA(OperatorData,'Numerics.OperatorData')} = Numerics.OperatorData()
+                Contour (1,1) {mustBeA(Contour,'Numerics.Contour.Quad')} = Numerics.Contour.Circle()
+                ell (1,1) double {mustBeNonnegative, mustBeInteger} = OperatorData.n
+                r (1,1) double {mustBeNonnegative, mustBeInteger} = OperatorData.n
             end
             obj.OperatorData = OperatorData;
             obj.Contour = Contour;
@@ -100,6 +100,10 @@ classdef SampleData < matlab.mixin.Copyable
         end
 
         function set.ell(obj,value)
+            if ~(isscalar(value) && isreal(value) && value >= 0 && value == floor(value))
+                error("Numerics:SampleData:badEll", ...
+                    "ell (number of left directions) must be a nonnegative integer.");
+            end
             Lsize = size(obj.Lf,2);
             if value ~= Lsize % don't mess with Lf if it was set first and ell is being updated to match it
                 if value > obj.ell
@@ -114,6 +118,10 @@ classdef SampleData < matlab.mixin.Copyable
         end
 
         function set.r(obj,value)
+            if ~(isscalar(value) && isreal(value) && value >= 0 && value == floor(value))
+                error("Numerics:SampleData:badR", ...
+                    "r (number of right directions) must be a nonnegative integer.");
+            end
             Rsize = size(obj.Rf,2);
             if value ~= Rsize % don't mess with Rf if it was set first and r is being updated to match it
                 if value > obj.r

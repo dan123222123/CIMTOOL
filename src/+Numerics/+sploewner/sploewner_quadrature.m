@@ -27,7 +27,10 @@ assert(N==length(z)); assert(N==length(w));
 assert(m > 0, "# Eig Search should be > 0");
 assert(K > 0, "# of moments should be > 0");
 
-[Ml,Mr,Mlr] = build_quadrature_moments(sigma,z,w,Ql,Qr,Qlr,2*K);
+% build_quadrature_moments already produces Mlr up to order 2*K internally, so
+% passing K (not 2*K) yields exactly the moments build_sploewner consumes
+% (Mlr_1..2K, Ml_1..K, Mr_1..K) -- 2*K computed twice the needed moments.
+[Ml,Mr,Mlr] = build_quadrature_moments(sigma,z,w,Ql,Qr,Qlr,K);
 [Db,Ds,B,C] = build_sploewner(sigma,Ml,Mr,Mlr,K);
 [Lambda,V,W,X,Sigma,Y] = realize(m,Db,Ds,B,C,options.AbsTol);
 

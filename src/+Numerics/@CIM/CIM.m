@@ -28,9 +28,9 @@ classdef CIM < matlab.mixin.Copyable
     methods
         function obj = CIM(OperatorData,Contour,RealizationData)
             arguments
-                OperatorData = Numerics.OperatorData()
-                Contour = Numerics.Contour.Circle()
-                RealizationData = Numerics.RealizationData()
+                OperatorData (1,1) {mustBeA(OperatorData,'Numerics.OperatorData')} = Numerics.OperatorData()
+                Contour (1,1) {mustBeA(Contour,'Numerics.Contour.Quad')} = Numerics.Contour.Circle()
+                RealizationData (1,1) {mustBeA(RealizationData,'Numerics.RealizationData')} = Numerics.RealizationData()
             end
             obj.SampleData = Numerics.SampleData(OperatorData,Contour);
             obj.RealizationData = RealizationData;
@@ -122,7 +122,7 @@ classdef CIM < matlab.mixin.Copyable
         interlevedshifts(obj);
         computeRealization(obj);
         refineQuadrature(obj);
-        [nmd,gd] = greedyMatchingDistance(obj);
+        [nmd,pairs] = matchingDistance(obj);
     end
     methods (Access = protected)
         function updateContourListeners(obj,~,~)
@@ -154,6 +154,19 @@ classdef CIM < matlab.mixin.Copyable
             switch obj.RealizationData.ComputationalMode
                 case Numerics.ComputationalMode.Hankel
                     obj.RealizationData.defaultInterpolationData;
+                case Numerics.ComputationalMode.SPLoewner
+                    % The single shift sigma must stay OUTSIDE the contour --
+                    % a sigma inside Omega adds a spurious pole 1/(sigma-z)^(k+1)
+                    % to the moment integrands and silently corrupts the result.
+                    % Keep a still-valid shift in place (so dragging the contour
+                    % doesn't churn results), and only relocate when sigma is
+                    % missing/non-finite or has fallen inside the contour.
+                    sigma = obj.RealizationData.InterpolationData.sigma;
+                    contour = obj.SampleData.Contour;
+                    if isempty(sigma) || ~all(isfinite(sigma)) || contour.inside(sigma(1))
+                        obj.RealizationData.InterpolationData = ...
+                            Numerics.InterpolationData([], contour.FindRandomShift());
+                    end
                 case Numerics.ComputationalMode.MPLoewner
                     obj.contour_interlevedshifts();
             end

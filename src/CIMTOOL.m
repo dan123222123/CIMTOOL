@@ -145,7 +145,13 @@ classdef CIMTOOL < matlab.apps.AppBase
                     zc = c.trapezoid(c.gamma,alpha,beta,256);
                     zc = [c.gamma + alpha, zc, c.gamma + alpha];
                 case 'Visual.Contour.CircularSegment'
-                    errordlg("contour dragging not yet implemented for circular segments");
+                    % drag resizes the radius (keep the angular span and rule);
+                    % preview the segment boundary instead of erroring per move
+                    rho = abs(c.gamma - cp);
+                    zc = c.quad(c.gamma,rho,c.theta,[128;128],c.qr);
+                    zc = [zc(:).', zc(1)];   % close the outline
+                otherwise
+                    return;   % unknown contour type: nothing to preview
             end
             hold(app.PlotPanel.MainPlotAxes,"on")
             plot(app.PlotPanel.MainPlotAxes,real(zc),imag(zc),"red",'LineWidth',5,'Tag','ghost_contour','DisplayName','Ghost Contour');
@@ -170,6 +176,10 @@ classdef CIMTOOL < matlab.apps.AppBase
                     c.rho = sqrt((real(c.gamma) - real(cp))^2 + (imag(c.gamma) - imag(cp))^2);
                 case 'Visual.Contour.Ellipse'
                     c.alpha = abs(real(c.gamma)-real(cp)); c.beta = abs(imag(c.gamma)-imag(cp));
+                case 'Visual.Contour.CircularSegment'
+                    % commit the dragged radius (matches the ghost preview;
+                    % keeps the angular span and rule). Rotate/retheta via the picker.
+                    c.rho = abs(c.gamma - cp);
             end
             shiftReleaseKey(app,handle,event);
         end

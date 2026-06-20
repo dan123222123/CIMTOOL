@@ -1,11 +1,11 @@
 classdef CircularSegment < Numerics.Contour.Quad
 % Circular contour specified by a center `gamma`, radius `rho`, and number of quadrature nodes `N`.
     properties (SetObservable)
-        gamma   (1,1) double % center
-        rho     (1,1) double % radius
-        theta   (1,2) double % central subtending angle [start;end]
-        N       (1,2) double % number of nodes on [arc;line segment]
-        qr = "clencurt" % default quadrature rule on [-1,1]
+        gamma   (1,1) double = 0 % center
+        rho     (1,1) double {mustBePositive} = 1 % radius
+        theta   (1,2) double {mustBeReal} = [-pi/2, pi/2] % central subtending angle [start,end]
+        N       (1,2) double {mustBePositive, mustBeInteger} = [8, 8] % number of nodes on [arc;line segment]
+        qr      (1,1) string {mustBeMember(qr,["clencurt","gauss"])} = "clencurt" % quadrature rule on [-1,1]
     end
     methods(Access = protected)
         function cp = copyElement(obj)
@@ -15,17 +15,34 @@ classdef CircularSegment < Numerics.Contour.Quad
     methods
         function obj = CircularSegment(gamma,rho,theta,N,qr)
             arguments
-                gamma = 0
-                rho = 1
-                theta = [-pi/2,pi/2]
-                N = [8;8]
-                qr = "clencurt"
+                gamma (1,1) double = 0
+                rho (1,1) double {mustBePositive} = 1
+                theta double {mustBeReal} = [-pi/2,pi/2]
+                N double {mustBePositive, mustBeInteger} = [8;8]
+                qr (1,1) string {mustBeMember(qr,["clencurt","gauss"])} = "clencurt"
             end
             if isscalar(N)
                 N = [N;N];
             end
             if isscalar(theta)
                 theta = [-theta,theta];
+            end
+            % validate the (possibly expanded) angle range and node-count shapes
+            if numel(theta) ~= 2
+                error("Numerics:Contour:CircularSegment:badTheta", ...
+                    "theta must be a scalar half-angle or a 2-element [start,end] range; got %d elements.", numel(theta));
+            end
+            if ~(theta(2) > theta(1))
+                error("Numerics:Contour:CircularSegment:badTheta", ...
+                    "theta(2) (=%g) must be strictly greater than theta(1) (=%g).", theta(2), theta(1));
+            end
+            if theta(2) - theta(1) > 2*pi + 1e-9
+                error("Numerics:Contour:CircularSegment:badTheta", ...
+                    "theta span (=%g) must not exceed 2*pi.", theta(2) - theta(1));
+            end
+            if numel(N) ~= 2
+                error("Numerics:Contour:CircularSegment:badN", ...
+                    "N must be a scalar or a 2-element [arc;chord] node count; got %d elements.", numel(N));
             end
             [z,w] = Numerics.Contour.CircularSegment.quad(gamma,rho,theta,N,qr);
             obj@Numerics.Contour.Quad(z,w);
@@ -41,22 +58,45 @@ classdef CircularSegment < Numerics.Contour.Quad
         end
 
         function tf = inside(obj,pt)
-            cp = pt-obj.gamma; cang = angle(cp);
-            rang = ((cang>obj.theta(1) & cang<(obj.theta(2)))); % right angle
-            d = obj.rho*cos(obj.theta(2)-obj.theta(1));
-            rrho = bitand((abs(cp) > d),(abs(cp) < obj.rho));
-            tf =  rang & rrho;
+            % segment = open disk intersected with the open half-plane on
+            % the arc side of the chord (valid for minor and major segments,
+            % no angle() branch-cut issues)
+            cp = pt-obj.gamma;
+            mid = (obj.theta(1)+obj.theta(2))/2;
+            d = obj.rho*cos((obj.theta(2)-obj.theta(1))/2); % center-to-chord distance (signed)
+            tf = (abs(cp) < obj.rho) & (real(cp.*exp(-1i*mid)) > d);
         end
-        % TODO
-        function refineQuadrature(obj,rf)
-        % Scales the number of quadrature points of the contour by a factor `rf` and explicitly updates the contour.
+        function reused = refineQuadrature(obj,rf)
+        % Refine the quadrature, reusing previous samples where the nodes nest.
+        %
+        % The Clenshaw-Curtis nodes are nested: the N-node rule cos(pi*k/(N-1))
+        % is exactly the even-indexed subset of the 2(N-1)+1-node rule, so a
+        % nested doubling takes N -> 2N-1 on each boundary piece (arc and chord)
+        % and every old node survives -- at the ODD local positions of the
+        % refined piece. We return a logical mask over the refined node vector
+        % obj.z marking those reused nodes (in their original order) so that
+        % SampleData can slot in the cached operator evaluations and sample only
+        % the genuinely new nodes. Gauss nodes do not nest: fall back to a plain
+        % (non-reusing) refinement and return [] to mean "resample everything".
             arguments
                 obj
                 rf = 2
             end
-            %error("refining of quadrature not yet implemented for circular segments");
-            warning("refining circular segments does not reuse previous quadrature information");
-            obj.N = rf*obj.N; obj.update();
+            if rf == 2 && obj.qr == "clencurt"
+                Nold = obj.N;                       % [N_arc, N_chord]
+                La = 2*Nold(1) - 1; Lc = 2*Nold(2) - 1;
+                reused = false(1, La + Lc);
+                reused(1:2:La) = true;              % arc:   old nodes at odd local positions
+                reused(La + (1:2:Lc)) = true;       % chord: old nodes at odd local positions
+                obj.N = [La, Lc];
+                obj.update();
+            else
+                warning("Numerics:Contour:CircularSegment:noNest", ...
+                    "Refining a '%s' circular segment does not reuse previous quadrature data.", obj.qr);
+                obj.N = rf*obj.N;
+                obj.update();
+                reused = [];                        % signal SampleData to resample everything
+            end
         end
         function [theta,sigma] = interlevedshifts(obj,nsw,d,mode)
             arguments
@@ -66,18 +106,30 @@ classdef CircularSegment < Numerics.Contour.Quad
                 mode = 'scale'
             end
             import Numerics.Contour.CircularSegment;
-            % nodes on a circle around the current quad nodes
             switch mode
                 case 'scale'
                     rs = obj.rho*d;
                 case 'shift'
                     rs = obj.rho+d;
             end
+            % Interpolation points sit on the segment boundary pushed OUTWARD so
+            % they stay outside the contour for any orientation:
+            %   * arc   -> same angles at the enlarged radius rs (outside the disk)
+            %   * chord -> the original chord offset by (rs-rho) along its outward
+            %              normal -exp(1i*mid), mid = (theta1+theta2)/2.
+            % Offsetting along the geometric normal keeps the chord points outside
+            % under rotation, and they flip with the segment (flipping adds pi to
+            % mid, so the normal -- and the chord points -- flip with it).
+            delta = rs - obj.rho;
+            mid = (obj.theta(1) + obj.theta(2))/2;
+            nrm = -exp(1i*mid);
+            zout = CircularSegment.quad(obj.gamma,rs,obj.theta,nsw,obj.qr);
+            zin  = CircularSegment.quad(obj.gamma,obj.rho,obj.theta,nsw,obj.qr);
+            half = length(zout)/2;
+            z = [zout(1:half), zin(half+1:end) + delta*nrm];
+
             theta = double.empty();
             sigma = double.empty();
-            z = Numerics.Contour.CircularSegment.quad(obj.gamma,rs,obj.theta,nsw,obj.qr);
-            z_chord = z(length(z)/2+1:length(z)); z_chord = z_chord + sin(obj.theta(1))*(rs-obj.rho);
-            z = [z(1:length(z)/2) z_chord];
             for i=1:length(z)
                 if ~ismissing(z(i))
                     if mod(i,2) == 0
