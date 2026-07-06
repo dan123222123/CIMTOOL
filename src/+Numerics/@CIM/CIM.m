@@ -123,6 +123,12 @@ classdef CIM < matlab.mixin.Copyable
         computeRealization(obj);
         refineQuadrature(obj);
         [nmd,pairs] = matchingDistance(obj);
+        s = toStruct(obj);
+        saveState(obj,filepath);
+    end
+    methods (Static)
+        obj = fromStruct(s);
+        obj = loadState(filepath);
     end
     methods (Access = protected)
         function updateContourListeners(obj,~,~)

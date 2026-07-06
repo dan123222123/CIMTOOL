@@ -44,6 +44,17 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
             % auto_update_* are excluded and restored explicitly last.
             Visual.copyMatchingProperties(n, v, ["SampleData","RealizationData","ResultData", ...
                                            "auto_update_shifts","auto_update_K"]);
+
+            % The CIM constructor ran update_shifts() while auto-update was still
+            % enabled, which may have overwritten the realization shifts/size and
+            % flipped its loaded flag. Re-inject that state now (auto-update is
+            % off), setting the loaded flag last so it survives the size/shift
+            % setters -- otherwise a computed session reloads as "dirty".
+            v.RealizationData.RealizationSize   = n.RealizationData.RealizationSize;
+            v.RealizationData.InterpolationData = n.RealizationData.InterpolationData;
+            v.RealizationData.ranktol           = n.RealizationData.ranktol;
+            v.RealizationData.loaded            = n.RealizationData.loaded;
+
             v.auto_update_shifts = n.auto_update_shifts;   % restore last
             v.auto_update_K      = n.auto_update_K;
         end
@@ -88,6 +99,15 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
 
             Visual.copyMatchingProperties(obj, n, ["SampleData","RealizationData","ResultData", ...
                                              "auto_update_shifts","auto_update_K"]);
+
+            % Re-inject realization state clobbered by the constructor's
+            % update_shifts() (see fromNumerics for the full rationale); loaded
+            % flag last so a computed session round-trips as clean, not dirty.
+            n.RealizationData.RealizationSize   = obj.RealizationData.RealizationSize;
+            n.RealizationData.InterpolationData = obj.RealizationData.InterpolationData;
+            n.RealizationData.ranktol           = obj.RealizationData.ranktol;
+            n.RealizationData.loaded            = obj.RealizationData.loaded;
+
             n.auto_update_shifts = obj.auto_update_shifts;
             n.auto_update_K      = obj.auto_update_K;
         end

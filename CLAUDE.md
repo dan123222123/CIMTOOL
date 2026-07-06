@@ -240,6 +240,39 @@ test_modal_truncation    % Test modal truncation workflow
   - `deriv=2`: Second derivative, etc.
 - **`ResultData.getTransferFunction(deriv)`**: Extract transfer function handle from CIM results
 
+## Saving and Loading Sessions
+
+CIMTOOL can serialize a full CIM session to a `.mat` file so a configured example
+can be shared and reopened exactly, without re-running a setup script.
+
+### In the GUI
+
+- **File → Save State...** (Ctrl+S): writes the current session to a `.mat` file.
+- **File → Load State...** (Ctrl+O): loads a `.mat` session and relaunches the GUI
+  in a fresh window (there is no in-place panel rebind yet — panels bind listeners
+  to the current CIM's sub-object instances, so load tears down and relaunches).
+
+### Programmatically
+
+```matlab
+cim.saveState("session.mat");            % Numerics.CIM (or Visual.CIM) -> file
+cim2 = Numerics.CIM.loadState("session.mat");
+```
+
+### Design
+
+- `Numerics.CIM.toStruct` / `fromStruct` (`@CIM/`) convert the object graph to/from a
+  plain versioned struct; `saveState`/`loadState` wrap file I/O (`-v7.3` .mat).
+- **Greedy load**: `fromStruct` restores every field that is present and valid and
+  falls back to constructor defaults (with a warning) for anything missing or broken,
+  so partial/older files still load into a usable session.
+- **Operators**: NLEVP problems persist as `name`+`arglist` and regenerate via `nlevp`
+  on load; raw function-handle operators are stored natively in the `.mat`.
+- **Contours** persist by generating parameters (nodes/weights regenerate).
+- Cached quadrature samples and computed results are saved too, so a reloaded session
+  is clean (`DataDirtiness == 0`) and needs no recompute.
+- Tests: `tests/test_save_load_state.m`.
+
 ## Important Notes
 
 - When modifying `Numerics.*` classes, consider whether `Visual.*` wrappers need updates
