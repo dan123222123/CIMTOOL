@@ -21,8 +21,12 @@ function [Db,Ds,B,C] = build_sploewner(sigma,Ml,Mr,Mlr,K)
         Db = D(1:K*ell,1:K*r);
         Ds = D(1:K*ell,r+1:(K+1)*r);
     else
-        Db = D(1:K*ell,r+1:(K+1)*r);
-        Ds = sigma*D(1:K*ell,r+1:(K+1)*r) + D(1:K*ell,1:K*r);
+        % negated so that realize() reconstructs +H_Omega, matching the
+        % Hankel (sigma = Inf) and MPLoewner sign conventions; the pencil
+        % eigenvalues are invariant under the global sign change
+        Db = -D(1:K*ell,r+1:(K+1)*r);
+        Ds = -(sigma*D(1:K*ell,r+1:(K+1)*r) + D(1:K*ell,1:K*r));
+        B = -B; C = -C;
     end
 
 end

@@ -16,6 +16,14 @@ import Numerics.mploewner.*;
 % simple sanity checks
 assert(m > 0, "# Eig Search should be > 0");
 assert(~(isempty(theta) || isempty(sigma)), "# of left/right shifts should be > 0");
+% the Loewner pencil is numel(theta)-by-numel(sigma); realize() SVD-truncates it
+% to m, so at least m interpolation points are needed on each side to resolve m
+% poles (this is necessary, not sufficient -- realize() still checks the rank).
+if min(numel(theta),numel(sigma)) < m
+    error("Numerics:mploewner:tooFewPoints", ...
+        "Need at least m=%d interpolation points on each side to recover %d poles; got numel(theta)=%d, numel(sigma)=%d.", ...
+        m, m, numel(theta), numel(sigma));
+end
 
 [B,BB,C,CC] = build_exact_data(H,theta,sigma,L,R,options.PadStrategy,options.Verbose);
 [Db,Ds] = build_loewner(BB,CC,theta,sigma);

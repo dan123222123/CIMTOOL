@@ -43,9 +43,9 @@ classdef ModalTruncation < matlab.mixin.Copyable
             %   Contour         - Any Numerics.Contour.* object (default: Circle)
             %   RealizationData - Numerics.RealizationData (default: new instance)
             arguments
-                H                   % Transfer function handle
-                Contour = Numerics.Contour.Circle()
-                RealizationData = Numerics.RealizationData()
+                H (1,1) {mustBeA(H,'function_handle')}   % Transfer function handle (required)
+                Contour (1,1) {mustBeA(Contour,'Numerics.Contour.Quad')} = Numerics.Contour.Circle()
+                RealizationData (1,1) {mustBeA(RealizationData,'Numerics.RealizationData')} = Numerics.RealizationData()
             end
 
             obj.FullTransferFunction = H;

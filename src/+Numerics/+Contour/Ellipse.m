@@ -1,10 +1,10 @@
 classdef Ellipse < Numerics.Contour.Quad
 % Ellipsoidal contour specified by a center `gamma`, horizontal and vertical semi-radii `alpha` and `beta`, and number of quadrature nodes `N`.
     properties (SetObservable)
-        gamma   (1,1) double % center
-        alpha   (1,1) double % horizontal semi-radius
-        beta    (1,1) double % vertical semi-radius
-        N       (1,1) double % number of quadrature nodes
+        gamma   (1,1) double = 0 % center
+        alpha   (1,1) double {mustBePositive} = 1 % horizontal semi-radius
+        beta    (1,1) double {mustBePositive} = 1 % vertical semi-radius
+        N       (1,1) double {mustBePositive, mustBeInteger} = 8 % number of quadrature nodes
     end
     methods(Access = protected)
         function cp = copyElement(obj)
@@ -14,10 +14,10 @@ classdef Ellipse < Numerics.Contour.Quad
     methods
         function obj = Ellipse(gamma,alpha,beta,N)
             arguments
-                gamma = 0
-                alpha = 1
-                beta = 1
-                N = 8
+                gamma (1,1) double = 0
+                alpha (1,1) double {mustBePositive} = 1
+                beta (1,1) double {mustBePositive} = 1
+                N (1,1) double {mustBePositive, mustBeInteger} = 8
             end
             import Numerics.Contour.Ellipse.trapezoid
             [z,w] = trapezoid(gamma,alpha,beta,N);

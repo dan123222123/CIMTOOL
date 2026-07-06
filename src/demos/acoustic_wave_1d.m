@@ -21,9 +21,9 @@ cim.RealizationData.m = 42;
 cim.setComputationalMode(Numerics.ComputationalMode.Hankel)
 cim.RealizationData.K = 4;
 cim.compute();
-max(Numerics.relres(n.T,cim.ResultData.ew,cim.ResultData.rev,Numerics.SampleMode.Inverse))
+Numerics.maxrelresidual(n.T,cim.ResultData.ew,cim.ResultData.rev,Numerics.SampleMode.Inverse)
 %%
 cim.setComputationalMode(Numerics.ComputationalMode.MPLoewner)
 cim.RealizationData.K = 4*p;
 cim.compute();
-max(Numerics.relres(n.T,cim.ResultData.ew,cim.ResultData.rev,Numerics.SampleMode.Inverse))
+Numerics.maxrelresidual(n.T,cim.ResultData.ew,cim.ResultData.rev,Numerics.SampleMode.Inverse)

@@ -46,6 +46,16 @@ classdef OperatorData < matlab.mixin.Copyable
                 name = []
                 arglist = []
             end
+            % T is either a transfer-function / operator handle, or empty when
+            % loading an NLEVP problem by name
+            if ~isempty(T) && ~isa(T,'function_handle')
+                error("Numerics:OperatorData:badT", ...
+                    "T must be a function handle (or empty to load an NLEVP problem by name); got %s.", class(T));
+            end
+            if ~isempty(name) && ~(ischar(name) || isstring(name))
+                error("Numerics:OperatorData:badName", ...
+                    "name must be a string or char NLEVP problem name; got %s.", class(name));
+            end
             obj.T = T;
             if ~isempty(T)
                 obj.loaded = true;

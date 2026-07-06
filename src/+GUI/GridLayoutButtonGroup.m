@@ -14,6 +14,7 @@ classdef GridLayoutButtonGroup < matlab.ui.componentcontainer.ComponentContainer
         TitleLabel matlab.ui.control.Label
         Buttons (:,1) GUI.GridLayoutToggleButton = GUI.GridLayoutToggleButton.empty(0,1)
         ButtonListeners = []
+        SelectedButton = [] % tracks current selection so re-sets don't re-fire SelectionChangedFcn
     end
 
     properties (Dependent)
@@ -93,6 +94,15 @@ classdef GridLayoutButtonGroup < matlab.ui.componentcontainer.ComponentContainer
         function onButtonValueChanged(obj, changedButton)
             % Enforce mutual exclusivity and trigger callback
             if changedButton.Value
+                % PostSet fires on programmatic sets too (unlike native
+                % uibuttongroup), so only treat this as a selection change
+                % when the selected button actually changes
+                if isequal(changedButton, obj.SelectedButton)
+                    return;
+                end
+                previousButton = obj.SelectedButton;
+                obj.SelectedButton = changedButton;
+
                 % User selected this button - deselect all others
                 for i = 1:length(obj.Buttons)
                     if obj.Buttons(i) ~= changedButton
@@ -103,7 +113,7 @@ classdef GridLayoutButtonGroup < matlab.ui.componentcontainer.ComponentContainer
                 % Trigger selection changed callback
                 if ~isempty(obj.SelectionChangedFcn)
                     % Create event data structure similar to uibuttongroup
-                    eventData = struct('PreviousValue', [], 'Value', changedButton);
+                    eventData = struct('PreviousValue', previousButton, 'Value', changedButton);
                     obj.SelectionChangedFcn(obj, eventData);
                 end
             else
@@ -138,7 +148,6 @@ classdef GridLayoutButtonGroup < matlab.ui.componentcontainer.ComponentContainer
             obj.TitleLabel = uilabel(obj.GridLayout);
             obj.TitleLabel.Text = obj.Title;
             obj.TitleLabel.HorizontalAlignment = 'center';
-            obj.TitleLabel.FontWeight = 'bold';
             obj.TitleLabel.Layout.Row = 1;
             obj.TitleLabel.Layout.Column = 1;
         end

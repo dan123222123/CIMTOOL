@@ -41,13 +41,16 @@ classdef ModalTruncation < Numerics.ModalTruncation & Visual.VisualReactive
                 RealizationData = Visual.RealizationData()
                 ax = []
             end
+            % the Numerics superclass constructor requires H, so it must be
+            % called explicitly (the implicit zero-argument call errors)
+            obj@Numerics.ModalTruncation(H, Contour, RealizationData);
             import Visual.*
 
             % Create OperatorData from function handle
             opData = Visual.OperatorData(H);
+            opData.sample_mode = "Direct";
 
-            % Create CIM for region approximation with Visual components
-            obj.FullTransferFunction = H;
+            % Replace the superclass RegionCIM with Visual components
             obj.RegionCIM = Visual.CIM(opData, Contour, RealizationData);
 
             obj.ax = ax;

@@ -26,39 +26,39 @@ function [B,BB,C,CC] = build_quadrature_data(z,w,Ql,Qr,L,R,theta,sigma,PadStrate
     assert(n1==n2); assert(N1==N2); n=n1; N=N1;
     assert(N==length(z) && N==length(w));
 
-    % choose an appropriate padding strategy, if necessary
+    % Resolve one tangential direction (and its quadrature samples) per
+    % interpolation point. The number of left (theta) and right (sigma) points
+    % need NOT match: BB/CC are rectangular (elltheta-by-rsigma), which realize()
+    % handles by SVD-truncating to m -- recovery only requires
+    % min(elltheta,rsigma) >= m. When fewer directions than points are supplied,
+    % cycle through them; extra directions are unused.
     if Lsize < elltheta || Rsize < rsigma
-        RR = zeros(n,elltheta); LL = zeros(n,rsigma);
-        if strcmp(PadStrategy,"cyclical")
-            Qli = @(i) Ql(mod(i-1,Lsize)+1,:,:); Qri = @(i) Qr(:,mod(i-1,Rsize)+1,:);
-            Li = @(i) L(:,mod(i-1,Lsize)+1); Ri = @(i) R(:,mod(i-1,Rsize)+1);
-        else
+        if ~strcmp(PadStrategy,"cyclical")
             error('Fewer tangential directions than required and an invalid pad strategy "%s" was specified.', PadStrategy)
         end
+        Qli = @(i) Ql(mod(i-1,Lsize)+1,:,:); Qri = @(i) Qr(:,mod(i-1,Rsize)+1,:);
+        Li  = @(i) L(:,mod(i-1,Lsize)+1);    Ri  = @(i) R(:,mod(i-1,Rsize)+1);
     else
-        RR = R; LL = L;
         Qli = @(i) Ql(i,:,:); Qri = @(i) Qr(:,i,:);
-        Li = @(i) L(:,i); Ri = @(i) R(:,i);
-        if Lsize > elltheta || Rsize > rsigma && Verbose
+        Li  = @(i) L(:,i);    Ri  = @(i) R(:,i);
+        if (Lsize > elltheta || Rsize > rsigma) && Verbose
             warning('More tangential directions than interpolation points -- is this intended?.')
         end
     end
 
-    % preallocate intermediate sample and (possibly padded) tangential direction arrays
-    B = zeros(elltheta,n); C = zeros(n,rsigma);
-
-    % faster to multiply by probing directions at the end rather than for each i
-    for i=1:max(elltheta,rsigma)
-        if i <= elltheta
-            % B(i,:) = sum((w ./ (theta(i) - z)) .* reshape(Qli(i),n1,N),2);
-            B(i,:) = sum((w ./ (z - theta(i))) .* reshape(Qli(i),n1,N),2);
-            RR(:,i) = Ri(i);
-        end
-        if i <= rsigma
-            % C(:,i) = sum((w ./ (sigma(i) - z)) .* reshape(Qri(i),n2,N),2);
-            C(:,i) = sum((w ./ (z - sigma(i))) .* reshape(Qri(i),n2,N),2);
-            LL(:,i) = Li(i);
-        end
+    % left data B (one row per theta) / right data C (one column per sigma), each
+    % a quadrature-approximated contour-integral moment, gathering the matching
+    % tangential directions into LL (n-by-elltheta) and RR (n-by-rsigma)
+    B = zeros(elltheta,n); LL = zeros(n,elltheta);
+    for i = 1:elltheta
+        B(i,:)  = sum((w ./ (z - theta(i))) .* reshape(Qli(i),n1,N), 2);
+        LL(:,i) = Li(i);
     end
-    BB = B*RR; CC = LL'*C;
+    C = zeros(n,rsigma); RR = zeros(n,rsigma);
+    for j = 1:rsigma
+        C(:,j)  = sum((w ./ (z - sigma(j))) .* reshape(Qri(j),n2,N), 2);
+        RR(:,j) = Ri(j);
+    end
+
+    BB = B*RR; CC = LL'*C;   % both elltheta-by-rsigma
 end

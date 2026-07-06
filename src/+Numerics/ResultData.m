@@ -83,30 +83,6 @@ classdef ResultData < matlab.mixin.Copyable
             value = size(obj.Ds);
         end
 
-        function [Lambda,V,W] = rtfm(obj,m,abstol)
-            arguments
-                obj
-                m = Inf
-                abstol = NaN
-            end
-            if m == length(obj.ew)
-                Lambda = diag(obj.ew); V = obj.rev; W = obj.lev;
-            else % need to do realization for m
-                if isnan(abstol)
-                    tol = max(size(obj.Sigma))*eps(obj.Sigma(1,1));
-                else
-                    tol = abstol;
-                end
-                r = sum(diag(obj.Sigma)>=tol);
-                if r < m
-                    error("Db has numerical rank %d < %d. Cannot recover TF!",r,m);
-                end
-                X=obj.X(:,1:m); Sigma=obj.Sigma(1:m,1:m); Y=obj.Y(:,1:m);
-                [S,Lambda] = eig(X'*obj.Ds*Y,Sigma);
-                Lambda = diag(Lambda); V = obj.CC*Y*(Sigma\S); W = S\(X'*obj.BB);
-            end
-        end
-
         function H = getTransferFunction(obj, deriv)
             % Returns transfer function handle from computed eigenvalues/eigenvectors.
             % The returned function handle evaluates the transfer function at any point z.

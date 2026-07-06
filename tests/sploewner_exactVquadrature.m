@@ -1,4 +1,5 @@
 %% setup CIM
+rng(0);
 n = 6; m = n; p = n; ewref = -1:-1:-n;
 A = diag(ewref); B = randn(n,m); C = randn(p,n);
 H = @(z) C*((z*eye(size(A)) - A) \ B);
@@ -7,7 +8,7 @@ nlevp = Numerics.OperatorData(H); nlevp.sample_mode = Numerics.SampleMode.Direct
 contour = Numerics.Contour.Ellipse(-(n+1)/2,((n+1)/2),0.5,8);
 CIM = Numerics.CIM(nlevp,contour);
 %
-CIM.SampleData.show_progress = false; CIM.SampleData.NLEVP.refew = ewref;
+CIM.SampleData.show_progress = false; CIM.SampleData.OperatorData.refew = ewref;
 CIM.RealizationData.ComputationalMode = Numerics.ComputationalMode.SPLoewner;
 CIM.auto_update_shifts = false; CIM.RealizationData.InterpolationData.sigma(1) = -(n+1)/2 + 1i;
 CIM.SampleData.ell = n; CIM.SampleData.r = n;
@@ -32,11 +33,12 @@ for j = 1:length(ndir)
         CIM.SampleData.Contour.N = N(i);
         try CIM.compute(); catch e; warning("failed for ndir=%d, N=%d",ndir(j),N(i)); continue; end
         cew = CIM.ResultData.ew;
-        nmdl(end+1) = Numerics.greedy_matching_distance(eew,cew);
+        nmdl(end+1) = Numerics.matching_distance(eew,cew);
         cNl(end+1) = N(i);
     end
+    assert(min(nmdl) < 1e-6, "quadrature SPLoewner did not converge to exact for ndir=%d (best dist %.2e)", ndir(j), min(nmdl));
     semilogy(cNl,nmdl,"DisplayName",sprintf("TID=%d",ndir(j))); hold on;
-    ylabel("Greedy Matching Distance to Exact"); xlabel("N");
+    ylabel("Optimal Matching Distance to Exact"); xlabel("N");
 end
 title("Exact vs Quadrature SPLoewner Convergence");
 legend("Location","northoutside","Orientation","horizontal");

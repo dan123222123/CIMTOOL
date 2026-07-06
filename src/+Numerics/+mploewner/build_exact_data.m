@@ -19,28 +19,40 @@ function [B,BB,C,CC] = build_exact_data(H,theta,sigma,L,R,PadStrategy,Verbose)
     n = size(H(randn(1)),1);
     elltheta = length(theta); rsigma = length(sigma);
     Lsize = size(L,2); Rsize = size(R,2);
-    B = zeros(elltheta,n); C = zeros(n,rsigma);
 
-    % choose an appropriate padding strategy, if necessary
+    % Resolve one tangential direction per interpolation point. The number of
+    % left (theta) and right (sigma) points need NOT match: BB/CC and the Loewner
+    % pencil built from them are simply rectangular (elltheta-by-rsigma), which
+    % realize() handles by SVD-truncating to m -- recovery only requires
+    % min(elltheta,rsigma) >= m (the McMillan degree being sought). When fewer
+    % directions than points are supplied, cycle through them; extra directions
+    % are unused.
     if Lsize < elltheta || Rsize < rsigma
-        RR = zeros(n,elltheta); LL = zeros(n,rsigma);
-        if strcmp(PadStrategy,"cyclical")
-            Li = @(i) L(:,mod(i-1,Lsize)+1); Ri = @(i) R(:,mod(i-1,Rsize)+1);
-        else
+        if ~strcmp(PadStrategy,"cyclical")
             error('Fewer tangential directions than required and an invalid pad strategy "%s" was specified.', PadStrategy)
         end
+        Li = @(i) L(:,mod(i-1,Lsize)+1); Ri = @(i) R(:,mod(i-1,Rsize)+1);
     else
-        RR = R; LL = L;
         Li = @(i) L(:,i); Ri = @(i) R(:,i);
-        if Lsize > elltheta || Rsize > rsigma && Verbose
+        if (Lsize > elltheta || Rsize > rsigma) && Verbose
             warning('More tangential directions than interpolation points -- is this intended?.')
         end
     end
 
-    for i=1:max(elltheta,rsigma)
-        if i <= elltheta; B(i,:) = - Li(i)'*H(theta(i)); RR(:,i) = Ri(i); end
-        if i <= rsigma; C(:,i) = - H(sigma(i))*Ri(i); LL(:,i) = Li(i); end
+    % left data B (one row per theta) and right data C (one column per sigma),
+    % gathering the matching tangential directions into LL (n-by-elltheta) and
+    % RR (n-by-rsigma)
+    B = zeros(elltheta,n); LL = zeros(n,elltheta);
+    for i = 1:elltheta
+        B(i,:)  = - Li(i)' * H(theta(i));
+        LL(:,i) = Li(i);
     end
-    BB = B*RR; CC = LL'*C;
+    C = zeros(n,rsigma); RR = zeros(n,rsigma);
+    for j = 1:rsigma
+        C(:,j)  = - H(sigma(j)) * Ri(j);
+        RR(:,j) = Ri(j);
+    end
+
+    BB = B*RR; CC = LL'*C;   % both elltheta-by-rsigma
 
 end

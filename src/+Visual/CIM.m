@@ -34,8 +34,11 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
             v.auto_update_shifts = false;
             v.auto_update_K      = false;
 
-            v.SampleData = v_sd;       % fires updateSampleDataListeners — correct
+            v.SampleData = v_sd;
             v.ResultData = v_result;
+
+            % Re-establish listeners on the new SampleData/RealizationData
+            v.updateListeners([],[]);
 
             % Copy remaining CIM-level primitives (DataDirtiness, options).
             % auto_update_* are excluded and restored explicitly last.
@@ -77,8 +80,11 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
             n.auto_update_shifts = false;
             n.auto_update_K      = false;
 
-            n.SampleData = n_sd;       % fires updateSampleDataListeners — correct
+            n.SampleData = n_sd;
             n.ResultData = n_result;
+
+            % Re-establish listeners on the new SampleData/RealizationData
+            n.updateListeners([],[]);
 
             Visual.copyMatchingProperties(obj, n, ["SampleData","RealizationData","ResultData", ...
                                              "auto_update_shifts","auto_update_K"]);
