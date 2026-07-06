@@ -54,9 +54,12 @@ jobs:
         uses: quarto-dev/quarto-actions/setup@v2
 
       # ── Python ───────────────────────────────────────────────────────────────
+      # Pin to 3.13: mkernel depends on matlabengine, which only publishes
+      # wheels for Python <3.14. Using "3.x" now resolves to 3.14 and breaks
+      # the dependency install (no matlabengine wheel available).
       - uses: actions/setup-python@v5
         with:
-          python-version: 3.x
+          python-version: '3.13'
 
       - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
 
