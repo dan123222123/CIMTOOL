@@ -121,19 +121,20 @@ classdef SampleData < Numerics.SampleData & Visual.VisualReactive
         end
 
         function delete(obj)
-            % Only delete if explicitly requested
+            % Clean up graphics/listeners and children on destruction.
+            % Do NOT guard the object's own cleanup with isvalid(obj):
+            % inside a destructor it is already false, so cleanup would be
+            % skipped (see Visual.VisualReactive.delete). The per-child
+            % isvalid() checks below are fine -- those are separate objects.
             try
-                if isvalid(obj)
-                    % Detach from graphics first
-                    obj.detachFromGraphics();
+                obj.detachFromGraphics();
 
-                    % Delete children
-                    if ~isempty(obj.Contour) && isvalid(obj.Contour)
-                        delete(obj.Contour);
-                    end
-                    if ~isempty(obj.OperatorData) && isvalid(obj.OperatorData)
-                        delete(obj.OperatorData);
-                    end
+                % Delete children
+                if ~isempty(obj.Contour) && isvalid(obj.Contour)
+                    delete(obj.Contour);
+                end
+                if ~isempty(obj.OperatorData) && isvalid(obj.OperatorData)
+                    delete(obj.OperatorData);
                 end
             catch
                 % Already deleted - ignore

@@ -108,13 +108,18 @@ classdef VisualReactive < handle
         end
 
         function delete(obj)
-            % Clean up when object is actually being deleted
+            % Clean up plotted graphics and listeners on destruction.
+            %
+            % Do NOT guard this with isvalid(obj): inside a handle
+            % destructor MATLAB already reports the object as invalid, so
+            % the guard would skip cleanup entirely and leave this object's
+            % graphics (e.g. a contour curve) orphaned on the axes -- the
+            % cause of stale contours lingering after a type switch.
+            % detachFromGraphics() is itself try/catch-guarded.
             try
-                if isvalid(obj)
-                    obj.detachFromGraphics();
-                end
+                obj.detachFromGraphics();
             catch
-                % Object already deleted or in invalid state - ignore
+                % best-effort cleanup during destruction
             end
         end
 

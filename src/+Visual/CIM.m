@@ -228,22 +228,23 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
         end
 
         function delete(obj)
-            % Only delete if explicitly requested (not called during GUI close)
+            % Clean up graphics/listeners and children on destruction.
+            % Do NOT guard the object's own cleanup with isvalid(obj):
+            % inside a destructor it is already false, so cleanup would be
+            % skipped (see Visual.VisualReactive.delete). The per-child
+            % isvalid() checks below are fine -- those are separate objects.
             try
-                if isvalid(obj)
-                    % Detach from graphics first
-                    obj.detachFromGraphics();
+                obj.detachFromGraphics();
 
-                    % Delete children
-                    if ~isempty(obj.SampleData) && isvalid(obj.SampleData)
-                        delete(obj.SampleData);
-                    end
-                    if ~isempty(obj.RealizationData) && isvalid(obj.RealizationData)
-                        delete(obj.RealizationData);
-                    end
-                    if ~isempty(obj.ResultData) && isvalid(obj.ResultData)
-                        delete(obj.ResultData);
-                    end
+                % Delete children
+                if ~isempty(obj.SampleData) && isvalid(obj.SampleData)
+                    delete(obj.SampleData);
+                end
+                if ~isempty(obj.RealizationData) && isvalid(obj.RealizationData)
+                    delete(obj.RealizationData);
+                end
+                if ~isempty(obj.ResultData) && isvalid(obj.ResultData)
+                    delete(obj.ResultData);
                 end
             catch
                 % Already deleted - ignore
