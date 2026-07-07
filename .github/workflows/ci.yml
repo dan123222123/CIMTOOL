@@ -73,11 +73,18 @@ jobs:
 
       # matlabengine (pulled in by mkernel) is version-locked to a MATLAB
       # release: 25.2.x == R2025b, 26.1.x == R2026a, etc. Its wheel build
-      # requires the *matching* MATLAB install to be present. mkernel leaves
-      # it unpinned, so pip grabs the newest (26.1.x -> R2026a) and the build
-      # fails against our R2025b install. Pin it to the R2025b line to match.
+      # requires the *matching* MATLAB install to be discoverable. mkernel
+      # leaves it unpinned, so pip grabs the newest (26.1.x -> R2026a) and the
+      # build fails; pin it to the R2025b line (25.2.2) to match our install.
+      #
+      # The build locates MATLAB via LD_LIBRARY_PATH (it looks for
+      # <matlabroot>/bin/glnxa64). setup-matlab installs to a non-default
+      # location and only adds it to PATH, so derive matlabroot from the
+      # matlab binary and export LD_LIBRARY_PATH before the build.
       - name: Install Python dependencies
         run: |
+          MATLAB_ROOT="$(dirname "$(dirname "$(readlink -f "$(which matlab)")")")"
+          export LD_LIBRARY_PATH="$MATLAB_ROOT/bin/glnxa64:$LD_LIBRARY_PATH"
           pip install \
             mkdocs-material \
             mkdocstrings-matlab==2.0.0 \
