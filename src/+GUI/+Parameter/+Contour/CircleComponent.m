@@ -115,6 +115,12 @@ classdef CircleComponent < GUI.Parameter.Contour.ContourComponent
 
         end
 
+    end
+
+    methods
+        % Destructor must be public: ContourTab.updateContourComponent
+        % calls delete(comp.ContourComponent) externally when the contour
+        % type changes.
         function delete(comp)
             Visual.deleteListeners(comp.listeners);
         end
