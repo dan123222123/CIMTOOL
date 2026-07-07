@@ -12,3 +12,7 @@ experiments/allpass/ex*Data
 **/*.quarto_ipynb
 **/.ipynb*
 **/.venv
+
+# local CI mirror (scripts/ci-local.sh) artifacts
+/.ci-venv/
+/.ci-site/
