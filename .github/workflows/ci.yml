@@ -10,6 +10,9 @@ permissions:
 
 jobs:
   # ── Job 1: validate MATLAB code ─────────────────────────────────────────────
+  # NOTE: this currently only loads the code onto the path and cd's into tests/
+  # as a smoke check — it does not yet execute the test scripts. Wiring up the
+  # actual tests (and confirming they run headless / without NLEVP) is a TODO.
   test:
     runs-on: ubuntu-latest
     steps:
@@ -30,10 +33,15 @@ jobs:
             addpath(genpath('src')); cd('tests');
 
   # ── Job 2: build and deploy documentation ───────────────────────────────────
-  docs:
+  # Static mkdocs build (docstrings parsed statically by mkdocstrings-matlab —
+  # no MATLAB engine needed) deployed to the gh-pages branch. This is the
+  # long-standing working docs pipeline. The Quarto/mkernel "reactive docs"
+  # overhaul lives on the `doc_overhaul` branch: it renders live MATLAB, which
+  # needs a MATLAB license the hosted runners don't grant to a standalone
+  # engine, so it is intentionally kept off main.
+  deploy:
     runs-on: ubuntu-latest
     needs: test
-
     steps:
       - uses: actions/checkout@v4
 
@@ -42,25 +50,9 @@ jobs:
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
-      # ── MATLAB ───────────────────────────────────────────────────────────────
-      - name: Set up MATLAB
-        uses: matlab-actions/setup-matlab@v2
-        with:
-          release: R2025b
-          cache: true
-
-      # ── Quarto ───────────────────────────────────────────────────────────────
-      - name: Set up Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
-
-      # ── Python ───────────────────────────────────────────────────────────────
-      # Pin to 3.12: mkernel depends on matlabengine, and the R2025b line
-      # (matlabengine 25.2.x) declares requires-python ">=3.9,<3.13". Newer
-      # Pythons (3.13+) are rejected at install time. 3.12 is the newest that
-      # the R2025b engine supports.
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: 3.x
 
       - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
 
@@ -71,41 +63,7 @@ jobs:
           restore-keys: |
             mkdocs-material-
 
-      # matlabengine (pulled in by mkernel) is version-locked to a MATLAB
-      # release: 25.2.x == R2025b, 26.1.x == R2026a, etc. Its wheel build
-      # requires the *matching* MATLAB install to be discoverable. mkernel
-      # leaves it unpinned, so pip grabs the newest (26.1.x -> R2026a) and the
-      # build fails; pin it to the R2025b line (25.2.2) to match our install.
-      #
-      # The build locates MATLAB via LD_LIBRARY_PATH (it looks for
-      # <matlabroot>/bin/glnxa64). setup-matlab installs to a non-default
-      # location and only adds it to PATH, so derive matlabroot from the
-      # matlab binary and export LD_LIBRARY_PATH before the build.
-      - name: Install Python dependencies
-        run: |
-          MATLAB_ROOT="$(dirname "$(dirname "$(readlink -f "$(which matlab)")")")"
-          export LD_LIBRARY_PATH="$MATLAB_ROOT/bin/glnxa64:$LD_LIBRARY_PATH"
-          pip install \
-            mkdocs-material \
-            mkdocstrings-matlab==2.0.0 \
-            mkdocs-awesome-nav \
-            jupyter \
-            matlabengine==25.2.2 \
-            git+https://github.com/allefeld/mkernel.git
-
-      ## Register the MATLAB Jupyter kernel so Quarto can find it.
-      ## matlab-actions/setup-matlab prepends MATLAB to PATH, so the kernel
-      ## installer can locate the MATLAB executable automatically.
-      #- name: Register MATLAB Jupyter kernel
-      #  run: python -m matlab_kernel install --user
-
-      # Render all .qmd files under docs/ to commonmark .md files in-place.
-      # MATLAB code blocks are executed live; output is embedded in the .md.
-      # The rendered .md files are then picked up by mkdocs in the next step.
-      - name: Render Quarto docs
-        uses: quarto-dev/quarto-actions/render@v2
-        with:
-          path: docs
-
-      # ── Deploy ───────────────────────────────────────────────────────────────
+      - run: pip install mkdocs-material
+      - run: pip install mkdocstrings-matlab==2.0.1
+      - run: pip install mkdocs-awesome-nav
       - run: mkdocs gh-deploy --force
