@@ -6,7 +6,11 @@
 %   2. MPLoewner custom shifts survive reconstruction (guards the constructor
 %      update_shifts() clobber)
 %   3. Greedy/partial struct loads with defaults, no error
-%   4. NLEVP round-trip incl. arglist (skipped if NLEVP is unavailable)
+%   4. CircularSegment contour with a complex center round-trip
+%   5. NLEVP round-trip incl. arglist (skipped if NLEVP is unavailable)
+%   6. AutoRank, RankRule, the chosen m and GapRatio round-trip, also through
+%      Visual.CIM.fromNumerics/toNumerics as the GUI's Save/Load use them
+%   7. A file saved before AutoRank (ranktol, fewer options) still loads
 
 clear; clc;
 fprintf('Testing Numerics.CIM save/load state...\n\n');
@@ -147,6 +151,67 @@ else
     catch e
         fprintf('  FAILED: %s\n', e.message); nfail = nfail + 1;
     end
+end
+fprintf('\n');
+
+%% Test 6: automatic realization order round-trip, and the GUI conversion
+fprintf('Test 6: AutoRank session round-trip and Visual.CIM conversion\n');
+try
+    rng(0);
+    n = 6; ewref = (-1:-1:-n);
+    A = diag(ewref); B = randn(n,n); C = randn(n,n);
+    H = @(z) C*((z*eye(size(A)) - A) \ B);
+    op = Numerics.OperatorData(H); op.sample_mode = Numerics.SampleMode.Direct;
+    cim = Numerics.CIM(op, Numerics.Contour.Ellipse(-(n+1)/2, (n+1)/2, 0.5, 32));
+    cim.RealizationData.ComputationalMode = Numerics.ComputationalMode.Hankel;
+    cim.SampleData.ell = n; cim.SampleData.r = n;
+    cim.RealizationData.K = 2;
+    cim.RealizationData.AutoRank = true;
+    cim.compute();
+    assert(cim.ResultData.m == n, 'the Gap rule should realize the %d poles, got m = %d', n, cim.ResultData.m);
+
+    cim.saveState(tmp);
+    cim2 = Numerics.CIM.loadState(tmp + ".mat");
+
+    assert(cim2.RealizationData.AutoRank && cim2.RealizationData.RankRule == Numerics.RankRule.Gap, 'AutoRank/RankRule not preserved');
+    assert(cim2.ResultData.m == n && isequaln(cim2.ResultData.GapRatio, cim.ResultData.GapRatio), 'chosen m or gap ratio not preserved');
+    assert(isequaln(cim2.options, cim.options), 'options not preserved');
+    assert(cim2.DataDirtiness == 0, 'DataDirtiness should be clean after loading a computed session');
+
+    % the GUI saves through toNumerics and loads through fromNumerics
+    v = Visual.CIM.fromNumerics(cim2);
+    assert(v.RealizationData.AutoRank && v.DataDirtiness == 0, 'fromNumerics lost AutoRank or the computed state');
+    n2 = v.toNumerics();
+    assert(isequal(n2.ResultData.ew, cim2.ResultData.ew) && n2.DataDirtiness == 0, 'toNumerics lost the computed state');
+
+    cim.RealizationData.RankRule = Numerics.RankRule.Tolerance;
+    cim.saveState(tmp);
+    cim3 = Numerics.CIM.loadState(tmp + ".mat");
+    assert(cim3.RealizationData.RankRule == Numerics.RankRule.Tolerance, 'Tolerance rank rule not preserved');
+    pass('AutoRank, RankRule, chosen m and GapRatio round-trip, also through Visual.CIM'); npass = npass + 1;
+catch e
+    fprintf('  FAILED: %s\n', e.message); nfail = nfail + 1;
+end
+fprintf('\n');
+
+%% Test 7: a session saved before AutoRank and the newer options
+fprintf('Test 7: session file from before AutoRank\n');
+try
+    op = Numerics.OperatorData(@(z) z*eye(2) - diag([0.5 -0.5]));
+    s = Numerics.CIM(op, Numerics.Contour.Circle(0, 2, 16)).toStruct();
+    s.realization = rmfield(s.realization, ["AutoRank","RankRule"]);
+    s.realization.ranktol = NaN;
+    s.cim.options = struct("PadStrategy","cyclical","AbsTol",1e-9,"Verbose",false);
+
+    cimL = Numerics.CIM.fromStruct(s);
+    dflt = Numerics.CIM().options;
+
+    assert(~cimL.RealizationData.AutoRank && cimL.RealizationData.RankRule == Numerics.RankRule.Gap, 'a file without AutoRank should load with AutoRank off');
+    assert(cimL.options.AbsTol == 1e-9 && ~cimL.options.Verbose, 'saved options not applied');
+    assert(cimL.options.EmptyTol == dflt.EmptyTol && cimL.options.GapMin == dflt.GapMin, 'options missing from the file should keep their defaults');
+    pass('pre-AutoRank file loads, ranktol ignored, newer options at their defaults'); npass = npass + 1;
+catch e
+    fprintf('  FAILED: %s\n', e.message); nfail = nfail + 1;
 end
 fprintf('\n');
 

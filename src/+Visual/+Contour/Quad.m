@@ -10,11 +10,17 @@ classdef Quad < Numerics.Contour.Quad & Visual.VisualReactive
           cp.plot_quadrature = obj.plot_quadrature;
       end
 
+      function reattachListeners(obj)
+          reattachListeners@Numerics.Contour.Quad(obj);
+          obj.forgetGraphics();
+          obj.attachListeners();
+      end
+
       function phandles = plotContourCurve(obj, ax, zp, gamma, of)
           % Plot styled contour curve with center marker.
           % Shared by Circle, Ellipse, and CircularSegment subclasses.
           sp = obj.StylePreferences;
-          phandles = gobjects(0);
+          phandles = Visual.emptyHandles();
           hold(ax, "on");
           phandles(end+1) = rectangle(ax, 'Position', ...
               [real(gamma)-of/2, imag(gamma)-of/2, of, of], ...
@@ -38,6 +44,10 @@ classdef Quad < Numerics.Contour.Quad & Visual.VisualReactive
             arguments
                 n Numerics.Contour.Quad
                 ax = []
+            end
+            if isempty(n)   % no contour chosen yet
+                v = Visual.Contour.Quad.empty;
+                return;
             end
             switch class(n)
                 case 'Numerics.Contour.Circle'
@@ -66,11 +76,7 @@ classdef Quad < Numerics.Contour.Quad & Visual.VisualReactive
             end
             obj = obj@Numerics.Contour.Quad(z,w);
             obj.ax = ax;
-            % Store listener handles so they can be deleted later
-            obj.listeners = [
-                addlistener(obj,'z','PostSet',@obj.update_plot)
-                addlistener(obj,'plot_quadrature','PostSet',@obj.update_plot)
-            ];
+            obj.attachListeners();
         end
 
         function attachListeners(obj)
@@ -84,6 +90,10 @@ classdef Quad < Numerics.Contour.Quad & Visual.VisualReactive
 
         function n = toNumerics(obj)
             % TONUMERICS Strip visual state and return the matching Numerics.Contour.* type.
+            if isempty(obj)   % no contour chosen yet
+                n = Numerics.Contour.Quad.empty;
+                return;
+            end
             switch class(obj)
                 case 'Visual.Contour.Circle'
                     n = Numerics.Contour.Circle();
@@ -105,7 +115,7 @@ classdef Quad < Numerics.Contour.Quad & Visual.VisualReactive
                 obj
                 ax = gca
             end
-            phandles = gobjects(0);
+            phandles = Visual.emptyHandles();
             if isempty(ax) || ~isgraphics(ax) || (~obj.plot_quadrature && ~obj.StylePreferences.ShowQuadratureNodes); return; end
             hold(ax,"on");
             sp = obj.StylePreferences;

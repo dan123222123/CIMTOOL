@@ -14,6 +14,7 @@ arguments % NOTE/TODO -- it is possible to write validation functions so that th
     options.PadStrategy = NaN   % padding strategy for construction of BB/CC (if the number of left/right tangential directions is less than the number of corresponding interpolation points)
     options.Verbose = true      % verbose output (or not)
     options.AbsTol = NaN        % absolute tolerance for base data matrix rank determination
+    options.RelTol = NaN        % tolerance for base data matrix rank determination, relative to its largest singular value
 end
 import Numerics.mploewner.* Numerics.realize;
 
@@ -29,8 +30,7 @@ if min(numel(theta),numel(sigma)) < m
         m, m, numel(theta), numel(sigma));
 end
 
-[B,BB,C,CC] = build_quadrature_data(z,w,Ql,Qr,L,R,theta,sigma,options.PadStrategy,options.Verbose);
-[Db,Ds] = build_loewner(BB,CC,theta,sigma);
-[Lambda,V,W,X,Sigma,Y] = realize(m,Db,Ds,B,C,options.AbsTol);
+[Db,Ds,B,BB,C,CC] = mploewner_quadrature_data(z,w,Ql,Qr,L,R,theta,sigma,options.PadStrategy,options.Verbose);
+[Lambda,V,W,X,Sigma,Y] = realize(m,Db,Ds,B,C,options.AbsTol,options.RelTol);
 
 end

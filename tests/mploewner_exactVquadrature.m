@@ -21,6 +21,7 @@ for j = 1:length(ndir)
     % exact
     theta = CIM.RealizationData.InterpolationData.theta;
     sigma = CIM.RealizationData.InterpolationData.sigma;
+    CIM.SampleData.drawDirections();   % reading L and R does not draw them
     L = CIM.SampleData.L; R = CIM.SampleData.R;
     m = CIM.RealizationData.m;
     %

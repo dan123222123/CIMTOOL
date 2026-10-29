@@ -10,28 +10,17 @@ arguments (Input)
     Qlr                             % vector of two-sided samples \( L^* T^{-1} R \) at \( z_k \) in \(z\)
     K                               % number of moments to use in data matrix construction
     m                               % number of poles to search for in \( \Omega \)
-    options = struct("AbsTol",NaN)  % options for realization
+    options = struct("AbsTol",NaN)  % options for realization: AbsTol, and optionally RelTol (see rankdet)
 end
 import Numerics.sploewner.* Numerics.realize;
 
-% check that elements of qs have the same dimension
-[ell,r,N] = size(Qlr); n = size(Qr,1);
-for i=1:N
-    assert(all(size(Qlr(:,:,i))==[ell,r]));
-end
-
-% check that the length of qs, z, and w match
-assert(N==length(z)); assert(N==length(w));
-
 % check that m, # of left/right shifts are greater than 0
 assert(m > 0, "# Eig Search should be > 0");
-assert(K > 0, "# of moments should be > 0");
 
-% build_quadrature_moments already produces Mlr up to order 2*K internally, so
-% passing K (not 2*K) yields exactly the moments build_sploewner consumes
-% (Mlr_1..2K, Ml_1..K, Mr_1..K) -- 2*K computed twice the needed moments.
-[Ml,Mr,Mlr] = build_quadrature_moments(sigma,z,w,Ql,Qr,Qlr,K);
-[Db,Ds,B,C] = build_sploewner(sigma,Ml,Mr,Mlr,K);
-[Lambda,V,W,X,Sigma,Y] = realize(m,Db,Ds,B,C,options.AbsTol);
+reltol = NaN;
+if isfield(options,"RelTol"); reltol = options.RelTol; end
+
+[Db,Ds,B,C] = sploewner_quadrature_data(sigma,z,w,Ql,Qr,Qlr,K);
+[Lambda,V,W,X,Sigma,Y] = realize(m,Db,Ds,B,C,options.AbsTol,reltol);
 
 end

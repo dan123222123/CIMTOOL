@@ -11,6 +11,18 @@ classdef CircularSegment < Numerics.Contour.Quad
         function cp = copyElement(obj)
             cp = Numerics.Contour.CircularSegment(obj.gamma,obj.rho,obj.theta,obj.N,obj.qr);
         end
+        function reattachListeners(obj)
+            obj.addUpdateListeners();
+        end
+    end
+    methods (Access = private)
+        function addUpdateListeners(obj)
+            addlistener(obj,'gamma','PostSet',@obj.update);
+            addlistener(obj,'rho','PostSet',@obj.update);
+            addlistener(obj,'theta','PostSet',@obj.update);
+            addlistener(obj,'N','PostSet',@obj.update);
+            addlistener(obj,'qr','PostSet',@obj.update);
+        end
     end
     methods
         function obj = CircularSegment(gamma,rho,theta,N,qr)
@@ -50,11 +62,7 @@ classdef CircularSegment < Numerics.Contour.Quad
             obj.N = N;
             obj.theta = theta;
             obj.qr = qr;
-            addlistener(obj,'gamma','PostSet',@obj.update);
-            addlistener(obj,'rho','PostSet',@obj.update);
-            addlistener(obj,'theta','PostSet',@obj.update);
-            addlistener(obj,'N','PostSet',@obj.update);
-            addlistener(obj,'qr','PostSet',@obj.update);
+            obj.addUpdateListeners();
         end
 
         function tf = inside(obj,pt)

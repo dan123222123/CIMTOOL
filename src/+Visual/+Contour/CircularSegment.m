@@ -5,6 +5,11 @@ classdef CircularSegment < Numerics.Contour.CircularSegment & Visual.Contour.Qua
           cp = Visual.Contour.CircularSegment(obj.gamma,obj.rho,obj.theta,obj.N,obj.qr,obj.ax);
           cp.plot_quadrature = obj.plot_quadrature;
       end
+
+      function reattachListeners(obj)
+          reattachListeners@Numerics.Contour.CircularSegment(obj);
+          reattachListeners@Visual.Contour.Quad(obj);
+      end
    end
 
     methods
@@ -26,7 +31,7 @@ classdef CircularSegment < Numerics.Contour.CircularSegment & Visual.Contour.Qua
                 obj
                 ax = gca
             end
-            phandles = gobjects(0);
+            phandles = Visual.emptyHandles();
             if isempty(ax) || ~isgraphics(ax); return; end
             zp = Numerics.Contour.CircularSegment.quad(obj.gamma,obj.rho,obj.theta,[512;512]);
             phandles = obj.plotContourCurve(ax, zp, obj.gamma, obj.rho*0.05);

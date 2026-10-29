@@ -5,6 +5,19 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
             cp = copyElement@Numerics.CIM(obj);
             cp.ax = obj.ax;
         end
+
+        function reattachListeners(obj)
+            reattachListeners@Numerics.CIM(obj);
+            obj.forgetGraphics();
+            obj.addPlotListeners();
+        end
+    end
+
+    methods (Access = private)
+        function addPlotListeners(obj)
+            obj.deleteListeners();
+            obj.listeners = obj.partListeners(["SampleData","RealizationData","ResultData"]);
+        end
     end
 
     methods (Static)
@@ -26,37 +39,25 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
             v_rd     = Visual.RealizationData.fromNumerics(n.RealizationData, ax);
             v_result = Visual.ResultData.fromNumerics(n.ResultData, ax);
 
-            % Construct with matching OperatorData/Contour so the constructor's
-            % internal SampleData uses the same handles, then immediately replace it.
-            % Disable auto-update flags first to prevent update_shifts() from
-            % overwriting the InterpolationData already restored in v_rd.
-            v = Visual.CIM(v_sd.OperatorData, v_sd.Contour, v_rd, ax);
+            % Construct with defaults and turn the auto updates off before
+            % assigning the converted parts, so update_shifts() cannot replace
+            % their shifts or loaded flags; the assignments re-wire the listeners.
+            v = Visual.CIM();
             v.auto_update_shifts = false;
             v.auto_update_K      = false;
-
+            v.options = n.options;   % before RealizationData: an options change marks the realization stale
             v.SampleData = v_sd;
+            v.RealizationData = v_rd;
             v.ResultData = v_result;
+            v.RealizationData.loaded = n.RealizationData.loaded;   % replacing the parts marked it stale
 
-            % Re-establish listeners on the new SampleData/RealizationData
-            v.updateListeners([],[]);
-
-            % Copy remaining CIM-level primitives (DataDirtiness, options).
-            % auto_update_* are excluded and restored explicitly last.
+            % Copy any remaining CIM-level properties; DataDirtiness is derived below.
             Visual.copyMatchingProperties(n, v, ["SampleData","RealizationData","ResultData", ...
-                                           "auto_update_shifts","auto_update_K"]);
-
-            % The CIM constructor ran update_shifts() while auto-update was still
-            % enabled, which may have overwritten the realization shifts/size and
-            % flipped its loaded flag. Re-inject that state now (auto-update is
-            % off), setting the loaded flag last so it survives the size/shift
-            % setters -- otherwise a computed session reloads as "dirty".
-            v.RealizationData.RealizationSize   = n.RealizationData.RealizationSize;
-            v.RealizationData.InterpolationData = n.RealizationData.InterpolationData;
-            v.RealizationData.ranktol           = n.RealizationData.ranktol;
-            v.RealizationData.loaded            = n.RealizationData.loaded;
-
+                                           "auto_update_shifts","auto_update_K","options","DataDirtiness"]);
             v.auto_update_shifts = n.auto_update_shifts;   % restore last
             v.auto_update_K      = n.auto_update_K;
+            v.checkdirty([],[]);
+            v.ax = ax;
         end
     end
 
@@ -65,7 +66,7 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
         function obj = CIM(OperatorData,Contour,RealizationData,ax)
             arguments
                 OperatorData = Visual.OperatorData()
-                Contour = Visual.Contour.Circle()
+                Contour = Visual.Contour.Quad.empty
                 RealizationData = Visual.RealizationData()
                 ax = []
             end
@@ -75,6 +76,7 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
             obj.ResultData = ResultData();
             obj.ax = ax; obj.update_plot([],[]);
             obj.updateListeners([],[]);
+            obj.addPlotListeners();
         end
 
         function n = toNumerics(obj)
@@ -87,29 +89,21 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
             n_rd     = obj.RealizationData.toNumerics();
             n_result = obj.ResultData.toNumerics();
 
-            n = Numerics.CIM(n_sd.OperatorData, n_sd.Contour, n_rd);
+            % as in fromNumerics: defaults, auto updates off, options, then the converted parts
+            n = Numerics.CIM();
             n.auto_update_shifts = false;
             n.auto_update_K      = false;
-
+            n.options = obj.options;
             n.SampleData = n_sd;
+            n.RealizationData = n_rd;
             n.ResultData = n_result;
-
-            % Re-establish listeners on the new SampleData/RealizationData
-            n.updateListeners([],[]);
+            n.RealizationData.loaded = obj.RealizationData.loaded;   % replacing the parts marked it stale
 
             Visual.copyMatchingProperties(obj, n, ["SampleData","RealizationData","ResultData", ...
-                                             "auto_update_shifts","auto_update_K"]);
-
-            % Re-inject realization state clobbered by the constructor's
-            % update_shifts() (see fromNumerics for the full rationale); loaded
-            % flag last so a computed session round-trips as clean, not dirty.
-            n.RealizationData.RealizationSize   = obj.RealizationData.RealizationSize;
-            n.RealizationData.InterpolationData = obj.RealizationData.InterpolationData;
-            n.RealizationData.ranktol           = obj.RealizationData.ranktol;
-            n.RealizationData.loaded            = obj.RealizationData.loaded;
-
+                                             "auto_update_shifts","auto_update_K","options","DataDirtiness"]);
             n.auto_update_shifts = obj.auto_update_shifts;
             n.auto_update_K      = obj.auto_update_K;
+            n.checkdirty([],[]);
         end
 
         function update_plot(obj,~,~)
@@ -160,7 +154,7 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
                 obj
                 ax = gca
             end
-            phandles = gobjects(0);
+            phandles = Visual.emptyHandles();
             if isempty(ax); return; end
             if ~iscell(ax); ax = num2cell(ax); end
             phandles = [phandles obj.SampleData.plot(ax{1})];
@@ -207,8 +201,7 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
 
         function attachListeners(obj)
             % Recreate listeners recursively (called when reattaching to new graphics)
-            obj.deleteListeners();  % Clear any existing listeners first
-            % Visual.CIM inherits from VisualReactive but has no additional listeners
+            obj.addPlotListeners();
             % Attach listeners on children
             try
                 if ~isempty(obj.SampleData) && isvalid(obj.SampleData)
@@ -247,28 +240,5 @@ classdef CIM < Numerics.CIM & Visual.VisualReactive
             end
         end
 
-        function delete(obj)
-            % Clean up graphics/listeners and children on destruction.
-            % Do NOT guard the object's own cleanup with isvalid(obj):
-            % inside a destructor it is already false, so cleanup would be
-            % skipped (see Visual.VisualReactive.delete). The per-child
-            % isvalid() checks below are fine -- those are separate objects.
-            try
-                obj.detachFromGraphics();
-
-                % Delete children
-                if ~isempty(obj.SampleData) && isvalid(obj.SampleData)
-                    delete(obj.SampleData);
-                end
-                if ~isempty(obj.RealizationData) && isvalid(obj.RealizationData)
-                    delete(obj.RealizationData);
-                end
-                if ~isempty(obj.ResultData) && isvalid(obj.ResultData)
-                    delete(obj.ResultData);
-                end
-            catch
-                % Already deleted - ignore
-            end
-        end
     end
 end

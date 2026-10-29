@@ -7,6 +7,11 @@
 #   ./scripts/ci-local.sh docs    # Job 2: mkdocs static build (build only, no deploy)
 #   ./scripts/ci-local.sh all     # both (default)
 #
+# and one job CI does not run yet:
+#
+#   ./scripts/ci-local.sh realtest       # run_numerics_tests: the headless suite
+#   ./scripts/ci-local.sh realtest all   # also the heavy tests (test_pes39, test_gun)
+#
 # How this maps to the real CI:
 #   - test job   -> matlab-actions/run-command on a GitHub runner.
 #                   Here MATLAB runs via the host 'matlab' wrapper, which
@@ -44,13 +49,10 @@ job_test() {
 }
 
 job_realtest() {
-  # Not part of CI yet — actually executes the test scripts documented in
-  # CLAUDE.md. Kept separate because these may need NLEVP / a display and can
-  # fail for reasons the CI smoke check never exercises.
-  echo "== (extra) run the real test scripts =="
-  timeout 400 matlab -batch "addpath(genpath('src')); cd('tests'); \
-    testCIMEigensystemRealization; \
-    hankel_exactVquadrature; mploewner_exactVquadrature; sploewner_exactVquadrature;"
+  # Not part of CI yet, potentially heavy
+  local suite="$1"
+  echo "== (extra) run_numerics_tests(\"$suite\") =="
+  timeout 1200 matlab -batch "cd('tests'); run_numerics_tests(\"$suite\")"
   echo "  realtest: OK"
 }
 
@@ -74,9 +76,23 @@ job_docs() {
 }
 
 case "${1:-all}" in
-  test)     job_test ;;
-  realtest) job_realtest ;;
-  docs)     job_docs ;;
-  all)      job_test; job_docs ;;
-  *) echo "usage: $0 {test|realtest|docs|all}" >&2; exit 2 ;;
+test) job_test ;;
+realtest)
+  case "${2:-ci}" in
+  ci | all) job_realtest "${2:-ci}" ;;
+  *)
+    echo "usage: $0 realtest [all]" >&2
+    exit 2
+    ;;
+  esac
+  ;;
+docs) job_docs ;;
+all)
+  job_test
+  job_docs
+  ;;
+*)
+  echo "usage: $0 {test|realtest [all]|docs|all}" >&2
+  exit 2
+  ;;
 esac

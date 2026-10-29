@@ -80,6 +80,10 @@ classdef CIMTOOL < matlab.apps.AppBase
         function recordKey(app,src,event)
             set(app.UIFigure,'WindowKeyPressFcn','');
             if contains(event.Modifier,'shift')
+                if isempty(app.CIMData.SampleData.Contour)   % no contour to drag yet
+                    set(app.UIFigure,'WindowKeyPressFcn',@app.recordKey);
+                    return;
+                end
                 set(app.UIFigure,'WindowButtonDownFcn',@app.MainPlotAxesWindowButtonDownFcn);
                 set(app.UIFigure,'WindowKeyReleaseFcn',@app.shiftReleaseKey)
                 set(app.PlotPanel.MainPlotAxes.Title,'String','MOD');
@@ -275,6 +279,7 @@ classdef CIMTOOL < matlab.apps.AppBase
 
             % Create UIFigure and components
             app.createComponents();
+            registerApp(app, app.UIFigure);   % so the figure's RunningAppInstance is this app
 
             % Reattach listeners after axes are connected
             % This is needed when reusing a CIMData object from a previous GUI

@@ -23,6 +23,7 @@ classdef ShiftsTab < matlab.ui.componentcontainer.ComponentContainer
             obj.addListeners();
 
             obj.InterpolationDataChangedFcn();
+            obj.ShiftsTableEditableFcn();
 
         end
 
@@ -66,8 +67,8 @@ classdef ShiftsTab < matlab.ui.componentcontainer.ComponentContainer
         function addListeners(comp)
             % Store listener handles for cleanup
             comp.listeners = [
-                addlistener(comp.CIMData.RealizationData,'InterpolationData','PostSet',@(src,event)comp.InterpolationDataChangedFcn)
-                addlistener(comp.CIMData.RealizationData,'ComputationalMode','PostSet',@(src,event)comp.ShiftsTableEditableFcn)
+                GUI.SubObjectListener(comp.CIMData,"RealizationData",'InterpolationData',@(src,event)comp.InterpolationDataChangedFcn)
+                GUI.SubObjectListener(comp.CIMData,"RealizationData",'ComputationalMode',@(src,event)comp.ShiftsTableEditableFcn)
             ];
         end
 

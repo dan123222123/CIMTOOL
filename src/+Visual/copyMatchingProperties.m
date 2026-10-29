@@ -28,7 +28,7 @@ function copyMatchingProperties(src, dst, exclude)
     dst_settable = string.empty;
     for p = dst_meta.PropertyList'
         if strcmp(p.SetAccess, 'public') && ~p.Dependent && ~p.Constant
-            dst_settable(end+1) = p.Name; %#ok<AGROW>
+            dst_settable(end+1) = p.Name;
         end
     end
 

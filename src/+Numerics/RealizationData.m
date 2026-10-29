@@ -4,7 +4,8 @@ classdef RealizationData < matlab.mixin.Copyable
         ComputationalMode
         InterpolationData
         RealizationSize
-        ranktol
+        AutoRank (1,1) logical = false                              % choose m from Db by RankRule instead of RealizationSize.m
+        RankRule (1,1) Numerics.RankRule = Numerics.RankRule.Gap   % how computeRealization chooses m under AutoRank; kept while AutoRank is off
         %auto_update_realization_size = true
         loaded = false
     end
@@ -20,20 +21,36 @@ classdef RealizationData < matlab.mixin.Copyable
             cp.ComputationalMode = obj.ComputationalMode;
             cp.InterpolationData = obj.InterpolationData;
             cp.RealizationSize = obj.RealizationSize;
-            cp.ranktol = obj.ranktol;
+            cp.AutoRank = obj.AutoRank;
+            cp.RankRule = obj.RankRule;
             %cp.auto_update_realization_size = obj.auto_update_realization_size;
             cp.loaded = obj.loaded;
+        end
+
+        function reattachListeners(obj)
+            obj.updateListeners();
+        end
+    end
+
+    methods (Static)
+        function obj = loadobj(obj)
+            if isstruct(obj)
+                warning("Numerics:RealizationData:loadobj", "A RealizationData could not be loaded as an object and is returned as a struct.");
+                return;
+            end
+            obj.reattachListeners();
         end
     end
 
     methods
 
-        function obj = RealizationData(ComputationalMode,InterpolationData,RealizationSize,ranktol)
+        function obj = RealizationData(ComputationalMode,InterpolationData,RealizationSize,AutoRank,RankRule)
             arguments
                 ComputationalMode = Numerics.ComputationalMode.Hankel
                 InterpolationData = []
                 RealizationSize = []
-                ranktol = NaN
+                AutoRank = false
+                RankRule = Numerics.RankRule.Gap
             end
             obj.ComputationalMode = ComputationalMode;
             if isempty(InterpolationData)
@@ -47,7 +64,8 @@ classdef RealizationData < matlab.mixin.Copyable
             else
                 obj.RealizationSize = RealizationSize;
             end
-            obj.ranktol = ranktol;
+            obj.AutoRank = AutoRank;
+            obj.RankRule = RankRule;
             obj.updateListeners();
             obj.RealizationDataChanged();
         end
@@ -70,6 +88,7 @@ classdef RealizationData < matlab.mixin.Copyable
 
         function set.ComputationalMode(obj,value)
             obj.ComputationalMode = value;
+            obj.loaded = false;
         end
 
         function set.InterpolationData(obj,value)
@@ -77,9 +96,14 @@ classdef RealizationData < matlab.mixin.Copyable
             obj.InterpolationDataChanged([],[]);
         end
 
-        function set.ranktol(obj,value)
-            obj.ranktol = value;
-            obj.loaded = false;
+        function set.AutoRank(obj,value)
+            obj.AutoRank = value;
+            obj.loaded = false;   % the CIM realizes again; the samples stay
+        end
+
+        function set.RankRule(obj,value)
+            obj.RankRule = value;
+            if obj.AutoRank; obj.loaded = false; end   % a rule kept while AutoRank is off changes nothing
         end
 
         function defaultInterpolationData(obj)

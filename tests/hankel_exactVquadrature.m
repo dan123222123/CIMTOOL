@@ -21,6 +21,7 @@ for j = 1:length(ndir)
     CIM.RealizationData.K = ceil(m/ndir(j));
     % exact
     sigma = CIM.RealizationData.InterpolationData.sigma(1);
+    CIM.SampleData.drawDirections();   % reading L and R does not draw them
     L = CIM.SampleData.L; R = CIM.SampleData.R;
     K = CIM.RealizationData.K; m = CIM.RealizationData.m;
     %

@@ -9,6 +9,10 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         ProblemSizeLabel
         ProblemSize
         %
+        ReferenceStatusLayout
+        ReferenceStatusLabel
+        ReferenceCancelButton
+        %
         NumQuadNodesLabel
         NumQuadNodes
         %
@@ -31,7 +35,6 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
     properties (Access = private)
         % Store listener handles for cleanup
         listeners = []
-        contourListener = []  % Separate since it's recreated dynamically
     end
 
     methods (Access = public)
@@ -53,43 +56,33 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
 
         function createDynamicComponents(comp)
             comp.PlotViewportControl = GUI.Plot.PlotViewportComplexPlane(comp.GridLayout,comp.MainPlotAxes);
-            comp.PlotViewportControl.Layout.Row = 7;
+            comp.PlotViewportControl.Layout.Row = 8;
             comp.PlotViewportControl.Layout.Column = [1 3];    
         end
 
         function setDefaults(comp)
             CIM = comp.CIMData;
             comp.OperatorDataChangedFcn(missing);
+            comp.ReferenceStatusChangedFcn(missing);
             comp.DataDirtinessChangedFcn(missing);
-            comp.NumQuadNodes.Value = num2str(CIM.SampleData.Contour.N);
+            comp.DataMatrixSizeChangedFcn(missing);
+            comp.QuadratureChangedFcn(missing);
             % comp.AutoSampleCheckBox.Value = CIM.auto_compute_samples;
             % comp.AutoRealizationCheckBox.Value = CIM.auto_compute_realization;
         end
 
         function addListeners(comp)
-            % Store listener handles so they can be deleted when component is destroyed
+            % Store listener handles so they can be deleted when component is destroyed;
+            % each follows its object when the CIM's parts are replaced (GUI.SubObjectListener)
+            cim = comp.CIMData;
             comp.listeners = [
-                addlistener(comp.CIMData.SampleData.OperatorData,'loaded','PostSet',@(~,~)comp.OperatorDataChangedFcn([]))
-                addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(~,~)comp.QuadratureChangedFcn([]))
-                addlistener(comp.CIMData.ResultData,'Db','PostSet',@(~,~)comp.DataMatrixSizeChangedFcn([]))
-                addlistener(comp.CIMData,'DataDirtiness','PostSet',@(~,~)comp.DataDirtinessChangedFcn([]))
-                addlistener(comp.MainApp,'FontSize','PostSet',@(~,~)comp.updateFontSize([]))
-                addlistener(comp.CIMData.SampleData,'Contour','PostSet',@(~,~)comp.updateContourListeners([]))
+                GUI.SubObjectListener(cim,"SampleData.OperatorData",'loaded',@(~,~)comp.OperatorDataChangedFcn([]))
+                GUI.SubObjectListener(cim,"SampleData.OperatorData",'ReferenceStatus',@(~,~)comp.ReferenceStatusChangedFcn([]))
+                GUI.SubObjectListener(cim,"SampleData.Contour",'N',@(~,~)comp.QuadratureChangedFcn([]))
+                GUI.SubObjectListener(cim,"ResultData",'Db',@(~,~)comp.DataMatrixSizeChangedFcn([]))
+                GUI.SubObjectListener(cim,"",'DataDirtiness',@(~,~)comp.DataDirtinessChangedFcn([]))
+                GUI.SubObjectListener(comp.MainApp,"",'FontSize',@(~,~)comp.updateFontSize([]))
             ];
-            % Create initial contour listener
-            comp.updateContourListeners([]);
-        end
-
-        function updateContourListeners(comp,~)
-            % Delete old contour listener and create new one for the new contour object
-            try
-                if ~isempty(comp.contourListener) && isvalid(comp.contourListener)
-                    delete(comp.contourListener);
-                end
-            catch
-            end
-            comp.contourListener = addlistener(comp.CIMData.SampleData.Contour,'N','PostSet',@(~,~)comp.QuadratureChangedFcn([]));
-            comp.QuadratureChangedFcn(missing);
         end
 
         function updateFontSize(comp,~)
@@ -116,8 +109,35 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             end
         end
 
+        function ReferenceStatusChangedFcn(comp,~)
+            % the operator's reference computation; the row collapses when there is none, and x shows while computing
+            op = comp.CIMData.SampleData.OperatorData;
+            switch op.ReferenceStatus
+                case "computing"
+                    comp.ReferenceStatusLabel.Text = 'Reference eigenvalues: computing...';
+                case "skipped"
+                    comp.ReferenceStatusLabel.Text = sprintf('Reference eigenvalues: skipped (n*d > %g)',op.MaxReferenceSize);
+                otherwise
+                    comp.ReferenceStatusLabel.Text = 'Reference eigenvalues: ' + op.ReferenceStatus;
+            end
+            computing = op.ReferenceStatus == "computing";
+            comp.ReferenceCancelButton.Visible = computing;
+            if op.ReferenceStatus == "none"
+                comp.GridLayout.RowHeight{3} = 0;
+            else
+                comp.GridLayout.RowHeight{3} = '0.5x';
+            end
+        end
+
         function QuadratureChangedFcn(comp,~)
-            comp.NumQuadNodes.Value = num2str(comp.CIMData.SampleData.Contour.N);
+            contour = comp.CIMData.SampleData.Contour;
+            if isempty(contour)   % none chosen yet: the placeholder
+                comp.NumQuadNodes.Value = '';
+            elseif isprop(contour, 'N')
+                comp.NumQuadNodes.Value = num2str(contour.N);
+            else   % a plain Quad: its node count
+                comp.NumQuadNodes.Value = num2str(numel(contour.z));
+            end
         end
 
         function DataMatrixSizeChangedFcn(comp,~)
@@ -150,7 +170,9 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
                 comp.ComputeButton.FontColor = [1 1 1];
                 uialert(comp.MainApp.UIFigure,e.message,"Compute Error","Interpreter","html");
                 % rethrow(e);
+                return;
             end
+            comp.confirmWeakGap();
         end
 
         function RefineQuadratureButtonPushed(comp,~)
@@ -160,11 +182,56 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
                 comp.ComputeButton.BackgroundColor = [0.85 0.35 0.35];
                 comp.ComputeButton.FontColor = [1 1 1];
                 uialert(comp.MainApp.UIFigure,e.message,"Refine Quadrature Error","Interpreter","html");
+                return;
+            end
+            comp.confirmWeakGap();
+        end
+
+        function confirmWeakGap(comp)
+            % after a compute from the GUI: a weak gap under the Gap rule (GapRatio is NaN under any other choice of m)
+            % offers to keep its m as a manual m; scripts keep AutoRank
+            cim = comp.CIMData;
+            ratio = cim.ResultData.GapRatio;
+            gapmin = 1e3;
+            if isfield(cim.options,"GapMin"); gapmin = cim.options.GapMin; end
+            if ~(ratio < gapmin)
+                return;
+            end
+            m = cim.ResultData.m;
+            msg = sprintf("The largest singular-value gap, &sigma;<sub>%d</sub>/&sigma;<sub>%d</sub> = %.3g, is below GapMin = %g, " + ...
+                "and the realization uses m = %d. Refining the quadrature, or raising K, may open a gap.", m, m + 1, ratio, gapmin, m);
+            uiconfirm(comp.MainApp.UIFigure,msg,"Weak Singular-Value Gap","Interpreter","html","Icon","warning", ...
+                "Options",{sprintf('Switch to manual (m = %d)',m),'Keep automatic'},"DefaultOption",1,"CancelOption",2, ...
+                "CloseFcn",@(~,event)comp.weakGapClosed(event,m));
+        end
+
+        function weakGapClosed(comp,event,m)
+            % the first option fixes m and unticks Auto, so the m field is editable at that value
+            if event.SelectedOptionIndex == 1
+                rd = comp.CIMData.RealizationData;
+                [theta,sigma] = rd.getThetaSigma();
+                rd.RealizationSize.m = m;
+                rd.AutoRank = false;
+                % the realization on screen is the manual one at m, unless the switch moved the interpolation points
+                [theta1,sigma1] = rd.getThetaSigma();
+                if comp.CIMData.SampleData.loaded && isequal(theta,theta1) && isequal(sigma,sigma1)
+                    comp.CIMData.ResultData.GapRatio = NaN;
+                    rd.loaded = true;
+                end
             end
         end
 
+        function ReferenceCancelButtonPushed(comp,~)
+            comp.CIMData.SampleData.OperatorData.cancelReference();
+        end
+
         function NumQuadNodesChanged(comp,~)
-            comp.CIMData.SampleData.Contour.N = str2num(comp.NumQuadNodes.Value);
+            contour = comp.CIMData.SampleData.Contour;
+            if isempty(contour) || ~isprop(contour, 'N')   % no contour yet, or a plain Quad with fixed nodes
+                comp.QuadratureChangedFcn(missing);
+                return;
+            end
+            contour.N = str2num(comp.NumQuadNodes.Value);
         end
 
         function AutoButtonsChanged(comp,~)
@@ -183,7 +250,7 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
         function setup(comp)
 
             comp.GridLayout = uigridlayout(comp);
-            comp.GridLayout.RowHeight = {'0.5x','0.5x','0.5x','0.5x','0.5x','0.5x','2x'};
+            comp.GridLayout.RowHeight = {'0.5x','0.5x',0,'0.5x','0.5x','0.5x','0.5x','2x'};
             % %
             comp.ProblemNameLabel = uilabel(comp.GridLayout);
             comp.ProblemNameLabel.HorizontalAlignment = 'center';
@@ -214,19 +281,42 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.ProblemSize.Placeholder = 'N/A';
             comp.ProblemSize.Layout.Row = 2;
             comp.ProblemSize.Layout.Column = [2 3];
+            % % the reference eigenvalue status; row 3 collapses while there is none
+            comp.ReferenceStatusLayout = uigridlayout(comp.GridLayout,[3 2]);
+            comp.ReferenceStatusLayout.ColumnWidth = {'1x','fit'};
+            comp.ReferenceStatusLayout.RowHeight = {'1x','fit','1x'};
+            comp.ReferenceStatusLayout.RowSpacing = 0;
+            comp.ReferenceStatusLayout.Padding = [0 0 0 0];
+            comp.ReferenceStatusLayout.Layout.Row = 3;
+            comp.ReferenceStatusLayout.Layout.Column = [1 3];
+            %
+            comp.ReferenceStatusLabel = uilabel(comp.ReferenceStatusLayout);
+            comp.ReferenceStatusLabel.HorizontalAlignment = 'center';
+            comp.ReferenceStatusLabel.WordWrap = 'on';
+            comp.ReferenceStatusLabel.Text = '';
+            comp.ReferenceStatusLabel.Layout.Row = [1 3];
+            comp.ReferenceStatusLabel.Layout.Column = 1;
+            %
+            comp.ReferenceCancelButton = uibutton(comp.ReferenceStatusLayout);
+            comp.ReferenceCancelButton.Layout.Row = 2;
+            comp.ReferenceCancelButton.Layout.Column = 2;
+            comp.ReferenceCancelButton.ButtonPushedFcn = matlab.apps.createCallbackFcn(comp, @ReferenceCancelButtonPushed, true);
+            comp.ReferenceCancelButton.Text = 'x';
+            comp.ReferenceCancelButton.Tooltip = 'Cancel the reference eigenvalue computation';
+            comp.ReferenceCancelButton.Visible = 'off';
             % %
             comp.NumQuadNodesLabel = uilabel(comp.GridLayout);
             comp.NumQuadNodesLabel.HorizontalAlignment = 'center';
             comp.NumQuadNodesLabel.Text = '# Quad Nodes';
             comp.NumQuadNodesLabel.WordWrap = 'on';
-            comp.NumQuadNodesLabel.Layout.Row = 3;
+            comp.NumQuadNodesLabel.Layout.Row = 4;
             comp.NumQuadNodesLabel.Layout.Column = 1;
             %
             comp.NumQuadNodes = uieditfield(comp.GridLayout,"text");
             comp.NumQuadNodes.HorizontalAlignment = 'center';
             comp.NumQuadNodes.FontName = 'Hack';
             comp.NumQuadNodes.Placeholder = 'N/A';
-            comp.NumQuadNodes.Layout.Row = 3;
+            comp.NumQuadNodes.Layout.Row = 4;
             comp.NumQuadNodes.Layout.Column = [2 3];
             comp.NumQuadNodes.ValueChangedFcn = matlab.apps.createCallbackFcn(comp,@NumQuadNodesChanged,true);
             % %
@@ -248,21 +338,21 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.ComputeButton.ButtonPushedFcn = matlab.apps.createCallbackFcn(comp, @ComputeButtonPushed, true);
             comp.ComputeButton.Text = 'Compute';
             comp.ComputeButton.FontWeight = 'bold';
-            comp.ComputeButton.Layout.Row = 4;
+            comp.ComputeButton.Layout.Row = 5;
             comp.ComputeButton.Layout.Column = [1 3];
             % %
             comp.DataMatrixSizeLabel = uilabel(comp.GridLayout);
             comp.DataMatrixSizeLabel.HorizontalAlignment = 'center';
             comp.DataMatrixSizeLabel.Text = 'Data Matrix Size';
             comp.DataMatrixSizeLabel.WordWrap = 'on';
-            comp.DataMatrixSizeLabel.Layout.Row = 5;
+            comp.DataMatrixSizeLabel.Layout.Row = 6;
             comp.DataMatrixSizeLabel.Layout.Column = 1;
             %
             comp.DataMatrixSize = uieditfield(comp.GridLayout,"numeric");
             comp.DataMatrixSize.HorizontalAlignment = 'center';
             comp.DataMatrixSize.FontName = 'Hack';
             comp.DataMatrixSize.Placeholder = 'N/A';
-            comp.DataMatrixSize.Layout.Row = 5;
+            comp.DataMatrixSize.Layout.Row = 6;
             comp.DataMatrixSize.Layout.Column = [2 3];
             comp.DataMatrixSize.Editable = 'off';
             % %
@@ -270,14 +360,13 @@ classdef LeftPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.RefineQuadratureButton.ButtonPushedFcn = matlab.apps.createCallbackFcn(comp, @RefineQuadratureButtonPushed, true);
             comp.RefineQuadratureButton.Text = 'Refine Quadrature';
             comp.RefineQuadratureButton.FontWeight = 'bold';
-            comp.RefineQuadratureButton.Layout.Row = 6;
+            comp.RefineQuadratureButton.Layout.Row = 7;
             comp.RefineQuadratureButton.Layout.Column = [1 3];
         
         end
 
         function delete(comp)
             Visual.deleteListeners(comp.listeners);
-            Visual.deleteListeners(comp.contourListener);
         end
 
     end

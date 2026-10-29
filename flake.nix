@@ -1,5 +1,5 @@
 {
-  description = "CIMTOOL docs dev shell: Quarto + mkdocs + MATLAB Jupyter kernel";
+  description = "CIMTOOL docs dev shell: mkdocs site";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -16,55 +16,47 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+
+        # Native toolchain a few pip packages need to build C extensions
+        # (tree-sitter for mkdocstrings-matlab, etc.) plus their runtime libs.
+        commonPackages = with pkgs; [
+          python311
+          git
+          gcc
+          gnumake
+          pkg-config
+          stdenv.cc.cc.lib
+          linux-pam
+        ];
+
+        # The venv lives at the repo root even when the shell is entered from a
+        # subdirectory. The library path is only extended, never given an
+        # empty entry (which the loader would read as the current directory).
+        commonEnv = ''
+          export LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib:${pkgs.linux-pam}/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+          CIMTOOL_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+        '';
       in
       {
-        devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-            quarto
-            python311
-            # C toolchain for pip packages with native extensions (tree-sitter, etc.)
-            gcc
-            gnumake
-            pkg-config
-            stdenv.cc.cc.lib
-            pkgs.linux-pam
-          ];
+        devShells = {
+          # ── Docs site (default): build/preview the mkdocs site. ──────────────
+          # No MATLAB — mkdocstrings-matlab only *parses* src/ for
+          # docstrings, so this shell works on any machine.
+          default = pkgs.mkShell {
+            packages = commonPackages;
+            shellHook = commonEnv + ''
+              if bash "$CIMTOOL_ROOT/scripts/ensure-venv.sh" docs; then
+                source "$CIMTOOL_ROOT/.venv-docs/bin/activate"
+              else
+                echo "warning: .venv-docs is not ready; mkdocs is unavailable in this shell" >&2
+              fi
 
-          shellHook = ''
-            #alias matlab="distrobox enter matlab -- ~/MATLAB/2025b/bin/matlab -nodesktop"
-
-            export LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib:$LD_LIBRARY_PATH"
-            export LD_LIBRARY_PATH="${pkgs.linux-pam}/lib:$LD_LIBRARY_PATH"
-            export PYTHONPATH="$PWD/.venv/bin/python"
-            export QUARTO_PYTHON="$PWD/.venv/bin/python"
-
-            export VENV_DIR="$PWD/.venv"
-            if [ ! -d "$VENV_DIR" ]; then
-              echo "Creating venv and installing docs dependencies..."
-              python -m venv "$VENV_DIR"
-              "$VENV_DIR/bin/pip" install \
-                mkdocs-material \
-                "mkdocstrings-matlab==2.0.0" \
-                mkdocs-awesome-nav \
-                jupyter
-              #"$VENV_DIR/bin/python" -m mkernel install --user \
-              #  || echo "Warning: MATLAB kernel registration failed — ensure 'matlab' is on PATH."
-            fi
-
-            source "$VENV_DIR/bin/activate"
-
-            echo ""
-            echo "CIMTOOL docs dev shell"
-            echo "  quarto render docs/examples/acoustic_wave_1d.qmd   # single page"
-            echo "  quarto render docs/                                  # all .qmd files"
-            echo "  mkdocs serve                                         # preview site"
-
-            quarto render docs/examples/acoustic_wave_1d.qmd --execute-dir=./
-
-            distrobox enter matlab -- bash --norc
-            export PATH=~/MATLAB/2025b/bin/:$PATH
-            export LD_LIBRARY_PATH=:$LD_LIBRARY_PATH:~/MATLAB/2025b/bin/glnxa64/
-          '';
+              echo ""
+              echo "CIMTOOL docs site shell (no MATLAB needed)"
+              echo "  mkdocs serve    # live preview at http://localhost:8000"
+              echo "  mkdocs build    # static site in ./site"
+            '';
+          };
         };
       }
     );

@@ -30,8 +30,8 @@ MATLAB's standard `uitogglebutton` can only be created with a `ButtonGroup` pare
 - Contains a standard `uibutton` internally (which CAN be parented to GridLayout)
 - Maintains a `Value` property (logical) for selection state
 - Updates button styling based on selection state:
-  - **Selected**: Blue background (#4D9FFF), bold white text
-  - **Unselected**: Light gray background, normal black text
+  - **Selected**: Blue background (#4D99FF), bold white text
+  - **Unselected**: Light gray background, bold black text
 - Provides the same interface as `uitogglebutton`:
   - `Text` property for button label
   - `Value` property (SetObservable) for selection state
@@ -46,7 +46,7 @@ FontColor = [1 1 1]              % White
 
 % Unselected state
 BackgroundColor = [0.96 0.96 0.96]  % Light gray
-FontWeight = 'normal'
+FontWeight = 'bold'
 FontColor = [0 0 0]                 % Black
 ```
 
@@ -114,7 +114,7 @@ disp(selected.Text);
 **Changes**:
 - Line 5: Changed `ContourTypeButtonGroup` property type from `matlab.ui.container.ButtonGroup` to `GUI.GridLayoutButtonGroup`
 - Lines 6-8: Changed button property types from `matlab.ui.control.ToggleButton` to `GUI.GridLayoutToggleButton`
-- Lines 89-106: Replaced fixed-position button creation with `addButton()` calls
+- Lines 116-127: Replaced fixed-position button creation with `addButton()` calls
 
 **Before**:
 ```matlab
@@ -144,9 +144,9 @@ comp.CircularSegmentButton = comp.ContourTypeButtonGroup.addButton('CircularSegm
 ### 2. `src/+GUI/+Parameter/MethodTab.m`
 
 **Changes**:
-- Line 3: Changed `ComputationalModeButtonGroup` property type to `GUI.GridLayoutButtonGroup`
-- Lines 4-6: Changed button property types from `matlab.ui.control.ToggleButton` to `GUI.GridLayoutToggleButton`
-- Lines 108-130: Replaced fixed-position button creation with `addButton()` calls
+- Line 5: Changed `ComputationalModeButtonGroup` property type to `GUI.GridLayoutButtonGroup`
+- Lines 6-8: Changed button property types from `matlab.ui.control.ToggleButton` to `GUI.GridLayoutToggleButton`
+- Lines 150-161: Replaced fixed-position button creation with `addButton()` calls
 
 **Before**:
 ```matlab

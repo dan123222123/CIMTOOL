@@ -7,7 +7,9 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
         SPLoewnerButton                     GUI.GridLayoutToggleButton
         HankelButton                        GUI.GridLayoutToggleButton
         %
+        RankRuleGrid                        matlab.ui.container.GridLayout
         EstimateMCheckbox
+        RankRuleDropDown
         EigSearchEditFieldLabel
         EigSearchEditField
         %
@@ -54,8 +56,11 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
         function addListeners(comp)
             % Store listener handles for cleanup
             comp.listeners = [
-                addlistener(comp.CIMData.RealizationData,'ComputationalMode','PostSet',@(src,event)comp.updateMethodParameters)
-                addlistener(comp.CIMData.RealizationData,'RealizationSize','PostSet',@(src,event)comp.updateMethodParameters)
+                GUI.SubObjectListener(comp.CIMData,"RealizationData",'ComputationalMode',@(src,event)comp.updateMethodParameters)
+                GUI.SubObjectListener(comp.CIMData,"RealizationData",'RealizationSize',@(src,event)comp.updateMethodParameters)
+                GUI.SubObjectListener(comp.CIMData,"RealizationData",'AutoRank',@(src,event)comp.updateMethodParameters)
+                GUI.SubObjectListener(comp.CIMData,"RealizationData",'RankRule',@(src,event)comp.updateMethodParameters)
+                GUI.SubObjectListener(comp.CIMData,"ResultData",'m',@(src,event)comp.updateMethodParameters)
             ];
         end
 
@@ -86,8 +91,18 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
     methods % CIM -> GUI
 
         function updateMethodParameters(comp,~)
-            comp.EigSearchEditField.Value = comp.CIMData.RealizationData.RealizationSize.m;
-            % comp.EstimateMCheckbox.Value = comp.CIMData.auto_estimate_m;
+            % under AutoRank the field is read-only and shows the m chosen by the last compute;
+            % only Value/Enable are set here, which never fire the ValueChangedFcn callbacks
+            auto = comp.CIMData.RealizationData.AutoRank;
+            comp.EstimateMCheckbox.Value = auto;
+            comp.RankRuleDropDown.Value = comp.CIMData.RealizationData.RankRule;
+            comp.RankRuleDropDown.Enable = auto;
+            comp.EigSearchEditField.Enable = ~auto;
+            if auto && ~isempty(comp.CIMData.ResultData.m)
+                comp.EigSearchEditField.Value = comp.CIMData.ResultData.m;
+            else
+                comp.EigSearchEditField.Value = comp.CIMData.RealizationData.RealizationSize.m;
+            end
             switch(comp.CIMData.RealizationData.ComputationalMode)
                 case Numerics.ComputationalMode.Hankel
                     comp.HankelButton.Value = true;
@@ -103,10 +118,21 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
     methods % GUI -> CIM
 
         function MethodParametersChanged(comp,~)
-            comp.CIMData.RealizationData.RealizationSize.m = comp.EigSearchEditField.Value;
-            % comp.CIMData.auto_estimate_m = comp.EstimateMCheckbox.Value;
+            % the automatic m is never written into RealizationSize.m, so the manual m survives toggling
+            if ~comp.CIMData.RealizationData.AutoRank
+                comp.CIMData.RealizationData.RealizationSize.m = comp.EigSearchEditField.Value;
+            end
             % computational mode is changed in separate callback
             % (buttongroup)
+        end
+
+        function AutoRankChanged(comp,~)
+            % separate from the m field, which may still show the automatic m when this is unticked
+            comp.CIMData.RealizationData.AutoRank = comp.EstimateMCheckbox.Value;
+        end
+
+        function RankRuleChanged(comp,~)
+            comp.CIMData.RealizationData.RankRule = comp.RankRuleDropDown.Value;
         end
 
     end
@@ -134,16 +160,35 @@ classdef MethodTab < matlab.ui.componentcontainer.ComponentContainer
             % %
             comp.MPLoewnerButton = comp.ComputationalModeButtonGroup.addButton('MPLoewner');
             %
-            % comp.EstimateMCheckbox = uicheckbox(comp.GridLayout,'Text','Auto Estimate # Eig Search');
-            % comp.EstimateMCheckbox.Layout.Row = [1 2];
-            % comp.EstimateMCheckbox.Layout.Column = 2;
-            % comp.EstimateMCheckbox.Enable = "off";
-            %
             comp.EigSearchEditFieldLabel = uilabel(comp.GridLayout);
             comp.EigSearchEditFieldLabel.HorizontalAlignment = 'center';
-            comp.EigSearchEditFieldLabel.Layout.Row = [1 3];
+            comp.EigSearchEditFieldLabel.Layout.Row = [1 2];
             comp.EigSearchEditFieldLabel.Layout.Column = 2;
             comp.EigSearchEditFieldLabel.Text = '# Eig Search';
+            %
+            % directly above the m field: the checkbox says whether m is chosen automatically, the dropdown by which rule
+            comp.RankRuleGrid = uigridlayout(comp.GridLayout,[1,2]);
+            comp.RankRuleGrid.ColumnWidth = {'fit','1x'};
+            comp.RankRuleGrid.Padding = [0 0 0 0];
+            comp.RankRuleGrid.ColumnSpacing = 5;
+            comp.RankRuleGrid.Layout.Row = 3;
+            comp.RankRuleGrid.Layout.Column = 2;
+            % %
+            comp.EstimateMCheckbox = uicheckbox(comp.RankRuleGrid);
+            comp.EstimateMCheckbox.Text = 'Auto';
+            comp.EstimateMCheckbox.Value = false;
+            comp.EstimateMCheckbox.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @AutoRankChanged, true);
+            comp.EstimateMCheckbox.Layout.Row = 1;
+            comp.EstimateMCheckbox.Layout.Column = 1;
+            % %
+            comp.RankRuleDropDown = uidropdown(comp.RankRuleGrid);
+            comp.RankRuleDropDown.Items = {'Largest Gap','Tolerance'};
+            comp.RankRuleDropDown.ItemsData = {Numerics.RankRule.Gap, Numerics.RankRule.Tolerance};
+            comp.RankRuleDropDown.Value = Numerics.RankRule.Gap;
+            comp.RankRuleDropDown.Enable = false;
+            comp.RankRuleDropDown.ValueChangedFcn = matlab.apps.createCallbackFcn(comp, @RankRuleChanged, true);
+            comp.RankRuleDropDown.Layout.Row = 1;
+            comp.RankRuleDropDown.Layout.Column = 2;
             %
             comp.EigSearchEditField = uieditfield(comp.GridLayout, 'numeric');
             comp.EigSearchEditField.Limits = [0 Inf];

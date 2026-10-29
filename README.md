@@ -12,7 +12,7 @@ problems.
 
 ## Requirements
 
-- MATLAB r2022b+
+- MATLAB r2024b+
 
 ## Installation
 
@@ -35,4 +35,8 @@ cim.RealizationData.ComputationalMode = Numerics.ComputationalMode.MPLoewner;
 CTOOL = CIMTOOL(cim)
 ```
 
-Check out additional scripts and demos under `src/tutorial` or `src/demos`.
+`CIMTOOL()` with no argument opens the GUI with no contour; choosing a contour type builds a default one.
+
+Additional scripts are under `src/tutorial` and `src/demos`.
+Each example folder in `src/demos` has a README describing its scripts and their outputs.
+The tests are in `tests`, described in `tests/README.md`.

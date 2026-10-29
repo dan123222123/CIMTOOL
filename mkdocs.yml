@@ -18,13 +18,15 @@ markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
   - attr_list
+  - md_in_html
   - footnotes
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
   - pymdownx.inlinehilite
-  - pymdownx.snippets
+  - pymdownx.snippets:
+      check_paths: true   # a missing snippet file or section fails the build
   - admonition
   - pymdownx.details
   - pymdownx.superfences:

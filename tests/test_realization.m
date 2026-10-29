@@ -136,9 +136,9 @@ fprintf("eigs() interface (sorted, unit-normalized): PASS\n");
 %% 6. MPLoewner with unequal #theta != #sigma (rectangular Loewner pencil)
 % The Loewner pencil need not be square: realize() SVD-truncates to m, so
 % recovery only requires min(#theta,#sigma) >= m (the McMillan degree). This
-% pins the fix for the padding bug in build_exact_data / build_quadrature_data
-% (PRELIM_REVIEW.md sec 3), which previously sized the tangential-direction
-% arrays with swapped lengths and crashed for any unequal counts.
+% pins the fix for the padding bug in build_exact_data / build_quadrature_data,
+% which previously sized the tangential-direction arrays with swapped lengths
+% and crashed for any unequal counts.
 mk  = @(cnt,rad,off) (-3.5 + rad*exp(2i*pi*((0:cnt-1).'+off)/cnt));  % distinct pts off the spectrum
 pad = {"PadStrategy", "cyclical", "Verbose", false};
 % more left than right points (pads the left side), full identity directions

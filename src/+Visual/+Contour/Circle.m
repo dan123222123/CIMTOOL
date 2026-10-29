@@ -5,8 +5,13 @@ classdef Circle < Numerics.Contour.Circle & Visual.Contour.Quad
           cp = Visual.Contour.Circle(obj.gamma,obj.rho,obj.N,obj.ax);
           cp.plot_quadrature = obj.plot_quadrature;
       end
+
+      function reattachListeners(obj)
+          reattachListeners@Numerics.Contour.Circle(obj);
+          reattachListeners@Visual.Contour.Quad(obj);
+      end
    end
-    
+
     methods
         function obj = Circle(gamma,rho,N,ax)
             arguments
@@ -25,7 +30,7 @@ classdef Circle < Numerics.Contour.Circle & Visual.Contour.Quad
                 obj
                 ax = gca
             end
-            phandles = gobjects(0);
+            phandles = Visual.emptyHandles();
             if isempty(ax) || ~isgraphics(ax); return; end
             zp = Numerics.Contour.Circle.trapezoid(obj.gamma,obj.rho,512);
             zp = [obj.gamma + obj.rho, zp, obj.gamma + obj.rho];
@@ -46,4 +51,3 @@ classdef Circle < Numerics.Contour.Circle & Visual.Contour.Quad
     end
 
 end
-

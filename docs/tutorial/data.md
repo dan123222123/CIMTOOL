@@ -1,6 +1,6 @@
 # Building Data Matrices
 
-In this section, we will explore how to build Hankel and Loewner data matrices using the methods in [sploewner][Numerics.sploewner] and [mploewner][Numerics.mploewner] submodules of `Numerics`.
+In this section, we will explore how to build Hankel and Loewner data matrices using the methods in [sploewner][++Numerics.sploewner] and [mploewner][++Numerics.mploewner] submodules of `Numerics`.
 For both submodules, there are two types of data that can be used:
 
 1. **_Exact_ Data**:
@@ -64,7 +64,7 @@ norm(eig(Ds,Db)-diag(A)) % 1.0300e-04
 ??? note "Choice of \( \sigma \neq \infty \)"
 
     The choice of shift \( \sigma \) is crucial for the quality of poles realized in SPLoewner.
-    An example for the effect of choosing different shifts on the poles of \( S_1 \) is shown in `demos/exact_sploewner_sigma_choice.m`.
+    To see the effect, realize \( S_1 \) on a grid of shifts and compare each realization's pole error against ERA's.
     The resulting heatmap of the ratio between 2-norm error of ERA and SPLoewner for \( \sigma \in \{ z \in \mathbb{C} \,:\, -10 \leq \mathfrak{R}(z) \leq 5, -7.5 \leq \mathfrak{I}(z) \leq 7.5 \} \) is as follows:
 
     ![](../figures/eravspl_shiftmap.png)

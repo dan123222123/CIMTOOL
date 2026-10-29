@@ -1,29 +1,36 @@
-%% loading the problem+contour and starting the GUI
+%% acoustic_wave_1d from the NLEVP collection in the CIMTOOL GUI
+%
+% Companion to docs/examples/acoustic_wave_1d.md.
+% Needs the NLEVP collection on the MATLAB path.
 
+rng(0);   % the probing directions
+% --8<-- [start:setup]
 N = 506; Xi = 1.0001;
-n = Visual.OperatorData([],'acoustic_wave_1d',sprintf("%f,%f",N,Xi));
-c = Visual.Contour.Circle(0.8i,10);
-% c = Visual.Contour.CircularSegment(0.8i,10);
-cim = Visual.CIM(n,c);
+n = Visual.OperatorData([], 'acoustic_wave_1d', sprintf("%f,%f", N, Xi));
+c = Visual.Contour.Circle(0.8i, 10, 512);
+cim = Visual.CIM(n, c);
+% --8<-- [end:setup]
 
-nref = 50; refew = zeros(2*nref,1);
-for k=-nref:nref
-    refew(k+nref+1) = atan(1i*Xi)/(2*pi) + k/2;
-end
-CIM.SampleData.OperatorData.refew = refew;
+% --8<-- [start:reference]
+% the eigenvalues of the continuous problem
+n.refew = atan(1i*Xi)/(2*pi) + (-50:50).'/2;
+% --8<-- [end:reference]
 
 cimtool = CIMTOOL(cim);
-%%
-cim.SampleData.Contour.N = 128;
+%% Probing directions and the realization order
+% --8<-- [start:parameters]
 p = 15; cim.SampleData.ell = p; cim.SampleData.r = p;
-cim.RealizationData.m = 42;
-%%
-cim.setComputationalMode(Numerics.ComputationalMode.Hankel)
-cim.RealizationData.K = 4;
+cim.RealizationData.AutoRank = true;   % m at the largest gap in the singular values of Db
+% --8<-- [end:parameters]
+%% Hankel
+% --8<-- [start:hankel]
+cim.setComputationalMode(Numerics.ComputationalMode.Hankel, Numerics.RealizationSize(0, 4));   % Db is 60 x 60
 cim.compute();
-Numerics.maxrelresidual(n.T,cim.ResultData.ew,cim.ResultData.rev,Numerics.SampleMode.Inverse)
-%%
-cim.setComputationalMode(Numerics.ComputationalMode.MPLoewner)
-cim.RealizationData.K = 4*p;
+fprintf('Hankel: m = %d, max relative residual %.1e\n', cim.ResultData.m, cim.maxrelresidual());
+% --8<-- [end:hankel]
+%% MPLoewner
+% --8<-- [start:mploewner]
+cim.setComputationalMode(Numerics.ComputationalMode.MPLoewner, Numerics.RealizationSize(0, 4*p));   % Db is 60 x 60
 cim.compute();
-Numerics.maxrelresidual(n.T,cim.ResultData.ew,cim.ResultData.rev,Numerics.SampleMode.Inverse)
+fprintf('MPLoewner: m = %d, max relative residual %.1e\n', cim.ResultData.m, cim.maxrelresidual());
+% --8<-- [end:mploewner]

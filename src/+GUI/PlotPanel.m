@@ -44,10 +44,11 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             obj.CIMData.ax = {obj.MainPlotAxes,obj.HSVAxes};
 
             % Store listener handles for cleanup
+            % each follows its object when the CIM's parts are replaced (GUI.SubObjectListener)
             obj.listeners = [
-                addlistener(obj.CIMData.SampleData.OperatorData,'refew','PostSet',@(src,event)obj.ResultDataChangedFcn)
-                addlistener(obj.CIMData.RealizationData,'loaded','PostSet',@(src,event)obj.ResultDataChangedFcn)
-                addlistener(obj.MainApp,'FontSize','PostSet',@(src,event)obj.updateFontSize)
+                GUI.SubObjectListener(obj.CIMData,"SampleData.OperatorData",'refew',@(src,event)obj.ResultDataChangedFcn)
+                GUI.SubObjectListener(obj.CIMData,"RealizationData",'loaded',@(src,event)obj.ResultDataChangedFcn)
+                GUI.SubObjectListener(obj.MainApp,"",'FontSize',@(src,event)obj.updateFontSize)
             ];
 
             obj.ResultDataChangedFcn(0);
@@ -75,7 +76,7 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             % we have contour information, so we can use it to try and
             % prune extra reference eigenvalues from the table view at
             % least
-            if ~all(ismissing(refew))
+            if ~all(ismissing(refew)) && ~isempty(comp.CIMData.SampleData.Contour)   % with no contour yet, none are listed
                 % sort reference eigenvalues by magnitude, only those
                 % inside the contour
                 refew = refew(comp.CIMData.SampleData.Contour.inside(refew));
@@ -97,7 +98,10 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
 
             % if computed eigenvalues are available, show them and the
             % relative residual (assuming ev are also available)
-            if comp.CIMData.RealizationData.loaded && ~all(ismissing(ew))
+            % residuals only for current results of the current operator (a replaced operator or
+            % SampleData can still be mid-update when this runs)
+            if comp.CIMData.RealizationData.loaded && comp.CIMData.SampleData.loaded && ~all(ismissing(ew)) ...
+                    && size(ev,1) == nd.n
                 if ~all(isnan(refew)) % greedy matching between comp and ref if ref is available
                     cew = ew; cev = ev;
                     new = zeros(size(cew)); nev = zeros(size(cev));
@@ -165,7 +169,8 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             comp.HSVPlotTab.Title = 'Data Matrix Singular Values';
         
             % Create MainPlotAxes
-            comp.MainPlotAxes = uiaxes(comp.MainPlotTab);
+            comp.MainPlotTabGridLayout = uigridlayout(comp.MainPlotTab,[1,1]);
+            comp.MainPlotAxes = uiaxes(comp.MainPlotTabGridLayout);
             comp.MainPlotAxes.Layer = 'top';
             comp.MainPlotAxes.XGrid = 'on';
             comp.MainPlotAxes.XMinorGrid = 'on';
@@ -177,7 +182,8 @@ classdef PlotPanel < matlab.ui.componentcontainer.ComponentContainer
             hold(comp.MainPlotAxes,"on"); % easier to set hold on here
         
             % Create HSVAxes
-            comp.HSVAxes = uiaxes(comp.HSVPlotTab);
+            comp.HSVPlotTabGridLayout = uigridlayout(comp.HSVPlotTab,[1,1]);
+            comp.HSVAxes = uiaxes(comp.HSVPlotTabGridLayout);
             comp.HSVAxes.Layer = 'top';
             comp.HSVAxes.XGrid = 'on';
             comp.HSVAxes.XMinorGrid = 'on';

@@ -61,14 +61,15 @@ function s = toStruct(obj)
     R.RealizationSize   = struct('m',  rd.RealizationSize.m, ...
                                  'T1', rd.RealizationSize.T1, ...
                                  'T2', rd.RealizationSize.T2);
-    R.ranktol           = rd.ranktol;
+    R.AutoRank          = rd.AutoRank;
+    R.RankRule          = char(rd.RankRule);
     R.loaded            = rd.loaded;
     s.realization = R;
 
     % --- result data ---
     rs = obj.ResultData;
     RES = struct();
-    for f = ["Db","Ds","B","BB","C","CC","X","Sigma","Y","ew","rev","lev"]
+    for f = ["Db","Ds","B","BB","C","CC","X","Sigma","Y","ew","rev","lev","m","GapRatio"]
         RES.(f) = rs.(f);
     end
     s.result = RES;

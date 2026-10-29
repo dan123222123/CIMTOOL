@@ -19,14 +19,12 @@ where
 
 ## Getting Started
 
-We put $N = 500, \chi = 1.0001$, and let $\Omega = \mathcal{B}(0.8i,10)$ be the circular contour centered at $\gamma = 0.8i$ with radius $\rho = 10$.
+We put \( N = 506 \), \( \chi = 1.0001 \), and let \( \Omega = \mathcal{B}(0.8i,10) \) be the circular contour centered at \( \gamma = 0.8i \) with radius \( \rho = 10 \) and 512 quadrature nodes.
 
-``` matlabsession
->> N = 506; Xi = 1.0001;
->> n = Visual.OperatorData([],'acoustic_wave_1d',sprintf("%f,%f",N,Xi));
->> c = Visual.Contour.Circle(0.8i,10);
->> cim = Visual.CIM(n,c);
-```
+???+ note "Code (operator and contour)"
+    ``` matlab
+    --8<-- "src/demos/acoustic_wave_1d.m:setup"
+    ```
 
 Reference eigenvalues can be computed explicitly as
 
@@ -34,48 +32,38 @@ Reference eigenvalues can be computed explicitly as
 
 when \( \tan^{-1}(i \chi) \) is defined.
 
-``` matlab
-nref = 50; refew = zeros(2*nref,1);
-for k=-nref:nref
-    refew(k+nref+1) = atan(1i*chi)/(2*pi) + k/2;
-end
-CIM.SampleData.Operatordata.refew = refew;
-```
+???+ note "Code (reference eigenvalues)"
+    ``` matlab
+    --8<-- "src/demos/acoustic_wave_1d.m:reference"
+    ```
 
-$\mathbf{T}$ is meromorphic with $m = 40$ simple poles in $\Omega$.
-Hankel and MPLoewner-based CIMs build up relevant data matrices and utilize a rank-$m$ truncated SVD, where, with exact data, $m$ is exactly the number of poles of $\mathbf{T}$ within $\Omega$ (counting multiplicities).
-Inexact data is derived through contour integration of $f_k(z) \left( \left[ \mathbf{T}(z) \right]^{-1} \right)$, approximated via quadrature rule.
-$f_k(z)$ depends on the choice of Hankel/SPLoewner/MPLoewner formulations and, in the case of the latter two, on the choice of shift $\sigma$.
-In practice, left ($\mathbf{L} \in \mathbb{C}^{n \times \ell}$) and right ($\mathbf{R} \in \mathbb{C}^{n \times r}$) probing matrices are used to reduce the computational burden of full inversion of $\mathbf{T}$ at each quadrature node, so that the integrand becomes $f_k(z) \left( \mathbf{L}^* \left[ \mathbf{T}(z) \right]^{-1} \mathbf{R} \right)$.
+\( \mathbf{T} \) is meromorphic with \( m = 40 \) simple poles in \( \Omega \).
+Hankel and MPLoewner-based CIMs build up relevant data matrices and utilize a rank-\( m \) truncated SVD, where, with exact data, \( m \) is exactly the number of poles of \( \mathbf{T} \) within \( \Omega \) (counting multiplicities).
+Inexact data is derived through contour integration of \( f_k(z) \left( \left[ \mathbf{T}(z) \right]^{-1} \right) \), approximated via quadrature rule.
+\( f_k(z) \) depends on the choice of Hankel/SPLoewner/MPLoewner formulations and, in the case of the latter two, on the choice of shift \( \sigma \).
+In practice, left (\( \mathbf{L} \in \mathbb{C}^{n \times \ell} \)) and right (\( \mathbf{R} \in \mathbb{C}^{n \times r} \)) probing matrices are used to reduce the computational burden of full inversion of \( \mathbf{T} \) at each quadrature node, so that the integrand becomes \( f_k(z) \left( \mathbf{L}^* \left[ \mathbf{T}(z) \right]^{-1} \mathbf{R} \right) \).
 
 ## Example
 
-We set $m = 40, \ell = r = 15$, and choose $K$ so that $\mathbb{D},\mathbb{D_s} \in \mathbb{C}^{60 \times 60}$.
+We set \( \ell = r = 15 \) and choose \( K \) so that \( \mathbb{D},\mathbb{D_s} \in \mathbb{C}^{60 \times 60} \).
+With `AutoRank`, the realization order \( m \) sits at the largest gap in the singular values of \( \mathbb{D} \).
 
-```matlabsession
->> CIM.SampleData.Contour.N = 128;
->> p = 15; CIM.SampleData.ell = p; CIM.SampleData.r = p; % number of left/right sampling directions
->> CIM.RealizationData.m = 42; % independent of quadrature data
-```
+???+ note "Code (probing directions and realization order)"
+    ``` matlab
+    --8<-- "src/demos/acoustic_wave_1d.m:parameters"
+    ```
 
 ### Hankel
 
-To use Hankel realization, we set need to specify it and the number of moments, $K$, used to build $\mathbb{D}$:
+To use Hankel realization, we specify it and the number of moments \( K \) used to build \( \mathbb{D} \).
 
-``` matlabsession
->> cim.setComputationalMode(Numerics.ComputationalMode.Hankel);
->> cim.RealizationData.K = 4; % 60 / p = 4
->> cim.compute();
-```
+???+ note "Code (Hankel realization)"
+    ``` matlab
+    --8<-- "src/demos/acoustic_wave_1d.m:hankel"
+    ```
 
-Finally, we can find the maximum relative residual (MRR) of the computed eigenpairs:
-
-``` matlabsession
->> max(Numerics.relres(n.T,cim.ResultData.ew,cim.ResultData.rev,Numerics.SampleMode.Inverse))
-ans =
-
-   7.6804e-05
-```
+The gap falls at \( m = 42 \): the 40 eigenvalues inside \( \Omega \) and two just outside it, at \( \pm 10.003 + 0.555i \).
+The maximum relative residual (MRR) of the 42 computed eigenpairs is \( 1.9\times10^{-13} \).
 
 <!---
 /// admonition | Note
@@ -85,17 +73,15 @@ Since we previously computed `#!matlab CIM.SampleData`, `#!matlab CIM.compute()`
 
 ### MPLoewner
 
-We switch computational modes to MPLoewner where $K$ now represents the number of shifts used in construction of $\mathbb{D}$:
+We switch computational modes to MPLoewner where \( K \) now represents the number of shifts used in construction of \( \mathbb{D} \).
 
-```matlabsession
->> cim.setComputationalMode(Numerics.ComputationalMode.MPLoewner); % implicitly sets default shifts relative to the contour
->> cim.RealizationData.K = 4*p; % 4 * 15 = 60
->> cim.compute();
->>  max(Numerics.relres(n.T,cim.ResultData.ew,cim.ResultData.rev,Numerics.SampleMode.Inverse))
-ans =
+???+ note "Code (MPLoewner realization)"
+    ``` matlab
+    --8<-- "src/demos/acoustic_wave_1d.m:mploewner"
+    ```
 
-   2.4238e-06
-```
+MPLoewner also realizes \( m = 42 \) eigenvalues, with MRR \( 1.2\times10^{-14} \).
+The demo `src/demos/acoustic_wave_1d.m` also opens the CIMTOOL GUI on `cim`.
 
 <!---
 
