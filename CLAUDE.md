@@ -9,7 +9,7 @@ CIMTOOL is a MATLAB-based graphical user interface for exploring and applying co
 ## Requirements
 
 - MATLAB r2024b or later
-- Python 3.11+ (for documentation generation only)
+- Python 3.10 to 3.14 (for documentation generation only); mkdocstrings-matlab does not install on 3.15, and CI and the flake pin 3.14
 
 ## Development Setup
 

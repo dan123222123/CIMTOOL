@@ -16,7 +16,7 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 case "${1:-}" in
     docs)
         venv="$REPO/.venv-docs"
-        reqs=(mkdocs-material "mkdocstrings-matlab==2.0.0" mkdocs-awesome-nav)
+        reqs=(mkdocs-material "mkdocstrings-matlab==2.0.1" mkdocs-awesome-nav)
         ;;
     *)
         echo "usage: $0 docs" >&2

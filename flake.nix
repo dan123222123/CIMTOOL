@@ -19,8 +19,9 @@
 
         # Native toolchain a few pip packages need to build C extensions
         # (tree-sitter for mkdocstrings-matlab, etc.) plus their runtime libs.
+        # The python matches the version pinned in .github/workflows/ci.yml.
         commonPackages = with pkgs; [
-          python311
+          python314
           git
           gcc
           gnumake
