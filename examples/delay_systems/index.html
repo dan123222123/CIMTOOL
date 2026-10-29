@@ -1,0 +1,1702 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../webs/">
+      
+      
+        <link rel="next" href="../gun/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Time-Delay Eigenvalue Problems - CIMTOOL</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#time-delay-eigenvalue-problems" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="CIMTOOL" class="md-header__button md-logo" aria-label="CIMTOOL" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CIMTOOL
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Time-Delay Eigenvalue Problems
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="CIMTOOL" class="md-nav__button md-logo" aria-label="CIMTOOL" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    CIMTOOL
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Contour Integral Method (CIM) Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorial
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorial
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Data Matrices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acoustic_wave_1d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Acoustic Wave 1D (acoustic_wave_1d)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../webs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Going Beyond Polynomial Eigenvalue Problems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Time-Delay Eigenvalue Problems
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Time-Delay Eigenvalue Problems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-a-partial-element-equivalent-circuit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. A partial element equivalent circuit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-a-three-bus-system-with-a-delayed-stabiliser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. A three-bus system with a delayed stabiliser
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-ten-delayed-psss-on-a-39-bus-power-network" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Ten Delayed PSSs on a 39-bus power network
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gun/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Gun Problem: a Large and Sparse Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Api
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Api
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Numerics
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Numerics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1_1" id="__nav_4_1_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Realization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Realization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/realization/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Miscellaneous
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/realization/sploewner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ERA/Single-Point Loewner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/realization/mploewner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Point Loewner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1_2" id="__nav_4_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Structures
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Structures
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/structures/enumerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enumerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/structures/contours/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contours
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/numerics/structures/main/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Main Classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/visual/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visual Reactive Class "Decoration"
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/gui/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GUI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-a-partial-element-equivalent-circuit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. A partial element equivalent circuit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-a-three-bus-system-with-a-delayed-stabiliser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. A three-bus system with a delayed stabiliser
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-ten-delayed-psss-on-a-39-bus-power-network" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Ten Delayed PSSs on a 39-bus power network
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="time-delay-eigenvalue-problems">Time-Delay Eigenvalue Problems</h1>
+<p>Many physical systems carry a <em>time delay</em> <span class="arithmatex">\( \tau \)</span>: a signal, a wave, or a
+measurement arrives some time after it is produced.
+When systems incorporate a delay, it is often of interest to determine for which delay the system becomes unstable i.e. to determine the <em>stability margin</em> of the system.
+For continuous-time systems, this is given by the smallest <span class="arithmatex">\( \tau \)</span> such that poles of the system have zero real part.
+A general delay system can be written in the following form</p>
+<div class="arithmatex">\[
+\mathbf{E}\dot{x}(t) = \varphi\big(t, x(t), x(\kappa(t)), \dot{x}(\kappa(t))\big),
+\qquad
+\kappa_i(t) = t - \tau_i, \quad i = 1, 2, \dots, k_m .
+\]</div>
+<p>where <span class="arithmatex">\( \tau = \left[ \tau_1, \ldots, \tau_{k_m} \right]^\top \in \mathbb{R}^{k_m} \)</span> is a set of constant delays.
+When <span class="arithmatex">\( \phi \)</span> depends only on the first three arguments, we say that that the system is <em>retarded</em> and, otherwise, we say that it is <em>neutral</em>.
+Below are two examples of such systems with only a single delay</p>
+<div class="arithmatex">\[
+\underbrace{\mathbf{E}\dot{x}(t) = \mathbf{A}_0 x(t) + \mathbf{A}_1 x(t-\tau)}_{\text{retarded}}
+\qquad
+\underbrace{\mathbf{E}_0\dot{x}(t) + \mathbf{E}_1\dot{x}(t-\tau) = \mathbf{A}_0 x(t) + \mathbf{A}_1 x(t-\tau)}_{\text{neutral}} .
+\]</div>
+<p>Seeking solutions of the form <span class="arithmatex">\( x(t) = e^{\lambda t}\vec{v} \)</span> turns the stability question for these systems into a <em>nonlinear</em>
+eigenvalue problem <span class="arithmatex">\( \mathbf{T}(\lambda, \tau)\,\vec{v} = 0 \)</span>.
+After some algebraic manipulations, the above equations become</p>
+<div class="arithmatex">\[
+\underbrace{\mathbf{T}(\lambda,\tau) = \lambda\mathbf{I} - \mathbf{A}_0 - \mathbf{A}_1 e^{-\lambda\tau}}_{\text{retarded}}
+\qquad
+\underbrace{\mathbf{T}(\lambda,\tau) = \lambda(\mathbf{I} + \mathbf{E}_1 e^{-\lambda\tau}) - \mathbf{A}_0 - \mathbf{A}_1 e^{-\lambda\tau}}_{\text{neutral}} .
+\]</div>
+<p>Unlike polynomial or rational eigenvalue problems, these are transcendental in <span class="arithmatex">\( \lambda \)</span>; there are infinitely many eigenvalues, and no exact, finite linearisation exists.
+On any bounded region of the complex plane, however, there exist only
+finitely many eigenvalues, and we can use CIMs to recover eigenpairs in a domain of interest.
+All three examples below use the same multi-point Loewner mode.
+The realisation size <span class="arithmatex">\( m \)</span> sits at the largest gap in the singular values of the Loewner matrix <span class="arithmatex">\( \mathbb{D} \)</span> (even when the gap is smaller than <span class="arithmatex">\( 10^3 \)</span>).
+A contour whose sample moments are at noise level, below <code>options.EmptyTol</code> <span class="arithmatex">\( = 10^{-10} \)</span> relative to their bound, is read as empty, with <span class="arithmatex">\( m = 0 \)</span>.
+Eigenvalues with relative residual <span class="arithmatex">\( \lVert \mathbf{T}(\lambda)\mathbf{v} \rVert_2 / \lVert \mathbf{T}(\lambda) \rVert_F \geq 10^{-8} \)</span> are drawn as empty grey boxes.</p>
+<hr />
+<h2 id="1-a-partial-element-equivalent-circuit">1. A partial element equivalent circuit<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></h2>
+<p>A partial element equivalent circuit (PEEC) models a three dimensional circuit interconnect with propagation delay; they are written as delay differential equations.
+Time-domain solvers are less robust for these equations than for ordinary circuits, so it matters when the model itself is stable<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>.
+To this end we consider a test circuit of Bellen, Guglielmi and Ruehli<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup> given by the <em>neutral</em> delay differential equation</p>
+<div class="arithmatex">\[
+\dot{x}(t) = \mathbf{L}\, x(t) + \mathbf{M}\, x(t-\tau) + \mathbf{N}\, \dot{x}(t-\tau), \qquad x(t) \in \mathbb{R}^{3},
+\]</div>
+<p>where the matrices are</p>
+<div class="arithmatex">\[
+\frac{\mathbf{L}}{100} = \begin{pmatrix} -7 &amp; 1 &amp; 2 \\ 3 &amp; -9 &amp; 0 \\ 1 &amp; 2 &amp; -6 \end{pmatrix}
+\quad
+\frac{\mathbf{M}}{100} = \begin{pmatrix} 1 &amp; 0 &amp; -3 \\ -0.5 &amp; -0.5 &amp; -1 \\ -0.5 &amp; -1.5 &amp; 0 \end{pmatrix}
+\quad
+\mathbf{N} = \frac{1}{72}\begin{pmatrix} -1 &amp; 5 &amp; 2 \\ 4 &amp; 0 &amp; 3 \\ -2 &amp; 4 &amp; 1 \end{pmatrix},
+\]</div>
+<p>Our problem of interest is given as</p>
+<div class="arithmatex">\[ \mathbf{T}(\lambda) = \lambda(\mathbf{I} - \mathbf{N}e^{-\lambda\tau}) - \mathbf{L} - \mathbf{M}e^{-\lambda\tau}. \]</div>
+<p>We can track the eigenvalues of the delay problem as <span class="arithmatex">\( \tau \)</span> increases inside, say, an ellipse centred at the origin.</p>
+<details class="note">
+<summary>Code (the ellipse CIM and the delay sweep)</summary>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">beta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">-</span><span class="mi">7</span><span class="p">;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">100</span><span class="o">*</span><span class="p">[</span><span class="nb">beta</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">-</span><span class="mi">9</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">1</span><span class="w"> </span><span class="s">2</span><span class="w"> </span><span class="o">-</span><span class="mi">6</span><span class="p">];</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">M</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">100</span><span class="o">*</span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">-</span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="mf">0.5</span><span class="w"> </span><span class="o">-</span><span class="mf">0.5</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="mf">0.5</span><span class="w"> </span><span class="o">-</span><span class="mf">1.5</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">N</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="n">4</span><span class="w"> </span><span class="s">0</span><span class="w"> </span><span class="s">3</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="mi">2</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">72</span><span class="p">;</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">I</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">T</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">s</span><span class="p">,</span><span class="n">tau</span><span class="p">)</span><span class="w"> </span><span class="n">s</span><span class="o">*</span><span class="p">(</span><span class="n">I</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">N</span><span class="o">*</span><span class="nb">exp</span><span class="p">(</span><span class="o">-</span><span class="n">s</span><span class="o">*</span><span class="n">tau</span><span class="p">))</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">M</span><span class="o">*</span><span class="nb">exp</span><span class="p">(</span><span class="o">-</span><span class="n">s</span><span class="o">*</span><span class="n">tau</span><span class="p">);</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">c</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">Contour</span><span class="p">.</span><span class="n">Ellipse</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mf">1e4</span><span class="p">);</span><span class="w">   </span><span class="c">% semi-axes 2 and 10, 1e4 quadrature nodes</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="nb">rng</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">tau</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">op</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">OperatorData</span><span class="p">(@(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="n">T</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">tau</span><span class="p">));</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="n">cim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">CIM</span><span class="p">(</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="n">cim</span><span class="p">.</span><span class="n">RealizationData</span><span class="p">.</span><span class="n">ComputationalMode</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">ComputationalMode</span><span class="p">.</span><span class="n">MPLoewner</span><span class="p">;</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="n">cim</span><span class="p">.</span><span class="n">RealizationData</span><span class="p">.</span><span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">500</span><span class="p">;</span><span class="w">  </span><span class="n">cim</span><span class="p">.</span><span class="n">SampleData</span><span class="p">.</span><span class="n">ell</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w">  </span><span class="n">cim</span><span class="p">.</span><span class="n">SampleData</span><span class="p">.</span><span class="n">r</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="c">% m from the largest singular-value gap of the Loewner matrix; 0 for an empty ellipse</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="n">cim</span><span class="p">.</span><span class="n">RealizationData</span><span class="p">.</span><span class="n">AutoRank</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="c">% Each new op.T is sampled on the same contour, with the same probes and shifts.</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="n">taus</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">linspace</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">201</span><span class="p">);</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="n">ews</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="nb">cell</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">taus</span><span class="p">));</span><span class="w">  </span><span class="n">rr</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">cell</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">taus</span><span class="p">));</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="k">for</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">taus</span><span class="p">)</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">    </span><span class="n">op</span><span class="p">.</span><span class="n">T</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="n">T</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">taus</span><span class="p">(</span><span class="n">k</span><span class="p">));</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">    </span><span class="p">[</span><span class="n">V</span><span class="p">,</span><span class="w"> </span><span class="n">D</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">cim</span><span class="p">.</span><span class="n">eigs</span><span class="p">();</span><span class="w">  </span><span class="n">z</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">diag</span><span class="p">(</span><span class="n">D</span><span class="p">);</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">    </span><span class="n">in</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">inside</span><span class="p">(</span><span class="n">z</span><span class="p">);</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">    </span><span class="n">ews</span><span class="p">{</span><span class="n">k</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">z</span><span class="p">(</span><span class="n">in</span><span class="p">);</span>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">    </span><span class="n">rr</span><span class="p">{</span><span class="n">k</span><span class="p">}</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">relres</span><span class="p">(</span><span class="n">op</span><span class="p">.</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="n">V</span><span class="p">(:,</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="n">op</span><span class="p">.</span><span class="n">sample_mode</span><span class="p">);</span>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="k">end</span>
+</span></code></pre></div>
+</details>
+<p><img alt="" src="../../figures/peec/tau_sweep.png" /></p>
+<details class="note">
+<summary>Plotting code (tau_sweep.png)</summary>
+<p>The sweep script <code>src/demos/peec/milano_peec_1.m</code> writes <code>ews</code> and their relative residuals <code>rr</code> to <code>peec_tau_sweep.csv</code>, which this script reads.</p>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">here</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">fileparts</span><span class="p">(</span><span class="nb">mfilename</span><span class="p">(</span><span class="s">'fullpath'</span><span class="p">));</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">S</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">readtable</span><span class="p">(</span><span class="nb">fullfile</span><span class="p">(</span><span class="n">here</span><span class="p">,</span><span class="w"> </span><span class="s">'peec_tau_sweep.csv'</span><span class="p">));</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">tau_ms</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1000</span><span class="o">*</span><span class="n">S</span><span class="p">.</span><span class="n">tau</span><span class="p">;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">trusted</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">S</span><span class="p">.</span><span class="n">relres</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">1e-8</span><span class="p">;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">untrusted</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">S</span><span class="p">.</span><span class="n">relres</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mf">1e-8</span><span class="p">;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="n">f</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">figure</span><span class="p">(</span><span class="s">'Color'</span><span class="p">,</span><span class="w"> </span><span class="s">'w'</span><span class="p">,</span><span class="w"> </span><span class="s">'Position'</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">100</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="mi">500</span><span class="w"> </span><span class="mi">530</span><span class="p">]);</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">hold</span><span class="w"> </span><span class="s">on</span><span class="p">;</span><span class="w">  </span><span class="n">box</span><span class="w"> </span><span class="s">on</span><span class="p">;</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="n">th</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="o">*</span><span class="nb">pi</span><span class="p">,</span><span class="w"> </span><span class="mi">400</span><span class="p">);</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="nb">plot</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">cos</span><span class="p">(</span><span class="n">th</span><span class="p">),</span><span class="w"> </span><span class="mi">10</span><span class="o">*</span><span class="nb">sin</span><span class="p">(</span><span class="n">th</span><span class="p">),</span><span class="w"> </span><span class="s">'k-'</span><span class="p">);</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="nb">xline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">'k:'</span><span class="p">);</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="nb">scatter</span><span class="p">(</span><span class="n">S</span><span class="p">.</span><span class="n">re</span><span class="p">(</span><span class="n">trusted</span><span class="p">),</span><span class="w"> </span><span class="n">S</span><span class="p">.</span><span class="n">im</span><span class="p">(</span><span class="n">trusted</span><span class="p">),</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w"> </span><span class="n">tau_ms</span><span class="p">(</span><span class="n">trusted</span><span class="p">),</span><span class="w"> </span><span class="s">'filled'</span><span class="p">);</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="n">hu</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">plot</span><span class="p">(</span><span class="n">S</span><span class="p">.</span><span class="n">re</span><span class="p">(</span><span class="n">untrusted</span><span class="p">),</span><span class="w"> </span><span class="n">S</span><span class="p">.</span><span class="n">im</span><span class="p">(</span><span class="n">untrusted</span><span class="p">),</span><span class="w"> </span><span class="s">'s'</span><span class="p">,</span><span class="w"> </span><span class="s">'LineStyle'</span><span class="p">,</span><span class="w"> </span><span class="s">'none'</span><span class="p">,</span><span class="w"> </span><span class="s">'MarkerFaceColor'</span><span class="p">,</span><span class="w"> </span><span class="s">'none'</span><span class="p">,</span><span class="w"> </span><span class="s">'MarkerEdgeColor'</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mf">0.6</span><span class="w"> </span><span class="mf">0.6</span><span class="w"> </span><span class="mf">0.6</span><span class="p">]);</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="nb">legend</span><span class="p">(</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="s">'relative residual \geq 10^{-8}'</span><span class="p">,</span><span class="w"> </span><span class="s">'Interpreter'</span><span class="p">,</span><span class="w"> </span><span class="s">'tex'</span><span class="p">,</span><span class="w"> </span><span class="s">'Location'</span><span class="p">,</span><span class="w"> </span><span class="s">'northoutside'</span><span class="p">);</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="nb">colormap</span><span class="p">(</span><span class="nb">parula</span><span class="p">);</span><span class="w">  </span><span class="n">cb</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">colorbar</span><span class="p">;</span><span class="w">  </span><span class="n">clim</span><span class="p">([</span><span class="nb">min</span><span class="p">(</span><span class="n">tau_ms</span><span class="p">)</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">tau_ms</span><span class="p">)]);</span><span class="w">  </span><span class="n">cb</span><span class="p">.</span><span class="n">Label</span><span class="p">.</span><span class="n">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">'\tau [ms]'</span><span class="p">;</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="nb">xlabel</span><span class="p">(</span><span class="s">'Re \lambda'</span><span class="p">);</span><span class="w">  </span><span class="nb">ylabel</span><span class="p">(</span><span class="s">'Im \lambda'</span><span class="p">);</span><span class="w">  </span><span class="nb">axis</span><span class="p">([</span><span class="o">-</span><span class="mf">2.2</span><span class="w"> </span><span class="mf">0.6</span><span class="w"> </span><span class="o">-</span><span class="mf">10.5</span><span class="w"> </span><span class="mf">10.5</span><span class="p">]);</span>
+</span></code></pre></div>
+</details>
+<p>As <span class="arithmatex">\( \tau \)</span> grows, eigenvalues enter the ellipse and move toward the imaginary axis.
+The ellipse holds none at <span class="arithmatex">\( \tau = 200 \)</span> ms and 16 at <span class="arithmatex">\( \tau = 2000 \)</span> ms.
+Note that none appear to cross the imaginary axis, and, in fact, this holds for all <span class="arithmatex">\( \tau \)</span>.</p>
+<p>The eigenvalues of <span class="arithmatex">\( \mathbf{L} \)</span> are <span class="arithmatex">\( -407.9 \)</span> and <span class="arithmatex">\( -896 \pm 78i \)</span>, so <span class="arithmatex">\( \lambda\mathbf{I} - \mathbf{L} \)</span> is invertible for <span class="arithmatex">\( \operatorname{Re} \lambda \ge 0 \)</span>, and there we can factor</p>
+<div class="arithmatex">\[ \mathbf{T}(\lambda) = (\lambda\mathbf{I} - \mathbf{L})\big(\mathbf{I} - e^{-\lambda\tau}\mathbf{F}(\lambda)\big), \qquad \mathbf{F}(\lambda) = (\lambda\mathbf{I} - \mathbf{L})^{-1}(\lambda\mathbf{N} + \mathbf{M}). \]</div>
+<p>The only poles of <span class="arithmatex">\( \mathbf{F} \)</span> are the eigenvalues of <span class="arithmatex">\( \mathbf{L} \)</span>, so <span class="arithmatex">\( \mathbf{F} \)</span> is analytic on the closed right half-plane.
+Further, writing <span class="arithmatex">\( \lambda\mathbf{N} = (\lambda\mathbf{I} - \mathbf{L})\mathbf{N} + \mathbf{L}\mathbf{N} \)</span> gives <span class="arithmatex">\( \mathbf{F}(\lambda) = \mathbf{N} + (\lambda\mathbf{I} - \mathbf{L})^{-1}(\mathbf{M} + \mathbf{L}\mathbf{N}) \)</span>, a stable proper transfer function with <span class="arithmatex">\( \mathbf{F}(\lambda) \to \mathbf{N} \)</span> as <span class="arithmatex">\( |\lambda| \to \infty \)</span>.
+Its <span class="arithmatex">\( \mathcal{H}_\infty \)</span> norm</p>
+<div class="arithmatex">\[ \|\mathbf{F}\|_{\infty} = \sup_{\operatorname{Re} \lambda \ge 0} \|\mathbf{F}(\lambda)\|_2 = \sup_{\omega \in \mathbb{R}} \|\mathbf{F}(i\omega)\|_2 \]</div>
+<p>is finite, and MATLAB computes it from a state-space realisation.</p>
+<details class="note">
+<summary>Code (the small-gain bound)</summary>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c">% T(s) = (sI - L)(I - e^{-s tau} F(s)) with F(s) = N + (sI - L)^{-1}(M + L N).</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c">% L is stable, so ||F||_inf &lt; 1 makes T(s) nonsingular on Re s &gt;= 0 for all tau.</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">if</span><span class="w"> </span><span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="nb">ver</span><span class="p">(</span><span class="s">'control'</span><span class="p">))</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">license</span><span class="p">(</span><span class="s">'test'</span><span class="p">,</span><span class="w"> </span><span class="s">'Control_Toolbox'</span><span class="p">)</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">F</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">L</span><span class="o">*</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="nb">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">N</span><span class="p">);</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nb">fprintf</span><span class="p">(</span><span class="s">'eig(L) = %s\n'</span><span class="p">,</span><span class="w"> </span><span class="nb">mat2str</span><span class="p">(</span><span class="nb">eig</span><span class="p">(</span><span class="n">L</span><span class="p">).</span><span class="o">'</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">));</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nb">fprintf</span><span class="p">(</span><span class="s">'||F||_inf = %.4f\n'</span><span class="p">,</span><span class="w"> </span><span class="n">hinfnorm</span><span class="p">(</span><span class="n">F</span><span class="p">));</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="k">else</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="nb">fprintf</span><span class="p">(</span><span class="s">'Control System Toolbox not available: skipping the H-infinity check.\n'</span><span class="p">);</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="k">end</span>
+</span></code></pre></div>
+</details>
+<p>For <span class="arithmatex">\( \operatorname{Re} \lambda \ge 0 \)</span> we have <span class="arithmatex">\( |e^{-\lambda\tau}| \le 1 \)</span>, so <span class="arithmatex">\( \|e^{-\lambda\tau}\mathbf{F}(\lambda)\|_2 \le 0.6633 &lt; 1 \)</span>.
+Hence, <span class="arithmatex">\( \mathbf{I} - e^{-\lambda\tau}\mathbf{F}(\lambda) \Rightarrow \mathbf{T}(\lambda) \)</span> are nonsingular for every <span class="arithmatex">\( \tau \ge 0 \)</span>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>ss</code> and <code>hinfnorm</code> require the Control System Toolbox.
+The rest of this example runs in base MATLAB.</p>
+</div>
+<p>The full demo is <code>src/demos/peec/milano_peec_1.m</code>.</p>
+<hr />
+<h2 id="2-a-three-bus-system-with-a-delayed-stabiliser">2. A three-bus system with a delayed stabiliser<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></h2>
+<p>Wide-area controllers act on remote measurements, so their inputs arrive
+delayed. Milano's three-bus system<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup> is a two-machine network whose
+electromechanical oscillation is damped by a <em>power system stabiliser</em> (PSS);
+the PSS input is the rotor speed of machine 1, measured with delay <span class="arithmatex">\( \tau \)</span>.
+The small-signal model is given as</p>
+<div class="arithmatex">\[
+\dot{x}(t) = \mathbf{A}_0 x(t) + \mathbf{A}_1 x(t - \tau)
+\]</div>
+<p>This is a <em>retarded</em> delay differential equation
+<span class="arithmatex">\( \mathbf{T}(\lambda,\tau)=\lambda\mathbf{I}-\mathbf{A}_0-\mathbf{A}_1 e^{-\lambda\tau} \)</span>,
+with <span class="arithmatex">\( \mathbf{A}_0 \)</span> the state matrix of the machines, the automatic voltage regulators (AVRs) and the PSS, and the sparse <span class="arithmatex">\( \mathbf{A}_1 \)</span> the delayed speed input of the PSS.</p>
+<details class="note">
+<summary>Code (<span class="arithmatex">\( \mathbf{A}_0 \)</span>, <span class="arithmatex">\( \mathbf{A}_1 \)</span> and <span class="arithmatex">\( \mathbf{T} \)</span> on 23 states)</summary>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">As_base_3bus</span><span class="p">;</span><span class="w">   </span><span class="c">% 19x19 state matrix of Appendix B, without the PSS</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">Kw</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">10.9</span><span class="p">;</span><span class="w"> </span><span class="n">Tw</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">14</span><span class="p">;</span><span class="w"> </span><span class="n">Tz</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">0.5056</span><span class="p">;</span><span class="w"> </span><span class="n">Tp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">0.1007</span><span class="p">;</span><span class="w"> </span><span class="n">gAVR</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">40</span><span class="o">/</span><span class="mf">0.055</span><span class="p">;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">r</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Tz</span><span class="o">/</span><span class="n">Tp</span><span class="p">;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c">% PSS from omega_r1(t - tau) to v_s: x' = Ap x + Bp u, v_s = Cp x + Dp u</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">Ap</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">zeros</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span><span class="w"> </span><span class="n">Bp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">zeros</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">Ap</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">Tw</span><span class="p">;</span><span class="w"> </span><span class="n">Bp</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Kw</span><span class="o">/</span><span class="n">Tw</span><span class="p">;</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="n">Cp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span><span class="w"> </span><span class="n">Dp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Kw</span><span class="p">;</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="k">for</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="n">Ap</span><span class="p">(</span><span class="n">k</span><span class="p">,:)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Cp</span><span class="o">/</span><span class="n">Tp</span><span class="p">;</span><span class="w"> </span><span class="n">Ap</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Ap</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="n">Tp</span><span class="p">;</span><span class="w"> </span><span class="n">Bp</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Dp</span><span class="o">/</span><span class="n">Tp</span><span class="p">;</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">    </span><span class="n">Cp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">r</span><span class="o">*</span><span class="n">Cp</span><span class="p">;</span><span class="w"> </span><span class="n">Cp</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Cp</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">r</span><span class="p">);</span><span class="w"> </span><span class="n">Dp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">r</span><span class="o">*</span><span class="n">Dp</span><span class="p">;</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="k">end</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="c">% v_s enters the AVR of machine 1; the delayed omega_r1 enters the PSS</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="n">n</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">23</span><span class="p">;</span><span class="w"> </span><span class="n">iw</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="n">iva</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">16</span><span class="p">;</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">20</span><span class="p">:</span><span class="mi">23</span><span class="p">;</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="n">E</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="nb">eye</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="n">A0</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">blkdiag</span><span class="p">(</span><span class="n">As</span><span class="p">,</span><span class="w"> </span><span class="n">Ap</span><span class="p">);</span><span class="w"> </span><span class="n">A0</span><span class="p">(</span><span class="n">iva</span><span class="p">,</span><span class="n">ip</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">gAVR</span><span class="o">*</span><span class="n">Cp</span><span class="p">;</span>
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="n">A1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">);</span><span class="w"> </span><span class="n">A1</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="n">iw</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Bp</span><span class="p">;</span><span class="w"> </span><span class="n">A1</span><span class="p">(</span><span class="n">iva</span><span class="p">,</span><span class="n">iw</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">gAVR</span><span class="o">*</span><span class="n">Dp</span><span class="p">;</span>
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="n">T</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">s</span><span class="p">,</span><span class="n">tau</span><span class="p">)</span><span class="w"> </span><span class="n">s</span><span class="o">*</span><span class="n">E</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">A0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">A1</span><span class="o">*</span><span class="nb">exp</span><span class="p">(</span><span class="o">-</span><span class="n">s</span><span class="o">*</span><span class="n">tau</span><span class="p">);</span>
+</span></code></pre></div>
+</details>
+<p>One MPLoewner CIM on the circle <span class="arithmatex">\( |z - (-0.5 + 4i)| = 2.6 \)</span>, with <span class="arithmatex">\( K = 50 \)</span> and <span class="arithmatex">\( \ell = r = 5 \)</span> fixed probing directions, is reused at 201 delays from 0 to 250 ms.</p>
+<details class="note">
+<summary>Code (the CIM, the delay sweep and the margin)</summary>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">rng</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">   </span><span class="c">% the probing directions are drawn once and kept for every delay</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">c</span><span class="w">   </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">Contour</span><span class="p">.</span><span class="n">Circle</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>4<span class="nb">i</span><span class="p">,</span><span class="w"> </span><span class="mf">2.6</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">);</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">cim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">CIM</span><span class="p">(</span><span class="n">Numerics</span><span class="p">.</span><span class="n">OperatorData</span><span class="p">(@(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="n">T</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)),</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">cim</span><span class="p">.</span><span class="n">setComputationalMode</span><span class="p">(</span><span class="n">Numerics</span><span class="p">.</span><span class="n">ComputationalMode</span><span class="p">.</span><span class="n">MPLoewner</span><span class="p">,</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">RealizationSize</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">));</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">cim</span><span class="p">.</span><span class="n">SampleData</span><span class="p">.</span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">randn</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span><span class="w">  </span><span class="n">cim</span><span class="p">.</span><span class="n">SampleData</span><span class="p">.</span><span class="n">R</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">randn</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">cim</span><span class="p">.</span><span class="n">RealizationData</span><span class="p">.</span><span class="n">AutoRank</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">   </span><span class="c">% m from the largest singular-value gap of the Loewner matrix</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="n">tau</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.25</span><span class="p">,</span><span class="w"> </span><span class="mi">201</span><span class="p">);</span><span class="w">  </span><span class="n">sweep</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">cell</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">tau</span><span class="p">));</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="k">for</span><span class="w"> </span><span class="nb">i</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="n">sweep</span><span class="p">{</span><span class="nb">i</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">disk_eigs</span><span class="p">(</span><span class="n">cim</span><span class="p">,</span><span class="w"> </span><span class="p">@(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="n">T</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">tau</span><span class="p">(</span><span class="nb">i</span><span class="p">)));</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="k">end</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="c">% the first sign change of the abscissa of the trusted eigenvalues on the grid,</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="c">% refined by fzero; a disk without trusted eigenvalues reads as stable</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="n">tol</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">1e-8</span><span class="p">;</span><span class="w">   </span><span class="c">% an eigenvalue with relative residual below tol is trusted</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="n">abscissa</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">E</span><span class="p">)</span><span class="w"> </span><span class="nb">max</span><span class="p">([</span><span class="nb">real</span><span class="p">(</span><span class="n">E</span><span class="p">.</span><span class="n">z</span><span class="p">(</span><span class="n">E</span><span class="p">.</span><span class="n">relres</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">tol</span><span class="p">));</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">]);</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="nb">i</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="nb">find</span><span class="p">(</span><span class="nb">cellfun</span><span class="p">(</span><span class="n">abscissa</span><span class="p">,</span><span class="w"> </span><span class="n">sweep</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="n">tc</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">fzero</span><span class="p">(@(</span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="n">abscissa</span><span class="p">(</span><span class="n">disk_eigs</span><span class="p">(</span><span class="n">cim</span><span class="p">,</span><span class="w"> </span><span class="p">@(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="n">T</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">))),</span><span class="w"> </span><span class="n">tau</span><span class="p">([</span><span class="nb">i</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="nb">i</span><span class="p">]));</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="n">Ec</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">disk_eigs</span><span class="p">(</span><span class="n">cim</span><span class="p">,</span><span class="w"> </span><span class="p">@(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="n">T</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">tc</span><span class="p">));</span><span class="w">  </span><span class="n">Ec</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Ec</span><span class="p">(</span><span class="n">Ec</span><span class="p">.</span><span class="n">relres</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">tol</span><span class="p">,</span><span class="w"> </span><span class="p">:);</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="p">[</span><span class="o">~</span><span class="p">,</span><span class="w"> </span><span class="nb">j</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="nb">real</span><span class="p">(</span><span class="n">Ec</span><span class="p">.</span><span class="n">z</span><span class="p">));</span><span class="w">  </span><span class="n">zc</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Ec</span><span class="p">.</span><span class="n">z</span><span class="p">(</span><span class="nb">j</span><span class="p">);</span>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="k">function</span><span class="w"> </span>E<span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nf">disk_eigs</span><span class="p">(</span>cim, Ttau<span class="p">)</span>
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="c">% the eigenvalues z of Ttau inside the contour and their relative residuals</span>
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="n">op</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">cim</span><span class="p">.</span><span class="n">SampleData</span><span class="p">.</span><span class="n">OperatorData</span><span class="p">;</span>
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a><span class="n">op</span><span class="p">.</span><span class="n">T</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Ttau</span><span class="p">;</span><span class="w">   </span><span class="c">% new samples; the probes and shifts are kept</span>
+</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a><span class="p">[</span><span class="n">V</span><span class="p">,</span><span class="w"> </span><span class="n">Lam</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">cim</span><span class="p">.</span><span class="n">eigs</span><span class="p">();</span><span class="w">  </span><span class="n">z</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">diag</span><span class="p">(</span><span class="n">Lam</span><span class="p">);</span>
+</span><span id="__span-4-27"><a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a><span class="n">in</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">cim</span><span class="p">.</span><span class="n">SampleData</span><span class="p">.</span><span class="n">Contour</span><span class="p">.</span><span class="n">inside</span><span class="p">(</span><span class="n">z</span><span class="p">);</span>
+</span><span id="__span-4-28"><a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a><span class="n">E</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">table</span><span class="p">(</span><span class="n">z</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">relres</span><span class="p">(</span><span class="n">Ttau</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="n">V</span><span class="p">(:,</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="n">op</span><span class="p">.</span><span class="n">sample_mode</span><span class="p">),</span><span class="w"> </span><span class="s">'VariableNames'</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="s">'z'</span><span class="p">,</span><span class="w"> </span><span class="s">'relres'</span><span class="p">});</span>
+</span><span id="__span-4-29"><a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a><span class="k">end</span>
+</span></code></pre></div>
+</details>
+<p>Three eigenvalues are recovered inside the contour at every delay, with relative residuals at most <span class="arithmatex">\( 7.5\times10^{-19} \)</span>.
+At <span class="arithmatex">\( \tau = 50 \)</span> ms they include the delay-critical electromechanical mode near <span class="arithmatex">\( -0.75 \pm 5.92i \)</span>.
+Sweeping <span class="arithmatex">\( \tau \)</span> drives it across the imaginary axis at the delay margin of 155.3 ms, where it crosses at <span class="arithmatex">\( \pm 5.684i \)</span>.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Spectrum with and without the PSS</th>
+<th style="text-align: center;">Delay-induced instability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><img alt="" src="../../figures/milano_3bus/spectra.png" /></td>
+<td style="text-align: center;"><img alt="" src="../../figures/milano_3bus/delay_margin.png" /></td>
+</tr>
+</tbody>
+</table>
+<p>The left plot shows the critical portion of the spectrum with and without the PSS.
+The right plot shows the rightmost eigenvalue in the disk against <span class="arithmatex">\( \tau \)</span>.
+The model is built by <code>src/demos/3bus/milano_3bus_ex11_1.m</code>.
+<code>milano_3bus_spectra.m</code> and <code>milano_3bus_sweep.m</code> in the same folder compute the data, and <code>milano_3bus_figures.m</code> draws both figures from their CSVs.</p>
+<details class="note">
+<summary>Plotting code (spectra.png, delay_margin.png)</summary>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">here</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">fileparts</span><span class="p">(</span><span class="nb">mfilename</span><span class="p">(</span><span class="s">'fullpath'</span><span class="p">));</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">Sp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">readtable</span><span class="p">(</span><span class="nb">fullfile</span><span class="p">(</span><span class="n">here</span><span class="p">,</span><span class="w"> </span><span class="s">'spectra.csv'</span><span class="p">),</span><span class="w"> </span><span class="s">'TextType'</span><span class="p">,</span><span class="w"> </span><span class="s">'string'</span><span class="p">);</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">Sp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Sp</span><span class="p">(</span><span class="n">Sp</span><span class="p">.</span><span class="n">im</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="p">:);</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">nop</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Sp</span><span class="p">(</span><span class="n">Sp</span><span class="p">.</span><span class="n">system</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"nopss"</span><span class="p">,</span><span class="w"> </span><span class="p">:);</span><span class="w">  </span><span class="n">wp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Sp</span><span class="p">(</span><span class="n">Sp</span><span class="p">.</span><span class="n">system</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"pss"</span><span class="p">,</span><span class="w"> </span><span class="p">:);</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="n">f</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">figure</span><span class="p">(</span><span class="s">'Position'</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">100</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="mi">680</span><span class="w"> </span><span class="mi">420</span><span class="p">]);</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="nb">plot</span><span class="p">(</span><span class="n">nop</span><span class="p">.</span><span class="n">re</span><span class="p">,</span><span class="w"> </span><span class="n">nop</span><span class="p">.</span><span class="n">im</span><span class="p">,</span><span class="w"> </span><span class="s">'o'</span><span class="p">,</span><span class="w"> </span><span class="s">'MarkerSize'</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="s">'LineWidth'</span><span class="p">,</span><span class="w"> </span><span class="mf">1.2</span><span class="p">);</span><span class="w">  </span><span class="n">hold</span><span class="w"> </span><span class="s">on</span><span class="p">;</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="nb">plot</span><span class="p">(</span><span class="n">wp</span><span class="p">.</span><span class="n">re</span><span class="p">,</span><span class="w"> </span><span class="n">wp</span><span class="p">.</span><span class="n">im</span><span class="p">,</span><span class="w"> </span><span class="s">'.'</span><span class="p">,</span><span class="w"> </span><span class="s">'MarkerSize'</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">);</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="nb">xline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">'k-'</span><span class="p">);</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="nb">xlim</span><span class="p">([</span><span class="o">-</span><span class="mf">2.5</span><span class="w"> </span><span class="mf">0.5</span><span class="p">]);</span><span class="w">  </span><span class="nb">ylim</span><span class="p">([</span><span class="mf">1.5</span><span class="w"> </span><span class="mi">7</span><span class="p">]);</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="nb">xlabel</span><span class="p">(</span><span class="s">'Re \lambda'</span><span class="p">);</span><span class="w">  </span><span class="nb">ylabel</span><span class="p">(</span><span class="s">'Im \lambda'</span><span class="p">);</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="nb">legend</span><span class="p">(</span><span class="s">'without PSS'</span><span class="p">,</span><span class="w"> </span><span class="s">'with PSS'</span><span class="p">,</span><span class="w"> </span><span class="s">'Location'</span><span class="p">,</span><span class="w"> </span><span class="s">'northwest'</span><span class="p">);</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="nb">title</span><span class="p">(</span><span class="s">'Spectrum with/without PSS'</span><span class="p">);</span><span class="w">  </span><span class="n">grid</span><span class="w"> </span><span class="s">on</span><span class="p">;</span>
+</span></code></pre></div>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">here</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">fileparts</span><span class="p">(</span><span class="nb">mfilename</span><span class="p">(</span><span class="s">'fullpath'</span><span class="p">));</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">S</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">readtable</span><span class="p">(</span><span class="nb">fullfile</span><span class="p">(</span><span class="n">here</span><span class="p">,</span><span class="w"> </span><span class="s">'sweep.csv'</span><span class="p">));</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">M</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">readtable</span><span class="p">(</span><span class="nb">fullfile</span><span class="p">(</span><span class="n">here</span><span class="p">,</span><span class="w"> </span><span class="s">'margin.csv'</span><span class="p">));</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">tc</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">M</span><span class="p">.</span><span class="n">margin_ms</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">ok</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">S</span><span class="p">.</span><span class="n">relres</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">1e-8</span><span class="p">;</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">U</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">S</span><span class="p">(</span><span class="o">~</span><span class="n">ok</span><span class="p">,</span><span class="w"> </span><span class="p">:);</span><span class="w">  </span><span class="n">S</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">S</span><span class="p">(</span><span class="n">ok</span><span class="p">,</span><span class="w"> </span><span class="p">:);</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="p">[</span><span class="n">tau</span><span class="p">,</span><span class="w"> </span><span class="o">~</span><span class="p">,</span><span class="w"> </span><span class="n">g</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">unique</span><span class="p">(</span><span class="n">S</span><span class="p">.</span><span class="n">tau_ms</span><span class="p">);</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="n">zs</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">complex</span><span class="p">(</span><span class="n">S</span><span class="p">.</span><span class="n">re</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="p">.</span><span class="n">im</span><span class="p">);</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="n">z</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">splitapply</span><span class="p">(@(</span><span class="n">w</span><span class="p">)</span><span class="w"> </span><span class="n">w</span><span class="p">(</span><span class="nb">find</span><span class="p">(</span><span class="nb">real</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="nb">real</span><span class="p">(</span><span class="n">w</span><span class="p">)),</span><span class="w"> </span><span class="mi">1</span><span class="p">)),</span><span class="w"> </span><span class="n">zs</span><span class="p">,</span><span class="w"> </span><span class="n">g</span><span class="p">);</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="n">f</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">figure</span><span class="p">(</span><span class="s">'Position'</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">100</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="mi">680</span><span class="w"> </span><span class="mi">380</span><span class="p">]);</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="n">boxstyle</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="s">'s'</span><span class="p">,</span><span class="w"> </span><span class="s">'MarkerFaceColor'</span><span class="p">,</span><span class="w"> </span><span class="s">'none'</span><span class="p">,</span><span class="w"> </span><span class="s">'MarkerEdgeColor'</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mf">0.6</span><span class="w"> </span><span class="mf">0.6</span><span class="w"> </span><span class="mf">0.6</span><span class="p">]};</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="n">yyaxis</span><span class="w"> </span><span class="s">left</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="nb">plot</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span><span class="w"> </span><span class="nb">real</span><span class="p">(</span><span class="n">z</span><span class="p">),</span><span class="w"> </span><span class="s">'-'</span><span class="p">,</span><span class="w"> </span><span class="s">'LineWidth'</span><span class="p">,</span><span class="w"> </span><span class="mf">1.5</span><span class="p">);</span><span class="w">  </span><span class="n">hold</span><span class="w"> </span><span class="s">on</span><span class="p">;</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="k">if</span><span class="w"> </span><span class="nb">height</span><span class="p">(</span><span class="n">U</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="w">    </span><span class="n">hu</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">plot</span><span class="p">(</span><span class="n">U</span><span class="p">.</span><span class="n">tau_ms</span><span class="p">,</span><span class="w"> </span><span class="n">U</span><span class="p">.</span><span class="n">re</span><span class="p">,</span><span class="w"> </span><span class="n">boxstyle</span><span class="p">{:});</span>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="w">    </span><span class="nb">legend</span><span class="p">(</span><span class="n">hu</span><span class="p">,</span><span class="w"> </span><span class="s">'relative residual \geq 10^{-8}'</span><span class="p">,</span><span class="w"> </span><span class="s">'Interpreter'</span><span class="p">,</span><span class="w"> </span><span class="s">'tex'</span><span class="p">,</span><span class="w"> </span><span class="s">'AutoUpdate'</span><span class="p">,</span><span class="w"> </span><span class="s">'off'</span><span class="p">);</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="k">end</span>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="nb">yline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">'k-'</span><span class="p">);</span>
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="nb">ylabel</span><span class="p">(</span><span class="s">'Re \lambda'</span><span class="p">);</span>
+</span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="n">yyaxis</span><span class="w"> </span><span class="s">right</span>
+</span><span id="__span-6-23"><a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="nb">plot</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span><span class="w"> </span><span class="nb">imag</span><span class="p">(</span><span class="n">z</span><span class="p">),</span><span class="w"> </span><span class="s">'.'</span><span class="p">,</span><span class="w"> </span><span class="s">'MarkerSize'</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">);</span>
+</span><span id="__span-6-24"><a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a><span class="k">if</span><span class="w"> </span><span class="nb">height</span><span class="p">(</span><span class="n">U</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="nb">plot</span><span class="p">(</span><span class="n">U</span><span class="p">.</span><span class="n">tau_ms</span><span class="p">,</span><span class="w"> </span><span class="n">U</span><span class="p">.</span><span class="n">im</span><span class="p">,</span><span class="w"> </span><span class="n">boxstyle</span><span class="p">{:});</span><span class="w"> </span><span class="k">end</span>
+</span><span id="__span-6-25"><a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a><span class="nb">ylabel</span><span class="p">(</span><span class="s">'Im \lambda'</span><span class="p">);</span>
+</span><span id="__span-6-26"><a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a><span class="nb">xline</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span><span class="w"> </span><span class="s">'--'</span><span class="p">,</span><span class="w"> </span><span class="nb">sprintf</span><span class="p">(</span><span class="s">'margin %.1f ms'</span><span class="p">,</span><span class="w"> </span><span class="n">tc</span><span class="p">),</span><span class="w"> </span><span class="s">'LabelVerticalAlignment'</span><span class="p">,</span><span class="w"> </span><span class="s">'bottom'</span><span class="p">);</span>
+</span><span id="__span-6-27"><a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a><span class="nb">xlabel</span><span class="p">(</span><span class="s">'PSS delay \tau [ms]'</span><span class="p">);</span><span class="w">  </span><span class="nb">title</span><span class="p">(</span><span class="s">'Rightmost eigenvalue in the disk'</span><span class="p">);</span><span class="w">  </span><span class="n">grid</span><span class="w"> </span><span class="s">on</span><span class="p">;</span>
+</span></code></pre></div>
+</details>
+<hr />
+<h2 id="3-ten-delayed-psss-on-a-39-bus-power-network">3. Ten Delayed PSSs on a 39-bus power network<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">6</a></sup></h2>
+<p>The IEEE PES benchmark version of the New England 39-bus network<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">5</a></sup> is a published model with ten generators, each with a PSS<sup id="fnref2:7"><a class="footnote-ref" href="#fn:7">6</a></sup><sup id="fnref:8"><a class="footnote-ref" href="#fn:8">7</a></sup>.
+It is given as a differential algebraic equation (DAE)</p>
+<div class="arithmatex">\[ \dot{x} = f(x,y) \quad | \quad 0 = g(x, y) \]</div>
+<p>where <span class="arithmatex">\(f\)</span> contains the variables related to generator state, inertia, automatic voltage regulators (AVRs), PSSs, loads, and transmission lines.
+From the provided <code>Ared.mat</code>, we are given <span class="arithmatex">\( A_\text{red} = f_x - f_y g_y^{-1} g_x \)</span>, a structured sparse matrix that corresponds to the state of an autonomous LTI system that describes the linearized and reduced DAE.
+From the state layout of the report's Table 11, we can identify the PSS components explicitly.
+Without the PSSs the network is unstable, with rightmost eigenvalue <span class="arithmatex">\( +0.20 + 5.97i \)</span>;
+with them it is stable, and the rightmost of its oscillatory modes is <span class="arithmatex">\( -0.50 + 3.68i \)</span>.</p>
+<p><img alt="" src="../../figures/pes39/pes39_spectra.png" /></p>
+<details class="note">
+<summary>Plotting code (pes39_spectra.png)</summary>
+<p><code>pes39_spectra.m</code> writes <code>spectra.csv</code>, which this script reads.</p>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">here</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">fileparts</span><span class="p">(</span><span class="nb">mfilename</span><span class="p">(</span><span class="s">'fullpath'</span><span class="p">));</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">Sp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">readtable</span><span class="p">(</span><span class="nb">fullfile</span><span class="p">(</span><span class="n">here</span><span class="p">,</span><span class="w"> </span><span class="s">'spectra.csv'</span><span class="p">),</span><span class="w"> </span><span class="s">'TextType'</span><span class="p">,</span><span class="w"> </span><span class="s">'string'</span><span class="p">);</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">Sp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Sp</span><span class="p">(</span><span class="n">Sp</span><span class="p">.</span><span class="n">im</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="p">:);</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c">% asinh is linear within about sigma of zero and logarithmic beyond, so the</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c">% electromechanical modes near the axis and the exciter poles near -100 both stay legible</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">sigma</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">0.1</span><span class="p">;</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">plog</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nb">asinh</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">sigma</span><span class="p">))</span><span class="o">/</span><span class="nb">log</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="n">nop</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Sp</span><span class="p">(</span><span class="n">Sp</span><span class="p">.</span><span class="n">system</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"nopss"</span><span class="p">,</span><span class="w"> </span><span class="p">:);</span><span class="w">  </span><span class="n">wp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Sp</span><span class="p">(</span><span class="n">Sp</span><span class="p">.</span><span class="n">system</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"pss"</span><span class="p">,</span><span class="w"> </span><span class="p">:);</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="n">f</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">figure</span><span class="p">(</span><span class="s">'Position'</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">100</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="mi">680</span><span class="w"> </span><span class="mi">420</span><span class="p">]);</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="nb">plot</span><span class="p">(</span><span class="n">plog</span><span class="p">(</span><span class="n">nop</span><span class="p">.</span><span class="n">re</span><span class="p">),</span><span class="w"> </span><span class="n">nop</span><span class="p">.</span><span class="n">im</span><span class="p">,</span><span class="w"> </span><span class="s">'o'</span><span class="p">,</span><span class="w"> </span><span class="s">'MarkerSize'</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="s">'LineWidth'</span><span class="p">,</span><span class="w"> </span><span class="mf">1.2</span><span class="p">);</span><span class="w">  </span><span class="n">hold</span><span class="w"> </span><span class="s">on</span><span class="p">;</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="nb">plot</span><span class="p">(</span><span class="n">plog</span><span class="p">(</span><span class="n">wp</span><span class="p">.</span><span class="n">re</span><span class="p">),</span><span class="w"> </span><span class="n">wp</span><span class="p">.</span><span class="n">im</span><span class="p">,</span><span class="w"> </span><span class="s">'.'</span><span class="p">,</span><span class="w"> </span><span class="s">'MarkerSize'</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">);</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="nb">xline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">'k-'</span><span class="p">);</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="n">ticks</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="mi">100</span><span class="w"> </span><span class="o">-</span><span class="mi">10</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="mf">0.1</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mf">0.1</span><span class="p">];</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="nb">xticks</span><span class="p">(</span><span class="n">plog</span><span class="p">(</span><span class="n">ticks</span><span class="p">));</span><span class="w">  </span><span class="nb">xticklabels</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="n">ticks</span><span class="p">));</span><span class="w">  </span><span class="nb">xlim</span><span class="p">(</span><span class="n">plog</span><span class="p">([</span><span class="o">-</span><span class="mi">130</span><span class="w"> </span><span class="mf">0.5</span><span class="p">]));</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="nb">xlabel</span><span class="p">(</span><span class="s">'Re \lambda'</span><span class="p">);</span><span class="w">  </span><span class="nb">ylabel</span><span class="p">(</span><span class="s">'Im \lambda'</span><span class="p">);</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="nb">legend</span><span class="p">(</span><span class="s">'without PSSs'</span><span class="p">,</span><span class="w"> </span><span class="s">'with PSSs'</span><span class="p">,</span><span class="w"> </span><span class="s">'Location'</span><span class="p">,</span><span class="w"> </span><span class="s">'northwest'</span><span class="p">);</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="nb">title</span><span class="p">(</span><span class="s">'Spectrum with/without PSSs'</span><span class="p">);</span><span class="w">  </span><span class="n">grid</span><span class="w"> </span><span class="s">on</span><span class="p">;</span>
+</span></code></pre></div>
+</details>
+<p>To each identified PSS, we apply a delay, yielding the following <em>retarded</em> problem with ten delays</p>
+<div class="arithmatex">\[ \mathbf{T}(\lambda, \tau) = \lambda\mathbf{I} - \mathbf{A}_0 - \sum_{k=1}^{10} \mathbf{b}_k \mathbf{e}_k^\top e^{-\lambda\tau_k} = \lambda\mathbf{I} - \mathbf{A}_0 - \mathbf{B}\operatorname{diag}\big(e^{-\lambda\tau_1}, \dots, e^{-\lambda\tau_{10}}\big)\mathbf{E}^\top, \]</div>
+<p>where <span class="arithmatex">\( \mathbf{e}_k \)</span> selects the speed of the <span class="arithmatex">\( k \)</span>th generator and <span class="arithmatex">\( \mathbf{b}_k \)</span> holds <span class="arithmatex">\( x_W, x_P, x_Q, E_{fd}, \)</span> and <span class="arithmatex">\( x_i \)</span>.
+See the report<sup id="fnref3:7"><a class="footnote-ref" href="#fn:7">6</a></sup> for more details.</p>
+<details class="note">
+<summary>Code (<span class="arithmatex">\( \mathbf{T}(\lambda, \tau) \)</span> from <span class="arithmatex">\( \mathbf{A}_0 \)</span>, <span class="arithmatex">\( \mathbf{B} \)</span> and <span class="arithmatex">\( \mathbf{E} \)</span>)</summary>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c">% T(tau) is the characteristic matrix for the delay vector tau (10 x 1)</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">n</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">size</span><span class="p">(</span><span class="n">A0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">T</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">tau</span><span class="p">)</span><span class="w"> </span><span class="p">@(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="n">s</span><span class="o">*</span><span class="nb">eye</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">A0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">B</span><span class="o">*</span><span class="nb">diag</span><span class="p">(</span><span class="nb">exp</span><span class="p">(</span><span class="o">-</span><span class="n">s</span><span class="o">*</span><span class="n">tau</span><span class="p">(:)))</span><span class="o">*</span><span class="n">E</span><span class="o">'</span><span class="p">;</span>
+</span></code></pre></div>
+</details>
+<p>First, we track the rightmost eigenvalue as the common delay <span class="arithmatex">\( \tau = \tau_k \)</span> grows, with ten overlapping disks of radius <span class="arithmatex">\( \rho = 1 \)</span> centred at <span class="arithmatex">\( 3i, 4i, \dots, 12i \)</span>.
+Each disk is an independent CIM computation, so the disks can run in parallel<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">4</a></sup>.
+A disk returns every eigenvalue it finds inside its contour, and an eigenvalue found by two disks is kept only once via the smaller residual.
+In the common-delay and single-loop sweeps below, the trusted residuals are at most <span class="arithmatex">\( 9.8\times10^{-11} \)</span> in the common-delay sweep.</p>
+<details class="note">
+<summary>Code (the disk bank and the trust rule)</summary>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">arguments</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="n">Tf</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="n">opts</span><span class="p">.</span><span class="n">Centers</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,:)</span><span class="w"> </span><span class="nb">double</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">3</span><span class="p">:</span><span class="mi">12</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="n">opts</span><span class="p">.</span><span class="n">Radius</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="nb">double</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="n">opts</span><span class="p">.</span><span class="n">Nodes</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="nb">double</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">128</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="n">opts</span><span class="p">.</span><span class="n">Mode</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">ComputationalMode</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">ComputationalMode</span><span class="p">.</span><span class="n">MPLoewner</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">    </span><span class="n">opts</span><span class="p">.</span><span class="n">Probes</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="nb">double</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">5</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span><span class="n">opts</span><span class="p">.</span><span class="n">K</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="nb">double</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">50</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">    </span><span class="n">opts</span><span class="p">.</span><span class="n">Seed</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="nb">double</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">0</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">    </span><span class="n">opts</span><span class="p">.</span><span class="n">ResTol</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="nb">double</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">1e-8</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">    </span><span class="n">opts</span><span class="p">.</span><span class="n">EmptyTol</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="nb">double</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">1e-5</span><span class="w">     </span><span class="c">% moment level: occupied disks &gt;= 2.5e-3, leakage only &lt;= 1.1e-6</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="k">end</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="c">% One CIM per disk, all sharing the operator op and the probes L and R. Setting</span>
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="c">% op.T resamples every disk; the probes and interpolation points stay. AutoRank</span>
+</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a><span class="c">% reads a disk whose moment level is below EmptyTol as empty, and otherwise</span>
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a><span class="c">% realizes at the largest singular-value gap of its data matrix.</span>
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a><span class="n">op</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">OperatorData</span><span class="p">(</span><span class="n">Tf</span><span class="p">(</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span><span class="p">)));</span>
+</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a><span class="nb">rng</span><span class="p">(</span><span class="n">opts</span><span class="p">.</span><span class="n">Seed</span><span class="p">);</span>
+</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">randn</span><span class="p">(</span><span class="n">op</span><span class="p">.</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">Probes</span><span class="p">);</span><span class="w">  </span><span class="n">R</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">randn</span><span class="p">(</span><span class="n">op</span><span class="p">.</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">Probes</span><span class="p">);</span>
+</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a><span class="n">cims</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">cell</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">opts</span><span class="p">.</span><span class="n">Centers</span><span class="p">));</span>
+</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a><span class="k">for</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">opts</span><span class="p">.</span><span class="n">Centers</span><span class="p">)</span>
+</span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a><span class="w">    </span><span class="n">c</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">Contour</span><span class="p">.</span><span class="n">Circle</span><span class="p">(</span>1<span class="nb">i</span><span class="o">*</span><span class="n">opts</span><span class="p">.</span><span class="n">Centers</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">Radius</span><span class="p">,</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">Nodes</span><span class="p">);</span>
+</span><span id="__span-9-23"><a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a><span class="w">    </span><span class="n">cim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">CIM</span><span class="p">(</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
+</span><span id="__span-9-24"><a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a><span class="w">    </span><span class="n">cim</span><span class="p">.</span><span class="n">SampleData</span><span class="p">.</span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">L</span><span class="p">;</span><span class="w">  </span><span class="n">cim</span><span class="p">.</span><span class="n">SampleData</span><span class="p">.</span><span class="n">R</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">R</span><span class="p">;</span>
+</span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a><span class="w">    </span><span class="n">cim</span><span class="p">.</span><span class="n">setComputationalMode</span><span class="p">(</span><span class="n">opts</span><span class="p">.</span><span class="n">Mode</span><span class="p">,</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">RealizationSize</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">K</span><span class="p">));</span>
+</span><span id="__span-9-26"><a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a><span class="w">    </span><span class="n">cim</span><span class="p">.</span><span class="n">RealizationData</span><span class="p">.</span><span class="n">AutoRank</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span><span id="__span-9-27"><a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a><span class="w">    </span><span class="n">cim</span><span class="p">.</span><span class="n">options</span><span class="p">.</span><span class="n">EmptyTol</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opts</span><span class="p">.</span><span class="n">EmptyTol</span><span class="p">;</span><span class="w">  </span><span class="n">cim</span><span class="p">.</span><span class="n">options</span><span class="p">.</span><span class="n">Verbose</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-9-28"><a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a><span class="w">    </span><span class="n">cims</span><span class="p">{</span><span class="n">k</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">cim</span><span class="p">;</span>
+</span><span id="__span-9-29"><a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a><span class="k">end</span>
+</span><span id="__span-9-30"><a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a>
+</span><span id="__span-9-31"><a id="__codelineno-9-31" name="__codelineno-9-31" href="#__codelineno-9-31"></a><span class="k">function</span><span class="w"> </span><span class="p">[</span>ew, res, trusted<span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nf">eigenvalues</span><span class="p">(</span>op, cims, T, restol<span class="p">)</span>
+</span><span id="__span-9-32"><a id="__codelineno-9-32" name="__codelineno-9-32" href="#__codelineno-9-32"></a><span class="c">% Every eigenvalue a disk finds inside its contour, with its relative residual</span>
+</span><span id="__span-9-33"><a id="__codelineno-9-33" name="__codelineno-9-33" href="#__codelineno-9-33"></a><span class="c">% ||T(z)v|| / ||T(z)||_F.</span>
+</span><span id="__span-9-34"><a id="__codelineno-9-34" name="__codelineno-9-34" href="#__codelineno-9-34"></a><span class="n">op</span><span class="p">.</span><span class="n">T</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">T</span><span class="p">;</span>
+</span><span id="__span-9-35"><a id="__codelineno-9-35" name="__codelineno-9-35" href="#__codelineno-9-35"></a><span class="n">ew</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span><span class="w">  </span><span class="n">res</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-9-36"><a id="__codelineno-9-36" name="__codelineno-9-36" href="#__codelineno-9-36"></a><span class="k">for</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">cims</span><span class="p">)</span>
+</span><span id="__span-9-37"><a id="__codelineno-9-37" name="__codelineno-9-37" href="#__codelineno-9-37"></a><span class="w">    </span><span class="p">[</span><span class="n">V</span><span class="p">,</span><span class="w"> </span><span class="n">D</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">cims</span><span class="p">{</span><span class="n">k</span><span class="p">}.</span><span class="n">eigs</span><span class="p">();</span><span class="w">  </span><span class="n">z</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">diag</span><span class="p">(</span><span class="n">D</span><span class="p">);</span>
+</span><span id="__span-9-38"><a id="__codelineno-9-38" name="__codelineno-9-38" href="#__codelineno-9-38"></a><span class="w">    </span><span class="n">in</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">cims</span><span class="p">{</span><span class="n">k</span><span class="p">}.</span><span class="n">SampleData</span><span class="p">.</span><span class="n">Contour</span><span class="p">.</span><span class="n">inside</span><span class="p">(</span><span class="n">z</span><span class="p">);</span>
+</span><span id="__span-9-39"><a id="__codelineno-9-39" name="__codelineno-9-39" href="#__codelineno-9-39"></a><span class="w">    </span><span class="n">ew</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="n">ew</span><span class="p">;</span><span class="w"> </span><span class="n">z</span><span class="p">(</span><span class="n">in</span><span class="p">)];</span>
+</span><span id="__span-9-40"><a id="__codelineno-9-40" name="__codelineno-9-40" href="#__codelineno-9-40"></a><span class="w">    </span><span class="n">res</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="n">res</span><span class="p">;</span><span class="w"> </span><span class="n">Numerics</span><span class="p">.</span><span class="n">relres</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="n">V</span><span class="p">(:,</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="n">op</span><span class="p">.</span><span class="n">sample_mode</span><span class="p">)];</span>
+</span><span id="__span-9-41"><a id="__codelineno-9-41" name="__codelineno-9-41" href="#__codelineno-9-41"></a><span class="k">end</span>
+</span><span id="__span-9-42"><a id="__codelineno-9-42" name="__codelineno-9-42" href="#__codelineno-9-42"></a><span class="c">% Overlapping disks find some eigenvalues twice; the copy with the smaller</span>
+</span><span id="__span-9-43"><a id="__codelineno-9-43" name="__codelineno-9-43" href="#__codelineno-9-43"></a><span class="c">% residual is kept.</span>
+</span><span id="__span-9-44"><a id="__codelineno-9-44" name="__codelineno-9-44" href="#__codelineno-9-44"></a><span class="p">[</span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="nb">i</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">sort</span><span class="p">(</span><span class="n">res</span><span class="p">);</span><span class="w">  </span><span class="n">ew</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ew</span><span class="p">(</span><span class="nb">i</span><span class="p">);</span>
+</span><span id="__span-9-45"><a id="__codelineno-9-45" name="__codelineno-9-45" href="#__codelineno-9-45"></a><span class="n">keep</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">true</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">ew</span><span class="p">));</span>
+</span><span id="__span-9-46"><a id="__codelineno-9-46" name="__codelineno-9-46" href="#__codelineno-9-46"></a><span class="k">for</span><span class="w"> </span><span class="nb">j</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">ew</span><span class="p">)</span>
+</span><span id="__span-9-47"><a id="__codelineno-9-47" name="__codelineno-9-47" href="#__codelineno-9-47"></a><span class="w">    </span><span class="n">keep</span><span class="p">(</span><span class="nb">j</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">all</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">ew</span><span class="p">(</span><span class="nb">j</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ew</span><span class="p">(</span><span class="n">keep</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="nb">j</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">1e-6</span><span class="o">*</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nb">abs</span><span class="p">(</span><span class="n">ew</span><span class="p">(</span><span class="nb">j</span><span class="p">))));</span>
+</span><span id="__span-9-48"><a id="__codelineno-9-48" name="__codelineno-9-48" href="#__codelineno-9-48"></a><span class="k">end</span>
+</span><span id="__span-9-49"><a id="__codelineno-9-49" name="__codelineno-9-49" href="#__codelineno-9-49"></a><span class="n">ew</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ew</span><span class="p">(</span><span class="n">keep</span><span class="p">);</span><span class="w">  </span><span class="n">res</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">res</span><span class="p">(</span><span class="n">keep</span><span class="p">);</span>
+</span><span id="__span-9-50"><a id="__codelineno-9-50" name="__codelineno-9-50" href="#__codelineno-9-50"></a><span class="n">trusted</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">restol</span><span class="p">;</span>
+</span><span id="__span-9-51"><a id="__codelineno-9-51" name="__codelineno-9-51" href="#__codelineno-9-51"></a><span class="k">end</span>
+</span></code></pre></div>
+</details>
+<details class="note">
+<summary>Code (the delay margin)</summary>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">function</span><span class="w"> </span><span class="p">[</span>tc, zc, nb<span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nf">pes39_margin</span><span class="p">(</span>bank, u<span class="p">)</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="c">% Delay margin along the delay direction u (10 x 1): the smallest r at which</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="c">% the bank of pes39_bank.m trusts an eigenvalue with positive real part at</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c">% tau = r u. Returns Inf when nothing crosses by 500 ms. zc is the rightmost</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c">% trusted eigenvalue at the margin tc, and nb the number of bank evaluations.</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="c">% Step outward from 50 ms until the rightmost trusted eigenvalue crosses, then</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="c">% refine the crossing with fzero. The bank's fixed probes make the abscissa a</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="c">% deterministic function of r.</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="n">r</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">0.05</span><span class="p">;</span><span class="w">  </span><span class="n">dr</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">0.005</span><span class="p">;</span><span class="w">  </span><span class="n">rmax</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">0.5</span><span class="p">;</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="p">[</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">abscissa</span><span class="p">(</span><span class="n">bank</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="o">*</span><span class="n">u</span><span class="p">);</span><span class="w">  </span><span class="n">nb</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="nb">assert</span><span class="p">(</span><span class="o">~</span><span class="nb">isnan</span><span class="p">(</span><span class="n">z</span><span class="p">),</span><span class="w"> </span><span class="s">'pes39_margin:empty'</span><span class="p">,</span><span class="w"> </span><span class="s">'the bank trusts no eigenvalue at tau = %g s'</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">);</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="nb">assert</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">'pes39_margin:start'</span><span class="p">,</span><span class="w"> </span><span class="s">'not stable at tau = %g s'</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">);</span>
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="k">while</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">0</span>
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">    </span><span class="n">r</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dr</span><span class="p">;</span>
+</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">rmax</span><span class="p">,</span><span class="w"> </span><span class="n">tc</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">Inf</span><span class="p">;</span><span class="w">  </span><span class="n">zc</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">NaN</span><span class="p">;</span><span class="w">  </span><span class="k">return</span><span class="p">;</span><span class="w"> </span><span class="k">end</span>
+</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="w">    </span><span class="n">a</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">abscissa</span><span class="p">(</span><span class="n">bank</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="o">*</span><span class="n">u</span><span class="p">);</span><span class="w">  </span><span class="n">nb</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">nb</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-10-18"><a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="k">end</span>
+</span><span id="__span-10-19"><a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="p">[</span><span class="n">tc</span><span class="p">,</span><span class="w"> </span><span class="o">~</span><span class="p">,</span><span class="w"> </span><span class="o">~</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">fzero</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="n">abscissa</span><span class="p">(</span><span class="n">bank</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="o">*</span><span class="n">u</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="n">r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">dr</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">]);</span>
+</span><span id="__span-10-20"><a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="p">[</span><span class="o">~</span><span class="p">,</span><span class="w"> </span><span class="n">zc</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">abscissa</span><span class="p">(</span><span class="n">bank</span><span class="p">,</span><span class="w"> </span><span class="n">tc</span><span class="o">*</span><span class="n">u</span><span class="p">);</span>
+</span><span id="__span-10-21"><a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="n">nb</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">nb</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">out</span><span class="p">.</span><span class="n">funcCount</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-10-22"><a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="k">end</span>
+</span><span id="__span-10-23"><a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a>
+</span><span id="__span-10-24"><a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="k">function</span><span class="w"> </span><span class="p">[</span>a, z<span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nf">abscissa</span><span class="p">(</span>bank, tau<span class="p">)</span>
+</span><span id="__span-10-25"><a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="c">% The rightmost trusted eigenvalue z in the bank at the delays tau and its real</span>
+</span><span id="__span-10-26"><a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a><span class="c">% part a; a = -1 and z = NaN when the bank trusts none.</span>
+</span><span id="__span-10-27"><a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a><span class="p">[</span><span class="n">ew</span><span class="p">,</span><span class="w"> </span><span class="o">~</span><span class="p">,</span><span class="w"> </span><span class="n">trusted</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">bank</span><span class="p">(</span><span class="n">tau</span><span class="p">);</span>
+</span><span id="__span-10-28"><a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a><span class="n">ew</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ew</span><span class="p">(</span><span class="n">trusted</span><span class="p">);</span>
+</span><span id="__span-10-29"><a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a><span class="k">if</span><span class="w"> </span><span class="nb">isempty</span><span class="p">(</span><span class="n">ew</span><span class="p">),</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="w">  </span><span class="n">z</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">NaN</span><span class="p">;</span><span class="w">  </span><span class="k">return</span><span class="p">;</span><span class="w"> </span><span class="k">end</span>
+</span><span id="__span-10-30"><a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a><span class="p">[</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="nb">i</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="nb">real</span><span class="p">(</span><span class="n">ew</span><span class="p">));</span><span class="w">  </span><span class="n">z</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ew</span><span class="p">(</span><span class="nb">i</span><span class="p">);</span>
+</span><span id="__span-10-31"><a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a><span class="k">end</span>
+</span></code></pre></div>
+</details>
+<details class="note">
+<summary>Code (the common-delay sweep)</summary>
+<div class="language-matlab highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">bank</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">pes39_bank</span><span class="p">(</span><span class="n">Tf</span><span class="p">);</span><span class="w">  </span><span class="n">one</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">ones</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">cols</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="s">'tau_ms'</span><span class="p">,</span><span class="w"> </span><span class="s">'re'</span><span class="p">,</span><span class="w"> </span><span class="s">'im'</span><span class="p">,</span><span class="w"> </span><span class="s">'res'</span><span class="p">,</span><span class="w"> </span><span class="s">'trusted'</span><span class="p">};</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">tau</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.15</span><span class="p">,</span><span class="w"> </span><span class="mi">201</span><span class="p">);</span><span class="w">  </span><span class="n">sweep</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">cell</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">tau</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="k">for</span><span class="w"> </span><span class="nb">j</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span><span class="p">[</span><span class="n">ew</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">trusted</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">bank</span><span class="p">(</span><span class="n">tau</span><span class="p">(</span><span class="nb">j</span><span class="p">)</span><span class="o">*</span><span class="n">one</span><span class="p">);</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span><span class="n">sweep</span><span class="p">{</span><span class="nb">j</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">table</span><span class="p">(</span><span class="nb">repmat</span><span class="p">(</span><span class="mf">1e3</span><span class="o">*</span><span class="n">tau</span><span class="p">(</span><span class="nb">j</span><span class="p">),</span><span class="w"> </span><span class="nb">numel</span><span class="p">(</span><span class="n">ew</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="nb">real</span><span class="p">(</span><span class="n">ew</span><span class="p">),</span><span class="w"> </span><span class="nb">imag</span><span class="p">(</span><span class="n">ew</span><span class="p">),</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">trusted</span><span class="p">,</span><span class="w"> </span><span class="s">'VariableNames'</span><span class="p">,</span><span class="w"> </span><span class="n">cols</span><span class="p">);</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="k">end</span>
+</span></code></pre></div>
+</details>
+<p>We find that the stability margin of the entire system is <span class="arithmatex">\( \sim 96 \)</span> ms.
+The rightmost eigenvalue switches from <span class="arithmatex">\( 3.81i \)</span> to <span class="arithmatex">\( 10.49i \)</span> between 63.75 and 64.50 ms, and again, from <span class="arithmatex">\( 10.18i \)</span> to <span class="arithmatex">\( 10.62i \)</span>, at about 114 ms.
+The left CIM bank figure below shows trajectories as the common delay grows from <span class="arithmatex">\( 0 - 150 \)</span> ms.</p>
+<p>Next, we examine the effect of a delay on a single PSS, as if it had a sudden drop in a speed signal;
+we take <span class="arithmatex">\( \tau = \tau_k \mathbf{e}_k \)</span> for <span class="arithmatex">\( k = 1, \ldots, 10 \)</span>, while the other nine act without delay.
+The table below shows the delayed PSS, its rightmost eigenvalue at the stability margin, and the corresponding delay.
+Note that the PSS on generators 1 and 10 with individual delays did not make the system unstable up to a delay of 500 ms.
+The right CIM bank figure shows the eigenvalue trajectory associated with the delay associated with the worst case, generator 4.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center;">
+<div style="flex: 3 1 22rem; text-align: center;">
+<p>Rightmost <span class="arithmatex">\( \operatorname{Re}\lambda \)</span> against the common delay</p>
+<p><img alt="" src="../../figures/pes39/pes39_margin.png" /></p>
+</div>
+<div style="flex: 2 1 16rem; text-align: center;">
+<p>Delay margin with a single delayed PSS</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Generator</th>
+<th style="text-align: center;">Rightmost eigenvalue at the margin</th>
+<th style="text-align: center;">Delay margin [ms]</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">---</td>
+<td style="text-align: center;">---</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;"><span class="arithmatex">\( 7.675i \)</span></td>
+<td style="text-align: center;">178.32</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><span class="arithmatex">\( 8.845i \)</span></td>
+<td style="text-align: center;">114.35</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><span class="arithmatex">\( 10.222i \)</span></td>
+<td style="text-align: center;">101.06</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;"><span class="arithmatex">\( 7.001i \)</span></td>
+<td style="text-align: center;">250.56</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;"><span class="arithmatex">\( 8.673i \)</span></td>
+<td style="text-align: center;">252.49</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;"><span class="arithmatex">\( 10.552i \)</span></td>
+<td style="text-align: center;">157.11</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;"><span class="arithmatex">\( 10.828i \)</span></td>
+<td style="text-align: center;">101.30</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;"><span class="arithmatex">\( 8.257i \)</span></td>
+<td style="text-align: center;">114.33</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">---</td>
+<td style="text-align: center;">---</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">The disk bank as the common delay grows</th>
+<th style="text-align: center;">The disk bank as <span class="arithmatex">\( \tau_4 \)</span> grows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><img alt="" src="../../figures/pes39/pes39_bank.png" /></td>
+<td style="text-align: center;"><img alt="" src="../../figures/pes39/pes39_single_bank.png" /></td>
+</tr>
+</tbody>
+</table>
+<p>The model is built by <code>src/demos/pes39/pes39_model.m</code>.
+In the same folder, <code>pes39_spectra.m</code>, <code>pes39_common_margin.m</code>, <code>pes39_single_margin.m</code>, <code>pes39_sweep.m</code> and <code>pes39_single_sweep.m</code> compute the data, and <code>pes39_figures.m</code> draws the four figures from their CSVs.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>D. Yue and Q.-L. Han, "A Delay-Dependent Stability Criterion of Neutral Systems and its Application to a Partial Element Equivalent Circuit Model," IEEE Transactions on Circuits and Systems II: Express Briefs, vol. 51, no. 12, pp. 685-689, 2004, doi: 10.1109/TCSII.2004.837286.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>A. Bellen, N. Guglielmi, and A. E. Ruehli, "Methods for Linear Systems of Circuit Delay Differential Equations of Neutral Type," IEEE Transactions on Circuits and Systems I: Fundamental Theory and Applications, vol. 46, no. 1, pp. 212-216, 1999.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>Milano, Dassios, Liu, and, Tzounas, <em>Eigenvalue Problems in Power Systems</em>. Boca Raton, FL: CRC Press, 2020. The three-bus system is defined in Appendix A, A_S is given in Appendix B; the delayed-PSS study is Example 11.1, and the PSS design is Example 4.3.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p>S. Gao, Z. Du, and Y. Li, "Estimating Number of Critical Eigenvalues of Large-Scale Power System Based on Contour Integral," IEEE Transactions on Power Systems, vol. 36, no. 6, pp. 5854-5862, 2021, doi: 10.1109/TPWRS.2021.3084683.&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p>T. Athay, R. Podmore, and S. Virmani, "A Practical Method for the Direct Analysis of Transient Stability," IEEE Transactions on Power Apparatus and Systems, vol. PAS-98, no. 2, pp. 573-584, 1979 (the New England 39-bus system).&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7">
+<p>I. Hiskens, "IEEE PES Task Force on Benchmark Systems for Stability Controls: Report on the 39-bus system (New England reduced model)," working paper, 2013, https://cmte.ieee.org/pes-psdp/benchmark-systems-2/.&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:7" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:7" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:8">
+<p>C. Cañizares, T. Fernandes, E. Geraldi Jr., L. Gérin-Lajoie, M. Gibbard, I. Hiskens, et al., "Benchmark Models for the Analysis and Control of Small-Signal Oscillatory Dynamics in Power Systems," IEEE Transactions on Power Systems, vol. 32, no. 1, pp. 715-722, 2017, doi: 10.1109/TPWRS.2016.2561263.&#160;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.sections"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+        <script src="../../javascripts/katex.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@10.9.0/dist/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>
