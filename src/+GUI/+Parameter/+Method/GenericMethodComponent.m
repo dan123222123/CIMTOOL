@@ -33,6 +33,7 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
             obj.updateLeftProbingSize();
             obj.updateRightProbingSize();
             obj.updateMaxMoments();
+            obj.updateKText();
 
             obj.addListeners();
 
@@ -87,10 +88,10 @@ classdef GenericMethodComponent < GUI.Parameter.Method.MethodComponent
         function addListeners(comp)
             % Store listener handles for cleanup
             comp.listeners = [
-                addlistener(comp.CIMData.SampleData,'ell','PostSet',@(src,event)comp.updateLeftProbingSize)
-                addlistener(comp.CIMData.SampleData,'r','PostSet',@(src,event)comp.updateRightProbingSize)
-                addlistener(comp.CIMData.RealizationData,'RealizationSize','PostSet',@(src,event)comp.updateMaxMoments)
-                addlistener(comp.CIMData.RealizationData,'ComputationalMode','PostSet',@(src,event)comp.updateKText)
+                GUI.SubObjectListener(comp.CIMData,"SampleData",'ell',@(src,event)comp.updateLeftProbingSize)
+                GUI.SubObjectListener(comp.CIMData,"SampleData",'r',@(src,event)comp.updateRightProbingSize)
+                GUI.SubObjectListener(comp.CIMData,"RealizationData",'RealizationSize',@(src,event)comp.updateMaxMoments)
+                GUI.SubObjectListener(comp.CIMData,"RealizationData",'ComputationalMode',@(src,event)comp.updateKText)
             ];
         end
         

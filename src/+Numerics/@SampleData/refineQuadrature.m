@@ -1,5 +1,9 @@
 function refineQuadrature(obj)
 
+    if isempty(obj.Contour)
+        error("Numerics:SampleData:noContour", ...
+            "Contour data required to refine the quadrature. Please set a contour and try again.")
+    end
     if ~(obj.OperatorData.loaded && obj.loaded)
         error("Numerics:SampleData:notLoaded", ...
             "Contour/NLEVP sample data not loaded.\n Please 'compute' before refining the quadrature.")
@@ -7,8 +11,11 @@ function refineQuadrature(obj)
 
     % the cached samples reflect the current (un-refined) contour; snapshot
     % them before the contour's nodes change underneath us
+    % refinement keeps only the leading ell and r directions; the samples of
+    % further stored directions are dropped, and a larger ell later resamples
+    [Qlold,Qrold,Qlrold] = obj.activeSamples();
+    Ls = obj.L; Rs = obj.R;
     obj.loaded = false;
-    Qlold = obj.Ql; Qrold = obj.Qr; Qlrold = obj.Qlr;
 
     if isa(obj.Contour,'Numerics.Contour.CircularSegment') % covers Visual subclass too
         % Clenshaw-Curtis nests: reuse cached evaluations at the surviving
@@ -20,7 +27,7 @@ function refineQuadrature(obj)
             return; % leave loaded=false so the next compute() resamples fully
         end
         zadded = obj.Contour.z(~reused);
-        [Qladded,Qradded,Qlradded] = obj.samplequadrature(obj.OperatorData.T,obj.Lf,obj.Rf,zadded,obj.show_progress,obj.OperatorData.sample_mode);
+        [Qladded,Qradded,Qlradded] = obj.samplequadrature(obj.OperatorData.T,Ls,Rs,zadded,obj.show_progress,obj.OperatorData.sample_mode);
 
         L = numel(reused);
         Qlnew  = zeros(size(Qlold,1),  size(Qlold,2),  L);
@@ -45,7 +52,7 @@ function refineQuadrature(obj)
     zadded = obj.Contour.z(1:2:end);
     N = length(zadded);
 
-    [Qladded,Qradded,Qlradded] = obj.samplequadrature(obj.OperatorData.T,obj.Lf,obj.Rf,zadded,obj.show_progress,obj.OperatorData.sample_mode);
+    [Qladded,Qradded,Qlradded] = obj.samplequadrature(obj.OperatorData.T,Ls,Rs,zadded,obj.show_progress,obj.OperatorData.sample_mode);
 
     Qlnew   = zeros(size(Qlold,1),size(Qlold,2),2*N);
     Qrnew   = zeros(size(Qrold,1),size(Qrold,2),2*N);

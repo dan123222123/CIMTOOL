@@ -5,6 +5,12 @@ classdef RealizationData < Numerics.RealizationData & Visual.VisualReactive
           cp = copyElement@Numerics.RealizationData(obj);
           cp.ax = obj.ax;
       end
+
+      function reattachListeners(obj)
+          reattachListeners@Numerics.RealizationData(obj);
+          obj.forgetGraphics();
+          obj.attachListeners();
+      end
    end
 
     methods (Static)
@@ -23,15 +29,16 @@ classdef RealizationData < Numerics.RealizationData & Visual.VisualReactive
 
     methods
 
-        function obj = RealizationData(ComputationalMode,InterpolationData,RealizationSize,ranktol,ax)
+        function obj = RealizationData(ComputationalMode,InterpolationData,RealizationSize,AutoRank,RankRule,ax)
             arguments
                 ComputationalMode = Numerics.ComputationalMode.Hankel
                 InterpolationData = []
                 RealizationSize = []
-                ranktol = NaN
+                AutoRank = false
+                RankRule = Numerics.RankRule.Gap
                 ax = []
             end
-            obj = obj@Numerics.RealizationData(ComputationalMode,InterpolationData,RealizationSize,ranktol);
+            obj = obj@Numerics.RealizationData(ComputationalMode,InterpolationData,RealizationSize,AutoRank,RankRule);
             obj.ax = ax;
             obj.RealizationDataChanged();
             % Store listener handles so they can be deleted later
@@ -64,7 +71,7 @@ classdef RealizationData < Numerics.RealizationData & Visual.VisualReactive
                 obj
                 ax = gca
             end
-            phandles = gobjects(0);
+            phandles = Visual.emptyHandles();
             if isempty(ax) || ~isgraphics(ax); return; end
             % try to first get the next theta/sigma before clearing plots
             [theta,sigma] = obj.getThetaSigma(obj.RealizationSize.T1,obj.RealizationSize.T2);

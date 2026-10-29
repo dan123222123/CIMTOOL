@@ -5,6 +5,19 @@ classdef SampleData < Numerics.SampleData & Visual.VisualReactive
             cp = copyElement@Numerics.SampleData(obj);
             cp.ax = obj.ax; cp.update_plot();
         end
+
+        function reattachListeners(obj)
+            reattachListeners@Numerics.SampleData(obj);
+            obj.forgetGraphics();
+            obj.addPlotListeners();
+        end
+    end
+
+    methods (Access = private)
+        function addPlotListeners(obj)
+            obj.deleteListeners();
+            obj.listeners = obj.partListeners(["OperatorData","Contour"]);
+        end
     end
 
     methods (Static)
@@ -14,6 +27,7 @@ classdef SampleData < Numerics.SampleData & Visual.VisualReactive
                 n Numerics.SampleData
                 ax = []
             end
+            if n.OperatorData.loaded; n.drawDirections(); end
             v_op      = Visual.OperatorData.fromNumerics(n.OperatorData, ax);
             v_contour = Visual.Contour.Quad.fromNumerics(n.Contour, ax);
             v = Visual.SampleData(v_op, v_contour, n.ell, n.r, ax);
@@ -30,27 +44,19 @@ classdef SampleData < Numerics.SampleData & Visual.VisualReactive
         function obj = SampleData(OperatorData,Contour,ell,r,ax)
             arguments
                 OperatorData = Visual.OperatorData()
-                Contour = Visual.Contour.Circle()
+                Contour = Visual.Contour.Quad.empty
                 ell = OperatorData.n
                 r = OperatorData.n
                 ax = []
             end
             obj = obj@Numerics.SampleData(OperatorData,Contour,ell,r);
             obj.ax = ax; obj.update_plot([],[]);
-            % Store listener handles so they can be deleted later
-            obj.listeners = [
-                addlistener(obj,'OperatorData','PostSet',@obj.update_plot)
-                addlistener(obj,'Contour','PostSet',@obj.update_plot)
-            ];
+            obj.addPlotListeners();
         end
 
         function attachListeners(obj)
             % Recreate listeners recursively (called when reattaching to new graphics)
-            obj.deleteListeners();  % Clear any existing listeners first
-            obj.listeners = [
-                addlistener(obj,'OperatorData','PostSet',@obj.update_plot)
-                addlistener(obj,'Contour','PostSet',@obj.update_plot)
-            ];
+            obj.addPlotListeners();
             % Attach listeners on children too
             if ~isempty(obj.Contour) && isvalid(obj.Contour)
                 obj.Contour.attachListeners();
@@ -62,6 +68,7 @@ classdef SampleData < Numerics.SampleData & Visual.VisualReactive
 
         function n = toNumerics(obj)
             % TONUMERICS Strip visual state and return a Numerics.SampleData.
+            if obj.OperatorData.loaded; obj.drawDirections(); end   % as copy: the conversion shares the source's directions
             n_op      = obj.OperatorData.toNumerics();
             n_contour = obj.Contour.toNumerics();
             n = Numerics.SampleData(n_op, n_contour, obj.ell, obj.r);
@@ -96,9 +103,11 @@ classdef SampleData < Numerics.SampleData & Visual.VisualReactive
                 obj
                 ax = gca
             end
-            phandles = gobjects(0);
+            phandles = Visual.emptyHandles();
             if isempty(ax); return; end
-            phandles = [phandles obj.Contour.plot(ax)];
+            if ~isempty(obj.Contour)
+                phandles = [phandles obj.Contour.plot(ax)];
+            end
             phandles = [phandles obj.OperatorData.plot(ax)];
         end
 
@@ -117,27 +126,6 @@ classdef SampleData < Numerics.SampleData & Visual.VisualReactive
                 detachFromGraphics@Visual.VisualReactive(obj);
             catch
                 % Ignore errors during cleanup
-            end
-        end
-
-        function delete(obj)
-            % Clean up graphics/listeners and children on destruction.
-            % Do NOT guard the object's own cleanup with isvalid(obj):
-            % inside a destructor it is already false, so cleanup would be
-            % skipped (see Visual.VisualReactive.delete). The per-child
-            % isvalid() checks below are fine -- those are separate objects.
-            try
-                obj.detachFromGraphics();
-
-                % Delete children
-                if ~isempty(obj.Contour) && isvalid(obj.Contour)
-                    delete(obj.Contour);
-                end
-                if ~isempty(obj.OperatorData) && isvalid(obj.OperatorData)
-                    delete(obj.OperatorData);
-                end
-            catch
-                % Already deleted - ignore
             end
         end
 

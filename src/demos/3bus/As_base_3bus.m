@@ -1,7 +1,5 @@
-% Initialize a 19x19 matrix with zeros
 As = zeros(19, 19);
 
-% Populate columns 1-6 based on As1.jpg
 As(1, 2) = 376.99;
 %
 As(2, 1) = -0.0314;
@@ -70,7 +68,6 @@ As(13, 4) = 0.9808;
 As(13, 5) = -1.0938;
 As(13, 6) = 0.19;
 
-% Populate columns 7-12 based on As2.jpg
 As(2, 10) = 0.0185;
 As(2, 11) = -0.0245;
 %
@@ -113,7 +110,6 @@ As(13, 11) = 8.5076;
 %
 As(16, 12) = -727.27;
 
-% Populate columns 13-19 based on As3.jpg
 As(3, 14) = 0.125;
 %
 As(9, 15) = 0.125;

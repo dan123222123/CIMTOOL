@@ -9,6 +9,36 @@ classdef ModalTruncation < Numerics.ModalTruncation & Visual.VisualReactive
             cp = copyElement@Numerics.ModalTruncation(obj);
             cp.ax = obj.ax;
         end
+
+        function reattachListeners(obj)
+            reattachListeners@Numerics.ModalTruncation(obj);
+            obj.forgetGraphics();
+            obj.deleteListeners();
+            obj.listeners = obj.partListeners("RegionCIM");
+        end
+    end
+
+    methods
+        function attachListeners(obj)
+            % Recreate listeners recursively (called when reattaching to new graphics)
+            obj.deleteListeners();
+            obj.listeners = obj.partListeners("RegionCIM");
+            if isa(obj.RegionCIM, 'Visual.VisualReactive') && isvalid(obj.RegionCIM)
+                obj.RegionCIM.attachListeners();
+            end
+        end
+
+        function detachFromGraphics(obj)
+            % Detach from graphics and remove all listeners recursively
+            try
+                if isa(obj.RegionCIM, 'Visual.VisualReactive') && isvalid(obj.RegionCIM)
+                    obj.RegionCIM.detachFromGraphics();
+                end
+                detachFromGraphics@Visual.VisualReactive(obj);
+            catch
+                % Ignore errors during cleanup
+            end
+        end
     end
 
     methods (Static)
@@ -19,9 +49,10 @@ classdef ModalTruncation < Numerics.ModalTruncation & Visual.VisualReactive
                 ax = []
             end
             v_region = Visual.CIM.fromNumerics(n.RegionCIM, ax);
-            v = Visual.ModalTruncation(n.FullTransferFunction, ...
-                v_region.SampleData.Contour, v_region.RealizationData, ax);
-            v.RegionCIM = v_region;
+            % constructed with its own default contour and RealizationData, so no
+            % throwaway CIM keeps listening to the converted ones
+            v = Visual.ModalTruncation(n.FullTransferFunction, Visual.Contour.Circle(), Visual.RealizationData(), ax);
+            v.RegionCIM = v_region;   % the RegionCIM listener moves the graphics to it
             Visual.copyMatchingProperties(n, v, "RegionCIM");
         end
     end
@@ -42,8 +73,8 @@ classdef ModalTruncation < Numerics.ModalTruncation & Visual.VisualReactive
                 ax = []
             end
             % the Numerics superclass constructor requires H, so it must be
-            % called explicitly (the implicit zero-argument call errors)
-            obj@Numerics.ModalTruncation(H, Contour, RealizationData);
+            % called explicitly (the implicit zero-argument call errors); it gets
+            obj@Numerics.ModalTruncation(H);
             import Visual.*
 
             % Create OperatorData from function handle
@@ -55,13 +86,14 @@ classdef ModalTruncation < Numerics.ModalTruncation & Visual.VisualReactive
 
             obj.ax = ax;
             obj.update_plot([],[]);
+            % a replaced RegionCIM leaves the axes and the new one is drawn
+            obj.listeners = obj.partListeners("RegionCIM");
         end
 
         function n = toNumerics(obj)
             % TONUMERICS Strip visual state and return a Numerics.ModalTruncation.
             n_region = obj.RegionCIM.toNumerics();
-            n = Numerics.ModalTruncation(obj.FullTransferFunction, ...
-                n_region.SampleData.Contour, n_region.RealizationData);
+            n = Numerics.ModalTruncation(obj.FullTransferFunction);
             n.RegionCIM = n_region;
             Visual.copyMatchingProperties(obj, n, "RegionCIM");
         end
@@ -83,7 +115,7 @@ classdef ModalTruncation < Numerics.ModalTruncation & Visual.VisualReactive
                 obj
                 ax = gca
             end
-            phandles = gobjects(0);
+            phandles = Visual.emptyHandles();
             if isempty(ax); return; end
             if ~iscell(ax); ax = num2cell(ax); end
 

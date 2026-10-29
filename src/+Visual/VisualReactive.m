@@ -1,21 +1,55 @@
 classdef VisualReactive < handle
 
-    properties (Access = public, SetObservable)
+    properties (Access = public, SetObservable, Transient)
         ax = []
+    end
+
+    properties (Access = public, SetObservable)
         StylePreferences = Visual.StylePreferences()
     end
 
-    properties
-        phandles = gobjects(0)
+    properties (Transient)
+        phandles = []   % graphics handles once plotted (Visual.emptyHandles: [] on thread-based workers)
     end
 
-    properties (Access = protected)
+    properties (Access = protected, Transient)
         % Store listener handles so they can be cleaned up without deleting object
         listeners = []
     end
 
     methods (Abstract)
         phandles = plot(obj,ax);
+    end
+
+    methods (Access = protected)
+        function ls = partListeners(obj, names)
+            % Listeners that move the graphics from a replaced part (a property holding a Visual object) to its replacement:
+            ls = event.proplistener.empty;
+            for p = names
+                ls(end+1) = addlistener(obj, char(p), 'PreSet', @obj.detachPart);
+                ls(end+1) = addlistener(obj, char(p), 'PostSet', @obj.attachPart);
+            end
+        end
+
+        function forgetGraphics(obj)
+            obj.phandles = Visual.emptyHandles();
+            obj.ax = [];
+        end
+
+        function detachPart(obj, src, ~)
+            part = obj.(src.Name);   % empty for a part not chosen yet, such as the contour
+            if isa(part, 'Visual.VisualReactive') && ~isempty(part) && isvalid(part)
+                part.detachFromGraphics();
+            end
+        end
+
+        function attachPart(obj, src, ~)
+            part = obj.(src.Name);
+            if isa(part, 'Visual.VisualReactive') && ~isempty(part) && isvalid(part)
+                part.attachListeners();
+            end
+            obj.update_plot([],[]);
+        end
     end
 
     methods
@@ -53,10 +87,10 @@ classdef VisualReactive < handle
                         delete(cgo);
                     end
                 end
-                obj.phandles = gobjects(0);
+                obj.phandles = Visual.emptyHandles();
             catch
                 % Graphics already deleted - just clear the array
-                obj.phandles = gobjects(0);
+                obj.phandles = Visual.emptyHandles();
             end
         end
 
@@ -110,14 +144,9 @@ classdef VisualReactive < handle
         function delete(obj)
             % Clean up plotted graphics and listeners on destruction.
             %
-            % Do NOT guard this with isvalid(obj): inside a handle
-            % destructor MATLAB already reports the object as invalid, so
-            % the guard would skip cleanup entirely and leave this object's
-            % graphics (e.g. a contour curve) orphaned on the axes -- the
-            % cause of stale contours lingering after a type switch.
-            % detachFromGraphics() is itself try/catch-guarded.
             try
-                obj.detachFromGraphics();
+                obj.cla();
+                obj.deleteListeners();
             catch
                 % best-effort cleanup during destruction
             end

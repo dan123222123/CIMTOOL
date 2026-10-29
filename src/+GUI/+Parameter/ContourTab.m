@@ -15,6 +15,10 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
         PlotTab
     end
 
+    properties (Access = private)
+        listeners = []  % Store listener handles for cleanup
+    end
+
     methods
 
         function obj = ContourTab(Parent,MainApp,CIMData)
@@ -25,8 +29,13 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
 
             obj.updateContourComponent();
 
-            % obj.addListeners();
+            % a replaced contour, from the type buttons or from a script, rebuilds the component
+            obj.listeners = GUI.SubObjectListener(obj.CIMData,"SampleData",'Contour',@(~,~)obj.updateContourComponent());
 
+        end
+
+        function delete(comp)
+            Visual.deleteListeners(comp.listeners);
         end
 
         function updateContourComponent(comp)
@@ -43,6 +52,9 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
                 case 'Visual.Contour.CircularSegment'
                     comp.CircularSegmentButton.Value = true;
                     comp.ContourComponent = GUI.Parameter.Contour.CircularSegmentComponent(comp.GridLayout,comp.CIMData);
+                otherwise   % a contour type without an editor, e.g. a plain Quad assigned from a script
+                    comp.ContourComponent = GUI.Parameter.Contour.ContourComponent.empty;
+                    return;
             end
             comp.ContourComponent.Layout.Row = [1 5];
             comp.ContourComponent.Layout.Column = [2 5];
@@ -57,7 +69,11 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
             if strcmp(class(oc), "Visual.Contour." + selectedButton.Text)
                 return;
             end
-            center = oc.gamma; N = oc.N;
+            if isempty(oc)   % no contour yet: each type's default (an empty Quad matches no case below)
+                center = 0; radius = 1; N = 8;
+            else
+                center = oc.gamma; N = oc.N;
+            end
             switch(class(oc))
                 case 'Visual.Contour.Circle'
                     radius = comp.CIMData.SampleData.Contour.rho;
@@ -74,14 +90,15 @@ classdef ContourTab < matlab.ui.componentcontainer.ComponentContainer
                 case "CircularSegment"
                     comp.CIMData.SampleData.Contour = Visual.Contour.CircularSegment(center,radius,pi/2,N,"clencurt");
             end
-            delete(oc);
-            comp.updateContourComponent();
+            delete(oc);   % the listener on SampleData.Contour has rebuilt the component
         end
 
         function updateFontSize(comp,update)
             fontsize(comp.GridLayout.Children,update,"points");
             comp.ContourTypeButtonGroup.updateFontSize(update);
-            comp.ContourComponent.updateFontSize(update);
+            if ~isempty(comp.ContourComponent) && isvalid(comp.ContourComponent)
+                comp.ContourComponent.updateFontSize(update);
+            end
         end
 
     end

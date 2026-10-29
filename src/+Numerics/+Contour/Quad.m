@@ -11,10 +11,27 @@ classdef Quad < matlab.mixin.Copyable
             cp = feval(class(obj));
             cp.z = obj.z; cp.w = obj.w;
         end
+        function reattachListeners(~)
+            % subclasses that listen to their own parameters reinstall those listeners here
+        end
+    end
+
+    methods (Static)
+        function obj = loadobj(obj)
+            if isstruct(obj)
+                warning("Numerics:Contour:loadobj", "A contour could not be loaded as an object and is returned as a struct.");
+                return;
+            end
+            obj.reattachListeners();
+        end
     end
 
     methods
         function obj = Quad(z,w)
+            arguments
+                z = []
+                w = []
+            end
             obj.z = z; obj.w = w;
         end
         function tf = inside(obj,pt)
@@ -35,6 +52,16 @@ classdef Quad < matlab.mixin.Copyable
             d = max(abs(c - obj.z))*scale;
             r = randn(1,"like",1i); r = r/norm(r);
             s = c + r*d;
+        end
+        function s = FindShift(obj,scale)
+            % Returns a point outside of the convex hull of the given quadrature
+            arguments
+                obj
+                scale = 1.25
+            end
+            c = sum(obj.z)/length(obj.z);
+            d = max(abs(c - obj.z))*scale;
+            s = c + d*exp(1i*pi/4);
         end
     end
 

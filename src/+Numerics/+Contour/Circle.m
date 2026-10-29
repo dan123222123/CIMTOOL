@@ -9,6 +9,16 @@ classdef Circle < Numerics.Contour.Quad
         function cp = copyElement(obj)
             cp = Numerics.Contour.Circle(obj.gamma,obj.rho,obj.N);
         end
+        function reattachListeners(obj)
+            obj.addUpdateListeners();
+        end
+    end
+    methods (Access = private)
+        function addUpdateListeners(obj)
+            addlistener(obj,'gamma','PostSet',@obj.update);
+            addlistener(obj,'rho','PostSet',@obj.update);
+            addlistener(obj,'N','PostSet',@obj.update);
+        end
     end
     methods
         function obj = Circle(gamma,rho,N)
@@ -21,16 +31,23 @@ classdef Circle < Numerics.Contour.Quad
             [z,w] = trapezoid(gamma,rho,N);
             obj@Numerics.Contour.Quad(z,w);
             obj.gamma = gamma; obj.rho = rho; obj.N = N;
-            addlistener(obj,'gamma','PostSet',@obj.update);
-            addlistener(obj,'rho','PostSet',@obj.update);
-            addlistener(obj,'N','PostSet',@obj.update);
+            obj.addUpdateListeners();
         end
 
         function tf = inside(obj,pt)
             tf = (abs(pt-obj.gamma) < obj.rho);
         end
 
-        function [theta,sigma] = interlevedshifts(obj,nsw,d,mode,variant)
+        function s = FindShift(obj,scale)
+            % As Quad.FindShift, from the center `gamma` and radius `rho` rather than the nodes.
+            arguments
+                obj
+                scale = 1.25
+            end
+            s = obj.gamma + obj.rho*scale*exp(1i*pi/4);
+        end
+
+        function [theta,sigma] = interlevedshifts(obj,nsw,d,mode,variant,phase)
         % Returns a set of left and right interleaved shifts with `nsw` shifts each. The shifts are placed `d`*\(\rho\) or `d`+\(\rho\) away from the center of the contour depending on setting `mode=scale` or `mode=shift`, respectively.
             arguments
                 obj
@@ -38,11 +55,11 @@ classdef Circle < Numerics.Contour.Quad
                 d = 1.25
                 mode = 'scale'
                 variant = 'cconj' % or 'trap'
+                phase = 0         % rotation of the 'trap' points, in [0, pi/2]
             end
             import Numerics.Contour.Circle.trapezoid Numerics.Contour.Circle.circquad;
-            z = obj.z;
-            c = sum(z)/length(z);
-            r = max(abs(c - z));
+            c = obj.gamma;
+            r = obj.rho;
             switch mode
                 case 'scale'
                     rs = r*d;
@@ -58,9 +75,12 @@ classdef Circle < Numerics.Contour.Quad
 
             switch variant
                 case 'cconj'
+                    if phase ~= 0
+                        error("Numerics:Circle:phaseNeedsTrap", "phase applies to the 'trap' variant only.");
+                    end
                     z = circquad(c,rs,2*(nsw+1));
                 case 'trap'
-                    z = trapezoid(c,rs,2*nsw);
+                    z = trapezoid(c,rs,2*nsw,phase);
             end
 
             for i=1:length(z)
@@ -90,17 +110,18 @@ classdef Circle < Numerics.Contour.Quad
         end
     end
     methods (Static)
-        function [z,w] = trapezoid(gamma,rho,N)
+        function [z,w] = trapezoid(gamma,rho,N,phase)
             arguments (Input)
-                gamma   % center
-                rho     % radius
-                N       % number of nodes
+                gamma       % center
+                rho         % radius
+                N           % number of nodes
+                phase = 0   % angle added to every node
             end
             arguments (Output)
                 z       % nodes
                 w       % weights
             end
-            q = @(N) ((2*pi)/N)*(1:N);
+            q = @(N) phase + ((2*pi)/N)*(1:N);
             f = @(theta) gamma + rho*exp(1i*theta);
             wfun = @(theta) (rho/N)*exp(1i*theta);
             z = f(q(N)); w = wfun(q(N));

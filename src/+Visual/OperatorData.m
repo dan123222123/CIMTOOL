@@ -5,6 +5,12 @@ classdef OperatorData <  Numerics.OperatorData & Visual.VisualReactive
           cp = copyElement@Numerics.OperatorData(obj);
           cp.ax = obj.ax;
       end
+
+      function reattachListeners(obj)
+          reattachListeners@Numerics.OperatorData(obj);
+          obj.forgetGraphics();
+          obj.attachListeners();
+      end
    end
 
     methods (Static)
@@ -17,6 +23,7 @@ classdef OperatorData <  Numerics.OperatorData & Visual.VisualReactive
             v = Visual.OperatorData();
             v.ax = ax;
             Visual.copyMatchingProperties(n, v, "loaded");
+            v.ReferenceStatus = Numerics.OperatorData.settledStatus(n.ReferenceStatus);
             v.loaded = n.loaded;   % set last — fires listeners that depend on it
         end
     end
@@ -40,6 +47,7 @@ classdef OperatorData <  Numerics.OperatorData & Visual.VisualReactive
             % TONUMERICS Strip visual state and return a Numerics.OperatorData.
             n = Numerics.OperatorData();
             Visual.copyMatchingProperties(obj, n, "loaded");
+            n.ReferenceStatus = Numerics.OperatorData.settledStatus(obj.ReferenceStatus);
             n.loaded = obj.loaded;
         end
 
@@ -54,7 +62,7 @@ classdef OperatorData <  Numerics.OperatorData & Visual.VisualReactive
                 obj
                 ax = gca
             end
-            phandles = gobjects(0);
+            phandles = Visual.emptyHandles();
             if isempty(ax) || ~isgraphics(ax); return; end
             hold(ax,"on");
             if ~isempty(obj.refew)

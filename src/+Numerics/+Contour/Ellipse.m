@@ -10,6 +10,17 @@ classdef Ellipse < Numerics.Contour.Quad
         function cp = copyElement(obj)
             cp = Numerics.Contour.Ellipse(obj.gamma,obj.alpha,obj.beta,obj.N);
         end
+        function reattachListeners(obj)
+            obj.addUpdateListeners();
+        end
+    end
+    methods (Access = private)
+        function addUpdateListeners(obj)
+            addlistener(obj,'gamma','PostSet',@obj.update);
+            addlistener(obj,'alpha','PostSet',@obj.update);
+            addlistener(obj,'beta','PostSet',@obj.update);
+            addlistener(obj,'N','PostSet',@obj.update);
+        end
     end
     methods
         function obj = Ellipse(gamma,alpha,beta,N)
@@ -26,10 +37,7 @@ classdef Ellipse < Numerics.Contour.Quad
             obj.alpha = alpha;
             obj.beta = beta;
             obj.N = N;
-            addlistener(obj,'gamma','PostSet',@obj.update);
-            addlistener(obj,'alpha','PostSet',@obj.update);
-            addlistener(obj,'beta','PostSet',@obj.update);
-            addlistener(obj,'N','PostSet',@obj.update);
+            obj.addUpdateListeners();
         end
         function tf = inside(obj,pt)
             tf = (((real(pt) - real(obj.gamma)).^2/obj.alpha^2) + ((imag(pt) - imag(obj.gamma)).^2/obj.beta^2) < 1);

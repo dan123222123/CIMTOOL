@@ -28,7 +28,7 @@ classdef NLEVPTab < matlab.ui.componentcontainer.ComponentContainer
 
         function addListeners(comp)
             % Store listener handle for cleanup
-            comp.listeners = addlistener(comp.CIMData.SampleData.OperatorData,'loaded','PostSet',@(src,event)comp.OperatorDataChangedFcn);
+            comp.listeners = GUI.SubObjectListener(comp.CIMData,"SampleData.OperatorData",'loaded',@(src,event)comp.OperatorDataChangedFcn);
         end
 
         function delete(comp)

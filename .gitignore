@@ -8,11 +8,25 @@ experiments/allpass/ex*Data
 *.avi
 *.gif
 
+# but keep documentation assets (figures, diagrams) under version control
+!docs/**/*.jpg
+!docs/**/*.png
+!docs/**/*.gif
+
 /.quarto/
 **/*.quarto_ipynb
 **/.ipynb*
-**/.venv
+**/.venv*
+/site/
 
 # local CI mirror (scripts/ci-local.sh) artifacts
 /.ci-venv/
 /.ci-site/
+
+# demo outputs (compute scripts write these next to themselves; *_figures.m plot from them)
+src/demos/**/*.csv
+src/demos/**/*.txt
+
+# download caches (src/demos/pes39/cache/ holds the PES 39-bus files)
+src/demos/**/cache/
+__pycache__/

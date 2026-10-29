@@ -19,6 +19,8 @@ classdef ResultData < matlab.mixin.Copyable
         ew  % computed eigenvalues
         rev % computed right eigenvectors
         lev % computed left eigenvectors
+        m   % the realization order of ew: RealizationSize.m, or under RealizationData.AutoRank the one RankRule chose; empty when the realization is cleared
+        GapRatio = NaN  % sigma_m/sigma_{m+1} when the Gap rule chose m, below options.GapMin for a weak gap; NaN otherwise
     end
 
     properties (Dependent)
@@ -41,8 +43,23 @@ classdef ResultData < matlab.mixin.Copyable
           cp.ew     = obj.ew;
           cp.rev    = obj.rev;
           cp.lev    = obj.lev;
+          cp.m      = obj.m;
+          cp.GapRatio = obj.GapRatio;
+      end
+
+      function reattachListeners(~)
       end
    end
+
+    methods (Static)
+        function obj = loadobj(obj)
+            if isstruct(obj)
+                warning("Numerics:ResultData:loadobj", "A ResultData could not be loaded as an object and is returned as a struct.");
+                return;
+            end
+            obj.reattachListeners();
+        end
+    end
 
     methods
 
@@ -93,7 +110,8 @@ classdef ResultData < matlab.mixin.Copyable
             if isempty(obj.ew) || isempty(obj.rev) || isempty(obj.lev)
                 error('ResultData:NoResults', 'No computed results available. Call CIM.compute() first.');
             end
-            H = @(z) Numerics.poresz(z, obj.ew, obj.lev, obj.rev, deriv);
+            ew = obj.ew; lev = obj.lev; rev = obj.rev;
+            H = @(z) Numerics.poresz(z, ew, lev, rev, deriv);
         end
 
     end

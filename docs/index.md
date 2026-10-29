@@ -11,7 +11,7 @@ problems.
 
 ## Requirements
 
-- MATLAB r2022b+
+- MATLAB r2024b+
 
 ## Installation
 

@@ -5,6 +5,12 @@ classdef ResultData < Numerics.ResultData & Visual.VisualReactive
           cp = copyElement@Numerics.ResultData(obj);
           cp.ax = obj.ax;
       end
+
+      function reattachListeners(obj)
+          reattachListeners@Numerics.ResultData(obj);
+          obj.forgetGraphics();
+          obj.attachListeners();
+      end
    end
 
     methods (Static)
@@ -43,6 +49,7 @@ classdef ResultData < Numerics.ResultData & Visual.VisualReactive
             obj.listeners = [
                 addlistener(obj,'ew','PostSet',@obj.update_plot)
                 addlistener(obj,'Sigma','PostSet',@obj.update_plot)
+                addlistener(obj,'m','PostSet',@obj.update_plot)
             ];
         end
 
@@ -52,6 +59,7 @@ classdef ResultData < Numerics.ResultData & Visual.VisualReactive
             obj.listeners = [
                 addlistener(obj,'ew','PostSet',@obj.update_plot)
                 addlistener(obj,'Sigma','PostSet',@obj.update_plot)
+                addlistener(obj,'m','PostSet',@obj.update_plot)
             ];
         end
 
@@ -66,7 +74,7 @@ classdef ResultData < Numerics.ResultData & Visual.VisualReactive
                 obj
                 ax = gca
             end
-            phandles = gobjects(0);
+            phandles = Visual.emptyHandles();
             if isempty(ax) || ~isgraphics(ax); return; end
             hold(ax,"on");
             if ~isempty(obj.ew)
@@ -86,7 +94,7 @@ classdef ResultData < Numerics.ResultData & Visual.VisualReactive
                 obj
                 ax = gca
             end
-            phandles = gobjects(0);
+            phandles = Visual.emptyHandles();
             if isempty(ax) || ~isgraphics(ax); return; end
             hold(ax,"on");
             if ~isempty(obj.Sigma)
@@ -97,6 +105,12 @@ classdef ResultData < Numerics.ResultData & Visual.VisualReactive
                     "MarkerSize", sp.SingularValueMarkerSize, ...
                     'DisplayName', 'Base Data Matrix (Db)', ...
                     'Color', sp.SingularValueColor);
+                if ~isempty(obj.m) % the rank used by the last realization, manual or automatic
+                    phandles(end+1) = xline(ax, obj.m + 0.5, ':', sprintf('m = %d', obj.m), ...
+                        'Color', [0.4 0.4 0.4], ...
+                        'LabelVerticalAlignment', 'bottom', ...
+                        'DisplayName', 'Realization Rank (m)');
+                end
                 ax.XLim = [0,length(Dbsw)+1];
             end
             hold(ax,"off");
@@ -107,7 +121,7 @@ classdef ResultData < Numerics.ResultData & Visual.VisualReactive
                 obj
                 ax = gca
             end
-            phandles = gobjects(0);
+            phandles = Visual.emptyHandles();
             if isempty(ax); return; end % assumed that ax is a cell array of axes henceforth
             if ~iscell(ax); ax = num2cell(ax); end
             if isgraphics(ax{1}); phandles = [phandles obj.plot_eigenvalues(ax{1})]; end

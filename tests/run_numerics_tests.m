@@ -1,4 +1,4 @@
-function run_numerics_tests()
+function run_numerics_tests(suite)
 % One-command regression runner for the headless Numerics test suite.
 %
 % Runs every script-based numerics test in an isolated workspace, reports
@@ -7,10 +7,15 @@ function run_numerics_tests()
 % which launches the GUI (CIMTOOL) and is not headless-safe.
 %
 % Usage (from any directory):
-%     run_numerics_tests
+%     run_numerics_tests           % the CI suite
+%     run_numerics_tests("all")    % also the heavy example tests (test_pes39, test_gun)
 %
 % Each test still runs standalone (cd tests; <name>); this just bundles them so
 % the whole baseline can be checked before/after a change in one shot.
+
+    arguments
+        suite (1,1) string {mustBeMember(suite, ["ci", "all"])} = "ci"
+    end
 
     here = fileparts(mfilename('fullpath'));
     addpath(genpath(fullfile(here, '..', 'src')));
@@ -24,12 +29,23 @@ function run_numerics_tests()
         'test_metrics', ...                  % matching_distance, maxrelresidual
         'test_validation', ...               % input validation on entry points
         'test_realization', ...              % ERA/SP/MP realization baseline
+        'test_cim_state', ...                % RNG-neutral construction/copy, listener re-wiring, rank tolerance
+        'test_reference', ...                % background polyeig reference: wait, callback, cancel, size limit (skips w/o NLEVP)
+        'test_rankrule', ...                 % automatic realization order: rankgap, RankRule Tolerance/Gap
+        'test_save_load_state', ...          % session save/load round trips, old files (NLEVP case skips w/o NLEVP)
         'test_poresz', ...                   % pole-residue transfer-function eval
         'test_modal_truncation', ...         % H = H_region + H_residual decomposition
         'hankel_exactVquadrature', ...       % quadrature -> exact convergence (Hankel)
         'sploewner_exactVquadrature', ...    % quadrature -> exact convergence (SPLoewner)
         'mploewner_exactVquadrature', ...    % quadrature -> exact convergence (MPLoewner)
+        'test_tritare', ...                  % exact transcendental ground truth + multiplicities (skips w/o nlevp_webs)
     };
+    % Heavy example tests, kept out of CI: run only with run_numerics_tests("all").
+    heavy = { ...
+        'test_pes39', ...                    % ten-delay 39-bus benchmark: published spectrum, CIM vs Newton (downloads on first run)
+        'test_gun', ...                      % sparse sampler at n=9956, slow ~1-2 min (skips w/o NLEVP)
+    };
+    if suite == "all", tests = [tests, heavy]; end
 
     ok = false(1, numel(tests)); msg = strings(1, numel(tests)); secs = zeros(1, numel(tests));
     for i = 1:numel(tests)

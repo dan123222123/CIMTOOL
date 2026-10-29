@@ -27,10 +27,23 @@ classdef ModalTruncation < matlab.mixin.Copyable
 
     methods(Access = protected)
         function cp = copyElement(obj)
-            cp = Numerics.ModalTruncation(obj.FullTransferFunction);
+            cp = feval(class(obj), obj.FullTransferFunction);
             cp.RegionCIM = copy(obj.RegionCIM);
             cp.RegionTF = obj.RegionTF;
             cp.ResidualTF = obj.ResidualTF;
+        end
+
+        function reattachListeners(~)
+        end
+    end
+
+    methods (Static)
+        function obj = loadobj(obj)
+            if isstruct(obj)
+                warning("Numerics:ModalTruncation:loadobj", "A ModalTruncation could not be loaded as an object and is returned as a struct.");
+                return;
+            end
+            obj.reattachListeners();
         end
     end
 
@@ -106,8 +119,11 @@ classdef ModalTruncation < matlab.mixin.Copyable
         end
 
         function setRealizationData(obj, RealizationData)
-            % Update realization parameters
+            % Update realization parameters, keeping the shifts RealizationData carries
+            aus = obj.RegionCIM.auto_update_shifts;
+            obj.RegionCIM.auto_update_shifts = false;
             obj.RegionCIM.RealizationData = RealizationData;
+            obj.RegionCIM.auto_update_shifts = aus;
         end
     end
 end

@@ -85,7 +85,10 @@ function obj = fromStruct(s)
     rsize  = Numerics.RealizationSize(getfielddefault(rsz, 'm',  0), ...
                                       getfielddefault(rsz, 'T1', 0), ...
                                       getfielddefault(rsz, 'T2', 0));
-    rd     = Numerics.RealizationData(cm, interp, rsize, getfielddefault(R, 'ranktol', NaN));
+    % files saved before AutoRank carry a ranktol field instead, which no computation read; it is ignored
+    rd     = Numerics.RealizationData(cm, interp, rsize, ...
+                                      logical(getfielddefault(R, 'AutoRank', false)), ...
+                                      toRankRule(getfielddefault(R, 'RankRule', []), Numerics.RankRule.Gap));
 
     % ---- sample data ----
     % Build with ell=r=0 to skip the constructor's random direction sampling,
@@ -117,7 +120,7 @@ function obj = fromStruct(s)
 
     % ---- result data ----
     RES = getfielddefault(s, 'result', struct());
-    for f = ["Db","Ds","B","BB","C","CC","X","Sigma","Y","ew","rev","lev"]
+    for f = ["Db","Ds","B","BB","C","CC","X","Sigma","Y","ew","rev","lev","m","GapRatio"]
         if isfield(RES, f)
             obj.ResultData.(f) = RES.(f);
         end
@@ -125,8 +128,13 @@ function obj = fromStruct(s)
 
     % ---- cim-level options ----
     C = getfielddefault(s, 'cim', struct());
+    % merged over the defaults, so options added since the file was saved keep their defaults
     if isfield(C, 'options') && isstruct(C.options)
-        obj.options = C.options;
+        opts = obj.options;
+        for f = string(fieldnames(C.options))'
+            opts.(f) = C.options.(f);
+        end
+        obj.options = opts;
     end
 
     % ---- restore loaded flags LAST (every setter above resets them) ----
@@ -174,6 +182,16 @@ function e = toComputationalMode(val, dflt)
         case 'Hankel';    e = Numerics.ComputationalMode.Hankel;
         case 'SPLoewner'; e = Numerics.ComputationalMode.SPLoewner;
         case 'MPLoewner'; e = Numerics.ComputationalMode.MPLoewner;
+        otherwise;        e = dflt;
+    end
+end
+
+function e = toRankRule(val, dflt)
+    if isa(val, 'Numerics.RankRule'); e = val; return; end
+    if isempty(val); e = dflt; return; end
+    switch char(val)
+        case 'Tolerance'; e = Numerics.RankRule.Tolerance;
+        case 'Gap';       e = Numerics.RankRule.Gap;
         otherwise;        e = dflt;
     end
 end

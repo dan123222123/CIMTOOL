@@ -5,8 +5,13 @@ classdef Ellipse < Numerics.Contour.Ellipse & Visual.Contour.Quad
           cp = Visual.Contour.Ellipse(obj.gamma,obj.alpha,obj.beta,obj.N,obj.ax);
           cp.plot_quadrature = obj.plot_quadrature;
       end
+
+      function reattachListeners(obj)
+          reattachListeners@Numerics.Contour.Ellipse(obj);
+          reattachListeners@Visual.Contour.Quad(obj);
+      end
    end
-    
+
     methods
         function obj = Ellipse(gamma,alpha,beta,N,ax)
             arguments
@@ -26,7 +31,7 @@ classdef Ellipse < Numerics.Contour.Ellipse & Visual.Contour.Quad
                 obj
                 ax = gca
             end
-            phandles = gobjects(0);
+            phandles = Visual.emptyHandles();
             if isempty(ax) || ~isgraphics(ax); return; end
             zp = Numerics.Contour.Ellipse.trapezoid(obj.gamma,obj.alpha,obj.beta,512);
             zp = [obj.gamma + obj.alpha, zp, obj.gamma + obj.alpha];
@@ -47,4 +52,3 @@ classdef Ellipse < Numerics.Contour.Ellipse & Visual.Contour.Quad
     end
 
 end
-

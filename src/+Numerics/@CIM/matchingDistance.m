@@ -17,6 +17,9 @@ function [nmd,pairs] = matchingDistance(obj)
     refew = obj.SampleData.OperatorData.refew;
 
     if isempty(refew)
+        if obj.SampleData.OperatorData.ReferenceStatus == "computing"
+            error("the reference eigenvalues are still computing; call waitReference() on the OperatorData first...")
+        end
         error("no reference eigenvalue data in CIM, cannot compute matching distance...")
     end
 
